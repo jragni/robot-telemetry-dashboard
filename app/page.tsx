@@ -1,18 +1,20 @@
 /**
  * Homepage
  */
+import { cookies } from 'next/headers';
 
 import DashboardSidebar from "@/components/dashboard/sidebar";
 import { Button } from "@/components/ui/button";
-import { SidebarTrigger, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies()
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
   return (
     <div>
-      <SidebarProvider defaultOpen>
+      <SidebarProvider defaultOpen={defaultOpen}>
         <DashboardSidebar />
         <main>
-          <SidebarTrigger />
         </main>
       </SidebarProvider>
     </div>
