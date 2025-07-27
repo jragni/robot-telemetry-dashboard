@@ -14,8 +14,7 @@ export default async function Home() {
     <div>
       <SidebarProvider defaultOpen={defaultOpen}>
         <DashboardSidebar />
-        <main className="pl-2">
-        </main>
+          <main></main>
       </SidebarProvider>
     </div>
   );
