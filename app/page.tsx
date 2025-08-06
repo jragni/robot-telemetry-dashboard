@@ -3,6 +3,7 @@
  */
 import { cookies } from 'next/headers';
 
+import ConnectionProvider from '@/components/dashboard/ConnectionProvider';
 import DashboardSidebar from "@/components/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
@@ -11,11 +12,11 @@ export default async function Home() {
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
   return (
-    <div>
+    <ConnectionProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
         <DashboardSidebar />
           <main></main>
       </SidebarProvider>
-    </div>
+    </ConnectionProvider>
   );
 }
