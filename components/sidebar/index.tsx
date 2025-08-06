@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from 'next-themes';
-import { Bot, LoaderPinwheel, Moon, Sun } from "lucide-react";
+import { Bot, Moon, Sun } from "lucide-react";
 
 import { Badge } from '@/components/ui/badge'
 import {
@@ -19,8 +19,10 @@ import {
 } from "@/components/ui/sidebar";
 import { Switch } from '@/components/ui/switch';
 import useMounted from '@/hooks/useMounted';
+import { useConnection } from '../dashboard/ConnectionProvider'; // TODO this will be moved
 
 import AddConnectionDialog from "./AddConnectionDialog";
+import ConnectionsList from './ConnectionsList';
 
 /**
  * Dashboard Sidebar
@@ -32,11 +34,12 @@ import AddConnectionDialog from "./AddConnectionDialog";
  * 
  */
 export default function DashboardSidebar() {
-  const { theme, setTheme } = useTheme()
+  const { connections } = useConnection();
+  const { theme, setTheme } = useTheme();
   const { open } = useSidebar();
   const isMounted = useMounted();
 
-  const connectionCount = 0; // TODO: add state or derived variable for this
+  const connectionsList = Object.values(connections);
 
   return (
     <>
@@ -62,10 +65,10 @@ export default function DashboardSidebar() {
                   className="h-5 min-w-5 rounded-full font-mono tabular-nums"
                   variant="default"
                 >
-                  {connectionCount}
+                  {connectionsList.length}
                 </Badge>
               </div>
-              {/* TODO: Add list of connected devices */}
+              <ConnectionsList connections={connectionsList} />
               <AddConnectionDialog />
             </SidebarGroupContent>
           <SidebarSeparator className="my-4" />

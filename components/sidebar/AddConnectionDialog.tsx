@@ -1,38 +1,74 @@
 "use client";
 
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Plus } from "lucide-react";
+import { v4 as uuidV4 } from 'uuid';
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useConnection } from '@/components/dashboard/ConnectionProvider';
 
-interface ConnectionDialogFormData { 
-  connectionName: string,
-  webSocketUrl: string
-}
+import { ConnectionDialogFormData } from './definitions';
+import { validateAddConnectionForm } from './helpers';
+
 
 /**
  * AddConnectionDialog
- * 
+ *
  * @description
  * Dialog that adds a data source to the dashboard
  */
 export default function AddConnectionDialog(): React.ReactNode {
+  const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState<ConnectionDialogFormData>({
     connectionName: '',
     webSocketUrl: '',
   })
 
+  const { addConnection, connections } = useConnection()
+
+  const handleUpdateForm = (e: ChangeEvent<HTMLInputElement>, field: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
+  }
+
+  const handleSubmit = async () => {
+    try {
+      const { reason, status } = validateAddConnectionForm(formData, connections)
+      if (status === 'valid') {
+        await addConnection(
+          uuidV4(),
+          formData.connectionName.trim(),
+          formData.webSocketUrl.trim()
+        );
+        // Reset form or close dialog on success
+        setFormData({
+          connectionName: '',
+          webSocketUrl: '',
+        });
+        setIsOpen(false);
+      } else {
+        console.warn(reason)
+      }
+    } catch (error) {
+      console.error('Failed to add connection:', error);
+      // Handle error (show toast, error message, etc.)
+    }
+  }
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
       <DialogTrigger asChild>
         <Button variant="outline">
           <Plus className="h-4 mr-2 w-4" />
@@ -42,13 +78,14 @@ export default function AddConnectionDialog(): React.ReactNode {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Data Source to Dashboard</DialogTitle>
+          <DialogDescription>Add Robot or Data Source</DialogDescription>
         </DialogHeader>
         <div>
           <Label htmlFor="connection-name-input">Data Source Name:</Label>
           <Input
             id="connection-name-input"
             className="my-2"
-            onChange={(e) => setFormData((prev) => ({...prev, connectonName: e.target.value }))}
+            onChange={(e) => handleUpdateForm(e, 'connectionName')}
             placeholder="Robot 1"
             value={formData.connectionName}
           />
@@ -58,12 +95,20 @@ export default function AddConnectionDialog(): React.ReactNode {
           <Input
             id="websocket-url-input"
             className="my-2"
-            onChange={(e) => setFormData((prev) => ({...prev, webSocketUrl: e.target.value }))}
+            onChange={(e) => handleUpdateForm(e, 'webSocketUrl')}
             placeholder="ws://192.168.1.100:9090 or https://random.ngrok.io:9090"
             value={formData.webSocketUrl}
           />
         </div>
-        
+        <div className="flex gap-2">
+          <Button
+            onClick={handleSubmit}
+            size="lg"
+            variant="default"
+          >
+            Add Connection
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
