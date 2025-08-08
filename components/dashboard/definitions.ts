@@ -2,8 +2,8 @@
  * Dashboard definitions
  */
 
+// Interfaces
 export interface TopicSubscription {
-  id: string
   topicName: string
   messageType: string
   lastMessage?: unknown
@@ -15,13 +15,19 @@ export interface RobotConnection {
   lastMessage?: string
   name: string,
   rosInstance?: ROSLIB.Ros
-  status: 'disconnected' | 'connecting' | 'connected' | 'error'
+  status: ConnectionStatus
   subscriptions: Record<string, TopicSubscription>
   url: string
 }
 
 export interface ConnectionContextType {
-  addConnection: (id: string, name:string, url: string) => void,
+  addConnection: (id: string, name:string, url: string) => Promise<void>,
   connections: Record<string, RobotConnection>
-  removeConnection: (id: string) => void,
+  disconnect: (id: string) => void
+  reconnect: (id: string) => void
+  removeConnection: (id: string) => void
 }
+
+// Types
+
+export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error'
