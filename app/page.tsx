@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import ConnectionProvider from '@/components/dashboard/ConnectionProvider';
 import DashboardSidebar from "@/components/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from '@/components/ui/sonner';
 
 export default async function Home() {
   const cookieStore = await cookies()
@@ -16,6 +17,7 @@ export default async function Home() {
       <SidebarProvider defaultOpen={defaultOpen}>
         <DashboardSidebar />
           <main></main>
+          <Toaster richColors />
       </SidebarProvider>
     </ConnectionProvider>
   );
