@@ -1,17 +1,22 @@
-import { RobotConnection } from "../dashboard/definitions";
-import { Card, CardContent } from "../ui/card";
+"use client"
 
-// TODO Add the remove on click for this
+import { Card, CardContent } from "@/components/ui/card";
+import { RobotConnection } from "@/components/dashboard/definitions";
+import ConnnectionListItem from "./ConnectionsListItem";
+
 
 /**
  * ConnectonsList
  */
 export default function ConnectionsList({ connections }: { connections: RobotConnection[]}) {
+
   return (
     <Card>
       <CardContent>
         <ul>
-          {connections.map(({ id, name }) => <li key={id}>{name}</li>)}
+          {connections.map(({ id, name, status }) => (
+            <ConnnectionListItem key={id} id={id} name={name} status={status}/>
+          ))}
         </ul>
       </CardContent>
     </Card>

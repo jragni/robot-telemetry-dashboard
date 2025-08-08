@@ -1,6 +1,7 @@
 "use client";
 
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Plus } from "lucide-react";
 import { v4 as uuidV4 } from 'uuid';
 
@@ -29,12 +30,23 @@ import { validateAddConnectionForm } from './helpers';
  */
 export default function AddConnectionDialog(): React.ReactNode {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [formData, setFormData] = useState<ConnectionDialogFormData>({
     connectionName: '',
     webSocketUrl: '',
   })
 
   const { addConnection, connections } = useConnection()
+
+  useEffect(() => {
+    if (!hasError) {
+      setFormData({
+        connectionName: '',
+        webSocketUrl: '',
+      });
+      setIsOpen(false);
+    }
+  }, [hasError, setHasError])
 
   const handleUpdateForm = (e: ChangeEvent<HTMLInputElement>, field: string) => {
     setFormData((prev) => ({
@@ -52,25 +64,22 @@ export default function AddConnectionDialog(): React.ReactNode {
           formData.connectionName.trim(),
           formData.webSocketUrl.trim()
         );
-        // Reset form or close dialog on success
-        setFormData({
-          connectionName: '',
-          webSocketUrl: '',
-        });
-        setIsOpen(false);
+        setHasError(false);
       } else {
-        console.warn(reason)
+        // Frontend error validation
+        toast.error(reason);
       }
-    } catch (error) {
-      console.error('Failed to add connection:', error);
+    } catch (e) {
       // Handle error (show toast, error message, etc.)
+      setHasError(true);
+			toast.error('Unable to add data source. Please verify WebSocket URL is valid.')
     }
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button className="my-2" variant="outline">
           <Plus className="h-4 mr-2 w-4" />
           <span>Add Data Source</span>
         </Button>
@@ -102,7 +111,8 @@ export default function AddConnectionDialog(): React.ReactNode {
         </div>
         <div className="flex gap-2">
           <Button
-            onClick={handleSubmit}
+            disabled={(!formData.connectionName || !formData.webSocketUrl)}
+            onClick={async () => await handleSubmit()}
             size="lg"
             variant="default"
           >

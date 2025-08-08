@@ -65,7 +65,7 @@ export default function DashboardSidebar() {
                   className="h-5 min-w-5 rounded-full font-mono tabular-nums"
                   variant="default"
                 >
-                  {connectionsList.length}
+                  {connectionsList.filter(({ status }) => status === 'connected').length}
                 </Badge>
               </div>
               <ConnectionsList connections={connectionsList} />
