@@ -7,6 +7,7 @@ import ConnectionProvider from '@/components/dashboard/ConnectionProvider';
 import DashboardSidebar from "@/components/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from '@/components/ui/sonner';
+import TopicSection from '@/components/topicsection';
 
 export default async function Home() {
   const cookieStore = await cookies()
@@ -16,7 +17,9 @@ export default async function Home() {
     <ConnectionProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
         <DashboardSidebar />
-          <main></main>
+          <main>
+            <TopicSection />
+          </main>
           <Toaster richColors />
       </SidebarProvider>
     </ConnectionProvider>
