@@ -31,6 +31,10 @@ export interface ConnectionContextType {
   selectedConnection: RobotConnection | null
 }
 
+export interface ConnectionProviderProps {
+  children: React.ReactNode
+}
+
 // Types
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error'
