@@ -29,8 +29,8 @@ import { validateAddConnectionForm } from './helpers';
  * Dialog that adds a data source to the dashboard
  */
 export default function AddConnectionDialog(): React.ReactNode {
-  const [isOpen, setIsOpen] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<ConnectionDialogFormData>({
     connectionName: '',
     webSocketUrl: '',
@@ -38,15 +38,13 @@ export default function AddConnectionDialog(): React.ReactNode {
 
   const { addConnection, connections } = useConnection()
 
-  useEffect(() => {
-    if (!hasError) {
-      setFormData({
-        connectionName: '',
-        webSocketUrl: '',
-      });
-      setIsOpen(false);
-    }
-  }, [hasError, setHasError])
+  const resetForm = () => {
+    setFormData({
+      connectionName: '',
+      webSocketUrl: '',
+    });
+    setIsLoading(false);
+  };
 
   const handleUpdateForm = (e: ChangeEvent<HTMLInputElement>, field: string) => {
     setFormData((prev) => ({
@@ -57,6 +55,7 @@ export default function AddConnectionDialog(): React.ReactNode {
 
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       const { reason, status } = validateAddConnectionForm(formData, connections)
       if (status === 'valid') {
         await addConnection(
@@ -64,15 +63,18 @@ export default function AddConnectionDialog(): React.ReactNode {
           formData.connectionName.trim(),
           formData.webSocketUrl.trim()
         );
-        setHasError(false);
+        resetForm();
+        setIsOpen(false);
+        toast.success('Connection added successfully!');
       } else {
         // Frontend error validation
         toast.error(reason);
       }
     } catch (e) {
       // Handle error (show toast, error message, etc.)
-      setHasError(true);
-			toast.error('Unable to add data source. Please verify WebSocket URL is valid.')
+      toast.error('Unable to add data source. Please verify WebSocket URL is valid.')
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -111,12 +113,12 @@ export default function AddConnectionDialog(): React.ReactNode {
         </div>
         <div className="flex gap-2">
           <Button
-            disabled={(!formData.connectionName || !formData.webSocketUrl)}
-            onClick={async () => await handleSubmit()}
+            disabled={(!formData.connectionName || !formData.webSocketUrl) || isLoading}
+            onClick={handleSubmit}
             size="lg"
             variant="default"
           >
-            Add Connection
+            {isLoading ? 'Connecting...' : 'Add Connection'}
           </Button>
         </div>
       </DialogContent>

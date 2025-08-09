@@ -4,10 +4,10 @@
 
 // Interfaces
 export interface TopicSubscription {
-  topicName: string
-  messageType: string
   lastMessage?: unknown
-  status: 'subscribing' | 'subscribed' | 'error'
+  messageType: string
+  status: 'subscribing' | 'subscribed' | 'error' | 'unsubscribed'
+  topicName: string
 }
 
 export interface RobotConnection {
@@ -16,7 +16,7 @@ export interface RobotConnection {
   name: string,
   rosInstance?: ROSLIB.Ros
   status: ConnectionStatus
-  subscriptions: Record<string, TopicSubscription>
+  subscriptions: TopicSubscription[]
   url: string
 }
 
@@ -26,6 +26,9 @@ export interface ConnectionContextType {
   disconnect: (id: string) => void
   reconnect: (id: string) => void
   removeConnection: (id: string) => void
+  selectedConnectionId: string | null
+  setSelectedConnectionId: (id: string | null) => void
+  selectedConnection: RobotConnection | null
 }
 
 // Types
