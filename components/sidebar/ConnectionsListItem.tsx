@@ -60,7 +60,7 @@ export default function ConnnectionListItem({
           <Trash />
         </Button>
         <Button
-          className="h-6 w-6"
+          className="h-6 w-6 hover:opacity-70"
           onClick={() => setSelectedConnectionId(isSelected ? null : id)}
         >
           <Star fill={isSelected ? "yellow" : ""} />

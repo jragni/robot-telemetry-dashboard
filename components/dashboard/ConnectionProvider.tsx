@@ -2,11 +2,13 @@
 
 import {
   createContext,
+  useEffect,
   useState,
   useContext,
 } from 'react';
 
 import {
+  ConnectionProviderProps,
   ConnectionContextType,
   RobotConnection,
   TopicSubscription,
@@ -20,10 +22,6 @@ export function useConnection() {
   return context;
 }
 
-interface ConnectionProviderProps {
-  children: React.ReactNode
-}
-
 /**
  * Connection Provider
  *
@@ -34,6 +32,12 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
   const [selectedConnectionId, setSelectedConnectionId] = useState<string | null>(null);
   const [connections, setConnections] = useState<Record<string, RobotConnection>>({});
   const selectedConnection = selectedConnectionId ? connections[selectedConnectionId] ?? null : null;
+
+  useEffect(() => {
+    if (Object.keys(connections).length === 1) {
+      setSelectedConnectionId(Object.keys(connections)[0]);
+    }
+  }, [connections]);
 
   const addConnection = async (id: string, name: string, webSocketUrl: string) => {
     const ROSLIB = (await import('roslib')).default;
