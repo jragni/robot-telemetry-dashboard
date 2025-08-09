@@ -6,7 +6,11 @@ import {
   useContext,
 } from 'react';
 
-import { ConnectionContextType, RobotConnection } from './definitions';
+import {
+  ConnectionContextType,
+  RobotConnection,
+  TopicSubscription,
+} from './definitions';
 
 const ConnectionContext = createContext<ConnectionContextType | null>(null);
 
@@ -27,14 +31,15 @@ interface ConnectionProviderProps {
  * Connection context for the websocket connecting to devices running on ros2.
  */
 export default function ConnectionProvider({ children }: ConnectionProviderProps): React.ReactNode {
+  const [selectedConnectionId, setSelectedConnectionId] = useState<string | null>(null);
   const [connections, setConnections] = useState<Record<string, RobotConnection>>({});
+  const selectedConnection = selectedConnectionId ? connections[selectedConnectionId] ?? null : null;
 
   const addConnection = async (id: string, name: string, webSocketUrl: string) => {
     const ROSLIB = (await import('roslib')).default;
 
     return new Promise<void>((resolve, reject) => {
       const rosInstance = new ROSLIB.Ros({ url: webSocketUrl });
-
 
       let settled = false;
       const timeout = setTimeout(() => {
@@ -63,13 +68,28 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
             rosInstance,
             url: webSocketUrl,
             status: 'connected',
-            subscriptions: {}
+            subscriptions: []
           }
         }));
 
-        // TODO Delete and move late, use for testing
+        // TODO Delete and move later, use for testing
         rosInstance.getTopics(
-          (result) => { console.log(result.topics, result.types); },
+          ({ topics, types }) => {
+            const subs: TopicSubscription[] = topics.map((topic, idx) => ({
+              lastMessage: null,
+              messageType: types[idx],
+              status: 'unsubscribed',
+              topicName: topic,
+            }));
+
+            setConnections((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                subscriptions: subs,
+              }
+            }));
+          },
           (error) => { console.log('boop', error); }
         );
 
@@ -141,6 +161,9 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
         console.log('removing', removed)
         return rest;
       });
+
+      // Clear selection if the removed connection was selected
+      setSelectedConnectionId((currentId) => (currentId === id ? null : currentId));
     }
   };
 
@@ -152,6 +175,9 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
         connections,
         reconnect,
         removeConnection,
+        selectedConnectionId,
+        setSelectedConnectionId,
+        selectedConnection,
       }}
     >
       {children}
