@@ -6,7 +6,6 @@
 export interface TopicSubscription {
   lastMessage?: unknown
   messageType: string
-  status: 'subscribing' | 'subscribed' | 'error' | 'unsubscribed'
   topicName: string
 }
 
@@ -26,8 +25,8 @@ export interface ConnectionContextType {
   disconnect: (id: string) => void
   reconnect: (id: string) => void
   removeConnection: (id: string) => void
-  selectedConnectionId: string | null
-  setSelectedConnectionId: (id: string | null) => void
+  selectedConnectionId: string
+  setSelectedConnectionId: (id: string) => void
   selectedConnection: RobotConnection | null
 }
 
