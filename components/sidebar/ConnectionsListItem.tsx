@@ -1,6 +1,5 @@
 import {
   Crosshair,
-  Ellipsis,
   Plug,
   Trash,
   Unplug
@@ -15,15 +14,17 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { ConnectionsListItemProps } from "./definitions";
+import ConnectionInformationDialog from "./ConnectionInformationDialog";
 
 /**
  * ConnectionListItem
  */
 export default function ConnnectionListItem({
-	handleDisconnect,
-	handleReconnect,
-	handleSelectConnection,
+  handleDisconnect,
+  handleReconnect,
+  handleSelectConnection,
   handleRemoveConnection,
+  id,
   isSelected,
   name,
   status,
@@ -57,13 +58,12 @@ export default function ConnnectionListItem({
           </AccordionTrigger>
           <AccordionContent className="rounded-md bg-accent p-2">
             <div className="items-center flex gap-2 flex-row-reverse">
-              <Button
-                aria-label="More data source details"
-                className="h-5 w-5"
-                variant="outline"
-              >
-                <Ellipsis />
-              </Button>
+              <ConnectionInformationDialog
+                id={id}
+                name={name}
+                status={status}
+                url={url}
+              />
               <Button
                 className="h-5 w-5 hover:opacity-70"
                 onClick={handleSelectConnection}

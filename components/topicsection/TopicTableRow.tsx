@@ -31,6 +31,7 @@ export default function TopicTableRow({
         messageType,
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const handle = (m: any) => {
         const val =
           typeof m?.data !== 'undefined'
