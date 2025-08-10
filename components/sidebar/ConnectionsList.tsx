@@ -37,7 +37,7 @@ export default function ConnectionsList({
           }) => (
             <ConnnectionListItem
               key={id}
-							handleDisconnect={() => disconnect(id)}
+              handleDisconnect={() => disconnect(id)}
               handleReconnect={() => reconnect(id)}
               handleRemoveConnection={() => removeConnection(id)}
               handleSelectConnection={() => setSelectedConnectionId(id === selectedConnectionId ? "" : id)}
