@@ -34,12 +34,19 @@ import ConnectionsList from './ConnectionsList';
  * 
  */
 export default function DashboardSidebar() {
-  const { connections } = useConnection();
   const { theme, setTheme } = useTheme();
+  const {
+    connections,
+    disconnect,
+    removeConnection,
+    reconnect,
+    selectedConnectionId,
+		setSelectedConnectionId,
+  } = useConnection();
   const { open } = useSidebar();
   const isMounted = useMounted();
 
-  const connectionsList = Object.values(connections);
+  const connectionsArray = Object.values(connections);
 
   return (
     <>
@@ -51,24 +58,26 @@ export default function DashboardSidebar() {
           </div>
         </SidebarHeader>
         <SidebarContent>
-          {/* Active Connections */}
           <SidebarGroup>
-            <SidebarGroupLabel className="text-md">
-              Active Connections
-            </SidebarGroupLabel>
-            <SidebarGroupContent
-              className="flex flex-col justify-center"
-            >
+            <SidebarGroupLabel className="text-md">Active Connections</SidebarGroupLabel>
+            <SidebarGroupContent className="flex flex-col justify-center">
               <div className="flex my-2 p-2 justify-between">
-                <p>Connected Data Sources: </p>
+                <p className="font-bold">Connected Data Sources: </p>
                 <Badge
                   className="h-5 min-w-5 rounded-full font-mono tabular-nums"
                   variant="default"
                 >
-                  {connectionsList.filter(({ status }) => status === 'connected').length}
+                  {connectionsArray.filter(({ status }) => status === 'connected').length}
                 </Badge>
               </div>
-              <ConnectionsList connections={connectionsList} />
+              <ConnectionsList
+                connections={connectionsArray}
+                disconnect={disconnect}
+                reconnect={reconnect}
+                removeConnection={removeConnection}
+                selectedConnectionId={selectedConnectionId}
+								setSelectedConnectionId={setSelectedConnectionId}
+              />
               <AddConnectionDialog />
             </SidebarGroupContent>
           <SidebarSeparator className="my-4" />

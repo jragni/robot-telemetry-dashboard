@@ -29,7 +29,7 @@ export function useConnection() {
  * Connection context for the websocket connecting to devices running on ros2.
  */
 export default function ConnectionProvider({ children }: ConnectionProviderProps): React.ReactNode {
-  const [selectedConnectionId, setSelectedConnectionId] = useState<string | null>(null);
+  const [selectedConnectionId, setSelectedConnectionId] = useState<string>("");
   const [connections, setConnections] = useState<Record<string, RobotConnection>>({});
   const selectedConnection = selectedConnectionId ? connections[selectedConnectionId] ?? null : null;
 
@@ -82,7 +82,6 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
             const subs: TopicSubscription[] = topics.map((topic, idx) => ({
               lastMessage: null,
               messageType: types[idx],
-              status: 'unsubscribed',
               topicName: topic,
             }));
 
@@ -167,7 +166,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
       });
 
       // Clear selection if the removed connection was selected
-      setSelectedConnectionId((currentId) => (currentId === id ? null : currentId));
+      setSelectedConnectionId((currentId) => (currentId === id ? "" : currentId));
     }
   };
 

@@ -10,7 +10,13 @@ export interface ConnectionDialogFormData {
 }
 
 export interface ConnectionsListItemProps {
-  id: string
+  handleDisconnect: () => void
+  handleReconnect: () => void
+  handleRemoveConnection: () => void
+  handleSelectConnection: () => void
+  isSelected: boolean
   name: string
+  removeConnection: (id: string ) => void
   status: ConnectionStatus
+  url: string,
 }
