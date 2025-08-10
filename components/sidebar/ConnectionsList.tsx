@@ -1,17 +1,8 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card";
-import { RobotConnection } from "@/components/dashboard/definitions";
 import ConnnectionListItem from "./ConnectionsListItem";
-
-export interface ConnectionListProps {
-  connections: RobotConnection[]
-  disconnect: (id: string) => void
-  reconnect: (id: string) => void
-  removeConnection: (id: string) => void
-  selectedConnectionId: string
-  setSelectedConnectionId: (id: string) => void
-}
+import { ConnectionListProps } from "./definitions";
 
 /**
  * ConnectonsList
@@ -41,6 +32,7 @@ export default function ConnectionsList({
               handleReconnect={() => reconnect(id)}
               handleRemoveConnection={() => removeConnection(id)}
               handleSelectConnection={() => setSelectedConnectionId(id === selectedConnectionId ? "" : id)}
+              id={id}
               isSelected={id===selectedConnectionId}
               name={name}
               removeConnection={removeConnection}

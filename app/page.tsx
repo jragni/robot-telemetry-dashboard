@@ -4,9 +4,12 @@
 import { cookies } from 'next/headers';
 
 import ConnectionProvider from '@/components/dashboard/ConnectionProvider';
-import DashboardSidebar from "@/components/sidebar";
+
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from '@/components/ui/sonner';
+
+import ControlSection from '@/components/controlsection';
+import DashboardSidebar from "@/components/sidebar";
 import TopicSection from '@/components/topicsection';
 
 export default async function Home() {
@@ -18,6 +21,7 @@ export default async function Home() {
       <SidebarProvider defaultOpen={defaultOpen}>
         <DashboardSidebar />
           <main>
+            <ControlSection />
             <TopicSection />
           </main>
           <Toaster richColors />
