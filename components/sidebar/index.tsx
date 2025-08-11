@@ -41,7 +41,7 @@ export default function DashboardSidebar() {
     removeConnection,
     reconnect,
     selectedConnectionId,
-		setSelectedConnectionId,
+    setSelectedConnectionId,
   } = useConnection();
   const { open } = useSidebar();
   const isMounted = useMounted();
@@ -76,7 +76,7 @@ export default function DashboardSidebar() {
                 reconnect={reconnect}
                 removeConnection={removeConnection}
                 selectedConnectionId={selectedConnectionId}
-								setSelectedConnectionId={setSelectedConnectionId}
+                setSelectedConnectionId={setSelectedConnectionId}
               />
               <AddConnectionDialog />
             </SidebarGroupContent>

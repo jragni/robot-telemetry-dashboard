@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useConnection } from "@/components/dashboard/ConnectionProvider";
 
 import AddControlModal from "./AddControlModal"
+import ControlPanel from "./ControlPanel";
 
 /**
  * ControlSection
@@ -14,8 +15,9 @@ export default function ControlSection() {
   const { selectedConnection } = useConnection();
 
   return (
-    <section className="w-full m-2 p-4">
-      <h2 className="font-bold">Controls</h2>
+    <section className="w-max-screen m-2 p-4 w-100">
+      <h2 className="font-bold my-2">Controls</h2>
+      <ControlPanel />
       <div className="py-2">
         <AddControlModal
           isDialogOpen={isDialogOpen}
