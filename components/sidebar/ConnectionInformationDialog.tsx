@@ -1,4 +1,10 @@
-import { Ellipsis } from "lucide-react";
+import {
+  Crosshair,
+  Ellipsis,
+  Plug,
+  Trash,
+  Unplug
+} from "lucide-react";
 
 import { Button } from '@/components/ui/button';
 import {
@@ -21,11 +27,27 @@ import { ConnectionInfoDialogProps } from './definitions';
  */
 
 export default function ConnectionInfoDialog({
+  handleDisconnect,
+  handleReconnect,
+  handleRemoveConnection,
   id,
   name,
   status,
   url,
 }: ConnectionInfoDialogProps): React.ReactNode {
+  const buttonProps = status === 'connected'
+     ?{
+      'aria-label': `Disconnect from ${name}`,
+      className: 'bg-green-300 hover:bg-green-200 h-5 w-5',
+      onClick: handleDisconnect,
+      variant: 'destructive' as const,
+    } : {
+      'aria-label': `reconnect to ${name}`,
+      className: 'bg-red-500 hover:bg-red-300 h-5 w-5',
+      onClick: handleReconnect,
+      variant: 'secondary' as const,
+    };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -57,12 +79,31 @@ export default function ConnectionInfoDialog({
             </div>
             <div>
               <Label className="text-sm font-medium">Status</Label>
-              <p className="text-sm text-muted-foreground">{status}</p>
+              <div className="flex gap-2">
+                <Button {...buttonProps}>
+                  {status !== 'connected'
+                    ? <Unplug />
+                    : <Plug />
+                  }
+                </Button>
+                <p className="text-sm text-muted-foreground">{status}</p>
+              </div>
             </div>
             <div>
               <Label className="text-sm font-medium">WebSocket URL</Label>
               <p className="text-sm text-muted-foreground break-all">{url}</p>
             </div>
+          </div>
+          <div className="flex-row-reverse items-center flex gap-2">
+            <Button
+              aria-label="remove connecton"
+              className=" hover:bg-orange-500 bg-orange-700"
+              onClick={handleRemoveConnection}
+              variant="destructive"
+            >
+              <Trash />
+              Remove Connection
+            </Button>
           </div>
         </div>
       </DialogContent>

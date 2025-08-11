@@ -10,6 +10,9 @@ export interface ConnectionDialogFormData {
 }
 
 export interface ConnectionInfoDialogProps {
+  handleDisconnect: () => void
+  handleReconnect: () => void
+  handleRemoveConnection: () => void
   id: string
   name: string
   status: string
