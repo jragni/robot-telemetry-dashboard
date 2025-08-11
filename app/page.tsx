@@ -20,11 +20,11 @@ export default async function Home() {
     <ConnectionProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
         <DashboardSidebar />
-          <main>
-            <ControlSection />
-            <TopicSection />
-          </main>
-          <Toaster richColors />
+        <main>
+          <ControlSection />
+          <TopicSection />
+        </main>
+        <Toaster richColors />
       </SidebarProvider>
     </ConnectionProvider>
   );
