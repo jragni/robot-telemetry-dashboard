@@ -28,11 +28,9 @@ export default function AddControlModal({
   selectedConnection,
   setIsDialogOpen,
 }: AddControlModalProps) {
-  const [isComboBoxOpen, setIsComboBoxOpen] = useState<boolean>(false);
-  const [formData, setFormData] = useState({
-    topic: '',
-  });
-
+  const [isTopicComboBoxOpen, setIsTopicComboBoxOpen] = useState<boolean>(false);
+  const [formData, setFormData] = useState({ topic: '' });
+	// TODO move out of this component
   const {
     subscriptions,
     status: connectionStatus,
@@ -49,7 +47,7 @@ export default function AddControlModal({
 
   return (
     <Dialog onOpenChange={() => isAddControlButtonDisabled ? null : setIsDialogOpen(!isDialogOpen)} open={isDialogOpen}>
-			<DialogTrigger
+      <DialogTrigger
         className="w-fit bg-orange-100"
         disabled={isAddControlButtonDisabled}
         asChild
@@ -80,12 +78,16 @@ export default function AddControlModal({
           </Label>
           <ComboBox
             id="topic-combobox"
-            open={isComboBoxOpen}
+            open={isTopicComboBoxOpen}
             options={topicOptions}
-            setOpen={() => setIsComboBoxOpen(!isComboBoxOpen)}
+            setOpen={() => setIsTopicComboBoxOpen(!isTopicComboBoxOpen)}
             value={formData.topic}
             setValue={(val) => handleUpdateForm('topic', val)}
           />
+        </div>
+        <div>
+          <p className="font-bold my-1" >Type</p>
+          <p>{formData.topic ? subscriptions.filter(({ topicName }) => formData.topic === topicName )[0].messageType : "N/A"}</p>
         </div>
       </DialogContent>
     </Dialog>
