@@ -5,12 +5,14 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { RobotConnection } from '../dashboard/definitions';
 
 interface TopicTableRowProps {
+  hideRawMessage: boolean
   messageType: string;
   selectedConnection?: RobotConnection | null;
   topicName: string;
 }
 
 export default function TopicTableRow({
+  hideRawMessage,
   messageType,
   selectedConnection,
   topicName,
@@ -55,7 +57,7 @@ export default function TopicTableRow({
     <TableRow key={topicName}>
       <TableCell className="font-semibold">{topicName}</TableCell>
       <TableCell>{messageType}</TableCell>
-      <TableCell>{message}</TableCell>
+      {!hideRawMessage && <TableCell>{message}</TableCell>}
     </TableRow>
   );
 }
