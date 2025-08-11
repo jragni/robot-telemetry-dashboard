@@ -38,7 +38,7 @@ export default function ConnectionInfoDialog({
   const buttonProps = status === 'connected'
      ?{
       'aria-label': `Disconnect from ${name}`,
-      className: 'bg-green-300 hover:bg-green-200 h-5 w-5',
+      className: 'bg-green-500 hover:bg-green-300 dark:bg-green-500 dark:hover:bg-green-300 h-5 w-5',
       onClick: handleDisconnect,
       variant: 'destructive' as const,
     } : {

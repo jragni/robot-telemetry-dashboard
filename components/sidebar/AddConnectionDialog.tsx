@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { toast } from 'sonner';
 import { Plus } from "lucide-react";
 import { v4 as uuidV4 } from 'uuid';
