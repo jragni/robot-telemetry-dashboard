@@ -101,6 +101,7 @@ export default function ControlPanel(): React.ReactNode {
         <CardTitle>Control Panel</CardTitle>
       </CardHeader>
       <CardContent>
+        <p className="mb-2 text-md">Publishing to <code className="bg-accent">/cmd_vel</code></p>
         <div className="mb-4">
           <Label
             className="mb-4"
