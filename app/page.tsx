@@ -10,6 +10,7 @@ import { Toaster } from '@/components/ui/sonner';
 
 import ControlSection from '@/components/controlsection';
 import DashboardSidebar from "@/components/sidebar";
+import SensorSection from '@/components/sensorsection';
 import TopicSection from '@/components/topicsection';
 
 export default async function Home() {
@@ -22,6 +23,7 @@ export default async function Home() {
         <DashboardSidebar />
         <main>
           <ControlSection />
+          <SensorSection />
           <TopicSection />
         </main>
         <Toaster richColors />
