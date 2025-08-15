@@ -2,6 +2,7 @@
 
 import { useConnection } from "@/components/dashboard/ConnectionProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import LaserScanVisualization from "./LaserScanVisualization";
 
 export default function SensorSection(): React.ReactNode {
   const { selectedConnection } = useConnection();
@@ -25,6 +26,7 @@ export default function SensorSection(): React.ReactNode {
         <CardTitle>Sensor Data</CardTitle>
       </CardHeader>
       <CardContent>
+        <LaserScanVisualization />
       </CardContent>
     </Card>
   );
