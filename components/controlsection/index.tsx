@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 
 import { useConnection } from "@/components/dashboard/ConnectionProvider";
 
 import AddControlModal from "./AddControlModal"
-import ControlPanel from "./ControlPanel";
+
+const ControlPanel = dynamic(() => import("./ControlPanel"), { ssr: false });
 
 /**
  * ControlSection
