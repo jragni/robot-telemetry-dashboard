@@ -9,19 +9,19 @@ export default function SensorSection(): React.ReactNode {
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
-      <Card className="mx-4">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Sensor Data</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm underline font-semibold">No data available</p>
+          <p className="text-sm text-muted-foreground">No data available</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="mx-4">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Sensor Data</CardTitle>
       </CardHeader>
