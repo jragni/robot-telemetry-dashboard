@@ -1,5 +1,4 @@
 import {
-  Crosshair,
   Ellipsis,
   Plug,
   Trash,
