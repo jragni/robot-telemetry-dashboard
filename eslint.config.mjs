@@ -11,6 +11,20 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      // Allow 'any' for ROS message handling
+      "@typescript-eslint/no-explicit-any": "warn", // Changed from error to warning
+      
+      // Stricter rules for code quality
+      "@typescript-eslint/no-unused-vars": "warn",
+      "prefer-const": "error",
+      "no-console": "warn",
+      
+      // React specific
+      "react-hooks/exhaustive-deps": "warn",
+    }
+  }
 ];
 
 export default eslintConfig;
