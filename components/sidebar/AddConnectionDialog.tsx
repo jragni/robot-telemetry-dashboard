@@ -70,7 +70,7 @@ export default function AddConnectionDialog(): React.ReactNode {
         // Frontend error validation
         toast.error(reason);
       }
-    } catch (e) {
+    } catch {
       // Handle error (show toast, error message, etc.)
       toast.error('Unable to add data source. Please verify WebSocket URL is valid.')
     } finally {
