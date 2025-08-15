@@ -4,6 +4,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 
 import { useConnection } from "@/components/dashboard/ConnectionProvider";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import AddControlModal from "./AddControlModal"
 
@@ -17,16 +18,18 @@ export default function ControlSection() {
   const { selectedConnection } = useConnection();
 
   return (
-    <section className="w-max-screen m-2 p-4 w-100">
-      <h2 className="font-bold my-2">Controls</h2>
-      <ControlPanel />
-      <div className="py-2">
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Controls</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ControlPanel />
         <AddControlModal
           isDialogOpen={isDialogOpen}
           selectedConnection={selectedConnection}
           setIsDialogOpen={setIsDialogOpen}
         />
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }
