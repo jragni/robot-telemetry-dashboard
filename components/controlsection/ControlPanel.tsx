@@ -24,8 +24,8 @@ import useMounted from '@/hooks/useMounted';
  * NOTE: due to the roslib dependency, this component needs to be lazy loaded
  */
 export default function ControlPanel(): React.ReactNode {
-  const [linearVelocity, setLinearVelocity] = useState<number>(0.05);
-  const [angularVelocity, setAngularVelocity] = useState<number>(0.5);
+  const [linearVelocity, setLinearVelocity] = useState<number>(0.15);
+  const [angularVelocity, setAngularVelocity] = useState<number>(Math.floor(Math.PI/8*100) / 100);
   const [direction, setDirection] = useState<string>("stop");
 
   const isMounted = useMounted();
@@ -115,7 +115,7 @@ export default function ControlPanel(): React.ReactNode {
           </Label>
           <Slider
             id="linear-vel-slider"
-            min={-2}
+            min={0}
             max={2}
             onValueChange={(val) => setLinearVelocity(val[0])}
             step={0.02}
@@ -132,7 +132,7 @@ export default function ControlPanel(): React.ReactNode {
           </Label>
           <Slider
             id="angular-vel-slider"
-            min={-2}
+            min={0}
             max={2}
             onValueChange={(val) => setAngularVelocity(val[0])}
             step={0.02}
