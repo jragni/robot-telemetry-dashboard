@@ -1,15 +1,9 @@
 import { useEffect, useState } from 'react';
-// import ROSLIB from 'roslib';
 
 import { TableCell, TableRow } from '@/components/ui/table';
-import { RobotConnection } from '../dashboard/definitions';
+import { TopicTableRowProps } from './definitions';
 
-interface TopicTableRowProps {
-  hideRawMessage: boolean
-  messageType: string;
-  selectedConnection?: RobotConnection | null;
-  topicName: string;
-}
+import { formatMessage } from './helpers';
 
 export default function TopicTableRow({
   hideRawMessage,
@@ -35,16 +29,8 @@ export default function TopicTableRow({
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const handle = (m: any) => {
-        const val =
-          typeof m?.data !== 'undefined'
-            ? String(m.data)
-            : (() => {
-                try {
-                  return JSON.stringify(m);
-                } catch {
-                  return String(m);
-                }
-              })();
+
+        const val = formatMessage(m);
         setMessage(val);
       };
       topic.subscribe(handle);
@@ -55,9 +41,24 @@ export default function TopicTableRow({
 
   return (
     <TableRow key={topicName}>
-      <TableCell className="font-semibold">{topicName}</TableCell>
-      <TableCell>{messageType}</TableCell>
-      {!hideRawMessage && <TableCell>{message}</TableCell>}
+      <TableCell className="font-semibold text-xs sm:text-sm">
+        <div className="break-all">{topicName}</div>
+      </TableCell>
+      <TableCell className="hidden sm:table-cell text-xs sm:text-sm">
+        <div className="break-all">{messageType}</div>
+      </TableCell>
+      <TableCell className="sm:hidden text-xs">
+        <div className="break-all" title={messageType}>
+          {messageType.split('/').pop() || messageType}
+        </div>
+      </TableCell>
+      {!hideRawMessage && (
+        <TableCell className="max-w-xs sm:max-w-md">
+          <div className="font-mono text-xs overflow-auto max-h-32 whitespace-pre-wrap break-words bg-gray-50 p-2 rounded">
+            {message || 'No data received'}
+          </div>
+        </TableCell>
+      )}
     </TableRow>
   );
 }
