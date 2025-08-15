@@ -20,12 +20,18 @@ export default async function Home() {
   return (
     <ConnectionProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
-        <DashboardSidebar />
-        <main>
-          <ControlSection />
-          <SensorSection />
-          <TopicSection />
-        </main>
+        <div className="flex min-h-screen w-full -ml-0">
+          <DashboardSidebar />
+          <main className="flex-1 overflow-hidden">
+            <div className="h-full overflow-auto">
+              <div className="p-4 space-y-6 max-w-7xl mx-auto">
+                <ControlSection />
+                <SensorSection />
+                <TopicSection />
+              </div>
+            </div>
+          </main>
+        </div>
         <Toaster richColors />
       </SidebarProvider>
     </ConnectionProvider>
