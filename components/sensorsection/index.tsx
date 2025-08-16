@@ -2,6 +2,7 @@
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ImuVisualization from './ImuVisualization';
 import LaserScanVisualization from './LaserScanVisualization';
 
 export default function SensorSection(): React.ReactNode {
@@ -26,7 +27,10 @@ export default function SensorSection(): React.ReactNode {
         <CardTitle>Sensor Data</CardTitle>
       </CardHeader>
       <CardContent>
-        <LaserScanVisualization />
+        <div className="space-y-4">
+          <LaserScanVisualization />
+          <ImuVisualization />
+        </div>
       </CardContent>
     </Card>
   );

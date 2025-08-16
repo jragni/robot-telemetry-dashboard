@@ -8,7 +8,7 @@ import TopicSection from '@/components/topicsection';
 
 export default function DashboardLayout() {
   const { open } = useSidebar();
-  
+
   return (
     <div className="flex min-h-screen w-full">
       <DashboardSidebar />
