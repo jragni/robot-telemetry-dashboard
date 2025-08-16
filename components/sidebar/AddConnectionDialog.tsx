@@ -185,7 +185,7 @@ export default function AddConnectionDialog(): React.ReactNode {
               inputMode="url"
               onChange={(e) => handleUpdateForm(e, 'webSocketUrl')}
               onKeyDown={(e) => handleKeyDown(e, 'webSocketUrl')}
-              placeholder="ws://192.168.1.100:9090 or https://1.tcp.us-cal-3.ngrok.io:12345"
+              placeholder="ws://192.168.1.100:9090 or ws://1.tcp.us-cal-3.ngrok.io:12345"
               ref={webSocketUrlRef}
               value={formData.webSocketUrl}
             />
