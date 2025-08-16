@@ -38,3 +38,28 @@ export const formatMessage = (obj: unknown): string => {
   }
   return String(obj);
 };
+
+export const formatFullMessage = (obj: unknown): string => {
+  if (obj === null || obj === undefined) {
+    return String(obj);
+  }
+
+  if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean') {
+    return String(obj);
+  }
+
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return '[]';
+    return `[${obj.map(item => formatFullMessage(item)).join(', ')}]`;
+  }
+
+  if (typeof obj === 'object') {
+    try {
+      // Always show full formatted JSON for expanded view
+      return JSON.stringify(obj, null, 2);
+    } catch {
+      return '[Complex Object]';
+    }
+  }
+  return String(obj);
+};

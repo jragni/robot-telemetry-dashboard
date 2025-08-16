@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { TopicTableRowProps } from './definitions';
 
-import { formatMessage } from './helpers';
+import { formatFullMessage } from './helpers';
 
 export default function TopicTableRow({
   messageType,
@@ -28,8 +28,7 @@ export default function TopicTableRow({
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const handle = (m: any) => {
-
-        const val = formatMessage(m);
+        const val = formatFullMessage(m);
         setMessage(val);
       };
       topic.subscribe(handle);
@@ -52,7 +51,7 @@ export default function TopicTableRow({
         </div>
       </TableCell>
       <TableCell className="max-w-xs sm:max-w-md">
-        <div className="font-mono text-xs overflow-auto max-h-32 whitespace-pre-wrap break-words bg-gray-50 p-2 rounded">
+        <div className="font-mono text-xs overflow-auto h-32 whitespace-pre-wrap break-words bg-gray-50 p-2 rounded">
           {message || 'No data received'}
         </div>
       </TableCell>
