@@ -1,11 +1,11 @@
-"use client"
+'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import * as d3 from "d3";
+import * as d3 from 'd3';
 
-import { useConnection } from "@/components/dashboard/ConnectionProvider";
+import { useConnection } from '@/components/dashboard/ConnectionProvider';
 
-import { LaserScanMessage, ScanPoint } from "./definitions";
+import { LaserScanMessage, ScanPoint } from './definitions';
 
 export default function LaserScanVisualization(): React.ReactNode {
   const { selectedConnection } = useConnection();
@@ -20,7 +20,12 @@ export default function LaserScanVisualization(): React.ReactNode {
     const points: ScanPoint[] = [];
 
     message.ranges.forEach((range, index) => {
-      if (range >= message.range_min && range <= message.range_max && !isNaN(range) && isFinite(range)) {
+      if (
+        range >= message.range_min && 
+        range <= message.range_max && 
+        !isNaN(range) && 
+        isFinite(range)
+      ) {
         const angle = message.angle_min + index * message.angle_increment;
 
         // NOTE: To ensure up is always "up" shift the x and y by 90 degrees
@@ -31,7 +36,7 @@ export default function LaserScanVisualization(): React.ReactNode {
           x,
           y,
           range,
-          angle
+          angle,
         });
       }
     });
@@ -54,7 +59,7 @@ export default function LaserScanVisualization(): React.ReactNode {
       scanTopic = new ROSLIB.default.Topic({
         ros: selectedConnection.rosInstance,
         name: '/scan',
-        messageType: 'sensor_msgs/LaserScan'
+        messageType: 'sensor_msgs/LaserScan',
       });
 
       scanTopic.subscribe((message: LaserScanMessage) => {
@@ -84,7 +89,7 @@ export default function LaserScanVisualization(): React.ReactNode {
     const width = 600; // Fixed width
     const height = 400; // Fixed height
 
-    svg.selectAll("*").remove();
+    svg.selectAll('*').remove();
 
 
     const xScale = d3.scaleLinear()
@@ -220,7 +225,7 @@ export default function LaserScanVisualization(): React.ReactNode {
       {/* PLOT */}
       <div className="border rounded-lg bg-white p-2 sm:p-4 overflow-hidden">
         <div className="flex justify-center">
-          <svg ref={svgRef} className="max-w-full h-auto"></svg>
+          <svg className="max-w-full h-auto" ref={svgRef}></svg>
         </div>
       </div>
       {scanData.length === 0 && isSubscribed && (

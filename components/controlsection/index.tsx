@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
 
-import { useConnection } from "@/components/dashboard/ConnectionProvider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useConnection } from '@/components/dashboard/ConnectionProvider';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import AddControlModal from "./AddControlModal"
+import AddControlModal from './AddControlModal';
 
-const ControlPanel = dynamic(() => import("./ControlPanel"), { ssr: false });
+const ControlPanel = dynamic(() => import('./ControlPanel'), { ssr: false });
 
 /**
  * ControlSection

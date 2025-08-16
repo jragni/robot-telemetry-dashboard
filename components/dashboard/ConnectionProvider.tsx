@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -29,9 +29,11 @@ export function useConnection() {
  * Connection context for the websocket connecting to devices running on ros2.
  */
 export default function ConnectionProvider({ children }: ConnectionProviderProps): React.ReactNode {
-  const [selectedConnectionId, setSelectedConnectionId] = useState<string>("");
+  const [selectedConnectionId, setSelectedConnectionId] = useState<string>('');
   const [connections, setConnections] = useState<Record<string, RobotConnection>>({});
-  const selectedConnection = selectedConnectionId ? connections[selectedConnectionId] ?? null : null;
+  const selectedConnection = selectedConnectionId 
+    ? connections[selectedConnectionId] ?? null 
+    : null;
 
   useEffect(() => {
     if (Object.keys(connections).length === 1) {
@@ -55,7 +57,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
           [id]: {
             ...prev[id],
             status: 'error',
-          }
+          },
         }));
         reject(new Error('connection timeout'));
       }, 10000);
@@ -72,8 +74,8 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
             rosInstance,
             url: webSocketUrl,
             status: 'connected',
-            subscriptions: []
-          }
+            subscriptions: [],
+          },
         }));
 
         // TODO Delete and move later, use for testing
@@ -90,10 +92,10 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
               [id]: {
                 ...prev[id],
                 subscriptions: subs,
-              }
+              },
             }));
           },
-          (error) => { console.log('boop', error); }
+          (error) => { console.log('boop', error); },
         );
 
         resolve();
@@ -115,7 +117,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
           [id]: {
             ...prev[id],
             status: 'disconnected',
-          }
+          },
         }));
         reject(new Error('connection closed'));
       };
@@ -128,45 +130,45 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
 
   const disconnect = (id: string): void => {
     const connection = connections[id];
-    if (connection && connection.rosInstance) {
+    if (connection?.rosInstance) {
       connection.rosInstance.close();
       setConnections(prev => ({
         ...prev,
         [id]: {
           ...prev[id],
           status: 'disconnected',
-        }
-      }))
+        },
+      }));
     }
   };
 
   const reconnect = (id: string): void => {
     const connection = connections[id];
-    if (connection && connection.rosInstance) {
+    if (connection?.rosInstance) {
       connection.rosInstance.connect(connection.url);
       setConnections(prev => ({
         ...prev,
         [id]: {
           ...prev[id],
           status: 'connected',
-        }
-      }))
+        },
+      }));
     }
   };
 
   const removeConnection = (id: string): void => {
     const connection = connections[id];
-    if (connection && connection.rosInstance) {
+    if (connection?.rosInstance) {
       connection.rosInstance.close();
 
       setConnections((prev) => {
         const { [id]: removed, ...rest } = prev;
-        console.log('removing', removed)
+        console.log('removing', removed);
         return rest;
       });
 
       // Clear selection if the removed connection was selected
-      setSelectedConnectionId((currentId) => (currentId === id ? "" : currentId));
+      setSelectedConnectionId((currentId) => (currentId === id ? '' : currentId));
     }
   };
 

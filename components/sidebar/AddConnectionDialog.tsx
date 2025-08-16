@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import { ChangeEvent, useRef, useState, KeyboardEvent } from 'react';
 import { toast } from 'sonner';
-import { Plus } from "lucide-react";
+import { Plus } from 'lucide-react';
 import { v4 as uuidV4 } from 'uuid';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
@@ -34,9 +34,9 @@ export default function AddConnectionDialog(): React.ReactNode {
   const [formData, setFormData] = useState<ConnectionDialogFormData>({
     connectionName: '',
     webSocketUrl: '',
-  })
+  });
 
-  const { addConnection, connections } = useConnection()
+  const { addConnection, connections } = useConnection();
 
   // Refs for field focusing
   const connectionNameRef = useRef<HTMLInputElement>(null);
@@ -55,18 +55,18 @@ export default function AddConnectionDialog(): React.ReactNode {
       ...prev,
       [field]: e.target.value,
     }));
-  }
+  };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     try {
       setIsLoading(true);
-      const { reason, status } = validateAddConnectionForm(formData, connections)
+      const { reason, status } = validateAddConnectionForm(formData, connections);
       if (status === 'valid') {
         await addConnection(
           uuidV4(),
           formData.connectionName.trim(),
-          formData.webSocketUrl.trim()
+          formData.webSocketUrl.trim(),
         );
         resetForm();
         setIsOpen(false);
@@ -77,11 +77,11 @@ export default function AddConnectionDialog(): React.ReactNode {
       }
     } catch {
       // Handle error (show toast, error message, etc.)
-      toast.error('Unable to add data source. Please verify WebSocket URL is valid.')
+      toast.error('Unable to add data source. Please verify WebSocket URL is valid.');
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, currentField: 'connectionName' | 'webSocketUrl') => {
     if (e.key === 'Enter') {
@@ -96,10 +96,10 @@ export default function AddConnectionDialog(): React.ReactNode {
         }
       }
     }
-  }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
+    <Dialog onOpenChange={() => setIsOpen(!isOpen)} open={isOpen}>
       <DialogTrigger asChild>
         <Button className="my-2" variant="outline">
           <Plus className="h-4 mr-2 w-4" />
@@ -115,36 +115,36 @@ export default function AddConnectionDialog(): React.ReactNode {
           <div>
             <Label htmlFor="connection-name-input">Data Source Name:</Label>
             <Input
-              ref={connectionNameRef}
-              id="connection-name-input"
               className="my-2"
+              enterKeyHint="next"
+              id="connection-name-input"
+              inputMode="text"
               onChange={(e) => handleUpdateForm(e, 'connectionName')}
               onKeyDown={(e) => handleKeyDown(e, 'connectionName')}
               placeholder="Robot 1"
+              ref={connectionNameRef}
               value={formData.connectionName}
-              enterKeyHint="next"
-              inputMode="text"
             />
           </div>
           <div>
             <Label htmlFor="websocket-url-input">WebSocket URL:</Label>
             <Input
-              ref={webSocketUrlRef}
-              id="websocket-url-input"
               className="my-2"
+              enterKeyHint="done"
+              id="websocket-url-input"
+              inputMode="url"
               onChange={(e) => handleUpdateForm(e, 'webSocketUrl')}
               onKeyDown={(e) => handleKeyDown(e, 'webSocketUrl')}
               placeholder="ws://192.168.1.100:9090 or https://1.tcp.us-cal-3.ngrok.io:12345"
+              ref={webSocketUrlRef}
               value={formData.webSocketUrl}
-              enterKeyHint="done"
-              inputMode="url"
             />
           </div>
           <div className="flex gap-2">
             <Button
-              type="submit"
               disabled={(!formData.connectionName || !formData.webSocketUrl) || isLoading}
               size="lg"
+              type="submit"
               variant="default"
             >
               {isLoading ? 'Connecting...' : 'Add Connection'}

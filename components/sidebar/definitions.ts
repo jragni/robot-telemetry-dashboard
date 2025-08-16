@@ -2,8 +2,8 @@
  * sidebar definitions
  */
 
-import { ConnectionStatus } from "@/components//dashboard/definitions"
-import { RobotConnection } from "@/components/dashboard/definitions";
+import { ConnectionStatus } from '@/components//dashboard/definitions';
+import { RobotConnection } from '@/components/dashboard/definitions';
 export interface ConnectionDialogFormData {
   connectionName: string,
   webSocketUrl: string

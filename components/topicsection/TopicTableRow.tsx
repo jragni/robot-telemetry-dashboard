@@ -6,7 +6,6 @@ import { TopicTableRowProps } from './definitions';
 import { formatMessage } from './helpers';
 
 export default function TopicTableRow({
-  hideRawMessage,
   messageType,
   selectedConnection,
   topicName,
@@ -34,7 +33,7 @@ export default function TopicTableRow({
         setMessage(val);
       };
       topic.subscribe(handle);
-    }
+    };
 
     handleSubscribe();
   }, [ros, topicName, messageType]);
@@ -49,16 +48,14 @@ export default function TopicTableRow({
       </TableCell>
       <TableCell className="sm:hidden text-xs">
         <div className="break-all" title={messageType}>
-          {messageType.split('/').pop() || messageType}
+          {messageType.split('/').pop() ?? messageType}
         </div>
       </TableCell>
-      {!hideRawMessage && (
-        <TableCell className="max-w-xs sm:max-w-md">
-          <div className="font-mono text-xs overflow-auto max-h-32 whitespace-pre-wrap break-words bg-gray-50 p-2 rounded">
-            {message || 'No data received'}
-          </div>
-        </TableCell>
-      )}
+      <TableCell className="max-w-xs sm:max-w-md">
+        <div className="font-mono text-xs overflow-auto max-h-32 whitespace-pre-wrap break-words bg-gray-50 p-2 rounded">
+          {message || 'No data received'}
+        </div>
+      </TableCell>
     </TableRow>
   );
 }

@@ -1,9 +1,9 @@
-"use client"
+'use client';
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
+import { useState } from 'react';
+import { Plus } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -11,11 +11,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import ComboBox from "@/components/combobox";
-import { getOptionsFromSubs } from "./helpers";
-import { RobotConnection } from "../dashboard/definitions";
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import ComboBox from '@/components/combobox';
+import { getOptionsFromSubs } from './helpers';
+import { RobotConnection } from '../dashboard/definitions';
 
 interface AddControlModalProps {
   isDialogOpen: boolean
@@ -30,11 +30,11 @@ export default function AddControlModal({
 }: AddControlModalProps) {
   const [isTopicComboBoxOpen, setIsTopicComboBoxOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState({ topic: '' });
-	// TODO move out of this component
+  // TODO move out of this component
   const {
     subscriptions,
     status: connectionStatus,
-  } = selectedConnection || { subscriptions: []};
+  } = selectedConnection ?? { subscriptions: []};
   const topicOptions = getOptionsFromSubs(subscriptions);
 
   const handleUpdateForm = (field: string, value: unknown) => {
@@ -42,20 +42,23 @@ export default function AddControlModal({
       ...prev,
       [field]: value,
     }));
-  }
-  const isAddControlButtonDisabled = !selectedConnection || connectionStatus !== 'connected'
+  };
+  const isAddControlButtonDisabled = !selectedConnection || connectionStatus !== 'connected';
 
   return (
-    <Dialog onOpenChange={() => isAddControlButtonDisabled ? null : setIsDialogOpen(!isDialogOpen)} open={isDialogOpen}>
+    <Dialog
+      onOpenChange={() => isAddControlButtonDisabled ? null : setIsDialogOpen(!isDialogOpen)}
+      open={isDialogOpen}
+    >
       <DialogTrigger
+        asChild
         className="w-fit bg-orange-100"
         disabled={isAddControlButtonDisabled}
-        asChild
       >
         <div>
           <Button
-            variant="default"
             disabled={isAddControlButtonDisabled}
+            variant="default"
           >
             <Plus />
             <Label>Add a Control</Label>
@@ -81,13 +84,20 @@ export default function AddControlModal({
             open={isTopicComboBoxOpen}
             options={topicOptions}
             setOpen={() => setIsTopicComboBoxOpen(!isTopicComboBoxOpen)}
-            value={formData.topic}
             setValue={(val) => handleUpdateForm('topic', val)}
+            value={formData.topic}
           />
         </div>
         <div>
           <p className="font-bold my-1" >Type</p>
-          <p>{formData.topic ? subscriptions.filter(({ topicName }) => formData.topic === topicName )[0].messageType : "N/A"}</p>
+          <p>
+            {
+              formData.topic
+                ? subscriptions.filter(({ topicName }) => formData.topic === topicName)[0]
+                  .messageType
+                : 'N/A'
+            }
+          </p>
         </div>
       </DialogContent>
     </Dialog>
