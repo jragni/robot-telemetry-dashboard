@@ -2,8 +2,8 @@ import {
   Ellipsis,
   Plug,
   Trash,
-  Unplug
-} from "lucide-react";
+  Unplug,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 
 import { ConnectionInfoDialogProps } from './definitions';
@@ -35,7 +35,7 @@ export default function ConnectionInfoDialog({
   url,
 }: ConnectionInfoDialogProps): React.ReactNode {
   const buttonProps = status === 'connected'
-     ?{
+    ?{
       'aria-label': `Disconnect from ${name}`,
       className: 'bg-green-500 hover:bg-green-300 dark:bg-green-500 dark:hover:bg-green-300 h-5 w-5',
       onClick: handleDisconnect,
@@ -107,5 +107,5 @@ export default function ConnectionInfoDialog({
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

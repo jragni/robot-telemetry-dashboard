@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import { useConnection } from "@/components/dashboard/ConnectionProvider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import LaserScanVisualization from "./LaserScanVisualization";
+import { useConnection } from '@/components/dashboard/ConnectionProvider';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import LaserScanVisualization from './LaserScanVisualization';
 
 export default function SensorSection(): React.ReactNode {
   const { selectedConnection } = useConnection();

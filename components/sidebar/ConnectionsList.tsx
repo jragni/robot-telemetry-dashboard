@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import { Card, CardContent } from "@/components/ui/card";
-import ConnnectionListItem from "./ConnectionsListItem";
-import { ConnectionListProps } from "./definitions";
+import { Card, CardContent } from '@/components/ui/card';
+import ConnnectionListItem from './ConnectionsListItem';
+import { ConnectionListProps } from './definitions';
 
 /**
  * ConnectonsList
@@ -31,7 +31,7 @@ export default function ConnectionsList({
               handleDisconnect={() => disconnect(id)}
               handleReconnect={() => reconnect(id)}
               handleRemoveConnection={() => removeConnection(id)}
-              handleSelectConnection={() => setSelectedConnectionId(id === selectedConnectionId ? "" : id)}
+              handleSelectConnection={() => setSelectedConnectionId(id === selectedConnectionId ? '' : id)}
               id={id}
               isSelected={id===selectedConnectionId}
               name={name}

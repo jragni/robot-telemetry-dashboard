@@ -1,6 +1,6 @@
 /** helpers */
-import { RobotConnection } from "../dashboard/definitions";
-import { ConnectionDialogFormData } from "./definitions";
+import { RobotConnection } from '../dashboard/definitions';
+import { ConnectionDialogFormData } from './definitions';
 
 interface ValidateAddConnectionFormResult {
   field?: 'connectionName' | 'webSocketUrl'
@@ -10,7 +10,7 @@ interface ValidateAddConnectionFormResult {
 
 export const validateAddConnectionForm = (
   formData: ConnectionDialogFormData,
-  connections: Record<string, RobotConnection>
+  connections: Record<string, RobotConnection>,
 ): ValidateAddConnectionFormResult => {
   const { connectionName, webSocketUrl } = formData;
   const connectionsList = Object.values(connections);

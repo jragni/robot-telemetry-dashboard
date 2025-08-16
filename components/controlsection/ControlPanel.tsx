@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import ROSLIB from "roslib";
+import { useEffect, useState } from 'react';
+import ROSLIB from 'roslib';
 
 import {
   ArrowDown,
@@ -11,12 +11,12 @@ import {
   Square,
 } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 
-import { useConnection } from "@/components/dashboard/ConnectionProvider";
+import { useConnection } from '@/components/dashboard/ConnectionProvider';
 import useMounted from '@/hooks/useMounted';
 
 /**
@@ -26,7 +26,7 @@ import useMounted from '@/hooks/useMounted';
 export default function ControlPanel(): React.ReactNode {
   const [linearVelocity, setLinearVelocity] = useState<number>(0.15);
   const [angularVelocity, setAngularVelocity] = useState<number>(Math.floor(Math.PI/8*100) / 100);
-  const [direction, setDirection] = useState<string>("stop");
+  const [direction, setDirection] = useState<string>('stop');
 
   const isMounted = useMounted();
   const { selectedConnection } = useConnection();
@@ -34,19 +34,19 @@ export default function ControlPanel(): React.ReactNode {
   useEffect(() => {
     const handleMove = () => {
 
-      if (!selectedConnection || !selectedConnection.rosInstance) return;
+      if (!selectedConnection?.rosInstance) return;
 
       const { rosInstance } = selectedConnection;
 
       const twist = new ROSLIB.Topic({
         ros: rosInstance,
         name: '/cmd_vel',
-        messageType: 'geometry_msgs/Twist'
+        messageType: 'geometry_msgs/Twist',
       });
 
       const message = {
         linear: { x: 0, y: 0, z: 0 },
-        angular: { x: 0, y: 0, z: 0 }
+        angular: { x: 0, y: 0, z: 0 },
       };
 
       switch(direction) {
@@ -79,7 +79,7 @@ export default function ControlPanel(): React.ReactNode {
     direction,
     linearVelocity,
     selectedConnection,
-    setDirection
+    setDirection,
   ]);
 
   if (!isMounted) {
@@ -111,12 +111,12 @@ export default function ControlPanel(): React.ReactNode {
             className="mb-4"
             htmlFor="linear-vel-slider"
           >
-            Linear Velocity: {linearVelocity} {`m/s`}
+            Linear Velocity: {linearVelocity} {'m/s'}
           </Label>
           <Slider
             id="linear-vel-slider"
-            min={0}
             max={2}
+            min={0}
             onValueChange={(val) => setLinearVelocity(val[0])}
             step={0.02}
             value={[linearVelocity]}
@@ -128,12 +128,12 @@ export default function ControlPanel(): React.ReactNode {
             className="mb-4"
             htmlFor="angular-vel-slider"
           >
-            Angular Velocity: {angularVelocity} {`rad/s`}
+            Angular Velocity: {angularVelocity} {'rad/s'}
           </Label>
           <Slider
             id="angular-vel-slider"
-            min={0}
             max={2}
+            min={0}
             onValueChange={(val) => setAngularVelocity(val[0])}
             step={0.02}
             value={[angularVelocity]}

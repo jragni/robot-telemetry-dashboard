@@ -25,7 +25,7 @@ export const formatMessage = (obj: unknown): string => {
       if (keys.length <= 5) {
         const pairs = keys.map(key => {
           const value = formatMessage((obj as Record<string, unknown>)[key]);
-          return `${key}: ${value.length > 50 ? value.substring(0, 47) + '...' : value}`;
+          return `${key}: ${value.length > 50 ? `${value.substring(0, 47)  }...` : value}`;
         });
         return `{${pairs.join(', ')}}`;
       }

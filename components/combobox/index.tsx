@@ -1,10 +1,10 @@
-"use client"
+'use client';
 
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react"
+import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -12,12 +12,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from '@/components/ui/popover';
 
 export interface ComboBoxOption {
   label: string
@@ -46,18 +46,18 @@ export default function ComboBox({
   setValue,
 }: ComboBoxProp): React.ReactNode{
 
-  const selectPlaceholderToUse = !!selectPlaceholder ? selectPlaceholder : "Select an option...";
-  const inputPlaceHolderToUse = !!inputPlaceholder ? inputPlaceholder : "Search for option";
+  const selectPlaceholderToUse = !!selectPlaceholder ? selectPlaceholder : 'Select an option...';
+  const inputPlaceHolderToUse = !!inputPlaceholder ? inputPlaceholder : 'Search for option';
 
   return (
     <div id={id}>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover onOpenChange={setOpen} open={open}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
-            role="combobox"
             aria-expanded={open}
             className="w-[200px] justify-between"
+            role="combobox"
+            variant="outline"
           >
             {value
               ? options.find((option) => option.value === value)?.label
@@ -77,14 +77,14 @@ export default function ComboBox({
                     key={option.value}
                     value={option.value}
                     onSelect={(currentValue) => {
-                      setValue(currentValue === value ? "" : currentValue);
+                      setValue(currentValue === value ? '' : currentValue);
                       setOpen(false);
                     }}
                   >
                     <CheckIcon
                       className={cn(
-                        "mr-2 h-4 w-4",
-                        value === option.value ? "opacity-100" : "opacity-0"
+                        'mr-2 h-4 w-4',
+                        value === option.value ? 'opacity-100' : 'opacity-0',
                       )}
                     />
                     {option.label}
