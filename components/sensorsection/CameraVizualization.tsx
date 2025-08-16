@@ -462,8 +462,8 @@ export default function CameraVisualization(): React.ReactNode {
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
-        <p>No connection available</p>
+      <div className="h-full bg-gray-800 border border-gray-600 rounded flex items-center justify-center text-gray-400">
+        <p className="text-sm">Camera: No connection</p>
       </div>
     );
   }
@@ -475,7 +475,7 @@ export default function CameraVisualization(): React.ReactNode {
         {/* Desktop: Single row layout */}
         <div className="hidden sm:flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-sm font-medium text-gray-100 uppercase tracking-wide">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">
               Camera
             </h3>
             <div className="flex items-center gap-2">
@@ -527,7 +527,7 @@ export default function CameraVisualization(): React.ReactNode {
         {/* Mobile: Stacked layout */}
         <div className="sm:hidden space-y-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-100 uppercase tracking-wide">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">
               Camera
             </h3>
             <Button

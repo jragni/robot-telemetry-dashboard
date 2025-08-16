@@ -39,7 +39,7 @@ export default function TopicSection(): React.ReactNode {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Topics</CardTitle>
+        <CardTitle className="text-sm sm:text-lg">Topics</CardTitle>
         {heavySubscriptions.length > 0 && (
           <p className="text-xs text-muted-foreground">
             {heavySubscriptions.length} heavy data topic{heavySubscriptions.length > 1 ? 's' : ''} shown without live updates for performance
@@ -54,9 +54,9 @@ export default function TopicSection(): React.ReactNode {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-semibold min-w-32">Topic</TableHead>
-                    <TableHead className="font-semibold min-w-24 sm:table-cell">Type</TableHead>
-                    <TableHead className="font-semibold min-w-48">Raw Message</TableHead>
+                    <TableHead className="font-semibold min-w-32 text-xs sm:text-sm">Topic</TableHead>
+                    <TableHead className="font-semibold min-w-24 sm:table-cell text-xs sm:text-sm">Type</TableHead>
+                    <TableHead className="font-semibold min-w-48 text-xs sm:text-sm">Raw Message</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

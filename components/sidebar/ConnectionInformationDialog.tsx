@@ -69,15 +69,15 @@ export default function ConnectionInfoDialog({
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-sm font-medium">Data Source Name</Label>
+              <Label className="text-xs sm:text-sm font-medium">Data Source Name</Label>
               <p className="text-sm text-muted-foreground">{name}</p>
             </div>
             <div>
-              <Label className="text-sm font-medium">Connection ID</Label>
+              <Label className="text-xs sm:text-sm font-medium">Connection ID</Label>
               <p className="text-sm text-muted-foreground font-mono">{id}</p>
             </div>
             <div>
-              <Label className="text-sm font-medium">Status</Label>
+              <Label className="text-xs sm:text-sm font-medium">Status</Label>
               <div className="flex gap-2">
                 <Button {...buttonProps}>
                   {status !== 'connected'
@@ -89,7 +89,7 @@ export default function ConnectionInfoDialog({
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">WebSocket URL</Label>
+              <Label className="text-xs sm:text-sm font-medium">WebSocket URL</Label>
               <p className="text-sm text-muted-foreground break-all">{url}</p>
             </div>
           </div>

@@ -139,7 +139,7 @@ export default function AddConnectionDialog(): React.ReactNode {
         {/* Connection History */}
         {connectionHistory.length > 0 && (
           <div className="mb-4">
-            <Label className="text-sm font-medium">Recent Connections:</Label>
+            <Label className="text-xs sm:text-sm font-medium">Recent Connections:</Label>
             <div className="mt-2 space-y-2 max-h-32 overflow-y-auto">
               {connectionHistory.slice(0, 5).map((item, index) => (
                 <button

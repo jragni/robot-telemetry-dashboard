@@ -24,8 +24,8 @@ export default function DashboardLayout() {
           <div className="h-full flex flex-col">
             {/* Main Operator Console - Responsive Layout */}
             <div className="flex-1 p-2 min-h-0">
-              {/* Desktop: Side-by-side layout */}
-              <div className="hidden md:grid md:grid-cols-12 gap-2 h-full">
+              {/* Large Desktop: Side-by-side layout (1200px+) */}
+              <div className="hidden xl:grid xl:grid-cols-12 gap-2 h-full">
                 {/* Left: Camera Feed & IMU */}
                 <div className="col-span-8 flex flex-col gap-2 min-h-0">
                   {/* Camera - Takes most space */}
@@ -57,7 +57,34 @@ export default function DashboardLayout() {
                 </div>
               </div>
 
-              {/* Mobile: Scrollable stacked layout */}
+              {/* Medium Desktop: Optimized stacked layout (768px-1199px) */}
+              <div className="hidden md:block xl:hidden h-full overflow-y-auto">
+                <div className="space-y-3">
+                  {/* Top Row: Controls and LiDAR side by side */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <div className="order-2 lg:order-1">
+                      <ControlPanel />
+                    </div>
+                    <div className="order-1 lg:order-2 h-56 lg:h-64">
+                      <div className="h-full bg-gray-800 border border-gray-600 rounded">
+                        <LaserScanVisualization />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Middle Row: Camera - prominent display */}
+                  <div className="h-64 lg:h-80">
+                    <SensorSection />
+                  </div>
+
+                  {/* Bottom Row: IMU - always accessible */}
+                  <div className="h-48 lg:h-64 pb-4">
+                    <ImuVisualization />
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile: Scrollable stacked layout (0-767px) */}
               <div className="md:hidden h-full flex flex-col gap-2 overflow-y-auto">
                 {/* Controls First - Always accessible */}
                 <div className="shrink-0">

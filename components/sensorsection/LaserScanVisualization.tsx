@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -268,107 +267,108 @@ export default function LaserScanVisualization(): React.ReactNode {
   }, [maxRange, scanData]);
 
   // Check if we're on desktop for compact layout - Move hooks before early return
-  const [isDesktop, setIsDesktop] = useState(false);
 
-  useEffect(() => {
-    const checkScreenSize = () => {
-      if (typeof window !== 'undefined') {
-        setIsDesktop(window.innerWidth >= 768);
-      }
-    };
-
-    checkScreenSize();
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', checkScreenSize);
-      return () => window.removeEventListener('resize', checkScreenSize);
-    }
-  }, []);
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
-        <p>No connection available</p>
+      <div className="w-full h-full bg-gray-800 border border-gray-600 rounded flex items-center justify-center text-gray-400">
+        <p className="text-sm">LiDAR: No connection</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
-      {/* Desktop: Compact header, Mobile: Full header */}
-      <div className="mb-4">
-        {isDesktop ? (
-          /* Compact desktop header */
-          <div className="flex items-center justify-between p-3">
-            <h3 className="text-base font-semibold">LiDAR</h3>
-            <div className="flex items-center gap-2 text-xs">
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                <span>Robot</span>
-              </div>
+    <div className="w-full h-full bg-gray-800 border border-gray-600 rounded flex flex-col">
+      {/* Header - Drone Operator Style */}
+      <div className="px-3 py-2 bg-gray-900/80 border-b border-gray-600">
+        {/* Desktop: Single row layout */}
+        <div className="hidden sm:flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">
+              LiDAR
+            </h3>
+            <div className="flex items-center gap-2">
+              <Select onValueChange={setSelectedTopic} value={selectedTopic}>
+                <SelectTrigger className="h-7 text-xs bg-gray-700 border-gray-500 text-gray-200 w-40">
+                  <SelectValue placeholder="Select laser scan topic..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {laserScanTopics.map((topic) => (
+                    <SelectItem key={topic} value={topic}>
+                      {topic}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 text-xs">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span className="text-gray-300 font-mono">{scanData.length}</span>
+            </div>
+            <div className={`w-2 h-2 rounded-full ${
+              isSubscribed ? 'bg-green-500 animate-pulse' : 'bg-red-500'
+            }`} />
+            <div className={`px-1.5 py-0.5 rounded text-xs ${
+              isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+            }`}>
+              {isSubscribed ? 'Live' : 'Off'}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile: Stacked layout */}
+        <div className="sm:hidden space-y-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">
+              LiDAR
+            </h3>
+            <div className={`px-2 py-1 rounded text-xs ${
+              isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+            }`}>
+              {isSubscribed ? 'Connected' : 'Disconnected'}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Select onValueChange={setSelectedTopic} value={selectedTopic}>
+              <SelectTrigger className="h-7 text-xs bg-gray-700 border-gray-500 text-gray-200 w-full">
+                <SelectValue placeholder="Select laser scan topic..." />
+              </SelectTrigger>
+              <SelectContent>
+                {laserScanTopics.map((topic) => (
+                  <SelectItem key={topic} value={topic}>
+                    {topic}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="flex items-center justify-center gap-2 text-xs">
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span>{scanData.length} pts</span>
-              </div>
-              <div className={`px-2 py-1 rounded text-xs ${
-                isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-              }`}>
-                {isSubscribed ? 'Live' : 'Off'}
+                <span className="text-gray-300 font-mono">{scanData.length} pts</span>
               </div>
             </div>
           </div>
-        ) : (
-          /* Full mobile header */
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <h3 className="text-lg font-semibold">LiDAR</h3>
-              <div className="flex items-center gap-2">
-                <Label className="text-sm" htmlFor="laser-topic-select">Topic:</Label>
-                <Select onValueChange={setSelectedTopic} value={selectedTopic}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Select laser scan topic..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {laserScanTopics.map((topic) => (
-                      <SelectItem key={topic} value={topic}>
-                        {topic}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 text-sm">
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-red-500 rounded-full mr-1"></div>
-                <span>Robot</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
-                <span>Points: {scanData.length}</span>
-              </div>
-              <div className={`px-2 py-1 rounded text-xs ${
-                isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-              }`}>
-                {isSubscribed ? 'Connected' : 'Disconnected'}
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Plot area */}
-      <div className="flex-1 border rounded-lg bg-white dark:bg-gray-800 p-2 overflow-hidden">
-        <div className="w-full h-full min-h-0">
+      <div className="flex-1 p-3 overflow-hidden">
+        <div className="w-full h-full min-h-0 border rounded-lg bg-white dark:bg-gray-800 p-2">
           <svg className="w-full h-full chart-container" ref={svgRef}></svg>
         </div>
-      </div>
 
-      {/* Status message - only show on mobile */}
-      {!isDesktop && scanData.length === 0 && isSubscribed && (
-        <div className="text-center text-gray-500 mt-4">
-          <p>Waiting for scan data on {selectedTopic} topic...</p>
-        </div>
-      )}
+        {/* Status message - only show on mobile */}
+        {scanData.length === 0 && isSubscribed && (
+          <div className="text-center text-gray-400 mt-4">
+            <p className="text-xs">Waiting for scan data on {selectedTopic} topic...</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

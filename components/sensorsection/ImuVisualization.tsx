@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -420,22 +419,25 @@ export default function ImuVisualization(): React.ReactNode {
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
-        <p>No connection available</p>
+      <div className="w-full bg-gray-800 border border-gray-600 rounded flex items-center justify-center h-16 text-gray-400">
+        <p className="text-sm">IMU: No connection</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-semibold">IMU</h3>
-          <div className="flex flex-col sm:flex-row gap-2">
+    <div className="w-full bg-gray-800 border border-gray-600 rounded flex flex-col">
+      {/* Header - Drone Operator Style */}
+      <div className="px-3 py-2 bg-gray-900/80 border-b border-gray-600">
+        {/* Desktop: Single row layout */}
+        <div className="hidden sm:flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">
+              IMU
+            </h3>
             <div className="flex items-center gap-2">
-              <Label className="text-sm" htmlFor="imu-topic-select">Topic:</Label>
               <Select onValueChange={setSelectedTopic} value={selectedTopic}>
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="h-7 text-xs bg-gray-700 border-gray-500 text-gray-200 w-40">
                   <SelectValue placeholder="Select IMU topic..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -448,9 +450,8 @@ export default function ImuVisualization(): React.ReactNode {
               </Select>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="text-sm" htmlFor="orientation-unit">Orientation:</Label>
               <Select onValueChange={(value: 'degrees' | 'radians') => setOrientationUnit(value)} value={orientationUnit}>
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="h-7 text-xs bg-gray-700 border-gray-500 text-gray-200 w-20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -460,9 +461,70 @@ export default function ImuVisualization(): React.ReactNode {
               </Select>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="text-sm" htmlFor="angular-velocity-unit">Angular Vel:</Label>
               <Select onValueChange={(value: 'rad/s' | 'deg/s') => setAngularVelocityUnit(value)} value={angularVelocityUnit}>
-                <SelectTrigger className="w-24">
+                <SelectTrigger className="h-7 text-xs bg-gray-700 border-gray-500 text-gray-200 w-24">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="deg/s">deg/s</SelectItem>
+                  <SelectItem value="rad/s">rad/s</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${
+              isSubscribed ? 'bg-green-500 animate-pulse' : 'bg-red-500'
+            }`} />
+            <div className={`px-2 py-1 rounded text-xs ${
+              isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+            }`}>
+              {isSubscribed ? 'Live' : 'Off'}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile: Stacked layout */}
+        <div className="sm:hidden space-y-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">
+              IMU
+            </h3>
+            <div className={`px-2 py-1 rounded text-xs ${
+              isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+            }`}>
+              {isSubscribed ? 'Connected' : 'Disconnected'}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Select onValueChange={setSelectedTopic} value={selectedTopic}>
+              <SelectTrigger className="h-7 text-xs bg-gray-700 border-gray-500 text-gray-200 w-full">
+                <SelectValue placeholder="Select IMU topic..." />
+              </SelectTrigger>
+              <SelectContent>
+                {imuTopics.map((topic) => (
+                  <SelectItem key={topic} value={topic}>
+                    {topic}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="flex gap-2">
+              <Select onValueChange={(value: 'degrees' | 'radians') => setOrientationUnit(value)} value={orientationUnit}>
+                <SelectTrigger className="h-7 text-xs bg-gray-700 border-gray-500 text-gray-200 flex-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="degrees">deg</SelectItem>
+                  <SelectItem value="radians">rad</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select onValueChange={(value: 'rad/s' | 'deg/s') => setAngularVelocityUnit(value)} value={angularVelocityUnit}>
+                <SelectTrigger className="h-7 text-xs bg-gray-700 border-gray-500 text-gray-200 flex-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -473,44 +535,42 @@ export default function ImuVisualization(): React.ReactNode {
             </div>
           </div>
         </div>
-        <div className={`px-2 py-1 rounded text-xs ${
-          isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
-          {isSubscribed ? 'Connected' : 'Disconnected'}
-        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        {/* Orientation Time Series */}
-        <div className="border rounded-lg bg-white dark:bg-gray-800 p-3 min-w-0">
-          <h4 className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">Orientation</h4>
-          <div className="flex justify-center overflow-hidden">
-            <svg className="max-w-full h-auto chart-container" ref={orientationRef}></svg>
+      {/* Content area */}
+      <div className="p-3 flex-1">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          {/* Orientation Time Series */}
+          <div className="border rounded-lg bg-white dark:bg-gray-800 p-3 min-w-0">
+            <h4 className="text-xs sm:text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">Orientation</h4>
+            <div className="flex justify-center overflow-hidden">
+              <svg className="max-w-full h-auto chart-container" ref={orientationRef}></svg>
+            </div>
+          </div>
+
+          {/* Acceleration Time Series */}
+          <div className="border rounded-lg bg-white dark:bg-gray-800 p-3 min-w-0">
+            <h4 className="text-xs sm:text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">Linear Acceleration</h4>
+            <div className="flex justify-center overflow-hidden">
+              <svg className="max-w-full h-auto chart-container" ref={accelerationRef}></svg>
+            </div>
+          </div>
+
+          {/* Angular Velocity Time Series */}
+          <div className="border rounded-lg bg-white dark:bg-gray-800 p-3 min-w-0">
+            <h4 className="text-xs sm:text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">Angular Velocity</h4>
+            <div className="flex justify-center overflow-hidden">
+              <svg className="max-w-full h-auto chart-container" ref={angularVelocityRef}></svg>
+            </div>
           </div>
         </div>
 
-        {/* Acceleration Time Series */}
-        <div className="border rounded-lg bg-white dark:bg-gray-800 p-3 min-w-0">
-          <h4 className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">Linear Acceleration</h4>
-          <div className="flex justify-center overflow-hidden">
-            <svg className="max-w-full h-auto chart-container" ref={accelerationRef}></svg>
+        {imuDataHistory.length === 0 && isSubscribed && (
+          <div className="text-center text-gray-500 mt-4">
+            <p>Waiting for IMU data on {selectedTopic} topic...</p>
           </div>
-        </div>
-
-        {/* Angular Velocity Time Series */}
-        <div className="border rounded-lg bg-white dark:bg-gray-800 p-3 min-w-0">
-          <h4 className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">Angular Velocity</h4>
-          <div className="flex justify-center overflow-hidden">
-            <svg className="max-w-full h-auto chart-container" ref={angularVelocityRef}></svg>
-          </div>
-        </div>
+        )}
       </div>
-
-      {imuDataHistory.length === 0 && isSubscribed && (
-        <div className="text-center text-gray-500 mt-4">
-          <p>Waiting for IMU data on {selectedTopic} topic...</p>
-        </div>
-      )}
     </div>
   );
 }
