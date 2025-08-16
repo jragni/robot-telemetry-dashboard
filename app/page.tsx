@@ -1,20 +1,17 @@
 /**
  * Homepage
  */
-import { cookies } from 'next/headers';
+'use client';
 
 import ConnectionProvider from '@/components/dashboard/ConnectionProvider';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
-export default async function Home() {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
-
+export default function Home() {
   return (
     <ConnectionProvider>
-      <SidebarProvider defaultOpen={defaultOpen}>
+      <SidebarProvider defaultOpen={false}>
         <DashboardLayout />
         <Toaster richColors />
       </SidebarProvider>

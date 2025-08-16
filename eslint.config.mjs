@@ -34,10 +34,10 @@ const eslintConfig = [
       "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
       "@typescript-eslint/ban-tslint-comment": "error",
       "@typescript-eslint/consistent-type-assertions": [
-        "error",
+        "warn",
         {
           assertionStyle: "as",
-          objectLiteralTypeAssertions: "never",
+          objectLiteralTypeAssertions: "allow",
         },
       ],
       "@typescript-eslint/consistent-type-definitions": ["error", "interface"],

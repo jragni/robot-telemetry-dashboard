@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { ImuMessage, Quaternion, Vector3 } from './definitions';
+import { Quaternion, Vector3 } from './definitions';
 
 interface ImuDataPoint {
   timestamp: number;
@@ -221,20 +221,20 @@ export default function ImuVisualization(): React.ReactNode {
       const allValues = data.flatMap(d =>
         Object.values(valueAccessors).map(accessor => accessor(d)),
       );
-      
+
       // Filter out any extreme or invalid values
-      const validValues = allValues.filter(v => 
-        isFinite(v) && !isNaN(v) && Math.abs(v) < 1000
+      const validValues = allValues.filter(v =>
+        isFinite(v) && !isNaN(v) && Math.abs(v) < 1000,
       );
-      
+
       if (validValues.length > 0) {
         const dataMin = d3.min(validValues) ?? 0;
         const dataMax = d3.max(validValues) ?? 0;
-        
+
         // Use a sliding window approach for dynamic bounds
         const range = dataMax - dataMin;
         const minRange = 0.1;
-        
+
         if (range < minRange) {
           const center = (dataMin + dataMax) / 2;
           yMin = center - minRange / 2;
@@ -245,7 +245,7 @@ export default function ImuVisualization(): React.ReactNode {
           yMin = dataMin - padding;
           yMax = dataMax + padding;
         }
-        
+
         // Enforce absolute bounds to prevent extreme scaling
         yMin = Math.max(yMin, -100);
         yMax = Math.min(yMax, 100);
@@ -351,7 +351,7 @@ export default function ImuVisualization(): React.ReactNode {
         .attr('class', 'chart-legend-text')
         .text(key);
     });
-  }, [angularVelocityUnit, orientationUnit]);
+  }, []);
 
   // Draw orientation time series
   useEffect(() => {
