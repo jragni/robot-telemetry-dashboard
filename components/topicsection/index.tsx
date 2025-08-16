@@ -29,8 +29,7 @@ export default function TopicSection(): React.ReactNode {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="font-semibold min-w-32">Topic</TableHead>
-                    <TableHead className="font-semibold min-w-24 hidden sm:table-cell">Type</TableHead>
-                    <TableHead className="font-semibold sm:hidden">T</TableHead>
+                    <TableHead className="font-semibold min-w-24 sm:table-cell">Type</TableHead>
                     <TableHead className="font-semibold min-w-48">Raw Message</TableHead>
                   </TableRow>
                 </TableHeader>
