@@ -4,6 +4,14 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { LaserScanMessage, ScanPoint } from './definitions';
 
@@ -12,6 +20,8 @@ export default function LaserScanVisualization(): React.ReactNode {
   const svgRef = useRef<SVGSVGElement>(null);
   const [scanData, setScanData] = useState<ScanPoint[]>([]);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState<string>('/scan');
+  const [laserScanTopics, setLaserScanTopics] = useState<string[]>(['/scan']);
 
   // NOTE arbitrarily set for best visualization of objects within close proximity
   const maxRange = 5;
@@ -44,6 +54,52 @@ export default function LaserScanVisualization(): React.ReactNode {
     setScanData(points);
   }, []);
 
+  // Fetch available LaserScan topics when connection changes
+  useEffect(() => {
+    if (!selectedConnection?.rosInstance) {
+      setLaserScanTopics(['/scan']);
+      return;
+    }
+
+    const { rosInstance } = selectedConnection;
+
+    const fetchTopics = async () => {
+      try {
+        const ROSLIB = await import('roslib');
+        
+        const getTopics = new ROSLIB.default.Service({
+          ros: rosInstance,
+          name: '/rosapi/topics_for_type',
+          serviceType: 'rosapi/TopicsForType',
+        });
+
+        const request = new ROSLIB.default.ServiceRequest({
+          type: 'sensor_msgs/LaserScan',
+        });
+
+        getTopics.callService(request, (result: any) => {
+          if (result?.topics && result.topics.length > 0) {
+            setLaserScanTopics(result.topics);
+            // If current selected topic is not in the list, reset to /scan or first available
+            if (!result.topics.includes(selectedTopic)) {
+              setSelectedTopic(result.topics.includes('/scan') ? '/scan' : result.topics[0]);
+            }
+          } else {
+            // Fallback to default
+            setLaserScanTopics(['/scan']);
+            setSelectedTopic('/scan');
+          }
+        });
+      } catch (error) {
+        console.warn('Failed to fetch LaserScan topics:', error);
+        setLaserScanTopics(['/scan']);
+        setSelectedTopic('/scan');
+      }
+    };
+
+    fetchTopics();
+  }, [selectedConnection, selectedTopic]);
+
   useEffect(() => {
     let scanTopic: ROSLIB.Topic | null = null;
 
@@ -58,7 +114,7 @@ export default function LaserScanVisualization(): React.ReactNode {
 
       scanTopic = new ROSLIB.default.Topic({
         ros: selectedConnection.rosInstance,
-        name: '/scan',
+        name: selectedTopic,
         messageType: 'sensor_msgs/LaserScan',
       });
 
@@ -77,7 +133,7 @@ export default function LaserScanVisualization(): React.ReactNode {
         setIsSubscribed(false);
       }
     };
-  }, [selectedConnection, processLaserScan]);
+  }, [selectedConnection, selectedTopic, processLaserScan]);
 
   useEffect(() => {
     if (!svgRef.current || scanData.length === 0) return;
@@ -202,8 +258,25 @@ export default function LaserScanVisualization(): React.ReactNode {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-        <h3 className="text-lg font-semibold">Laser Scan Visualization</h3>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+        <div className="flex flex-col gap-2">
+          <h3 className="text-lg font-semibold">Laser Scan Visualization</h3>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="laser-topic-select" className="text-sm">Topic:</Label>
+            <Select onValueChange={setSelectedTopic} value={selectedTopic}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Select laser scan topic..." />
+              </SelectTrigger>
+              <SelectContent>
+                {laserScanTopics.map((topic) => (
+                  <SelectItem key={topic} value={topic}>
+                    {topic}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <div className="flex items-center">
             <div className="w-2 h-2 bg-red-500 rounded-full mr-1"></div>
@@ -230,7 +303,7 @@ export default function LaserScanVisualization(): React.ReactNode {
       </div>
       {scanData.length === 0 && isSubscribed && (
         <div className="text-center text-gray-500 mt-4">
-          <p>Waiting for scan data on /scan topic...</p>
+          <p>Waiting for scan data on {selectedTopic} topic...</p>
         </div>
       )}
     </div>
