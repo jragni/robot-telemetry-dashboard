@@ -15,6 +15,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
 import useMounted from '@/hooks/useMounted';
@@ -27,9 +34,45 @@ export default function ControlPanel(): React.ReactNode {
   const [linearVelocity, setLinearVelocity] = useState<number>(0.15);
   const [angularVelocity, setAngularVelocity] = useState<number>(Math.floor(Math.PI/8*100) / 100);
   const [direction, setDirection] = useState<string>('stop');
+  const [selectedTopic, setSelectedTopic] = useState<string>('/cmd_vel');
+  const [twistTopics, setTwistTopics] = useState<string[]>(['/cmd_vel']);
 
   const isMounted = useMounted();
   const { selectedConnection } = useConnection();
+
+  // Fetch available Twist topics when connection changes
+  useEffect(() => {
+    if (!selectedConnection?.rosInstance) {
+      setTwistTopics(['/cmd_vel']);
+      return;
+    }
+
+    const { rosInstance } = selectedConnection;
+
+    const getTopics = new ROSLIB.Service({
+      ros: rosInstance,
+      name: '/rosapi/topics_for_type',
+      serviceType: 'rosapi/TopicsForType',
+    });
+
+    const request = new ROSLIB.ServiceRequest({
+      type: 'geometry_msgs/Twist',
+    });
+
+    getTopics.callService(request, (result: any) => {
+      if (result?.topics && result.topics.length > 0) {
+        setTwistTopics(result.topics);
+        // If current selected topic is not in the list, reset to /cmd_vel or first available
+        if (!result.topics.includes(selectedTopic)) {
+          setSelectedTopic(result.topics.includes('/cmd_vel') ? '/cmd_vel' : result.topics[0]);
+        }
+      } else {
+        // Fallback to default
+        setTwistTopics(['/cmd_vel']);
+        setSelectedTopic('/cmd_vel');
+      }
+    });
+  }, [selectedConnection, selectedTopic]);
 
   useEffect(() => {
     const handleMove = () => {
@@ -40,7 +83,7 @@ export default function ControlPanel(): React.ReactNode {
 
       const twist = new ROSLIB.Topic({
         ros: rosInstance,
-        name: '/cmd_vel',
+        name: selectedTopic,
         messageType: 'geometry_msgs/Twist',
       });
 
@@ -79,7 +122,7 @@ export default function ControlPanel(): React.ReactNode {
     direction,
     linearVelocity,
     selectedConnection,
-    setDirection,
+    selectedTopic,
   ]);
 
   if (!isMounted) {
@@ -105,7 +148,21 @@ export default function ControlPanel(): React.ReactNode {
         <CardTitle>Control Panel</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="mb-2 text-md">Publishing to <code className="bg-accent">/cmd_vel</code></p>
+        <div className="mb-4">
+          <Label htmlFor="topic-select">Publishing Topic:</Label>
+          <Select onValueChange={setSelectedTopic} value={selectedTopic}>
+            <SelectTrigger className="mt-2">
+              <SelectValue placeholder="Select topic..." />
+            </SelectTrigger>
+            <SelectContent>
+              {twistTopics.map((topic) => (
+                <SelectItem key={topic} value={topic}>
+                  {topic}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="mb-4">
           <Label
             className="mb-4"
