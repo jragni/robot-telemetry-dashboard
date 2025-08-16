@@ -39,10 +39,10 @@ export const validateAddConnectionForm = (
     return { field: 'connectionName', reason: 'name too long', status: 'invalid' };
   }
 
-  // Validate WebSocket URL format
-  const wsUrlPattern = /^(ws|wss):\/\/[^\s/$.?#].[^\s]*$/i;
+  // Validate WebSocket URL format - more permissive regex
+  const wsUrlPattern = /^(ws|wss):\/\/[\w\-._~:/?#[\]@!$&'()*+,;=]+$/i;
   if (!wsUrlPattern.test(webSocketUrl.trim())) {
-    return { field: 'webSocketUrl', reason: 'invalid websocket url', status: 'invalid' };
+    return { field: 'webSocketUrl', reason: 'URL must start with ws:// or wss://', status: 'invalid' };
   }
 
   // Additional URL validation
@@ -50,6 +50,10 @@ export const validateAddConnectionForm = (
     const urlObj = new URL(webSocketUrl.trim());
     if (!urlObj.hostname) {
       return { field: 'webSocketUrl', reason: 'missing hostname', status: 'invalid' };
+    }
+    // Allow any valid hostname and port
+    if (urlObj.protocol !== 'ws:' && urlObj.protocol !== 'wss:') {
+      return { field: 'webSocketUrl', reason: 'protocol must be ws:// or wss://', status: 'invalid' };
     }
   } catch {
     return { field: 'webSocketUrl', reason: 'malformed url', status: 'invalid' };
