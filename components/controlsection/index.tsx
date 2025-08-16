@@ -14,21 +14,23 @@ const ControlPanel = dynamic(() => import('./ControlPanel'), { ssr: false });
  * ControlSection
  */
 export default function ControlSection() {
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const { selectedConnection } = useConnection();
+	// TODO will re-introduce feature later
+  // const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  // const { selectedConnection } = useConnection();
 
   return (
-    <Card className="w-full">
+    <Card className="w-fit">
       <CardHeader>
         <CardTitle>Controls</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <ControlPanel />
-        <AddControlModal
+				{/* TODO will update when features are flushed out */}
+        {/* <AddControlModal
           isDialogOpen={isDialogOpen}
           selectedConnection={selectedConnection}
           setIsDialogOpen={setIsDialogOpen}
-        />
+        /> */}
       </CardContent>
     </Card>
   );

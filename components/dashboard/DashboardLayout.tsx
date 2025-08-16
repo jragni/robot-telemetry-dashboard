@@ -17,8 +17,8 @@ export default function DashboardLayout() {
       <main className="flex-1 overflow-hidden">
         <div className="h-full overflow-auto">
           <div className="p-4 space-y-6 max-w-7xl mx-auto">
-            <ControlSection />
             <SensorSection />
+            <ControlSection />
             <TopicSection />
           </div>
         </div>
