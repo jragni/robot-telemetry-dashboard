@@ -1,37 +1,26 @@
 'use client';
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ImuVisualization from './ImuVisualization';
-import LaserScanVisualization from './LaserScanVisualization';
+
+import CameraVisualization from './CameraVizualization';
 
 export default function SensorSection(): React.ReactNode {
   const { selectedConnection } = useConnection();
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Sensor Data</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">No data available</p>
-        </CardContent>
-      </Card>
+      <div className="w-full h-96 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
+        <p className="text-muted-foreground">No connection available</p>
+      </div>
     );
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Sensor Data</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <LaserScanVisualization />
-          <ImuVisualization />
-        </div>
-      </CardContent>
-    </Card>
+    <div className="h-full">
+      {/* Camera Feed - Full space on left side */}
+      <div className="h-full">
+        <CameraVisualization />
+      </div>
+    </div>
   );
 }

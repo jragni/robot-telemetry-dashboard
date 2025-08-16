@@ -22,7 +22,6 @@ import { ConnectionDialogFormData } from './definitions';
 import { validateAddConnectionForm } from './helpers';
 import { getConnectionHistory, addConnectionToHistory } from './connectionHistory';
 
-
 /**
  * AddConnectionDialog
  *
@@ -36,7 +35,9 @@ export default function AddConnectionDialog(): React.ReactNode {
     connectionName: '',
     webSocketUrl: '',
   });
-  const [connectionHistory, setConnectionHistory] = useState<ReturnType<typeof getConnectionHistory>>([]);
+  const [connectionHistory, setConnectionHistory] = useState<
+    ReturnType<typeof getConnectionHistory>
+  >([]);
 
   const { addConnection, connections } = useConnection();
 
@@ -74,16 +75,16 @@ export default function AddConnectionDialog(): React.ReactNode {
       if (status === 'valid') {
         const connectionName = formData.connectionName.trim();
         const webSocketUrl = formData.webSocketUrl.trim();
-        
+
         await addConnection(
           uuidV4(),
           connectionName,
           webSocketUrl,
         );
-        
+
         // Add to connection history
         addConnectionToHistory(connectionName, webSocketUrl);
-        
+
         resetForm();
         setIsOpen(false);
         toast.success('Connection added successfully!');
@@ -191,7 +192,7 @@ export default function AddConnectionDialog(): React.ReactNode {
           </div>
           <div className="flex gap-2">
             <Button
-              disabled={(!formData.connectionName || !formData.webSocketUrl) || isLoading}
+              disabled={!formData.connectionName || !formData.webSocketUrl || isLoading}
               size="lg"
               type="submit"
               variant="default"

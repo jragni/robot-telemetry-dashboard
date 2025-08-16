@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 import { TableCell, TableRow } from '@/components/ui/table';
 import { TopicTableRowProps } from './definitions';
@@ -12,9 +12,35 @@ export default function TopicTableRow({
 }: TopicTableRowProps): React.ReactNode {
   const ros = selectedConnection?.rosInstance;
   const [message, setMessage] = useState<string>('');
+  const lastUpdateRef = useRef<number>(0);
+  const pendingMessageRef = useRef<string>('');
+
+  // Throttle updates to prevent UI freezing (max 2 updates per second)
+  const throttleDelay = 500; // ms
+
+  const throttledSetMessage = useCallback((newMessage: string) => {
+    const now = Date.now();
+    pendingMessageRef.current = newMessage;
+
+    if (now - lastUpdateRef.current >= throttleDelay) {
+      setMessage(newMessage);
+      lastUpdateRef.current = now;
+    } else {
+      // Schedule update for later
+      setTimeout(() => {
+        if (pendingMessageRef.current) {
+          setMessage(pendingMessageRef.current);
+          lastUpdateRef.current = Date.now();
+          pendingMessageRef.current = '';
+        }
+      }, throttleDelay - (now - lastUpdateRef.current));
+    }
+  }, [throttleDelay]);
 
   useEffect(() => {
     setMessage('');
+    lastUpdateRef.current = 0;
+    pendingMessageRef.current = '';
 
     const handleSubscribe = async () => {
       if (!ros) return;
@@ -28,14 +54,24 @@ export default function TopicTableRow({
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const handle = (m: any) => {
-        const val = formatFullMessage(m);
-        setMessage(val);
+        try {
+          const val = formatFullMessage(m);
+          // Limit message size to prevent UI lag
+          const maxLength = 10000;
+          const truncatedVal = val.length > maxLength
+            ? `${val.substring(0, maxLength)}\n... [Message truncated for performance]`
+            : val;
+          throttledSetMessage(truncatedVal);
+        } catch (error) {
+          console.warn('Error formatting message for topic', topicName, ':', error);
+          throttledSetMessage('[Error formatting message]');
+        }
       };
       topic.subscribe(handle);
     };
 
     handleSubscribe();
-  }, [ros, topicName, messageType]);
+  }, [ros, topicName, messageType, throttledSetMessage]);
 
   return (
     <TableRow key={topicName}>
@@ -51,7 +87,7 @@ export default function TopicTableRow({
         </div>
       </TableCell>
       <TableCell className="max-w-xs sm:max-w-md">
-        <div className="font-mono text-xs overflow-auto h-32 whitespace-pre-wrap break-words bg-gray-50 p-2 rounded">
+        <div className="font-mono text-xs overflow-auto h-32 whitespace-pre-wrap break-words bg-gray-50 dark:bg-gray-800 dark:text-gray-100 p-2 rounded">
           {message || 'No data received'}
         </div>
       </TableCell>
