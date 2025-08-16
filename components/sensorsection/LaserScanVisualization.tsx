@@ -141,9 +141,9 @@ export default function LaserScanVisualization(): React.ReactNode {
     const svg = d3.select(svgRef.current);
 
     // Static sizing to prevent growth animation
-    const margin = { top: 20, right: 20, bottom: 40, left: 40 };
-    const width = 600; // Fixed width
-    const height = 400; // Fixed height
+    const margin = { top: 10, right: 15, bottom: 25, left: 25 };
+    const width = 300; // Fixed width
+    const height = 250; // Fixed height
 
     svg.selectAll('*').remove();
 
@@ -196,16 +196,20 @@ export default function LaserScanVisualization(): React.ReactNode {
       .style('stroke-width', 0.5)
       .style('opacity', 0.5);
 
-    // Add axes
+    // Add axes with fewer ticks
     g.append('g')
       .attr('transform', `translate(0,${yScale(0)})`)
-      .call(d3.axisBottom(xScale).ticks(10))
-      .style('color', '#6b7280');
+      .call(d3.axisBottom(xScale).ticks(5))
+      .style('color', '#6b7280')
+      .selectAll('text')
+      .style('font-size', '10px');
 
     g.append('g')
       .attr('transform', `translate(${xScale(0)},0)`)
-      .call(d3.axisLeft(yScale).ticks(8))
-      .style('color', '#6b7280');
+      .call(d3.axisLeft(yScale).ticks(5))
+      .style('color', '#6b7280')
+      .selectAll('text')
+      .style('font-size', '10px');
 
     // Add robot position (origin)
     g.append('circle')
@@ -231,18 +235,18 @@ export default function LaserScanVisualization(): React.ReactNode {
     // Add labels
     g.append('text')
       .attr('x', width / 2)
-      .attr('y', height + margin.bottom - 5)
+      .attr('y', height + margin.bottom - 3)
       .style('text-anchor', 'middle')
-      .style('font-size', '12px')
+      .style('font-size', '10px')
       .style('fill', '#6b7280')
       .text('Distance (m)');
 
     g.append('text')
       .attr('transform', 'rotate(-90)')
-      .attr('y', 0 - margin.left + 10)
+      .attr('y', 0 - margin.left + 12)
       .attr('x', 0 - (height / 2))
       .style('text-anchor', 'middle')
-      .style('font-size', '12px')
+      .style('font-size', '10px')
       .style('fill', '#6b7280')
       .text('Distance (m)');
 
@@ -296,7 +300,7 @@ export default function LaserScanVisualization(): React.ReactNode {
         </div>
       </div>
       {/* PLOT */}
-      <div className="border rounded-lg bg-white p-2 sm:p-4 overflow-hidden">
+      <div className="border rounded-lg bg-white p-3 overflow-hidden">
         <div className="flex justify-center">
           <svg className="max-w-full h-auto" ref={svgRef}></svg>
         </div>
