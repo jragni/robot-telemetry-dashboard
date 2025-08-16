@@ -44,7 +44,7 @@ export default function DashboardLayout() {
                 {/* Right: LiDAR & Mission Controls */}
                 <div className="col-span-4 flex flex-col gap-2 min-h-0">
                   {/* LiDAR - Larger size */}
-                  <div className="h-[28rem]">
+                  <div className="h-[32rem]">
                     <div className="h-full bg-gray-800 border border-gray-600 rounded">
                       <LaserScanVisualization />
                     </div>
@@ -65,7 +65,7 @@ export default function DashboardLayout() {
                     <div className="order-2 lg:order-1">
                       <ControlPanel />
                     </div>
-                    <div className="order-1 lg:order-2 h-56 lg:h-64">
+                    <div className="order-1 lg:order-2 h-64 lg:h-80">
                       <div className="h-full bg-gray-800 border border-gray-600 rounded">
                         <LaserScanVisualization />
                       </div>
@@ -97,7 +97,7 @@ export default function DashboardLayout() {
                 </div>
 
                 {/* LiDAR - Fixed height */}
-                <div className="shrink-0 h-60">
+                <div className="shrink-0 h-72">
                   <div className="h-full bg-gray-800 border border-gray-600 rounded">
                     <LaserScanVisualization />
                   </div>
