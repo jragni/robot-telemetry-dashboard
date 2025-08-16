@@ -123,13 +123,22 @@ sudo mv ngrok /usr/local/bin
 # Create account at https://ngrok.com and get your authtoken
 ngrok config add-authtoken YOUR_AUTHTOKEN
 
-# Tunnel rosbridge port (9090) to the internet
+# For HTTPS deployments (GitHub Pages, Vercel, etc.) - use HTTP tunnel for WSS support
+ngrok http 9090
+
+# For local development only - TCP tunnel
 ngrok tcp 9090
 ```
 
 **Use the ngrok URL in dashboard:**
-- ngrok will provide a URL like: `tcp://0.tcp.ngrok.io:12345`
-- Use this in the dashboard as: `ws://0.tcp.ngrok.io:12345`
+
+**For HTTPS sites (GitHub Pages, production):**
+- HTTP tunnel provides: `https://abc123.ngrok.io`
+- Use in dashboard as: `wss://abc123.ngrok.io`
+
+**For local development (localhost):**
+- TCP tunnel provides: `tcp://0.tcp.ngrok.io:12345`
+- Use in dashboard as: `ws://0.tcp.ngrok.io:12345`
 
 ## 📱 Usage
 
@@ -144,9 +153,15 @@ ngrok tcp 9090
 4. Click "Connect"
 
 **Connection Examples:**
+
+**For HTTPS deployments (GitHub Pages, production):**
+- **Remote via ngrok HTTP**: `wss://abc123.ngrok.io`
+- **Secure WebSocket**: `wss://your-robot.example.com:9090`
+
+**For local development only:**
 - **Local Robot**: `ws://192.168.1.100:9090`
 - **Localhost**: `ws://localhost:9090`
-- **Remote via ngrok**: `ws://0.tcp.ngrok.io:12345`
+- **Remote via ngrok TCP**: `ws://0.tcp.ngrok.io:12345`
 
 ### Supported Message Types
 - **Camera**: `sensor_msgs/CompressedImage`, `sensor_msgs/Image`
