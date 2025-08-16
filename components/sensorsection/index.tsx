@@ -9,8 +9,8 @@ export default function SensorSection(): React.ReactNode {
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
-      <div className="w-full h-96 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
-        <p className="text-muted-foreground">No connection available</p>
+      <div className="h-full bg-gray-800 border border-gray-600 rounded flex items-center justify-center text-gray-400">
+        <p className="text-sm">Camera: No connection</p>
       </div>
     );
   }

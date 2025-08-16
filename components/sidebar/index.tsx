@@ -61,10 +61,10 @@ export default function DashboardSidebar() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel className="text-md">Active Connections</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-xs sm:text-sm">Active Connections</SidebarGroupLabel>
             <SidebarGroupContent className="flex flex-col justify-center">
               <div className="flex my-2 p-2 justify-between">
-                <p className="font-bold">Connected Data Sources: </p>
+                <p className="font-bold text-xs sm:text-sm">Connected Data Sources: </p>
                 <Badge
                   className="h-5 min-w-5 rounded-full font-mono tabular-nums"
                   variant="default"

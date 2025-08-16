@@ -150,7 +150,7 @@ export default function ControlPanel(): React.ReactNode {
     <div className="bg-gray-800 border border-gray-600 rounded p-3 h-fit">
       {/* Compact Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-gray-100 uppercase tracking-wide">Controls</h3>
+        <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">Controls</h3>
         <Select onValueChange={setSelectedTopic} value={selectedTopic}>
           <SelectTrigger className="w-32 h-6 text-xs bg-gray-700 border-gray-500 text-gray-200">
             <SelectValue />
