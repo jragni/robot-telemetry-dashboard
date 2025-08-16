@@ -211,7 +211,7 @@ export default function CameraVisualization(): React.ReactNode {
 
         // Helper function to get topics for a specific type
         const getTopicsForType = (messageType: string): Promise<string[]> => {
-          return new Promise((resolve, reject) => {
+          return new Promise((resolve, _reject) => {
             console.log(`Searching for topics of type: ${messageType}`);
 
             const service = new ROSLIB.default.Service({
@@ -239,7 +239,12 @@ export default function CameraVisualization(): React.ReactNode {
         };
 
         // Fetch both topic types in parallel - try both ROS1 and ROS2 formats
-        const [compressedTopics, compressedTopicsRos2, rawTopics, rawTopicsRos2] = await Promise.all([
+        const [
+          compressedTopics,
+          compressedTopicsRos2,
+          rawTopics,
+          rawTopicsRos2,
+        ] = await Promise.all([
           getTopicsForType('sensor_msgs/CompressedImage'),
           getTopicsForType('sensor_msgs/msg/CompressedImage'),
           getTopicsForType('sensor_msgs/Image'),
