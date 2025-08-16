@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import ROSLIB from 'roslib';
 
 import {
   ArrowDown,
@@ -44,43 +43,49 @@ export default function ControlPanel(): React.ReactNode {
 
   // Fetch available Twist topics when connection changes
   useEffect(() => {
-    if (!selectedConnection?.rosInstance) {
-      setTwistTopics(['/cmd_vel']);
-      return;
-    }
-
-    const { rosInstance } = selectedConnection;
-
-    const getTopics = new ROSLIB.Service({
-      ros: rosInstance,
-      name: '/rosapi/topics_for_type',
-      serviceType: 'rosapi/TopicsForType',
-    });
-
-    const request = new ROSLIB.ServiceRequest({
-      type: 'geometry_msgs/Twist',
-    });
-
-    getTopics.callService(request, (result: { topics?: string[] }) => {
-      if (result?.topics && result.topics.length > 0) {
-        setTwistTopics(result.topics);
-        // If current selected topic is not in the list, reset to /cmd_vel or first available
-        if (!result.topics.includes(selectedTopic)) {
-          setSelectedTopic(result.topics.includes('/cmd_vel') ? '/cmd_vel' : result.topics[0]);
-        }
-      } else {
-        // Fallback to default
+    const fetchTopics = async () => {
+      if (!selectedConnection?.rosInstance) {
         setTwistTopics(['/cmd_vel']);
-        setSelectedTopic('/cmd_vel');
+        return;
       }
-    });
+
+      const { rosInstance } = selectedConnection;
+      const ROSLIB = (await import('roslib')).default;
+
+      const getTopics = new ROSLIB.Service({
+        ros: rosInstance,
+        name: '/rosapi/topics_for_type',
+        serviceType: 'rosapi/TopicsForType',
+      });
+
+      const request = new ROSLIB.ServiceRequest({
+        type: 'geometry_msgs/Twist',
+      });
+
+      getTopics.callService(request, (result: { topics?: string[] }) => {
+        if (result?.topics && result.topics.length > 0) {
+          setTwistTopics(result.topics);
+          // If current selected topic is not in the list, reset to /cmd_vel or first available
+          if (!result.topics.includes(selectedTopic)) {
+            setSelectedTopic(result.topics.includes('/cmd_vel') ? '/cmd_vel' : result.topics[0]);
+          }
+        } else {
+          // Fallback to default
+          setTwistTopics(['/cmd_vel']);
+          setSelectedTopic('/cmd_vel');
+        }
+      });
+    };
+
+    fetchTopics();
   }, [selectedConnection, selectedTopic]);
 
   useEffect(() => {
-    const handleMove = () => {
+    const handleMove = async () => {
       if (!selectedConnection?.rosInstance) return;
 
       const { rosInstance } = selectedConnection;
+      const ROSLIB = (await import('roslib')).default;
 
       // Priority control topic
       const twist = new ROSLIB.Topic({
