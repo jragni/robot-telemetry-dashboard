@@ -142,16 +142,18 @@ export default function LaserScanVisualization(): React.ReactNode {
 
     // Get container dimensions for responsive sizing
     const containerRect = container?.getBoundingClientRect();
-    const margin = { top: 15, right: 20, bottom: 30, left: 30 };
+    const margin = { top: 20, right: 25, bottom: 35, left: 35 };
 
-    // Make square dimensions based on smaller container dimension
-    const containerWidth = (containerRect?.width ?? 300);
-    const containerHeight = (containerRect?.height ?? 300);
+    // Make responsive dimensions that scale well
+    const containerWidth = (containerRect?.width ?? 400);
+    const containerHeight = (containerRect?.height ?? 400);
     const availableWidth = containerWidth - margin.left - margin.right;
     const availableHeight = containerHeight - margin.top - margin.bottom;
 
-    // Ensure square aspect ratio by using the smaller dimension
-    const size = Math.min(Math.max(availableWidth, 200), Math.max(availableHeight, 200));
+    // Ensure square aspect ratio but allow better scaling
+    // Use 90% of the smaller dimension to give more space while maintaining square shape
+    const maxSize = Math.min(availableWidth, availableHeight);
+    const size = Math.max(maxSize * 0.9, 180); // Minimum 180px, but scales up well
     const width = size;
     const height = size;
 
@@ -225,14 +227,18 @@ export default function LaserScanVisualization(): React.ReactNode {
     yAxis.selectAll('.domain, .tick line')
       .attr('class', 'chart-axis-line');
 
+    // Calculate responsive sizes based on plot dimensions
+    const robotRadius = Math.max(4, size * 0.015); // Scale robot size with plot
+    const pointRadius = Math.max(1.5, size * 0.008); // Scale point size with plot
+
     // Add robot position (origin)
     g.append('circle')
       .attr('cx', xScale(0))
       .attr('cy', yScale(0))
-      .attr('r', 4)
+      .attr('r', robotRadius)
       .style('fill', '#ef4444')
       .style('stroke', '#dc2626')
-      .style('stroke-width', 2);
+      .style('stroke-width', Math.max(2, size * 0.005));
 
     // Add scan points
     g.selectAll('.scan-point')
@@ -242,9 +248,11 @@ export default function LaserScanVisualization(): React.ReactNode {
       .attr('class', 'scan-point')
       .attr('cx', d => xScale(d.x))
       .attr('cy', d => yScale(d.y))
-      .attr('r', 1.5)
+      .attr('r', pointRadius)
       .style('fill', '#3b82f6')
-      .style('fill-opacity', 0.7);
+      .style('fill-opacity', 0.8)
+      .style('stroke', '#1d4ed8')
+      .style('stroke-width', 0.5);
 
     // Add labels with proper spacing
     g.append('text')
@@ -357,8 +365,8 @@ export default function LaserScanVisualization(): React.ReactNode {
       </div>
 
       {/* Plot area */}
-      <div className="flex-1 p-3 overflow-hidden">
-        <div className="w-full h-full min-h-0 border rounded-lg bg-white dark:bg-gray-800 p-2">
+      <div className="flex-1 p-2 overflow-hidden">
+        <div className="w-full h-full min-h-0 border rounded-lg bg-white dark:bg-gray-800 p-1">
           <svg className="w-full h-full chart-container" ref={svgRef}></svg>
         </div>
 
