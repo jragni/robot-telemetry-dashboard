@@ -55,6 +55,15 @@ export const validateAddConnectionForm = (
     if (urlObj.protocol !== 'ws:' && urlObj.protocol !== 'wss:') {
       return { field: 'webSocketUrl', reason: 'protocol must be ws:// or wss://', status: 'invalid' };
     }
+
+    // Check for mixed content issue when running on HTTPS
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:' && urlObj.protocol === 'ws:') {
+      return {
+        field: 'webSocketUrl',
+        reason: 'Cannot use ws:// on HTTPS site. Use wss:// instead (try ngrok http instead of tcp)',
+        status: 'invalid',
+      };
+    }
   } catch {
     return { field: 'webSocketUrl', reason: 'malformed url', status: 'invalid' };
   }
