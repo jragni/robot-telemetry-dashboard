@@ -143,7 +143,7 @@ export default function ControlPanel(): React.ReactNode {
   }
 
   return (
-    <Card>
+    <Card className="w-60 h-full">
       <CardHeader>
         <CardTitle>Control Panel</CardTitle>
       </CardHeader>
