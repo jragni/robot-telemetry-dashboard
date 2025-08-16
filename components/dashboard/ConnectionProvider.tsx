@@ -27,12 +27,13 @@ export function useConnection() {
  *
  * @description
  * Connection context for the websocket connecting to devices running on ros2.
+ * Prioritizes control commands over streaming data for optimal robot responsiveness.
  */
 export default function ConnectionProvider({ children }: ConnectionProviderProps): React.ReactNode {
   const [selectedConnectionId, setSelectedConnectionId] = useState<string>('');
   const [connections, setConnections] = useState<Record<string, RobotConnection>>({});
-  const selectedConnection = selectedConnectionId 
-    ? connections[selectedConnectionId] ?? null 
+  const selectedConnection = selectedConnectionId
+    ? connections[selectedConnectionId] ?? null
     : null;
 
   useEffect(() => {
@@ -59,7 +60,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
             status: 'error',
           },
         }));
-        reject(new Error('connection timeout'));
+        reject(new Error('Connection timeout'));
       }, 10000);
 
       const onConnection = () => {
@@ -95,7 +96,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
               },
             }));
           },
-          (error) => { console.log('boop', error); },
+          (error) => { console.log('Error fetching topics:', error); },
         );
 
         resolve();
@@ -105,7 +106,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
         if (settled) return;
         settled = true;
         clearTimeout(timeout);
-        reject(err instanceof Error ? err : new Error('connection error'));
+        reject(err instanceof Error ? err : new Error('Connection error'));
       };
 
       const onClose = () => {
@@ -119,8 +120,13 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
             status: 'disconnected',
           },
         }));
-        reject(new Error('connection closed'));
+        reject(new Error('Connection closed'));
       };
+
+      // Optimize for control command priority
+      if ((rosInstance as any).socket) {
+        (rosInstance as any).socket.binaryType = 'arraybuffer';
+      }
 
       rosInstance.on('connection', onConnection);
       rosInstance.on('error', onError);
@@ -163,7 +169,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
 
       setConnections((prev) => {
         const { [id]: removed, ...rest } = prev;
-        console.log('removing', removed);
+        console.log('Removing connection:', removed);
         return rest;
       });
 

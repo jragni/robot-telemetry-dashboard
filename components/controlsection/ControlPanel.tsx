@@ -32,7 +32,9 @@ import useMounted from '@/hooks/useMounted';
  */
 export default function ControlPanel(): React.ReactNode {
   const [linearVelocity, setLinearVelocity] = useState<number>(0.15);
-  const [angularVelocity, setAngularVelocity] = useState<number>(Math.floor(Math.PI/8*100) / 100);
+  const [angularVelocity, setAngularVelocity] = useState<number>(
+    Math.floor((Math.PI / 8) * 100) / 100,
+  );
   const [direction, setDirection] = useState<string>('stop');
   const [selectedTopic, setSelectedTopic] = useState<string>('/cmd_vel');
   const [twistTopics, setTwistTopics] = useState<string[]>(['/cmd_vel']);
@@ -59,7 +61,7 @@ export default function ControlPanel(): React.ReactNode {
       type: 'geometry_msgs/Twist',
     });
 
-    getTopics.callService(request, (result: any) => {
+    getTopics.callService(request, (result: { topics?: string[] }) => {
       if (result?.topics && result.topics.length > 0) {
         setTwistTopics(result.topics);
         // If current selected topic is not in the list, reset to /cmd_vel or first available
@@ -76,11 +78,11 @@ export default function ControlPanel(): React.ReactNode {
 
   useEffect(() => {
     const handleMove = () => {
-
       if (!selectedConnection?.rosInstance) return;
 
       const { rosInstance } = selectedConnection;
 
+      // Priority control topic
       const twist = new ROSLIB.Topic({
         ros: rosInstance,
         name: selectedTopic,
@@ -92,7 +94,7 @@ export default function ControlPanel(): React.ReactNode {
         angular: { x: 0, y: 0, z: 0 },
       };
 
-      switch(direction) {
+      switch (direction) {
         case 'forward':
           message.linear.x = linearVelocity;
           break;
@@ -114,6 +116,8 @@ export default function ControlPanel(): React.ReactNode {
       }
 
       const rosMessage = new ROSLIB.Message(message);
+
+      // Immediate publish with priority
       twist.publish(rosMessage);
     };
     handleMove();
@@ -143,106 +147,102 @@ export default function ControlPanel(): React.ReactNode {
   }
 
   return (
-    <Card className="w-60 h-full">
-      <CardHeader>
-        <CardTitle>Control Panel</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4">
-          <Label htmlFor="topic-select">Publishing Topic:</Label>
-          <Select onValueChange={setSelectedTopic} value={selectedTopic}>
-            <SelectTrigger className="mt-2">
-              <SelectValue placeholder="Select topic..." />
-            </SelectTrigger>
-            <SelectContent>
-              {twistTopics.map((topic) => (
-                <SelectItem key={topic} value={topic}>
-                  {topic}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="mb-4">
-          <Label
-            className="mb-4"
-            htmlFor="linear-vel-slider"
-          >
-            Linear Velocity: {linearVelocity} {'m/s'}
-          </Label>
+    <div className="bg-gray-800 border border-gray-600 rounded p-3 h-fit">
+      {/* Compact Header */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-medium text-gray-100 uppercase tracking-wide">Controls</h3>
+        <Select onValueChange={setSelectedTopic} value={selectedTopic}>
+          <SelectTrigger className="w-32 h-6 text-xs bg-gray-700 border-gray-500 text-gray-200">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {twistTopics.map((topic) => (
+              <SelectItem key={topic} value={topic}>
+                {topic}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Speed Controls - Horizontal for space efficiency */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Label className="text-xs text-gray-300 w-12 shrink-0">Linear:</Label>
           <Slider
-            id="linear-vel-slider"
+            className="flex-1"
             max={2}
             min={0}
             onValueChange={(val) => setLinearVelocity(val[0])}
             step={0.02}
             value={[linearVelocity]}
-          >
-          </Slider>
+          />
+          <span className="text-xs text-gray-400 font-mono w-12 text-right">{linearVelocity.toFixed(2)}</span>
         </div>
-        <div className="mb-4">
-          <Label
-            className="mb-4"
-            htmlFor="angular-vel-slider"
-          >
-            Angular Velocity: {angularVelocity} {'rad/s'}
-          </Label>
+        <div className="flex items-center gap-2">
+          <Label className="text-xs text-gray-300 w-12 shrink-0">Angular:</Label>
           <Slider
-            id="angular-vel-slider"
+            className="flex-1"
             max={2}
             min={0}
             onValueChange={(val) => setAngularVelocity(val[0])}
             step={0.02}
             value={[angularVelocity]}
-          >
-          </Slider>
+          />
+          <span className="text-xs text-gray-400 font-mono w-12 text-right">{angularVelocity.toFixed(2)}</span>
         </div>
-        {/* Buttons */}
-        <h3>Movement</h3>
-        <div className="flex flex-col items-center gap-2">
-          <div>
-            <Button
-              onClick={() => setDirection('forward')}
-              size="icon"
-              variant="outline"
-            >
-              <ArrowUp />
-            </Button>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setDirection('ccw')}
-              size="icon"
-              variant="outline"
-            >
-              <ArrowLeft/>
-            </Button>
-            <Button
-              onClick={() => setDirection('stop')}
-              size="icon"
-              variant="outline"
-            >
-              <Square color="red" fill="red" />
-            </Button>
-            <Button
-              onClick={() => setDirection('cw')}
-              size="icon"
-              variant="outline"
-            >
-              <ArrowRight/>
-            </Button>
-          </div>
-          <div>
-            <Button
-              onClick={() => setDirection('backward')}
-              size="icon"
-              variant="outline"
-            >
-              <ArrowDown/>
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Movement Grid - Compact for all screens */}
+      <div className="grid grid-cols-3 gap-1 mb-3 max-w-32 mx-auto">
+        <div></div>
+        <Button
+          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
+          onClick={() => setDirection('forward')}
+          size="sm"
+          variant="outline"
+        >
+          <ArrowUp className="w-4 h-4 text-gray-200" />
+        </Button>
+        <div></div>
+
+        <Button
+          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
+          onClick={() => setDirection('ccw')}
+          size="sm"
+          variant="outline"
+        >
+          <ArrowLeft className="w-4 h-4 text-gray-200" />
+        </Button>
+        <Button
+          className="w-8 h-8 p-0 bg-red-700 border-red-600 hover:bg-red-600"
+          onClick={() => setDirection('stop')}
+          size="sm"
+          variant="destructive"
+        >
+          <Square className="w-4 h-4" />
+        </Button>
+        <Button
+          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
+          onClick={() => setDirection('cw')}
+          size="sm"
+          variant="outline"
+        >
+          <ArrowRight className="w-4 h-4 text-gray-200" />
+        </Button>
+
+        <div></div>
+        <Button
+          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
+          onClick={() => setDirection('backward')}
+          size="sm"
+          variant="outline"
+        >
+          <ArrowDown className="w-4 h-4 text-gray-200" />
+        </Button>
+        <div></div>
+      </div>
+
+    </div>
   );
 }

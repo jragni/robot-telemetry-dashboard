@@ -31,16 +31,16 @@ export default function LaserScanVisualization(): React.ReactNode {
 
     message.ranges.forEach((range, index) => {
       if (
-        range >= message.range_min && 
-        range <= message.range_max && 
-        !isNaN(range) && 
-        isFinite(range)
+        range >= message.range_min
+        && range <= message.range_max
+        && !isNaN(range)
+        && isFinite(range)
       ) {
-        const angle = message.angle_min + index * message.angle_increment;
+        const angle = message.angle_min + (index * message.angle_increment);
 
         // NOTE: To ensure up is always "up" shift the x and y by 90 degrees
-        const x = range * Math.cos(angle + Math.PI / 2);
-        const y = range * Math.sin(angle + Math.PI / 2);
+        const x = range * Math.cos(angle + (Math.PI / 2));
+        const y = range * Math.sin(angle + (Math.PI / 2));
 
         points.push({
           x,
@@ -66,7 +66,7 @@ export default function LaserScanVisualization(): React.ReactNode {
     const fetchTopics = async () => {
       try {
         const ROSLIB = await import('roslib');
-        
+
         const getTopics = new ROSLIB.default.Service({
           ros: rosInstance,
           name: '/rosapi/topics_for_type',
@@ -77,7 +77,7 @@ export default function LaserScanVisualization(): React.ReactNode {
           type: 'sensor_msgs/LaserScan',
         });
 
-        getTopics.callService(request, (result: any) => {
+        getTopics.callService(request, (result: { topics?: string[] }) => {
           if (result?.topics && result.topics.length > 0) {
             setLaserScanTopics(result.topics);
             // If current selected topic is not in the list, reset to /scan or first available
@@ -118,7 +118,7 @@ export default function LaserScanVisualization(): React.ReactNode {
         messageType: 'sensor_msgs/LaserScan',
       });
 
-      scanTopic.subscribe((message: LaserScanMessage) => {
+      scanTopic.subscribe((message: any) => {
         processLaserScan(message);
       });
 
@@ -139,14 +139,24 @@ export default function LaserScanVisualization(): React.ReactNode {
     if (!svgRef.current || scanData.length === 0) return;
 
     const svg = d3.select(svgRef.current);
+    const container = svgRef.current.parentElement;
 
-    // Static sizing to prevent growth animation
-    const margin = { top: 10, right: 15, bottom: 25, left: 25 };
-    const width = 300; // Fixed width
-    const height = 250; // Fixed height
+    // Get container dimensions for responsive sizing
+    const containerRect = container?.getBoundingClientRect();
+    const margin = { top: 15, right: 20, bottom: 30, left: 30 };
+
+    // Make square dimensions based on smaller container dimension
+    const containerWidth = (containerRect?.width ?? 300);
+    const containerHeight = (containerRect?.height ?? 300);
+    const availableWidth = containerWidth - margin.left - margin.right;
+    const availableHeight = containerHeight - margin.top - margin.bottom;
+
+    // Ensure square aspect ratio by using the smaller dimension
+    const size = Math.min(Math.max(availableWidth, 200), Math.max(availableHeight, 200));
+    const width = size;
+    const height = size;
 
     svg.selectAll('*').remove();
-
 
     const xScale = d3.scaleLinear()
       .domain([-maxRange, maxRange])
@@ -156,11 +166,12 @@ export default function LaserScanVisualization(): React.ReactNode {
       .domain([-maxRange, maxRange])
       .range([height, 0]);
 
-    // Set fixed dimensions immediately to prevent growth
+    // Set responsive dimensions to fill container
     svg
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet');
 
     const g = svg
       .append('g')
@@ -178,9 +189,7 @@ export default function LaserScanVisualization(): React.ReactNode {
       .attr('y1', 0)
       .attr('x2', d => xScale(d))
       .attr('y2', height)
-      .style('stroke', '#e5e7eb')
-      .style('stroke-width', 0.5)
-      .style('opacity', 0.5);
+      .attr('class', 'chart-grid-line');
 
     // Horizontal grid lines
     gridLines.selectAll('.grid-line-horizontal')
@@ -192,24 +201,30 @@ export default function LaserScanVisualization(): React.ReactNode {
       .attr('y1', d => yScale(d))
       .attr('x2', width)
       .attr('y2', d => yScale(d))
-      .style('stroke', '#e5e7eb')
-      .style('stroke-width', 0.5)
-      .style('opacity', 0.5);
+      .attr('class', 'chart-grid-line');
 
-    // Add axes with fewer ticks
-    g.append('g')
+    // Add axes with fewer ticks and dark mode support
+    const xAxis = g.append('g')
       .attr('transform', `translate(0,${yScale(0)})`)
-      .call(d3.axisBottom(xScale).ticks(5))
-      .style('color', '#6b7280')
-      .selectAll('text')
-      .style('font-size', '10px');
+      .call(d3.axisBottom(xScale).ticks(5));
 
-    g.append('g')
+    xAxis.selectAll('text')
+      .style('font-size', '10px')
+      .attr('class', 'chart-axis-text');
+
+    xAxis.selectAll('.domain, .tick line')
+      .attr('class', 'chart-axis-line');
+
+    const yAxis = g.append('g')
       .attr('transform', `translate(${xScale(0)},0)`)
-      .call(d3.axisLeft(yScale).ticks(5))
-      .style('color', '#6b7280')
-      .selectAll('text')
-      .style('font-size', '10px');
+      .call(d3.axisLeft(yScale).ticks(5));
+
+    yAxis.selectAll('text')
+      .style('font-size', '10px')
+      .attr('class', 'chart-axis-text');
+
+    yAxis.selectAll('.domain, .tick line')
+      .attr('class', 'chart-axis-line');
 
     // Add robot position (origin)
     g.append('circle')
@@ -232,25 +247,42 @@ export default function LaserScanVisualization(): React.ReactNode {
       .style('fill', '#3b82f6')
       .style('fill-opacity', 0.7);
 
-    // Add labels
+    // Add labels with proper spacing
     g.append('text')
       .attr('x', width / 2)
-      .attr('y', height + margin.bottom - 3)
+      .attr('y', height + margin.bottom - 5)
       .style('text-anchor', 'middle')
-      .style('font-size', '10px')
-      .style('fill', '#6b7280')
+      .style('font-size', '9px')
+      .attr('class', 'chart-axis-label')
       .text('Distance (m)');
 
     g.append('text')
       .attr('transform', 'rotate(-90)')
-      .attr('y', 0 - margin.left + 12)
+      .attr('y', 0 - margin.left + 15)
       .attr('x', 0 - (height / 2))
       .style('text-anchor', 'middle')
-      .style('font-size', '10px')
-      .style('fill', '#6b7280')
+      .style('font-size', '9px')
+      .attr('class', 'chart-axis-label')
       .text('Distance (m)');
 
   }, [maxRange, scanData]);
+
+  // Check if we're on desktop for compact layout - Move hooks before early return
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      if (typeof window !== 'undefined') {
+        setIsDesktop(window.innerWidth >= 768);
+      }
+    };
+
+    checkScreenSize();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', checkScreenSize);
+      return () => window.removeEventListener('resize', checkScreenSize);
+    }
+  }, []);
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
@@ -261,51 +293,78 @@ export default function LaserScanVisualization(): React.ReactNode {
   }
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-semibold">Laser Scan Visualization</h3>
-          <div className="flex items-center gap-2">
-            <Label htmlFor="laser-topic-select" className="text-sm">Topic:</Label>
-            <Select onValueChange={setSelectedTopic} value={selectedTopic}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select laser scan topic..." />
-              </SelectTrigger>
-              <SelectContent>
-                {laserScanTopics.map((topic) => (
-                  <SelectItem key={topic} value={topic}>
-                    {topic}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+    <div className="w-full h-full flex flex-col">
+      {/* Desktop: Compact header, Mobile: Full header */}
+      <div className="mb-4">
+        {isDesktop ? (
+          /* Compact desktop header */
+          <div className="flex items-center justify-between p-3">
+            <h3 className="text-base font-semibold">LiDAR</h3>
+            <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                <span>Robot</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span>{scanData.length} pts</span>
+              </div>
+              <div className={`px-2 py-1 rounded text-xs ${
+                isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+              }`}>
+                {isSubscribed ? 'Live' : 'Off'}
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          <div className="flex items-center">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-1"></div>
-            <span className="hidden sm:inline">Robot</span>
-            <span className="sm:hidden">R</span>
+        ) : (
+          /* Full mobile header */
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h3 className="text-lg font-semibold">LiDAR</h3>
+              <div className="flex items-center gap-2">
+                <Label className="text-sm" htmlFor="laser-topic-select">Topic:</Label>
+                <Select onValueChange={setSelectedTopic} value={selectedTopic}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Select laser scan topic..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {laserScanTopics.map((topic) => (
+                      <SelectItem key={topic} value={topic}>
+                        {topic}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-red-500 rounded-full mr-1"></div>
+                <span>Robot</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
+                <span>Points: {scanData.length}</span>
+              </div>
+              <div className={`px-2 py-1 rounded text-xs ${
+                isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+              }`}>
+                {isSubscribed ? 'Connected' : 'Disconnected'}
+              </div>
+            </div>
           </div>
-          <div className="flex items-center">
-            <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
-            <span className="hidden sm:inline">Scan Points ({scanData.length})</span>
-            <span className="sm:hidden">Points: {scanData.length}</span>
-          </div>
-          <div className={`px-2 py-1 rounded text-xs ${
-            isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-          }`}>
-            {isSubscribed ? 'Connected' : 'Disconnected'}
-          </div>
+        )}
+      </div>
+
+      {/* Plot area */}
+      <div className="flex-1 border rounded-lg bg-white dark:bg-gray-800 p-2 overflow-hidden">
+        <div className="w-full h-full min-h-0">
+          <svg className="w-full h-full chart-container" ref={svgRef}></svg>
         </div>
       </div>
-      {/* PLOT */}
-      <div className="border rounded-lg bg-white p-3 overflow-hidden">
-        <div className="flex justify-center">
-          <svg className="max-w-full h-auto" ref={svgRef}></svg>
-        </div>
-      </div>
-      {scanData.length === 0 && isSubscribed && (
+
+      {/* Status message - only show on mobile */}
+      {!isDesktop && scanData.length === 0 && isSubscribed && (
         <div className="text-center text-gray-500 mt-4">
           <p>Waiting for scan data on {selectedTopic} topic...</p>
         </div>

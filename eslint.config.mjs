@@ -148,6 +148,7 @@ const eslintConfig = [
       "semi": ["error", "always"],
       "indent": ["error", 2, { SwitchCase: 1 }],
       "no-tabs": "error",
+      "no-trailing-spaces": "error",
       "max-len": [
         "error",
         {

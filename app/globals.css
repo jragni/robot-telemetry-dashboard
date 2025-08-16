@@ -120,3 +120,57 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Chart styling for proper dark mode support */
+  .chart-container .chart-axis-text {
+    fill: oklch(0.129 0.042 264.695);
+  }
+  
+  .chart-container .chart-axis-line {
+    stroke: oklch(0.129 0.042 264.695);
+    opacity: 0.8;
+  }
+  
+  .chart-container .chart-axis-label {
+    fill: oklch(0.129 0.042 264.695);
+    opacity: 0.9;
+  }
+  
+  .chart-container .chart-legend-text {
+    fill: oklch(0.129 0.042 264.695);
+    opacity: 0.9;
+  }
+  
+  .chart-container .chart-grid-line {
+    stroke: oklch(0.129 0.042 264.695);
+    stroke-width: 0.5;
+    opacity: 0.3;
+  }
+  
+  /* Dark mode chart styles */
+  .dark .chart-container .chart-axis-text {
+    fill: oklch(0.984 0.003 247.858);
+  }
+  
+  .dark .chart-container .chart-axis-line {
+    stroke: oklch(0.984 0.003 247.858);
+    opacity: 0.8;
+  }
+  
+  .dark .chart-container .chart-axis-label {
+    fill: oklch(0.984 0.003 247.858);
+    opacity: 0.9;
+  }
+  
+  .dark .chart-container .chart-legend-text {
+    fill: oklch(0.984 0.003 247.858);
+    opacity: 0.9;
+  }
+  
+  .dark .chart-container .chart-grid-line {
+    stroke: oklch(0.984 0.003 247.858);
+    stroke-width: 0.5;
+    opacity: 0.3;
+  }
+}

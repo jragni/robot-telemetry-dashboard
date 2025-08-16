@@ -1,12 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 
-import { useConnection } from '@/components/dashboard/ConnectionProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-import AddControlModal from './AddControlModal';
 
 const ControlPanel = dynamic(() => import('./ControlPanel'), { ssr: false });
 
@@ -14,7 +10,7 @@ const ControlPanel = dynamic(() => import('./ControlPanel'), { ssr: false });
  * ControlSection
  */
 export default function ControlSection() {
-	// TODO will re-introduce feature later
+  // TODO will re-introduce feature later
   // const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   // const { selectedConnection } = useConnection();
 
@@ -25,7 +21,7 @@ export default function ControlSection() {
       </CardHeader>
       <CardContent className="space-y-4">
         <ControlPanel />
-				{/* TODO will update when features are flushed out */}
+        {/* TODO will update when features are flushed out */}
         {/* <AddControlModal
           isDialogOpen={isDialogOpen}
           selectedConnection={selectedConnection}
