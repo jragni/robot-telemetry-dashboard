@@ -8,7 +8,6 @@ import SensorSection from '@/components/sensorsection';
 import TopicSection from '@/components/topicsection';
 import ImuVisualization from '@/components/sensorsection/ImuVisualization';
 import LaserScanVisualization from '@/components/sensorsection/LaserScanVisualization';
-import PilotModeToggle from '@/components/pilot/PilotModeToggle';
 import PilotMode from '@/components/pilot/PilotMode';
 
 const ControlPanel = dynamic(() => import('@/components/controlsection/ControlPanel'), { ssr: false });
@@ -117,9 +116,6 @@ export default function DashboardLayout() {
               <div className="flex items-center justify-between px-4 py-2">
                 <div className="flex-1">
                   <TopicSection />
-                </div>
-                <div className="ml-4">
-                  <PilotModeToggle />
                 </div>
               </div>
             </div>
