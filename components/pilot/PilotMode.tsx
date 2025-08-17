@@ -2,7 +2,7 @@
 
 import { usePilotMode } from './usePilotMode';
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
-import CameraVisualization from '@/components/sensorsection/CameraVizualization';
+import PilotModeCamera from './PilotModeCamera';
 import LaserScanVisualization from '@/components/sensorsection/LaserScanVisualization';
 import ControlPanel from '@/components/controlsection/ControlPanel';
 
@@ -25,9 +25,7 @@ export default function PilotMode() {
       </button>
 
       {/* Fullscreen camera background */}
-      <div className="absolute inset-0">
-        <CameraVisualization />
-      </div>
+      <PilotModeCamera />
 
       {/* LiDAR HUD - Top Right */}
       <div className="absolute top-4 right-20 w-80 h-60 bg-black/30 backdrop-blur-sm border border-gray-400/30 rounded">
@@ -65,11 +63,6 @@ export default function PilotMode() {
             <div className="w-1 h-1 bg-white/80 rounded-full"></div>
           </div>
         </div>
-      </div>
-
-      {/* Keyboard shortcut help */}
-      <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-2 rounded text-white text-xs">
-        <div>ESC - Exit</div>
       </div>
     </div>
   );

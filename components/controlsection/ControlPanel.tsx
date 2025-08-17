@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import PilotModeToggle from '@/components/pilot/PilotModeToggle';
 import { Slider } from '@/components/ui/slider';
 import {
   Select,
@@ -169,7 +170,6 @@ export default function ControlPanel(): React.ReactNode {
           </SelectContent>
         </Select>
       </div>
-
       {/* Speed Controls - Horizontal for space efficiency */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
@@ -248,6 +248,7 @@ export default function ControlPanel(): React.ReactNode {
         <div></div>
       </div>
 
+      <PilotModeToggle />
     </div>
   );
 }
