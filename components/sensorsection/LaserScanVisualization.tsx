@@ -92,6 +92,7 @@ export default function LaserScanVisualization(): React.ReactNode {
           }
         });
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.warn('Failed to fetch LaserScan topics:', error);
         setLaserScanTopics(['/scan']);
         setSelectedTopic('/scan');
@@ -145,7 +146,7 @@ export default function LaserScanVisualization(): React.ReactNode {
     // Get container dimensions for responsive sizing
     const containerRect = container?.getBoundingClientRect();
     // Optimized margins for pilot mode - more compact, professional
-    const margin = isPilotMode 
+    const margin = isPilotMode
       ? { top: 15, right: 15, bottom: 15, left: 15 }
       : { top: 20, right: 25, bottom: 35, left: 35 };
 
@@ -188,7 +189,7 @@ export default function LaserScanVisualization(): React.ReactNode {
     // Professional grid system - adaptive density
     const gridLines = g.append('g').attr('class', 'grid');
     const gridDensity = isPilotMode ? 5 : 10; // Cleaner grid in pilot mode
-    
+
     // Vertical grid lines - subtle, professional
     gridLines.selectAll('.grid-line-vertical')
       .data(xScale.ticks(gridDensity))
@@ -219,7 +220,7 @@ export default function LaserScanVisualization(): React.ReactNode {
     const tickCount = isPilotMode ? 3 : 5;
     const fontSize = isPilotMode ? '8px' : '10px';
     const axisOpacity = isPilotMode ? 0.6 : 0.8;
-    
+
     const xAxis = g.append('g')
       .attr('transform', `translate(0,${yScale(0)})`)
       .call(d3.axisBottom(xScale).ticks(tickCount));
@@ -263,7 +264,7 @@ export default function LaserScanVisualization(): React.ReactNode {
     const pointColor = isPilotMode ? '#00d4ff' : '#3b82f6'; // Cyan for pilot mode
     const pointOpacity = isPilotMode ? 0.9 : 0.8;
     const strokeColor = isPilotMode ? '#0099cc' : '#1d4ed8';
-    
+
     g.selectAll('.scan-point')
       .data(scanData)
       .enter()
@@ -328,12 +329,14 @@ export default function LaserScanVisualization(): React.ReactNode {
       <div className="w-full h-full relative">
         {/* Subtle frame indicator */}
         <div className="absolute inset-0 border border-white/20 rounded-lg bg-black/10 backdrop-blur-sm" />
-        
+
         {/* LiDAR label - minimal, professional */}
         <div className="absolute top-2 left-2 z-10">
-          <div className="text-xs font-mono text-white/80 uppercase tracking-wider" 
-               style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
-            LiDAR
+          <div
+            className="text-xs font-mono text-white/80 uppercase tracking-wider"
+              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}
+            >
+              LiDAR
           </div>
         </div>
 
