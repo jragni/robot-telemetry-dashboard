@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
+import { usePilotMode } from '@/components/pilot/usePilotMode';
 import {
   Select,
   SelectContent,
@@ -16,6 +17,7 @@ import { LaserScanMessage, ScanPoint } from './definitions';
 
 export default function LaserScanVisualization(): React.ReactNode {
   const { selectedConnection } = useConnection();
+  const { isPilotMode } = usePilotMode();
   const svgRef = useRef<SVGSVGElement>(null);
   const [scanData, setScanData] = useState<ScanPoint[]>([]);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -135,14 +137,17 @@ export default function LaserScanVisualization(): React.ReactNode {
   }, [selectedConnection, selectedTopic, processLaserScan]);
 
   useEffect(() => {
-    if (!svgRef.current || scanData.length === 0) return;
+    if (!svgRef.current) return;
 
     const svg = d3.select(svgRef.current);
     const container = svgRef.current.parentElement;
 
     // Get container dimensions for responsive sizing
     const containerRect = container?.getBoundingClientRect();
-    const margin = { top: 20, right: 25, bottom: 35, left: 35 };
+    // Optimized margins for pilot mode - more compact, professional
+    const margin = isPilotMode 
+      ? { top: 15, right: 15, bottom: 15, left: 15 }
+      : { top: 20, right: 25, bottom: 35, left: 35 };
 
     // Make responsive dimensions that scale well
     const containerWidth = (containerRect?.width ?? 400);
@@ -153,7 +158,9 @@ export default function LaserScanVisualization(): React.ReactNode {
     // Ensure square aspect ratio but allow better scaling
     // Use 90% of the smaller dimension to give more space while maintaining square shape
     const maxSize = Math.min(availableWidth, availableHeight);
-    const size = Math.max(maxSize * 0.9, 180); // Minimum 180px, but scales up well
+    // Flexible sizing for pilot mode - allow smaller displays
+    const minSize = isPilotMode ? 80 : 120;
+    const size = Math.max(maxSize * 0.95, minSize);
     const width = size;
     const height = size;
 
@@ -178,11 +185,13 @@ export default function LaserScanVisualization(): React.ReactNode {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Add grid lines
+    // Professional grid system - adaptive density
     const gridLines = g.append('g').attr('class', 'grid');
-    // Vertical grid lines
+    const gridDensity = isPilotMode ? 5 : 10; // Cleaner grid in pilot mode
+    
+    // Vertical grid lines - subtle, professional
     gridLines.selectAll('.grid-line-vertical')
-      .data(xScale.ticks(10))
+      .data(xScale.ticks(gridDensity))
       .enter()
       .append('line')
       .attr('class', 'grid-line-vertical')
@@ -190,11 +199,12 @@ export default function LaserScanVisualization(): React.ReactNode {
       .attr('y1', 0)
       .attr('x2', d => xScale(d))
       .attr('y2', height)
-      .attr('class', 'chart-grid-line');
+      .style('stroke', isPilotMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)')
+      .style('stroke-width', isPilotMode ? '0.25' : '0.5');
 
     // Horizontal grid lines
     gridLines.selectAll('.grid-line-horizontal')
-      .data(yScale.ticks(8))
+      .data(yScale.ticks(gridDensity))
       .enter()
       .append('line')
       .attr('class', 'grid-line-horizontal')
@@ -202,30 +212,39 @@ export default function LaserScanVisualization(): React.ReactNode {
       .attr('y1', d => yScale(d))
       .attr('x2', width)
       .attr('y2', d => yScale(d))
-      .attr('class', 'chart-grid-line');
+      .style('stroke', isPilotMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)')
+      .style('stroke-width', isPilotMode ? '0.25' : '0.5');
 
-    // Add axes with fewer ticks and dark mode support
+    // Professional axes - clean and minimal
+    const tickCount = isPilotMode ? 3 : 5;
+    const fontSize = isPilotMode ? '8px' : '10px';
+    const axisOpacity = isPilotMode ? 0.6 : 0.8;
+    
     const xAxis = g.append('g')
       .attr('transform', `translate(0,${yScale(0)})`)
-      .call(d3.axisBottom(xScale).ticks(5));
+      .call(d3.axisBottom(xScale).ticks(tickCount));
 
     xAxis.selectAll('text')
-      .style('font-size', '10px')
-      .attr('class', 'chart-axis-text');
+      .style('font-size', fontSize)
+      .style('font-family', 'ui-monospace, SFMono-Regular, monospace')
+      .style('fill', `rgba(255, 255, 255, ${axisOpacity})`);
 
     xAxis.selectAll('.domain, .tick line')
-      .attr('class', 'chart-axis-line');
+      .style('stroke', `rgba(255, 255, 255, ${axisOpacity})`)
+      .style('stroke-width', isPilotMode ? '0.5' : '1');
 
     const yAxis = g.append('g')
       .attr('transform', `translate(${xScale(0)},0)`)
-      .call(d3.axisLeft(yScale).ticks(5));
+      .call(d3.axisLeft(yScale).ticks(tickCount));
 
     yAxis.selectAll('text')
-      .style('font-size', '10px')
-      .attr('class', 'chart-axis-text');
+      .style('font-size', fontSize)
+      .style('font-family', 'ui-monospace, SFMono-Regular, monospace')
+      .style('fill', `rgba(255, 255, 255, ${axisOpacity})`);
 
     yAxis.selectAll('.domain, .tick line')
-      .attr('class', 'chart-axis-line');
+      .style('stroke', `rgba(255, 255, 255, ${axisOpacity})`)
+      .style('stroke-width', isPilotMode ? '0.5' : '1');
 
     // Calculate responsive sizes based on plot dimensions
     const robotRadius = Math.max(4, size * 0.015); // Scale robot size with plot
@@ -240,7 +259,11 @@ export default function LaserScanVisualization(): React.ReactNode {
       .style('stroke', '#dc2626')
       .style('stroke-width', Math.max(2, size * 0.005));
 
-    // Add scan points
+    // Premium scan points - adaptive styling
+    const pointColor = isPilotMode ? '#00d4ff' : '#3b82f6'; // Cyan for pilot mode
+    const pointOpacity = isPilotMode ? 0.9 : 0.8;
+    const strokeColor = isPilotMode ? '#0099cc' : '#1d4ed8';
+    
     g.selectAll('.scan-point')
       .data(scanData)
       .enter()
@@ -249,28 +272,42 @@ export default function LaserScanVisualization(): React.ReactNode {
       .attr('cx', d => xScale(d.x))
       .attr('cy', d => yScale(d.y))
       .attr('r', pointRadius)
-      .style('fill', '#3b82f6')
-      .style('fill-opacity', 0.8)
-      .style('stroke', '#1d4ed8')
-      .style('stroke-width', 0.5);
+      .style('fill', pointColor)
+      .style('fill-opacity', pointOpacity)
+      .style('stroke', strokeColor)
+      .style('stroke-width', isPilotMode ? 0.25 : 0.5)
+      .style('filter', isPilotMode ? 'drop-shadow(0 0 2px rgba(0, 212, 255, 0.3))' : 'none');
 
-    // Add labels with proper spacing
-    g.append('text')
-      .attr('x', width / 2)
-      .attr('y', height + margin.bottom - 5)
-      .style('text-anchor', 'middle')
-      .style('font-size', '9px')
-      .attr('class', 'chart-axis-label')
-      .text('Distance (m)');
+    // Add "No Data" text when there are no scan points
+    if (scanData.length === 0) {
+      g.append('text')
+        .attr('x', width / 2)
+        .attr('y', height / 2)
+        .style('text-anchor', 'middle')
+        .style('font-size', '12px')
+        .style('fill', 'rgba(255, 255, 255, 0.6)')
+        .text('No LiDAR Data');
+    }
 
-    g.append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 0 - margin.left + 15)
-      .attr('x', 0 - (height / 2))
-      .style('text-anchor', 'middle')
-      .style('font-size', '9px')
-      .attr('class', 'chart-axis-label')
-      .text('Distance (m)');
+    // Clean labels - only in non-pilot mode for clarity
+    if (!isPilotMode) {
+      g.append('text')
+        .attr('x', width / 2)
+        .attr('y', height + margin.bottom - 5)
+        .style('text-anchor', 'middle')
+        .style('font-size', '9px')
+        .style('fill', 'rgba(255, 255, 255, 0.8)')
+        .text('Distance (m)');
+
+      g.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0 - margin.left + 15)
+        .attr('x', 0 - (height / 2))
+        .style('text-anchor', 'middle')
+        .style('font-size', '9px')
+        .style('fill', 'rgba(255, 255, 255, 0.8)')
+        .text('Distance (m)');
+    }
 
   }, [maxRange, scanData]);
 
@@ -279,20 +316,51 @@ export default function LaserScanVisualization(): React.ReactNode {
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
-      <div className="w-full h-full bg-gray-800 border border-gray-600 rounded flex items-center justify-center text-gray-400">
-        <p className="text-sm">LiDAR: No connection</p>
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="text-sm text-white" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>LiDAR: No connection</p>
       </div>
     );
   }
 
+  // Premium Pilot Mode LiDAR - Clean, HUD-style display
+  if (isPilotMode) {
+    return (
+      <div className="w-full h-full relative">
+        {/* Subtle frame indicator */}
+        <div className="absolute inset-0 border border-white/20 rounded-lg bg-black/10 backdrop-blur-sm" />
+        
+        {/* LiDAR label - minimal, professional */}
+        <div className="absolute top-2 left-2 z-10">
+          <div className="text-xs font-mono text-white/80 uppercase tracking-wider" 
+               style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+            LiDAR
+          </div>
+        </div>
+
+        {/* Data status indicator - top right */}
+        <div className="absolute top-2 right-2 z-10">
+          <div className={`w-1.5 h-1.5 rounded-full ${
+            scanData.length > 0 ? 'bg-green-400 shadow-green-400/50 shadow-sm' : 'bg-amber-400 shadow-amber-400/50 shadow-sm'
+          }`} />
+        </div>
+
+        {/* SVG Plot - optimized for pilot mode */}
+        <div className="absolute inset-0 p-3">
+          <svg className="w-full h-full" ref={svgRef} />
+        </div>
+      </div>
+    );
+  }
+
+
   return (
-    <div className="w-full h-full bg-gray-800 border border-gray-600 rounded flex flex-col">
+    <div className="w-full h-full flex flex-col">
       {/* Header - Drone Operator Style */}
-      <div className="px-3 py-2 bg-gray-900/80 border-b border-gray-600">
+      <div className="px-3 py-2">
         {/* Desktop: Single row layout */}
         <div className="hidden sm:flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">
+            <h3 className="text-xs sm:text-sm font-medium text-white uppercase tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
               LiDAR
             </h3>
             <div className="flex items-center gap-2">
@@ -314,14 +382,17 @@ export default function LaserScanVisualization(): React.ReactNode {
           <div className="flex items-center gap-1 text-xs">
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span className="text-gray-300 font-mono">{scanData.length}</span>
+              <span className="text-white font-mono" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{scanData.length}</span>
             </div>
             <div className={`w-2 h-2 rounded-full ${
               isSubscribed ? 'bg-green-500 animate-pulse' : 'bg-red-500'
             }`} />
-            <div className={`px-1.5 py-0.5 rounded text-xs ${
-              isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-            }`}>
+            <div
+              style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
+              className={`px-1.5 py-0.5 rounded text-xs ${
+                isSubscribed ? 'bg-green-500/80 text-white' : 'bg-red-500/80 text-white'
+              }`}
+            >
               {isSubscribed ? 'Live' : 'Off'}
             </div>
           </div>
@@ -330,12 +401,15 @@ export default function LaserScanVisualization(): React.ReactNode {
         {/* Mobile: Stacked layout */}
         <div className="sm:hidden space-y-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">
+            <h3 className="text-xs sm:text-sm font-medium text-white uppercase tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
               LiDAR
             </h3>
-            <div className={`px-2 py-1 rounded text-xs ${
-              isSubscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-            }`}>
+            <div
+              style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
+              className={`px-2 py-1 rounded text-xs ${
+                isSubscribed ? 'bg-green-500/80 text-white' : 'bg-red-500/80 text-white'
+              }`}
+            >
               {isSubscribed ? 'Connected' : 'Disconnected'}
             </div>
           </div>
@@ -357,7 +431,7 @@ export default function LaserScanVisualization(): React.ReactNode {
             <div className="flex items-center justify-center gap-2 text-xs">
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-gray-300 font-mono">{scanData.length} pts</span>
+                <span className="text-white font-mono" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{scanData.length} pts</span>
               </div>
             </div>
           </div>
@@ -366,14 +440,14 @@ export default function LaserScanVisualization(): React.ReactNode {
 
       {/* Plot area */}
       <div className="flex-1 p-2 overflow-hidden">
-        <div className="w-full h-full min-h-0 border rounded-lg bg-white dark:bg-gray-800 p-1">
+        <div className="w-full h-full min-h-0 p-1">
           <svg className="w-full h-full chart-container" ref={svgRef}></svg>
         </div>
 
         {/* Status message - only show on mobile */}
         {scanData.length === 0 && isSubscribed && (
-          <div className="text-center text-gray-400 mt-4">
-            <p className="text-xs">Waiting for scan data on {selectedTopic} topic...</p>
+          <div className="text-center mt-4">
+            <p className="text-xs text-white" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>Waiting for scan data on {selectedTopic} topic...</p>
           </div>
         )}
       </div>

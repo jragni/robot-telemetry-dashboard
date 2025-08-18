@@ -153,10 +153,10 @@ export default function ControlPanel(): React.ReactNode {
   }
 
   return (
-    <div className="bg-gray-800 border border-gray-600 rounded p-3 h-fit">
+    <div className="p-3 h-fit">
       {/* Compact Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs sm:text-sm font-medium text-gray-100 uppercase tracking-wide">Controls</h3>
+        <h3 className="text-xs sm:text-sm font-medium text-white uppercase tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>Controls</h3>
         <Select onValueChange={setSelectedTopic} value={selectedTopic}>
           <SelectTrigger className="w-32 h-6 text-xs bg-gray-700 border-gray-500 text-gray-200">
             <SelectValue />
@@ -173,7 +173,7 @@ export default function ControlPanel(): React.ReactNode {
       {/* Speed Controls - Horizontal for space efficiency */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-gray-300 w-12 shrink-0">Linear:</Label>
+          <Label className="text-xs text-white w-12 shrink-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>Linear:</Label>
           <Slider
             className="flex-1"
             max={2}
@@ -182,10 +182,10 @@ export default function ControlPanel(): React.ReactNode {
             step={0.02}
             value={[linearVelocity]}
           />
-          <span className="text-xs text-gray-400 font-mono w-12 text-right">{linearVelocity.toFixed(2)}</span>
+          <span className="text-xs text-white font-mono w-12 text-right" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{linearVelocity.toFixed(2)}</span>
         </div>
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-gray-300 w-12 shrink-0">Angular:</Label>
+          <Label className="text-xs text-white w-12 shrink-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>Angular:</Label>
           <Slider
             className="flex-1"
             max={2}
@@ -194,7 +194,7 @@ export default function ControlPanel(): React.ReactNode {
             step={0.02}
             value={[angularVelocity]}
           />
-          <span className="text-xs text-gray-400 font-mono w-12 text-right">{angularVelocity.toFixed(2)}</span>
+          <span className="text-xs text-white font-mono w-12 text-right" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{angularVelocity.toFixed(2)}</span>
         </div>
       </div>
 
