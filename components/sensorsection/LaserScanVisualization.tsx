@@ -334,17 +334,19 @@ export default function LaserScanVisualization(): React.ReactNode {
         <div className="absolute top-2 left-2 z-10">
           <div
             className="text-xs font-mono text-white/80 uppercase tracking-wider"
-              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}
-            >
+            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}
+          >
               LiDAR
           </div>
         </div>
 
         {/* Data status indicator - top right */}
         <div className="absolute top-2 right-2 z-10">
-          <div className={`w-1.5 h-1.5 rounded-full ${
-            scanData.length > 0 ? 'bg-green-400 shadow-green-400/50 shadow-sm' : 'bg-amber-400 shadow-amber-400/50 shadow-sm'
-          }`} />
+          <div
+            className={`w-1.5 h-1.5 rounded-full ${scanData.length > 0
+              ? 'bg-green-400 shadow-green-400/50 shadow-sm'
+              : 'bg-amber-400 shadow-amber-400/50 shadow-sm'}`}
+          />
         </div>
 
         {/* SVG Plot - optimized for pilot mode */}
