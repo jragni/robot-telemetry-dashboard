@@ -116,9 +116,6 @@ export default function ControlPanel(): React.ReactNode {
         case 'ccw':
           message.angular.z = angularVelocity;
           break;
-        default:
-          // Values are already 0 from the initialization above
-          break;
       }
 
       const rosMessage = new ROSLIB.Message(message);
@@ -247,7 +244,6 @@ export default function ControlPanel(): React.ReactNode {
         </Button>
         <div></div>
       </div>
-
       <PilotModeToggle />
     </div>
   );

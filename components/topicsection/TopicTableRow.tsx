@@ -3,22 +3,42 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { TopicTableRowProps } from './definitions';
 
-import { formatFullMessage } from './helpers';
+import { formatFullMessage, formatSensorMessage } from './helpers';
+
+interface ROSTopicSubscription {
+  subscribe: (callback: (message: unknown) => void) => void;
+  unsubscribe: () => void;
+}
+
+interface ExtendedTopicTableRowProps extends TopicTableRowProps {
+  isActive?: boolean;
+}
 
 export default function TopicTableRow({
   messageType,
   selectedConnection,
   topicName,
-}: TopicTableRowProps): React.ReactNode {
+  isActive = true,
+}: ExtendedTopicTableRowProps): React.ReactNode {
   const ros = selectedConnection?.rosInstance;
   const [message, setMessage] = useState<string>('');
   const lastUpdateRef = useRef<number>(0);
   const pendingMessageRef = useRef<string>('');
 
-  // Throttle updates to prevent UI freezing (max 2 updates per second)
-  const throttleDelay = 500; // ms
+  // NO THROTTLING - display all messages in real-time
+  const getThrottleDelay = useCallback((_messageType: string) => {
+    return 0; // No delay for any message type - real-time updates
+  }, []);
+
+  const throttleDelay = getThrottleDelay(messageType);
 
   const throttledSetMessage = useCallback((newMessage: string) => {
+    if (throttleDelay === 0) {
+      // No throttling - immediate update
+      setMessage(newMessage);
+      return;
+    }
+
     const now = Date.now();
     pendingMessageRef.current = newMessage;
 
@@ -38,24 +58,40 @@ export default function TopicTableRow({
   }, [throttleDelay]);
 
   useEffect(() => {
+    // Reset message state
     setMessage('');
     lastUpdateRef.current = 0;
     pendingMessageRef.current = '';
+
+    // Only subscribe when component is active
+    if (!isActive) {
+      setMessage('Table collapsed - no live updates');
+      return;
+    }
+
+    let topicSubscription: ROSTopicSubscription | null = null;
 
     const handleSubscribe = async () => {
       if (!ros) return;
       const ROSLIB = (await import('roslib')).default;
 
-      const topic = new ROSLIB.Topic({
+      topicSubscription = new ROSLIB.Topic({
         ros,
         name: topicName,
         messageType,
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const handle = (m: any) => {
+      const handle = (m: unknown) => {
         try {
-          const val = formatFullMessage(m);
+          // Use fast formatter for sensor data, full formatter for others
+          const isSensorData = messageType.includes('LaserScan') ||
+                              messageType.includes('Imu') ||
+                              messageType.includes('Image') ||
+                              messageType.includes('CompressedImage') ||
+                              messageType.includes('Twist');
+
+          const val = isSensorData ? formatSensorMessage(m, messageType) : formatFullMessage(m);
+
           // Limit message size to prevent UI lag
           const maxLength = 10000;
           const truncatedVal = val.length > maxLength
@@ -67,11 +103,18 @@ export default function TopicTableRow({
           throttledSetMessage('[Error formatting message]');
         }
       };
-      topic.subscribe(handle);
+      topicSubscription.subscribe(handle);
     };
 
     handleSubscribe();
-  }, [ros, topicName, messageType, throttledSetMessage]);
+
+    // Cleanup function to unsubscribe when component unmounts or becomes inactive
+    return () => {
+      if (topicSubscription) {
+        topicSubscription.unsubscribe();
+      }
+    };
+  }, [ros, topicName, messageType, throttledSetMessage, isActive]);
 
   return (
     <TableRow key={topicName}>

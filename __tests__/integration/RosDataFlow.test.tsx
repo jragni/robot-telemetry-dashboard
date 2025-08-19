@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, act } from '@/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -20,24 +21,27 @@ vi.mock('roslib', () => ({ default: mockROSLIB }));
 vi.mock('@/components/dashboard/ConnectionProvider');
 vi.mock('@/components/ui/sidebar', () => ({
   useSidebar: vi.fn(() => ({ open: true })),
+  SidebarProvider: vi.fn(({ children }: { children: React.ReactNode }) => <div>{children}</div>),
 }));
 
-// Mock individual components for integration testing
-const mockComponents = {
-  SensorSection: vi.fn(() => <div data-testid="sensor-section">Sensor Section</div>),
-  ImuVisualization: vi.fn(() => <div data-testid="imu-visualization">IMU Visualization</div>),
-  LaserScanVisualization: vi.fn(() => <div data-testid="laser-scan-visualization">Laser Scan</div>),
-  ControlPanel: vi.fn(() => <div data-testid="control-panel">Control Panel</div>),
-  TopicSection: vi.fn(() => <div data-testid="topic-section">Topic Section</div>),
-  Sidebar: vi.fn(() => <div data-testid="sidebar">Sidebar</div>),
-};
-
-vi.mock('@/components/sensorsection', () => ({ default: mockComponents.SensorSection }));
-vi.mock('@/components/sensorsection/ImuVisualization', () => ({ default: mockComponents.ImuVisualization }));
-vi.mock('@/components/sensorsection/LaserScanVisualization', () => ({ default: mockComponents.LaserScanVisualization }));
-vi.mock('@/components/controlsection/ControlPanel', () => ({ default: mockComponents.ControlPanel }));
-vi.mock('@/components/topicsection', () => ({ default: mockComponents.TopicSection }));
-vi.mock('@/components/sidebar', () => ({ default: mockComponents.Sidebar }));
+vi.mock('@/components/sensorsection', () => ({ 
+  default: vi.fn(() => <div data-testid="sensor-section">Sensor Section</div>)
+}));
+vi.mock('@/components/sensorsection/ImuVisualization', () => ({ 
+  default: vi.fn(() => <div data-testid="imu-visualization">IMU Visualization</div>)
+}));
+vi.mock('@/components/sensorsection/LaserScanVisualization', () => ({ 
+  default: vi.fn(() => <div data-testid="laser-scan-visualization">Laser Scan</div>)
+}));
+vi.mock('@/components/controlsection/ControlPanel', () => ({ 
+  default: vi.fn(() => <div data-testid="control-panel">Control Panel</div>)
+}));
+vi.mock('@/components/topicsection', () => ({ 
+  default: vi.fn(() => <div data-testid="topic-section">Topic Section</div>)
+}));
+vi.mock('@/components/sidebar', () => ({ 
+  default: vi.fn(() => <div data-testid="sidebar">Sidebar</div>)
+}));
 
 const mockUseConnection = useConnection as vi.MockedFunction<typeof useConnection>;
 

@@ -5,6 +5,7 @@ import { useConnection } from '@/components/dashboard/ConnectionProvider';
 import PilotModeCamera from './PilotModeCamera';
 import LaserScanVisualization from '@/components/sensorsection/LaserScanVisualization';
 import ControlPanel from '@/components/controlsection/ControlPanel';
+import PingDisplay from '@/components/dashboard/PingDisplay';
 
 export default function PilotMode() {
   const { isPilotMode, exitPilotMode, orientation, isFullscreen } = usePilotMode();
@@ -18,15 +19,14 @@ export default function PilotMode() {
     <div className={`fixed inset-0 z-50 bg-black ${isFullscreen ? 'mobile-fullscreen' : ''} ${
       orientation === 'landscape' ? 'mobile-landscape-layout' : ''
     } mobile-safe-area`}>
-      {/* Exit button - Top left, smaller */}
+      {/* Exit button - Top left */}
       <button
         onClick={exitPilotMode}
-        className={`absolute z-50 bg-red-600/80 hover:bg-red-600 text-white px-2 py-1 rounded text-xs backdrop-blur-sm touch-manipulation min-h-[32px] min-w-[32px] flex items-center justify-center ${
-          orientation === 'landscape' ? 'top-1 right-1 mobile-safe-area-top mobile-safe-area-left' : 'top-2 right-2 sm:top-4 sm:left-4 mobile-safe-area-top mobile-safe-area-left'
+        className={`absolute z-50 bg-red-600/80 hover:bg-red-600 text-white px-3 py-2 rounded text-xs backdrop-blur-sm touch-manipulation min-h-[32px] flex items-center justify-center ${
+          orientation === 'landscape' ? 'top-1 left-1 mobile-safe-area-top mobile-safe-area-left' : 'top-2 left-2 sm:top-4 sm:left-4 mobile-safe-area-top mobile-safe-area-left'
         }`}
       >
-        <span className="hidden sm:inline text-xs">Exit</span>
-        <span className="sm:hidden">✕</span>
+        <span className="text-xs font-medium">Exit</span>
       </button>
 
       {/* Fullscreen camera background */}
@@ -36,7 +36,7 @@ export default function PilotMode() {
       <div className="md:hidden">
         {/* Top status bar - Mobile */}
         <div className={`absolute ${
-          orientation === 'landscape' ? 'top-1 left-8 right-1 mobile-safe-area-top mobile-safe-area-right' : 'top-2 left-12 right-2 mobile-safe-area-top mobile-safe-area-right'
+          orientation === 'landscape' ? 'top-1 left-16 right-1 mobile-safe-area-top mobile-safe-area-right' : 'top-2 left-20 right-2 mobile-safe-area-top mobile-safe-area-right'
         } bg-black/60 backdrop-blur-sm px-3 py-2 rounded text-white text-sm`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -49,6 +49,9 @@ export default function PilotMode() {
                   : 'No Connection'
                 }
               </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <PingDisplay compact ping={selectedConnection?.ping} showLabel />
             </div>
           </div>
         </div>
@@ -88,17 +91,20 @@ export default function PilotMode() {
         </div>
 
         {/* Connection status indicator */}
-        <div className="absolute top-4 left-20 bg-black/50 backdrop-blur-sm px-3 py-2 rounded text-white text-sm">
-          <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${
-              selectedConnection?.status === 'connected' ? 'bg-green-500 animate-pulse' : 'bg-red-500'
-            }`} />
-            <span>
-              {selectedConnection?.status === 'connected'
-                ? `Connected: ${selectedConnection.name}`
-                : 'No Connection'
-              }
-            </span>
+        <div className="absolute top-4 left-24 bg-black/50 backdrop-blur-sm px-3 py-2 rounded text-white text-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${
+                selectedConnection?.status === 'connected' ? 'bg-green-500 animate-pulse' : 'bg-red-500'
+              }`} />
+              <span>
+                {selectedConnection?.status === 'connected'
+                  ? `Connected: ${selectedConnection.name}`
+                  : 'No Connection'
+                }
+              </span>
+            </div>
+            <PingDisplay ping={selectedConnection?.ping} showLabel />
           </div>
         </div>
 

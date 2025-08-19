@@ -39,6 +39,47 @@ export const formatMessage = (obj: unknown): string => {
   return String(obj);
 };
 
+// Fast formatter for sensor data - avoids expensive JSON.stringify
+export const formatSensorMessage = (obj: unknown, messageType: string): string => {
+  if (obj === null || obj === undefined) {
+    return String(obj);
+  }
+
+  // For sensor data, show key metrics instead of full JSON
+  if (messageType.includes('LaserScan') && typeof obj === 'object' && obj !== null) {
+    const laserScan = obj as { ranges?: number[]; range_min?: number; range_max?: number };
+    return `LaserScan: ${laserScan.ranges?.length || 0} points, range: ${laserScan.range_min?.toFixed(2) || 'N/A'}-${laserScan.range_max?.toFixed(2) || 'N/A'}m`;
+  }
+
+  if (messageType.includes('Imu') && typeof obj === 'object' && obj !== null) {
+    const imu = obj as {
+      orientation?: { x?: number; y?: number; z?: number; w?: number };
+      linear_acceleration?: { x?: number; y?: number; z?: number };
+    };
+    const orient = imu.orientation;
+    const accel = imu.linear_acceleration;
+    return `IMU: orientation(${orient?.x?.toFixed(2) || 0}, ${orient?.y?.toFixed(2) || 0}, ${orient?.z?.toFixed(2) || 0}, ${orient?.w?.toFixed(2) || 0}), accel(${accel?.x?.toFixed(2) || 0}, ${accel?.y?.toFixed(2) || 0}, ${accel?.z?.toFixed(2) || 0})`;
+  }
+
+  if ((messageType.includes('Image') || messageType.includes('CompressedImage')) && typeof obj === 'object' && obj !== null) {
+    const image = obj as { width?: number; height?: number; encoding?: string; data?: { length?: number } };
+    return `Image: ${image.width || 'unknown'}x${image.height || 'unknown'}, encoding: ${image.encoding || 'unknown'}, ${image.data?.length || 0} bytes`;
+  }
+
+  if (messageType.includes('Twist') && typeof obj === 'object' && obj !== null) {
+    const twist = obj as {
+      linear?: { x?: number; y?: number; z?: number };
+      angular?: { x?: number; y?: number; z?: number };
+    };
+    const linear = twist.linear;
+    const angular = twist.angular;
+    return `Twist: linear(${linear?.x?.toFixed(2) || 0}, ${linear?.y?.toFixed(2) || 0}, ${linear?.z?.toFixed(2) || 0}), angular(${angular?.x?.toFixed(2) || 0}, ${angular?.y?.toFixed(2) || 0}, ${angular?.z?.toFixed(2) || 0})`;
+  }
+
+  // For other message types, use lightweight formatting
+  return formatMessage(obj);
+};
+
 export const formatFullMessage = (obj: unknown): string => {
   if (obj === null || obj === undefined) {
     return String(obj);

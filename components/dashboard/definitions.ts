@@ -9,6 +9,13 @@ export interface TopicSubscription {
   topicName: string
 }
 
+export interface PingMetrics {
+  latency: number; // in milliseconds
+  lastPing: Date;
+  status: 'good' | 'fair' | 'poor' | 'timeout';
+  history: number[]; // last 10 ping values
+}
+
 export interface RobotConnection {
   id: string,
   lastMessage?: string
@@ -17,11 +24,13 @@ export interface RobotConnection {
   status: ConnectionStatus
   subscriptions: TopicSubscription[]
   url: string
+  ping?: PingMetrics
 }
 
 export interface ConnectionContextType {
   addConnection: (id: string, name:string, url: string) => Promise<void>,
   connections: Record<string, RobotConnection>
+  setConnections: React.Dispatch<React.SetStateAction<Record<string, RobotConnection>>>
   disconnect: (id: string) => void
   reconnect: (id: string) => void
   removeConnection: (id: string) => void

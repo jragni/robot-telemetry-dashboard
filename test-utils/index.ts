@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 // Re-export all test utilities
 export * from './renderWithProviders';
 export * from './mockRosConnection';
