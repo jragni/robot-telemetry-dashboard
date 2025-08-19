@@ -46,7 +46,9 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
     const ROSLIB = (await import('roslib')).default;
 
     return new Promise<void>((resolve, reject) => {
-      const rosInstance = new ROSLIB.Ros({ url: webSocketUrl });
+      const rosInstance = new ROSLIB.Ros({
+        url: webSocketUrl,
+      });
 
       let settled = false;
       const timeout = setTimeout(() => {
@@ -96,6 +98,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
               },
             }));
           },
+          // eslint-disable-next-line no-console
           (error) => { console.log('Error fetching topics:', error); },
         );
 
@@ -124,7 +127,9 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
       };
 
       // Optimize for control command priority
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((rosInstance as any).socket) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (rosInstance as any).socket.binaryType = 'arraybuffer';
       }
 
@@ -169,6 +174,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
 
       setConnections((prev) => {
         const { [id]: removed, ...rest } = prev;
+        // eslint-disable-next-line no-console
         console.log('Removing connection:', removed);
         return rest;
       });
@@ -184,6 +190,7 @@ export default function ConnectionProvider({ children }: ConnectionProviderProps
         addConnection,
         disconnect,
         connections,
+        setConnections,
         reconnect,
         removeConnection,
         selectedConnectionId,

@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom';
 import 'vitest-canvas-mock';
 import { beforeEach, afterEach, vi } from 'vitest';
+import React from 'react';
+
+// Make React globally available for JSX
+global.React = React;
 
 // Global test setup
 beforeEach(() => {
@@ -93,8 +97,8 @@ beforeEach(() => {
   });
 
   // Mock setTimeout and clearTimeout for better test control
-  vi.stubGlobal('setTimeout', vi.fn((fn) => fn()));
-  vi.stubGlobal('clearTimeout', vi.fn());
+  // Keep the real implementations to avoid breaking test library timers
+  // Just stub setInterval and clearInterval which we mock explicitly
   vi.stubGlobal('setInterval', vi.fn());
   vi.stubGlobal('clearInterval', vi.fn());
 });

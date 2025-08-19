@@ -1,6 +1,7 @@
 import { Crosshair } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import PingDisplay from '@/components/dashboard/PingDisplay';
 
 import { ConnectionsListItemProps } from './definitions';
 import ConnectionInformationDialog from './ConnectionInformationDialog';
@@ -18,12 +19,16 @@ export default function ConnnectionListItem({
   name,
   status,
   url,
+  ping,
 }: ConnectionsListItemProps): React.ReactNode {
 
 
   return (
-    <li className="flex items-center justify-between">
-      <span className="font-semibold">{name}</span>
+    <li className="flex items-center justify-between py-2">
+      <div className="flex flex-col gap-1">
+        <span className="font-semibold text-sm">{name}</span>
+        <PingDisplay compact ping={ping} showLabel />
+      </div>
       <div className="flex gap-2">
         <Button
           className="h-5 w-5 hover:opacity-70"

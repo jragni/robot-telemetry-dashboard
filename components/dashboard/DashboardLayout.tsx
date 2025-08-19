@@ -9,6 +9,7 @@ import TopicSection from '@/components/topicsection';
 import ImuVisualization from '@/components/sensorsection/ImuVisualization';
 import LaserScanVisualization from '@/components/sensorsection/LaserScanVisualization';
 import PilotMode from '@/components/pilot/PilotMode';
+import PingManager from '@/components/dashboard/PingManager';
 
 const ControlPanel = dynamic(() => import('@/components/controlsection/ControlPanel'), { ssr: false });
 
@@ -125,6 +126,9 @@ export default function DashboardLayout() {
 
       {/* Pilot Mode Overlay */}
       <PilotMode />
+
+      {/* Ping Manager - Background service */}
+      <PingManager />
     </div>
   );
 }

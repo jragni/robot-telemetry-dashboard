@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo, memo } from 'react';
 import * as d3 from 'd3';
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
@@ -21,7 +21,19 @@ interface ImuDataPoint {
   angularVelocity: Vector3;
 }
 
-export default function ImuVisualization(): React.ReactNode {
+
+interface D3Selection {
+  svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null;
+  g: d3.Selection<SVGGElement, unknown, null, undefined> | null;
+  xScale: d3.ScaleTime<number, number> | null;
+  yScale: d3.ScaleLinear<number, number> | null;
+  line: d3.Line<ImuDataPoint> | null;
+  paths: Map<string, d3.Selection<SVGPathElement, unknown, null, undefined>>;
+  legend: d3.Selection<SVGGElement, unknown, null, undefined> | null;
+  isInitialized: boolean;
+}
+
+function ImuVisualization(): React.ReactNode {
   const { selectedConnection } = useConnection();
   const [imuDataHistory, setImuDataHistory] = useState<ImuDataPoint[]>([]);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -38,28 +50,47 @@ export default function ImuVisualization(): React.ReactNode {
   const accelerationRef = useRef<SVGSVGElement>(null);
   const angularVelocityRef = useRef<SVGSVGElement>(null);
 
-  // Keep last 100 data points (about 10 seconds at 10Hz)
-  const maxDataPoints = 1000;
+  // D3 selection state management to avoid recreation
+  const orientationD3State = useRef<D3Selection>({
+    svg: null, g: null, xScale: null, yScale: null, line: null,
+    paths: new Map(), legend: null, isInitialized: false,
+  });
+  const accelerationD3State = useRef<D3Selection>({
+    svg: null, g: null, xScale: null, yScale: null, line: null,
+    paths: new Map(), legend: null, isInitialized: false,
+  });
+  const angularVelocityD3State = useRef<D3Selection>({
+    svg: null, g: null, xScale: null, yScale: null, line: null,
+    paths: new Map(), legend: null, isInitialized: false,
+  });
 
-  // Convert quaternion to Euler angles (roll, pitch, yaw)
-  const quaternionToEuler = useCallback((q: Quaternion) => {
-    const { x, y, z, w } = q;
+  // Performance monitoring
+  const performanceThreshold = 50; // 50ms render time threshold
 
-    // Roll (x-axis rotation)
-    const sinrCosp = 2 * (w * x + y * z);
-    const cosrCosp = 1 - 2 * (x * x + y * y);
-    const roll = Math.atan2(sinrCosp, cosrCosp);
+  // Keep last 100 data points (about 5 seconds at 20Hz) - optimized for smooth UI performance
+  const maxDataPoints = 100;
 
-    // Pitch (y-axis rotation)
-    const sinp = 2 * (w * y - z * x);
-    const pitch = Math.abs(sinp) >= 1 ? Math.sign(sinp) * (Math.PI / 2) : Math.asin(sinp);
+  // Convert quaternion to Euler angles (roll, pitch, yaw) - memoized for performance
+  const quaternionToEuler = useMemo(() => {
+    return (q: Quaternion) => {
+      const { x, y, z, w } = q;
 
-    // Yaw (z-axis rotation)
-    const sinyCosp = 2 * (w * z + x * y);
-    const cosyCosp = 1 - 2 * (y * y + z * z);
-    const yaw = Math.atan2(sinyCosp, cosyCosp);
+      // Roll (x-axis rotation)
+      const sinrCosp = 2 * (w * x + y * z);
+      const cosrCosp = 1 - 2 * (x * x + y * y);
+      const roll = Math.atan2(sinrCosp, cosrCosp);
 
-    return { roll, pitch, yaw };
+      // Pitch (y-axis rotation)
+      const sinp = 2 * (w * y - z * x);
+      const pitch = Math.abs(sinp) >= 1 ? Math.sign(sinp) * (Math.PI / 2) : Math.asin(sinp);
+
+      // Yaw (z-axis rotation)
+      const sinyCosp = 2 * (w * z + x * y);
+      const cosyCosp = 1 - 2 * (y * y + z * z);
+      const yaw = Math.atan2(sinyCosp, cosyCosp);
+
+      return { roll, pitch, yaw };
+    };
   }, []);
 
   // Fetch available IMU topics when connection changes
@@ -137,8 +168,14 @@ export default function ImuVisualization(): React.ReactNode {
         };
 
         setImuDataHistory(prev => {
-          const newHistory = [...prev, dataPoint];
-          return newHistory.slice(-maxDataPoints);
+          // Optimized array update - avoid spread operator for large arrays
+          if (prev.length >= maxDataPoints) {
+            const newHistory = prev.slice(1);
+            newHistory.push(dataPoint);
+            return newHistory;
+          } else {
+            return [...prev, dataPoint];
+          }
         });
       });
 
@@ -155,18 +192,27 @@ export default function ImuVisualization(): React.ReactNode {
     };
   }, [selectedConnection, selectedTopic, quaternionToEuler, maxDataPoints]);
 
-  // Create time series plot
+  // Performance monitoring utility
+  const measurePerformance = useCallback((renderTime: number, _pointCount: number) => {
+    // Log performance warnings if needed
+    if (renderTime > performanceThreshold) {
+      console.warn(`IMU render time exceeded threshold: ${renderTime.toFixed(2)}ms (threshold: ${performanceThreshold}ms)`);
+    }
+  }, [performanceThreshold]);
+
+  // Optimized create time series plot with selective updates
   const createTimeSeriesPlot = useCallback((
     svgRef: React.RefObject<SVGSVGElement | null>,
+    d3State: React.MutableRefObject<D3Selection>,
     data: ImuDataPoint[],
     valueAccessors: { [key: string]: (d: ImuDataPoint) => number },
     colors: { [key: string]: string },
     yLabel: string,
     yDomain?: [number, number],
   ) => {
-    if (!svgRef.current || data.length === 0) return;
+    if (!svgRef.current) return;
 
-    const svg = d3.select(svgRef.current);
+    const startTime = performance.now();
 
     // Get container dimensions for responsive sizing
     const container = svgRef.current.parentElement;
@@ -179,12 +225,28 @@ export default function ImuVisualization(): React.ReactNode {
     const width = Math.max(containerWidth - margin.left - margin.right, 200);
     const height = Math.max(containerHeight - margin.top - margin.bottom, 100);
 
-    svg.selectAll('*').remove();
-    svg.attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom);
+    // Initialize D3 elements only once
+    if (!d3State.current.isInitialized || !d3State.current.svg) {
+      // Clear previous elements
+      d3.select(svgRef.current).selectAll('*').remove();
 
-    const g = svg.append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+      d3State.current.svg = d3.select(svgRef.current);
+      d3State.current.svg
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom);
+
+      d3State.current.g = d3State.current.svg.append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+
+      d3State.current.paths.clear();
+      d3State.current.isInitialized = true;
+    }
+
+    if (data.length === 0) {
+      // Clear paths when no data
+      d3State.current.paths.forEach(path => path.attr('d', null));
+      return;
+    }
 
     // Create scales - use actual data range instead of fixed window
     const timeExtent = d3.extent(data, d => d.timestamp) as [number, number];
@@ -196,14 +258,11 @@ export default function ImuVisualization(): React.ReactNode {
       const now = Date.now();
 
       if (dataSpan < timeWindow) {
-        // If data spans less than 10 seconds, show from first data point to now
         xDomain = [timeExtent[0], Math.max(timeExtent[1], now)];
       } else {
-        // If data spans more than 10 seconds, show last 10 seconds of data
         xDomain = [timeExtent[1] - timeWindow, timeExtent[1]];
       }
     } else {
-      // Fallback to current time window
       const now = Date.now();
       xDomain = [now - timeWindow, now];
     }
@@ -221,7 +280,6 @@ export default function ImuVisualization(): React.ReactNode {
         Object.values(valueAccessors).map(accessor => accessor(d)),
       );
 
-      // Filter out any extreme or invalid values
       const validValues = allValues.filter(v =>
         isFinite(v) && !isNaN(v) && Math.abs(v) < 1000,
       );
@@ -229,8 +287,6 @@ export default function ImuVisualization(): React.ReactNode {
       if (validValues.length > 0) {
         const dataMin = d3.min(validValues) ?? 0;
         const dataMax = d3.max(validValues) ?? 0;
-
-        // Use a sliding window approach for dynamic bounds
         const range = dataMax - dataMin;
         const minRange = 0.1;
 
@@ -239,18 +295,13 @@ export default function ImuVisualization(): React.ReactNode {
           yMin = center - minRange / 2;
           yMax = center + minRange / 2;
         } else {
-          // Add modest padding but ensure we don't exceed reasonable bounds
-          const padding = Math.min(range * 0.1, 1.0); // Cap padding at 1.0
+          const padding = Math.min(range * 0.1, 1.0);
           yMin = dataMin - padding;
           yMax = dataMax + padding;
         }
 
-        // Enforce absolute bounds to prevent extreme scaling
         yMin = Math.max(yMin, -100);
         yMax = Math.min(yMax, 100);
-      } else {
-        yMin = 0;
-        yMax = 0;
       }
     }
 
@@ -258,27 +309,53 @@ export default function ImuVisualization(): React.ReactNode {
       .domain([yMin, yMax])
       .range([height, 0]);
 
-    // Add axes with better formatting and dark mode support
-    const xAxis = g.append('g')
-      .attr('transform', `translate(0,${height})`);
+    // Update scales references
+    d3State.current.xScale = xScale;
+    d3State.current.yScale = yScale;
 
+    // Create/update axes only if necessary
+    if (!d3State.current.g!.select('.x-axis').node()) {
+      const xAxis = d3State.current.g!.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', `translate(0,${height})`);
+
+      const yAxis = d3State.current.g!.append('g')
+        .attr('class', 'y-axis');
+
+      // Add axis labels
+      d3State.current.g!.append('text')
+        .attr('class', 'y-axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0 - margin.left + 12)
+        .attr('x', 0 - (height / 2))
+        .attr('dy', '0.35em')
+        .style('text-anchor', 'middle')
+        .style('font-size', '9px')
+        .attr('class', 'chart-axis-label')
+        .text(yLabel);
+
+      // Initialize legend container
+      d3State.current.legend = d3State.current.g!.append('g')
+        .attr('class', 'legend');
+    }
+
+    // Update axes
     const xAxisGenerator = d3.axisBottom(xScale)
       .ticks(4)
       .tickFormat((d) => d3.timeFormat('%M:%S')(new Date(d as number)));
-    xAxis.call(xAxisGenerator);
+    (d3State.current.g!.select('.x-axis') as any)
+      .call(xAxisGenerator);
 
-    xAxis.selectAll('text')
+    d3State.current.g!.select('.x-axis').selectAll('text')
       .style('font-size', '10px')
       .attr('class', 'chart-axis-text');
 
-    xAxis.selectAll('.domain, .tick line')
+    d3State.current.g!.select('.x-axis').selectAll('.domain, .tick line')
       .attr('class', 'chart-axis-line');
 
-    const yAxis = g.append('g');
     const yAxisGenerator = d3.axisLeft(yScale)
       .ticks(5)
       .tickFormat((d) => {
-        // Use more decimal places for small numbers
         const value = Number(d);
         if (Math.abs(value) < 0.1) {
           return d3.format('.3f')(value);
@@ -288,69 +365,82 @@ export default function ImuVisualization(): React.ReactNode {
           return d3.format('.1f')(value);
         }
       });
-    yAxis.call(yAxisGenerator);
+    (d3State.current.g!.select('.y-axis') as any)
+      .call(yAxisGenerator);
 
-    yAxis.selectAll('text')
+    d3State.current.g!.select('.y-axis').selectAll('text')
       .style('font-size', '10px')
       .attr('class', 'chart-axis-text');
 
-    yAxis.selectAll('.domain, .tick line')
+    d3State.current.g!.select('.y-axis').selectAll('.domain, .tick line')
       .attr('class', 'chart-axis-line');
 
-    // Add axis labels with proper spacing
-    g.append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 0 - margin.left + 12)
-      .attr('x', 0 - (height / 2))
-      .attr('dy', '0.35em')
-      .style('text-anchor', 'middle')
-      .style('font-size', '9px')
-      .attr('class', 'chart-axis-label')
-      .text(yLabel);
-
-    // Create line generator with clamping to prevent overflow
+    // Create line generator
     const line = d3.line<ImuDataPoint>()
       .x(d => xScale(d.timestamp))
       .curve(d3.curveLinear);
 
-    // Draw lines for each data series
-    Object.entries(valueAccessors).forEach(([key, accessor]) => {
+    // Update data lines using efficient enter/update/exit pattern
+    Object.entries(valueAccessors).forEach(([key, accessor], index) => {
       line.y(d => {
         const value = accessor(d);
-        // Robust clamping: handle invalid values and strict bounds enforcement
         if (!isFinite(value) || isNaN(value)) {
-          return yScale((yMin + yMax) / 2); // Use center for invalid values
+          return yScale((yMin + yMax) / 2);
         }
         const clampedValue = Math.max(yMin, Math.min(yMax, value));
         const scaledValue = yScale(clampedValue);
-        // Additional safety: ensure the scaled value is within the chart area
         return Math.max(0, Math.min(height, scaledValue));
       });
 
-      g.append('path')
-        .datum(data)
-        .attr('fill', 'none')
-        .attr('stroke', colors[key] ?? '#000000')
-        .attr('stroke-width', 2)
+      // Get or create path for this data series
+      if (!d3State.current.paths.has(key)) {
+        const path = d3State.current.g!.append('path')
+          .attr('class', `line-${key}`)
+          .attr('fill', 'none')
+          .attr('stroke', colors[key] ?? '#000000')
+          .attr('stroke-width', 2);
+        d3State.current.paths.set(key, path);
+      }
+
+      // Update path data with smooth transition
+      const path = d3State.current.paths.get(key)!;
+      path.datum(data)
+        .transition()
+        .duration(100)
         .attr('d', line);
 
-      // Add legend with better spacing
-      const legendY = Object.keys(valueAccessors).indexOf(key) * 14;
-      g.append('circle')
+      // Update legend
+      const legendY = index * 14;
+
+      // Legend circle
+      let legendCircle = d3State.current.legend!.select<SVGCircleElement>(`.legend-circle-${key}`);
+      if (legendCircle.empty()) {
+        legendCircle = d3State.current.legend!.append('circle')
+          .attr('class', `legend-circle-${key}`);
+      }
+      legendCircle
         .attr('cx', width + 6)
         .attr('cy', legendY + 5)
         .attr('r', 2.5)
         .style('fill', colors[key] ?? '#000000');
 
-      g.append('text')
+      // Legend text
+      let legendText = d3State.current.legend!.select<SVGTextElement>(`.legend-text-${key}`);
+      if (legendText.empty()) {
+        legendText = d3State.current.legend!.append('text')
+          .attr('class', `legend-text-${key} chart-legend-text`);
+      }
+      legendText
         .attr('x', width + 12)
         .attr('y', legendY + 5)
         .attr('dy', '0.35em')
         .style('font-size', '9px')
-        .attr('class', 'chart-legend-text')
         .text(key);
     });
-  }, []);
+
+    const endTime = performance.now();
+    measurePerformance(endTime - startTime, data.length);
+  }, [measurePerformance]);
 
   // Draw orientation time series
   useEffect(() => {
@@ -360,6 +450,7 @@ export default function ImuVisualization(): React.ReactNode {
 
     createTimeSeriesPlot(
       orientationRef,
+      orientationD3State,
       imuDataHistory,
       {
         'Roll': d => d.orientation.roll * orientationMultiplier,
@@ -380,6 +471,7 @@ export default function ImuVisualization(): React.ReactNode {
   useEffect(() => {
     createTimeSeriesPlot(
       accelerationRef,
+      accelerationD3State,
       imuDataHistory,
       {
         'X': d => d.linearAcceleration.x,
@@ -402,6 +494,7 @@ export default function ImuVisualization(): React.ReactNode {
 
     createTimeSeriesPlot(
       angularVelocityRef,
+      angularVelocityD3State,
       imuDataHistory,
       {
         'ωx': d => d.angularVelocity.x * unitMultiplier,
@@ -416,6 +509,29 @@ export default function ImuVisualization(): React.ReactNode {
       yLabel,
     );
   }, [imuDataHistory, createTimeSeriesPlot, angularVelocityUnit, useDegreesForAngularVelocity]);
+
+  // Cleanup on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      // Clear D3 selections and event listeners
+      [orientationD3State, accelerationD3State, angularVelocityD3State].forEach(state => {
+        if (state.current.svg) {
+          state.current.svg.selectAll('*').remove();
+          state.current.svg = null;
+          state.current.g = null;
+          state.current.xScale = null;
+          state.current.yScale = null;
+          state.current.line = null;
+          state.current.paths.clear();
+          state.current.legend = null;
+          state.current.isInitialized = false;
+        }
+      });
+
+      // Clear performance metrics
+    };
+  }, []);
+
 
   if (!selectedConnection || selectedConnection.status !== 'connected') {
     return (
@@ -574,3 +690,6 @@ export default function ImuVisualization(): React.ReactNode {
     </div>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export default memo(ImuVisualization);

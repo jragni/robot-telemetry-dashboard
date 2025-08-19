@@ -104,34 +104,33 @@ export const mockServiceResponses = {
 
 // Setup ROS connection mocks
 export const setupRosConnectionMocks = () => {
-  // Mock successful connection
-  const mockConnection = vi.fn().mockImplementation((callback) => {
-    setTimeout(() => callback(), 100);
-  });
-
-  // Mock error handling
-  const mockError = vi.fn();
-  const mockClose = vi.fn();
-
   // Setup ROSLIB.Ros mock
-  mockROSLIB.Ros.mockImplementation((options) => ({
-    url: options.url,
-    socket: { binaryType: 'arraybuffer' },
-    on: vi.fn().mockImplementation((event, callback) => {
-      if (event === 'connection') {
-        mockConnection(callback);
-      } else if (event === 'error') {
-        mockError(callback);
-      } else if (event === 'close') {
-        mockClose(callback);
-      }
-    }),
-    close: vi.fn(),
-    connect: vi.fn(),
-    getTopics: vi.fn().mockImplementation((successCallback) => {
-      setTimeout(() => successCallback(mockServiceResponses.getTopics), 50);
-    }),
-  }));
+  mockROSLIB.Ros.mockImplementation((options) => {
+    const eventHandlers: { [key: string]: Function[] } = {};
+    
+    return {
+      url: options.url,
+      socket: { binaryType: 'arraybuffer' },
+      on: vi.fn().mockImplementation((event, callback) => {
+        if (!eventHandlers[event]) {
+          eventHandlers[event] = [];
+        }
+        eventHandlers[event].push(callback);
+        
+        // Immediately trigger connection event for successful connections
+        if (event === 'connection' && !options.url.includes('invalid')) {
+          // Use queueMicrotask for immediate but asynchronous execution
+          queueMicrotask(() => callback());
+        }
+      }),
+      close: vi.fn(),
+      connect: vi.fn(),
+      getTopics: vi.fn().mockImplementation((successCallback) => {
+        queueMicrotask(() => successCallback(mockServiceResponses.getTopics));
+      }),
+      eventHandlers, // Expose for test access
+    };
+  });
 
   // Setup Service mock
   mockROSLIB.Service.mockImplementation((options) => ({
@@ -151,11 +150,9 @@ export const setupRosConnectionMocks = () => {
       } else {
         response = { topics: [] };
       }
-      setTimeout(() => callback(response), 50);
+      queueMicrotask(() => callback(response));
     }),
   }));
-
-  return { mockConnection, mockError, mockClose };
 };
 
 // Cleanup ROS mocks

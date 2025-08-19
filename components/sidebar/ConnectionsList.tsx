@@ -25,6 +25,7 @@ export default function ConnectionsList({
             name,
             status,
             url,
+            ping,
           }) => (
             <ConnnectionListItem
               key={id}
@@ -35,6 +36,7 @@ export default function ConnectionsList({
               id={id}
               isSelected={id===selectedConnectionId}
               name={name}
+              ping={ping}
               removeConnection={removeConnection}
               status={status}
               url={url}

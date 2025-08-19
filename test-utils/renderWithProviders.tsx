@@ -1,11 +1,19 @@
 import React, { ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
+import { render, RenderOptions, renderHook, RenderHookOptions } from '@testing-library/react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import ConnectionProvider from '@/components/dashboard/ConnectionProvider';
 import { ThemeProvider } from 'next-themes';
 
 // Custom render options interface
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  withConnectionProvider?: boolean;
+  withSidebarProvider?: boolean;
+  withThemeProvider?: boolean;
+  initialTheme?: string;
+}
+
+// Custom renderHook options interface
+interface CustomRenderHookOptions<TProps> extends Omit<RenderHookOptions<TProps>, 'wrapper'> {
   withConnectionProvider?: boolean;
   withSidebarProvider?: boolean;
   withThemeProvider?: boolean;
@@ -124,6 +132,34 @@ export const renderWithSidebarProvider = (ui: ReactElement, options: RenderOptio
   });
 };
 
-// Re-export everything
+// Custom renderHook function
+const customRenderHook = <TResult, TProps = any>(
+  hook: (props: TProps) => TResult,
+  options: CustomRenderHookOptions<TProps> = {}
+) => {
+  const {
+    withConnectionProvider = true,
+    withSidebarProvider = true,
+    withThemeProvider = true,
+    initialTheme = 'dark',
+    ...renderOptions
+  } = options;
+
+  return renderHook(hook, {
+    wrapper: ({ children }) => (
+      <AllTheProviders
+        withConnectionProvider={withConnectionProvider}
+        withSidebarProvider={withSidebarProvider}
+        withThemeProvider={withThemeProvider}
+        initialTheme={initialTheme}
+      >
+        {children}
+      </AllTheProviders>
+    ),
+    ...renderOptions,
+  });
+};
+
+// Re-export everything except renderHook
 export * from '@testing-library/react';
-export { customRender as render };
+export { customRender as render, customRenderHook as renderHook };

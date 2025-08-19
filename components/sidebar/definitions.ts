@@ -2,7 +2,7 @@
  * sidebar definitions
  */
 
-import { ConnectionStatus } from '@/components//dashboard/definitions';
+import { ConnectionStatus, PingMetrics } from '@/components//dashboard/definitions';
 import { RobotConnection } from '@/components/dashboard/definitions';
 export interface ConnectionDialogFormData {
   connectionName: string,
@@ -30,6 +30,7 @@ export interface ConnectionsListItemProps {
   removeConnection: (id: string ) => void
   status: ConnectionStatus
   url: string,
+  ping?: PingMetrics
 }
 
 export interface ConnectionListProps {

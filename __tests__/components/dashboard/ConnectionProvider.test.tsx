@@ -1,6 +1,7 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
-import { render, screen } from '@/test-utils';
+import { renderHook, act, waitFor, render, screen } from '@/test-utils';
+import { render as renderPlain } from '@testing-library/react';
 import ConnectionProvider, { useConnection } from '@/components/dashboard/ConnectionProvider';
 import { mockROSLIB, setupRosConnectionMocks, cleanupRosConnectionMocks } from '@/test-utils';
 
@@ -61,7 +62,7 @@ describe('ConnectionProvider', () => {
     // Suppress console.error for this test
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    expect(() => render(<TestComponent />)).toThrow(
+    expect(() => renderPlain(<TestComponent />)).toThrow(
       'useConnection must be used in ConnectionContextProvider'
     );
 

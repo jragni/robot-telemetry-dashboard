@@ -63,22 +63,26 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const [frameCount, setFrameCount] = useState<number>(0);
   const [selectedTopic, setSelectedTopic] = useState<string>('/camera/image_raw/compressed');
   const [imageTopics, setImageTopics] = useState<TopicInfo[]>([
-    { name: '/camera/image_raw/compressed', type: 'compressed', messageType: 'sensor_msgs/msg/CompressedImage' },
+    {
+      name: '/camera/image_raw/compressed',
+      type: 'compressed',
+      messageType: 'sensor_msgs/msg/CompressedImage',
+    },
   ]);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const frameTimestamps = useRef<number[]>([]);
   const fpsUpdateInterval = useRef<NodeJS.Timeout | null>(null);
+  const lastFrameTime = useRef<number>(0);
 
-  // Target 15 FPS for smooth video streaming
-  const FRAME_RATE_MS = 67;
+  // NO ARTIFICIAL DELAY - process frames immediately
 
-  // Calculate FPS based on recent frame timestamps
+  // Calculate FPS based on actual rendered frames
   const updateFPS = () => {
     const now = Date.now();
     const timestamps = frameTimestamps.current;
 
-    // Keep only timestamps from the last 2 seconds for FPS calculation
+    // Keep only timestamps from the last 2 seconds for stable FPS calculation
     const twoSecondsAgo = now - 2000;
     const recentTimestamps = timestamps.filter(timestamp => timestamp > twoSecondsAgo);
     frameTimestamps.current = recentTimestamps;
@@ -88,27 +92,48 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     setCurrentFPS(Math.round(fps * 10) / 10);
   };
 
-  // Update frame stats
+  // Update frame stats - only when we actually render a new frame
   const updateFrameStats = useCallback(() => {
     const now = Date.now();
-    frameTimestamps.current.push(now);
-    setFrameCount(prev => prev + 1);
+    
+    // Throttle FPS counting to prevent impossible frame rates
+    // Only count as a new frame if at least 16ms has passed (60 FPS max)
+    if (now - lastFrameTime.current >= 16) {
+      frameTimestamps.current.push(now);
+      setFrameCount(prev => prev + 1);
+      lastFrameTime.current = now;
+    }
   }, []);
 
-  // Process compressed image data
+  // Process compressed image data with optimized base64 conversion
   const processCompressedImage = useCallback((message: CompressedImageMessage) => {
     try {
       if (!message?.data) return;
 
       let imageDataUrl: string;
       if (typeof message.data === 'string') {
+        // Data already base64 encoded
         const mimeType = message.format.toLowerCase().includes('png') ? 'image/png' : 'image/jpeg';
         imageDataUrl = `data:${mimeType};base64,${message.data}`;
       } else {
+        // Optimize base64 conversion for large arrays
         const uint8Data = message.data instanceof Uint8Array
           ? message.data
           : new Uint8Array(message.data);
-        const base64String = btoa(String.fromCharCode(...uint8Data));
+        // Use more efficient base64 conversion for large data
+        let base64String: string;if (uint8Data.length > 100000) {
+          // For large images, process in chunks to avoid call stack overflow
+          const chunkSize = 8192;
+          let result = '';
+          for (let i = 0; i < uint8Data.length; i += chunkSize) {
+            const chunk = uint8Data.subarray(i, i + chunkSize);
+            result += String.fromCharCode.apply(null, Array.from(chunk));
+          }
+          base64String = btoa(result);
+        } else {
+          base64String = btoa(String.fromCharCode(...uint8Data));
+        }
+
         const mimeType = message.format.toLowerCase().includes('png') ? 'image/png' : 'image/jpeg';
         imageDataUrl = `data:${mimeType};base64,${base64String}`;
       }
@@ -181,7 +206,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
       clearInterval(fpsUpdateInterval.current);
     }
 
-    fpsUpdateInterval.current = setInterval(updateFPS, 500);
+    fpsUpdateInterval.current = setInterval(updateFPS, 1000); // Update FPS every 1 second for stable readings
 
     return () => {
       if (fpsUpdateInterval.current) {
@@ -284,13 +309,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         });
 
         topic.subscribe((message: any) => {
-          if (intervalRef.current) {
-            clearTimeout(intervalRef.current);
-          }
-
-          intervalRef.current = setTimeout(() => {
-            processImageMessage(message);
-          }, FRAME_RATE_MS);
+          // NO THROTTLING - process every frame immediately
+          processImageMessage(message);
         });
 
         setIsSubscribed(true);

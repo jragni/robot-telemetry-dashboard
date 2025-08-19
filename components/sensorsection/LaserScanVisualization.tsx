@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, memo } from 'react';
 import * as d3 from 'd3';
 
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
@@ -15,7 +15,7 @@ import {
 
 import { LaserScanMessage, ScanPoint } from './definitions';
 
-export default function LaserScanVisualization(): React.ReactNode {
+function LaserScanVisualization(): React.ReactNode {
   const { selectedConnection } = useConnection();
   const { isPilotMode } = usePilotMode();
   const svgRef = useRef<SVGSVGElement>(null);
@@ -30,12 +30,17 @@ export default function LaserScanVisualization(): React.ReactNode {
   const processLaserScan = useCallback((message: LaserScanMessage) => {
     const points: ScanPoint[] = [];
 
-    message.ranges.forEach((range, index) => {
+    // Data decimation for performance - skip every other point for high-resolution scans
+    const skipFactor = message.ranges.length > 720 ? 2 : 1; // Decimate if >720 points
+
+    for (let index = 0; index < message.ranges.length; index += skipFactor) {
+      const range = message.ranges[index];
       if (
         range >= message.range_min
         && range <= message.range_max
         && !isNaN(range)
         && isFinite(range)
+        && range <= maxRange // Additional filter for visualization range
       ) {
         const angle = message.angle_min + (index * message.angle_increment);
 
@@ -50,10 +55,10 @@ export default function LaserScanVisualization(): React.ReactNode {
           angle,
         });
       }
-    });
+    }
 
     setScanData(points);
-  }, []);
+  }, [maxRange]);
 
   // Fetch available LaserScan topics when connection changes
   useEffect(() => {
@@ -139,7 +144,6 @@ export default function LaserScanVisualization(): React.ReactNode {
 
   useEffect(() => {
     if (!svgRef.current) return;
-
     const svg = d3.select(svgRef.current);
     const container = svgRef.current.parentElement;
 
@@ -165,8 +169,8 @@ export default function LaserScanVisualization(): React.ReactNode {
     const width = size;
     const height = size;
 
-    svg.selectAll('*').remove();
-
+    // PERFORMANCE FIX: Only create SVG structure once, then just update data
+    let g = svg.select<SVGGElement>('g.main-group');
     const xScale = d3.scaleLinear()
       .domain([-maxRange, maxRange])
       .range([0, width]);
@@ -175,142 +179,165 @@ export default function LaserScanVisualization(): React.ReactNode {
       .domain([-maxRange, maxRange])
       .range([height, 0]);
 
-    // Set responsive dimensions to fill container
-    svg
-      .attr('width', '100%')
-      .attr('height', '100%')
-      .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .attr('preserveAspectRatio', 'xMidYMid meet');
+    if (g.empty()) {
+      // First time setup - clear and create structure
+      svg.selectAll('*').remove();
 
-    const g = svg
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+      // Set responsive dimensions to fill container
+      svg
+        .attr('width', '100%')
+        .attr('height', '100%')
+        .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet');
 
-    // Professional grid system - adaptive density
-    const gridLines = g.append('g').attr('class', 'grid');
-    const gridDensity = isPilotMode ? 5 : 10; // Cleaner grid in pilot mode
+      g = svg
+        .append('g')
+        .attr('class', 'main-group')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Vertical grid lines - subtle, professional
-    gridLines.selectAll('.grid-line-vertical')
-      .data(xScale.ticks(gridDensity))
-      .enter()
-      .append('line')
-      .attr('class', 'grid-line-vertical')
-      .attr('x1', d => xScale(d))
-      .attr('y1', 0)
-      .attr('x2', d => xScale(d))
-      .attr('y2', height)
-      .style('stroke', isPilotMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)')
-      .style('stroke-width', isPilotMode ? '0.25' : '0.5');
+      // Create all static elements only on first render
+      // Professional grid system - adaptive density
+      const gridLines = g.append('g').attr('class', 'grid');
+      const gridDensity = isPilotMode ? 5 : 10; // Cleaner grid in pilot mode
 
-    // Horizontal grid lines
-    gridLines.selectAll('.grid-line-horizontal')
-      .data(yScale.ticks(gridDensity))
-      .enter()
-      .append('line')
-      .attr('class', 'grid-line-horizontal')
-      .attr('x1', 0)
-      .attr('y1', d => yScale(d))
-      .attr('x2', width)
-      .attr('y2', d => yScale(d))
-      .style('stroke', isPilotMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)')
-      .style('stroke-width', isPilotMode ? '0.25' : '0.5');
+      // Vertical grid lines - subtle, professional
+      gridLines.selectAll('.grid-line-vertical')
+        .data(xScale.ticks(gridDensity))
+        .enter()
+        .append('line')
+        .attr('class', 'grid-line-vertical')
+        .attr('x1', d => xScale(d))
+        .attr('y1', 0)
+        .attr('x2', d => xScale(d))
+        .attr('y2', height)
+        .style('stroke', isPilotMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)')
+        .style('stroke-width', isPilotMode ? '0.25' : '0.5');
 
-    // Professional axes - clean and minimal
-    const tickCount = isPilotMode ? 3 : 5;
-    const fontSize = isPilotMode ? '8px' : '10px';
-    const axisOpacity = isPilotMode ? 0.6 : 0.8;
+      // Horizontal grid lines
+      gridLines.selectAll('.grid-line-horizontal')
+        .data(yScale.ticks(gridDensity))
+        .enter()
+        .append('line')
+        .attr('class', 'grid-line-horizontal')
+        .attr('x1', 0)
+        .attr('y1', d => yScale(d))
+        .attr('x2', width)
+        .attr('y2', d => yScale(d))
+        .style('stroke', isPilotMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)')
+        .style('stroke-width', isPilotMode ? '0.25' : '0.5');
 
-    const xAxis = g.append('g')
-      .attr('transform', `translate(0,${yScale(0)})`)
-      .call(d3.axisBottom(xScale).ticks(tickCount));
+      // Professional axes - clean and minimal
+      const tickCount = isPilotMode ? 3 : 5;
+      const fontSize = isPilotMode ? '8px' : '10px';
+      const axisOpacity = isPilotMode ? 0.6 : 0.8;
 
-    xAxis.selectAll('text')
-      .style('font-size', fontSize)
-      .style('font-family', 'ui-monospace, SFMono-Regular, monospace')
-      .style('fill', `rgba(255, 255, 255, ${axisOpacity})`);
+      const xAxis = g.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', `translate(0,${yScale(0)})`)
+        .call(d3.axisBottom(xScale).ticks(tickCount));
 
-    xAxis.selectAll('.domain, .tick line')
-      .style('stroke', `rgba(255, 255, 255, ${axisOpacity})`)
-      .style('stroke-width', isPilotMode ? '0.5' : '1');
+      xAxis.selectAll('text')
+        .style('font-size', fontSize)
+        .style('font-family', 'ui-monospace, SFMono-Regular, monospace')
+        .style('fill', `rgba(255, 255, 255, ${axisOpacity})`);
 
-    const yAxis = g.append('g')
-      .attr('transform', `translate(${xScale(0)},0)`)
-      .call(d3.axisLeft(yScale).ticks(tickCount));
+      xAxis.selectAll('.domain, .tick line')
+        .style('stroke', `rgba(255, 255, 255, ${axisOpacity})`)
+        .style('stroke-width', isPilotMode ? '0.5' : '1');
 
-    yAxis.selectAll('text')
-      .style('font-size', fontSize)
-      .style('font-family', 'ui-monospace, SFMono-Regular, monospace')
-      .style('fill', `rgba(255, 255, 255, ${axisOpacity})`);
+      const yAxis = g.append('g')
+        .attr('class', 'y-axis')
+        .attr('transform', `translate(${xScale(0)},0)`)
+        .call(d3.axisLeft(yScale).ticks(tickCount));
 
-    yAxis.selectAll('.domain, .tick line')
-      .style('stroke', `rgba(255, 255, 255, ${axisOpacity})`)
-      .style('stroke-width', isPilotMode ? '0.5' : '1');
+      yAxis.selectAll('text')
+        .style('font-size', fontSize)
+        .style('font-family', 'ui-monospace, SFMono-Regular, monospace')
+        .style('fill', `rgba(255, 255, 255, ${axisOpacity})`);
 
-    // Calculate responsive sizes based on plot dimensions
-    const robotRadius = Math.max(4, size * 0.015); // Scale robot size with plot
-    const pointRadius = Math.max(1.5, size * 0.008); // Scale point size with plot
+      yAxis.selectAll('.domain, .tick line')
+        .style('stroke', `rgba(255, 255, 255, ${axisOpacity})`)
+        .style('stroke-width', isPilotMode ? '0.5' : '1');
 
-    // Add robot position (origin)
-    g.append('circle')
-      .attr('cx', xScale(0))
-      .attr('cy', yScale(0))
-      .attr('r', robotRadius)
-      .style('fill', '#ef4444')
-      .style('stroke', '#dc2626')
-      .style('stroke-width', Math.max(2, size * 0.005));
+      // Add robot position (origin)
+      const robotRadius = Math.max(4, size * 0.015);
+      g.append('circle')
+        .attr('class', 'robot-circle')
+        .attr('cx', xScale(0))
+        .attr('cy', yScale(0))
+        .attr('r', robotRadius)
+        .style('fill', '#ef4444')
+        .style('stroke', '#dc2626')
+        .style('stroke-width', Math.max(2, size * 0.005));
 
-    // Premium scan points - adaptive styling
-    const pointColor = isPilotMode ? '#00d4ff' : '#3b82f6'; // Cyan for pilot mode
+      // Labels for non-pilot mode
+      if (!isPilotMode) {
+        g.append('text')
+          .attr('class', 'x-label')
+          .attr('x', width / 2)
+          .attr('y', height + margin.bottom - 5)
+          .style('text-anchor', 'middle')
+          .style('font-size', '9px')
+          .style('fill', 'rgba(255, 255, 255, 0.8)')
+          .text('Distance (m)');
+
+        g.append('text')
+          .attr('class', 'y-label')
+          .attr('transform', 'rotate(-90)')
+          .attr('y', 0 - margin.left + 15)
+          .attr('x', 0 - (height / 2))
+          .style('text-anchor', 'middle')
+          .style('font-size', '9px')
+          .style('fill', 'rgba(255, 255, 255, 0.8)')
+          .text('Distance (m)');
+      }
+    }
+
+    // NOW UPDATE ONLY THE DYNAMIC DATA - this happens every frame
+    const pointRadius = Math.max(1.5, size * 0.008);
+    const pointColor = isPilotMode ? '#00d4ff' : '#3b82f6';
     const pointOpacity = isPilotMode ? 0.9 : 0.8;
     const strokeColor = isPilotMode ? '#0099cc' : '#1d4ed8';
 
-    g.selectAll('.scan-point')
-      .data(scanData)
-      .enter()
+    // Efficient scan points update using D3 enter/update/exit pattern
+    const points = g.selectAll<SVGCircleElement, ScanPoint>('.scan-point')
+      .data(scanData, d => `${d.x.toFixed(3)}-${d.y.toFixed(3)}`);
+
+    // Remove old points
+    points.exit().remove();
+
+    // Add new points and update existing ones
+    points.enter()
       .append('circle')
       .attr('class', 'scan-point')
-      .attr('cx', d => xScale(d.x))
-      .attr('cy', d => yScale(d.y))
       .attr('r', pointRadius)
       .style('fill', pointColor)
       .style('fill-opacity', pointOpacity)
       .style('stroke', strokeColor)
       .style('stroke-width', isPilotMode ? 0.25 : 0.5)
-      .style('filter', isPilotMode ? 'drop-shadow(0 0 2px rgba(0, 212, 255, 0.3))' : 'none');
+      .style('filter', isPilotMode ? 'drop-shadow(0 0 2px rgba(0, 212, 255, 0.3))' : 'none')
+      .merge(points)
+      .attr('cx', d => xScale(d.x))
+      .attr('cy', d => yScale(d.y));
 
-    // Add "No Data" text when there are no scan points
+    // Handle "No Data" text efficiently
+    const noDataText = g.select('.no-data-text');
     if (scanData.length === 0) {
-      g.append('text')
-        .attr('x', width / 2)
-        .attr('y', height / 2)
-        .style('text-anchor', 'middle')
-        .style('font-size', '12px')
-        .style('fill', 'rgba(255, 255, 255, 0.6)')
-        .text('No LiDAR Data');
+      if (noDataText.empty()) {
+        g.append('text')
+          .attr('class', 'no-data-text')
+          .attr('x', width / 2)
+          .attr('y', height / 2)
+          .style('text-anchor', 'middle')
+          .style('font-size', '12px')
+          .style('fill', 'rgba(255, 255, 255, 0.6)')
+          .text('No LiDAR Data');
+      }
+    } else {
+      noDataText.remove();
     }
 
-    // Clean labels - only in non-pilot mode for clarity
-    if (!isPilotMode) {
-      g.append('text')
-        .attr('x', width / 2)
-        .attr('y', height + margin.bottom - 5)
-        .style('text-anchor', 'middle')
-        .style('font-size', '9px')
-        .style('fill', 'rgba(255, 255, 255, 0.8)')
-        .text('Distance (m)');
-
-      g.append('text')
-        .attr('transform', 'rotate(-90)')
-        .attr('y', 0 - margin.left + 15)
-        .attr('x', 0 - (height / 2))
-        .style('text-anchor', 'middle')
-        .style('font-size', '9px')
-        .style('fill', 'rgba(255, 255, 255, 0.8)')
-        .text('Distance (m)');
-    }
-
-  }, [maxRange, scanData]);
+  }, [maxRange, scanData, isPilotMode]);
 
   // Check if we're on desktop for compact layout - Move hooks before early return
 
@@ -459,3 +486,6 @@ export default function LaserScanVisualization(): React.ReactNode {
     </div>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export default memo(LaserScanVisualization);
