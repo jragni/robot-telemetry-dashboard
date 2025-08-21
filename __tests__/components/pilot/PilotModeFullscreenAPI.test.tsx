@@ -3,6 +3,26 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, act } from '@/test-utils';
 import userEvent from '@testing-library/user-event';
 import { PilotModeProvider, usePilotMode } from '@/components/pilot/usePilotMode';
+import { 
+  mockROSLIB, 
+  setupRosConnectionMocks, 
+  cleanupRosConnectionMocks,
+  createMockConnectionContext
+} from '@/test-utils';
+import { useConnection } from '@/components/dashboard/ConnectionProvider';
+
+// Mock dependencies
+vi.mock('roslib', () => ({ default: mockROSLIB }));
+vi.mock('@/components/dashboard/ConnectionProvider', () => ({
+  useConnection: vi.fn(),
+  default: vi.fn(({ children }: { children: React.ReactNode }) => <div data-testid="connection-provider">{children}</div>)
+}));
+vi.mock('next-themes', () => ({
+  ThemeProvider: vi.fn(({ children }: { children: React.ReactNode }) => <div data-testid="theme-provider">{children}</div>),
+  useTheme: vi.fn(() => ({ theme: 'dark', setTheme: vi.fn() }))
+}));
+
+const mockUseConnection = useConnection as vi.MockedFunction<typeof useConnection>;
 
 // Mock fullscreen API
 const mockFullscreenAPI = {
@@ -40,6 +60,9 @@ function TestComponent() {
 
 describe('PilotMode Fullscreen API Integration', () => {
   beforeEach(() => {
+    setupRosConnectionMocks();
+    mockUseConnection.mockReturnValue(createMockConnectionContext());
+    
     // Mock fullscreen API
     Object.defineProperty(document, 'documentElement', {
       value: {
@@ -92,6 +115,7 @@ describe('PilotMode Fullscreen API Integration', () => {
   });
 
   afterEach(() => {
+    cleanupRosConnectionMocks();
     vi.clearAllMocks();
   });
 
@@ -108,7 +132,7 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
@@ -128,7 +152,7 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
@@ -150,7 +174,7 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
@@ -160,6 +184,9 @@ describe('PilotMode Fullscreen API Integration', () => {
     });
 
     it('should still enable pilot mode if fullscreen request fails', async () => {
+      // Suppress console errors for this test
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+      
       mockFullscreenAPI.requestFullscreen.mockRejectedValue(new Error('Fullscreen not supported'));
       
       const user = userEvent.setup();
@@ -170,13 +197,15 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
-        expect(screen.getByTestId('fullscreen-status')).toHaveTextContent('windowed');
+        expect(screen.getByText('active')).toBeInTheDocument();
+        expect(screen.getByText('windowed')).toBeInTheDocument();
       });
+      
+      consoleError.mockRestore();
     });
 
     it('should set fullscreen state correctly when fullscreen succeeds', async () => {
@@ -191,16 +220,19 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
-        expect(screen.getByTestId('fullscreen-status')).toHaveTextContent('fullscreen');
+        expect(screen.getByText('active')).toBeInTheDocument();
+        expect(screen.getByText('fullscreen')).toBeInTheDocument();
       });
     });
 
     it('should handle orientation lock failure gracefully', async () => {
+      // Suppress console errors for this test
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+      
       mockFullscreenAPI.requestFullscreen.mockResolvedValue(undefined);
       mockScreenOrientationAPI.lock.mockRejectedValue(new Error('Orientation lock not supported'));
       
@@ -212,12 +244,14 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
+      
+      consoleError.mockRestore();
     });
   });
 
@@ -236,15 +270,15 @@ describe('PilotMode Fullscreen API Integration', () => {
       );
 
       // First enter pilot mode
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
 
       // Then exit pilot mode
-      const exitButton = screen.getByTestId('exit-pilot');
+      const exitButton = screen.getByText('Exit Pilot Mode');
       await user.click(exitButton);
 
       await waitFor(() => {
@@ -265,15 +299,15 @@ describe('PilotMode Fullscreen API Integration', () => {
       );
 
       // First enter pilot mode
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
 
       // Then exit pilot mode
-      const exitButton = screen.getByTestId('exit-pilot');
+      const exitButton = screen.getByText('Exit Pilot Mode');
       await user.click(exitButton);
 
       await waitFor(() => {
@@ -293,20 +327,20 @@ describe('PilotMode Fullscreen API Integration', () => {
       );
 
       // First enter pilot mode
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
 
       // Then exit pilot mode
-      const exitButton = screen.getByTestId('exit-pilot');
+      const exitButton = screen.getByText('Exit Pilot Mode');
       await user.click(exitButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('inactive');
-        expect(screen.getByTestId('fullscreen-status')).toHaveTextContent('windowed');
+        expect(screen.getByText('inactive')).toBeInTheDocument();
+        expect(screen.getByText('windowed')).toBeInTheDocument();
       });
     });
   });
@@ -322,11 +356,11 @@ describe('PilotMode Fullscreen API Integration', () => {
       );
 
       // Enter pilot mode
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
 
       // Simulate fullscreen change event (user exits fullscreen via browser)
@@ -337,8 +371,8 @@ describe('PilotMode Fullscreen API Integration', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('inactive');
-        expect(screen.getByTestId('fullscreen-status')).toHaveTextContent('windowed');
+        expect(screen.getByText('inactive')).toBeInTheDocument();
+        expect(screen.getByText('windowed')).toBeInTheDocument();
       });
     });
 
@@ -352,7 +386,7 @@ describe('PilotMode Fullscreen API Integration', () => {
       );
 
       // Start with pilot mode active
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       // Simulate entering fullscreen
@@ -363,7 +397,7 @@ describe('PilotMode Fullscreen API Integration', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByTestId('fullscreen-status')).toHaveTextContent('fullscreen');
+        expect(screen.getByText('fullscreen')).toBeInTheDocument();
       });
 
       // Simulate exiting fullscreen
@@ -374,7 +408,7 @@ describe('PilotMode Fullscreen API Integration', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByTestId('fullscreen-status')).toHaveTextContent('windowed');
+        expect(screen.getByText('windowed')).toBeInTheDocument();
       });
     });
   });
@@ -390,11 +424,11 @@ describe('PilotMode Fullscreen API Integration', () => {
       );
 
       // Enter pilot mode
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
 
       // Simulate page becoming hidden (app switching on mobile)
@@ -409,7 +443,7 @@ describe('PilotMode Fullscreen API Integration', () => {
 
       // Should still be in pilot mode but update fullscreen state
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
     });
   });
@@ -425,18 +459,18 @@ describe('PilotMode Fullscreen API Integration', () => {
       );
 
       // Enter pilot mode
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
 
       // Press Escape key
       await user.keyboard('{Escape}');
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('inactive');
+        expect(screen.getByText('inactive')).toBeInTheDocument();
       });
     });
 
@@ -450,11 +484,11 @@ describe('PilotMode Fullscreen API Integration', () => {
       );
 
       // Enter pilot mode
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
 
       // Press other keys
@@ -463,7 +497,7 @@ describe('PilotMode Fullscreen API Integration', () => {
       await user.keyboard('a');
 
       // Should still be in pilot mode
-      expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+      expect(screen.getByText('active')).toBeInTheDocument();
     });
   });
 
@@ -486,7 +520,7 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      expect(screen.getByTestId('orientation-status')).toHaveTextContent('portrait');
+      expect(screen.getByText('portrait')).toBeInTheDocument();
     });
 
     it('should detect landscape orientation correctly', () => {
@@ -507,7 +541,7 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      expect(screen.getByTestId('orientation-status')).toHaveTextContent('landscape');
+      expect(screen.getByText('landscape')).toBeInTheDocument();
     });
 
     it('should handle orientation change events', async () => {
@@ -530,7 +564,7 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      expect(screen.getByTestId('orientation-status')).toHaveTextContent('portrait');
+      expect(screen.getByText('portrait')).toBeInTheDocument();
 
       // Simulate orientation change to landscape
       mockMediaQuery.matches = true;
@@ -545,7 +579,7 @@ describe('PilotMode Fullscreen API Integration', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByTestId('orientation-status')).toHaveTextContent('landscape');
+        expect(screen.getByText('landscape')).toBeInTheDocument();
       });
     });
   });
@@ -566,12 +600,12 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
-        expect(screen.getByTestId('fullscreen-status')).toHaveTextContent('windowed');
+        expect(screen.getByText('active')).toBeInTheDocument();
+        expect(screen.getByText('windowed')).toBeInTheDocument();
       });
     });
 
@@ -590,11 +624,11 @@ describe('PilotMode Fullscreen API Integration', () => {
         </PilotModeProvider>
       );
 
-      const enterButton = screen.getByTestId('enter-pilot');
+      const enterButton = screen.getByText('Enter Pilot Mode');
       await user.click(enterButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('pilot-mode-status')).toHaveTextContent('active');
+        expect(screen.getByText('active')).toBeInTheDocument();
       });
     });
   });

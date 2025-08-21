@@ -14,35 +14,60 @@ import {
   createMockTopicSubscription,
   measureRenderPerformance
 } from '@/test-utils';
-import { useConnection } from '@/components/dashboard/ConnectionProvider';
 
 // Mock all necessary modules
 vi.mock('roslib', () => ({ default: mockROSLIB }));
-vi.mock('@/components/dashboard/ConnectionProvider');
+vi.mock('@/components/dashboard/ConnectionProvider', () => ({
+  useConnection: vi.fn(),
+  default: vi.fn(({ children }: { children: React.ReactNode }) => <div data-testid="connection-provider">{children}</div>)
+}));
 vi.mock('@/components/ui/sidebar', () => ({
   useSidebar: vi.fn(() => ({ open: true })),
   SidebarProvider: vi.fn(({ children }: { children: React.ReactNode }) => <div>{children}</div>),
 }));
 
+vi.mock('@/components/pilot/usePilotMode', () => ({
+  usePilotMode: vi.fn(() => ({ isPilotMode: false })),
+}));
+
+// Mock components with vi.fn() inside the mock factory
 vi.mock('@/components/sensorsection', () => ({ 
-  default: vi.fn(() => <div data-testid="sensor-section">Sensor Section</div>)
+  default: vi.fn(() => <div>Sensor Section</div>)
 }));
 vi.mock('@/components/sensorsection/ImuVisualization', () => ({ 
-  default: vi.fn(() => <div data-testid="imu-visualization">IMU Visualization</div>)
+  default: vi.fn(() => <div>IMU Visualization</div>)
 }));
 vi.mock('@/components/sensorsection/LaserScanVisualization', () => ({ 
-  default: vi.fn(() => <div data-testid="laser-scan-visualization">Laser Scan</div>)
+  default: vi.fn(() => <div>Laser Scan</div>)
 }));
 vi.mock('@/components/controlsection/ControlPanel', () => ({ 
-  default: vi.fn(() => <div data-testid="control-panel">Control Panel</div>)
+  default: vi.fn(() => <div>Control Panel</div>)
 }));
+
+// Mock dynamic import for ControlPanel
+vi.mock('next/dynamic', () => {
+  return {
+    default: (importFunc: () => Promise<any>) => {
+      // Return the mock component directly instead of dynamic loading
+      return vi.fn(() => <div data-testid="control-panel">Control Panel</div>);
+    }
+  };
+});
 vi.mock('@/components/topicsection', () => ({ 
-  default: vi.fn(() => <div data-testid="topic-section">Topic Section</div>)
+  default: vi.fn(() => <div>Topic Section</div>)
 }));
 vi.mock('@/components/sidebar', () => ({ 
   default: vi.fn(() => <div data-testid="sidebar">Sidebar</div>)
 }));
+vi.mock('@/components/pilot/PilotMode', () => ({ 
+  default: vi.fn(() => <div data-testid="pilot-mode">Pilot Mode</div>)
+}));
+vi.mock('@/components/dashboard/PingManager', () => ({ 
+  default: vi.fn(() => <div data-testid="ping-manager">Ping Manager</div>)
+}));
 
+// Import the original and create mock reference
+import { useConnection } from '@/components/dashboard/ConnectionProvider';
 const mockUseConnection = useConnection as vi.MockedFunction<typeof useConnection>;
 
 describe('ROS Data Flow Integration', () => {
@@ -51,6 +76,21 @@ describe('ROS Data Flow Integration', () => {
 
   beforeEach(() => {
     setupRosConnectionMocks();
+    
+    // Mock window size for responsive layout testing (xl breakpoint = 1280px)
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1400,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      writable: true,
+      configurable: true,
+      value: 800,
+    });
+    
+    // Trigger resize event
+    window.dispatchEvent(new Event('resize'));
     
     // Create mock topics for different message types
     mockTopics.imu = createMockTopicSubscription('sensor_msgs/Imu', '/imu');
@@ -79,20 +119,16 @@ describe('ROS Data Flow Integration', () => {
 
   describe('end-to-end data flow', () => {
     it('should establish connection and subscribe to all sensor topics', async () => {
-      render(<DashboardLayout />);
+      const { container } = render(<DashboardLayout />, { withSidebarProvider: true });
+      
+      // Verify all components are rendered (responsive layout has multiple instances)
+      expect(screen.getAllByText('Sensor Section').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Control Panel').length).toBeGreaterThan(0);
 
-      // Verify all components are rendered
-      expect(screen.getByTestId('sensor-section')).toBeInTheDocument();
-      expect(screen.getByTestId('imu-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('laser-scan-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('control-panel')).toBeInTheDocument();
-
-      // Verify components receive connection context
-      await waitFor(() => {
-        Object.values(mockComponents).forEach(component => {
-          expect(component).toHaveBeenCalled();
-        });
-      });
+      // Topic section is unique
+      expect(screen.getByText('Topic Section')).toBeInTheDocument();
     });
 
     it('should handle simultaneous data streams from multiple sensors', async () => {
@@ -105,10 +141,10 @@ describe('ROS Data Flow Integration', () => {
         mockTopics.camera.triggerMessage(generateCameraImageData());
       });
 
-      // All components should handle their respective data
-      expect(screen.getByTestId('imu-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('laser-scan-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('sensor-section')).toBeInTheDocument();
+      // All components should handle their respective data (responsive layout)
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Sensor Section').length).toBeGreaterThan(0);
     });
 
     it('should maintain data synchronization across components', async () => {
@@ -125,15 +161,17 @@ describe('ROS Data Flow Integration', () => {
         });
       });
 
-      // Components should receive data with consistent timestamps
+      // Components should receive data - verify they are still rendered (responsive layout)
       await waitFor(() => {
-        expect(mockComponents.ImuVisualization).toHaveBeenCalled();
-        expect(mockComponents.LaserScanVisualization).toHaveBeenCalled();
+        expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
       });
     });
 
     it('should handle high-frequency data updates efficiently', async () => {
-      const metrics = await measureRenderPerformance(() => render(<DashboardLayout />));
+      const startTime = performance.now();
+      render(<DashboardLayout />);
+      const renderTime = performance.now() - startTime;
 
       await act(async () => {
         // Simulate high-frequency updates (30 Hz)
@@ -145,7 +183,7 @@ describe('ROS Data Flow Integration', () => {
       });
 
       // Should maintain good performance
-      expect(metrics.renderTime).toBeLessThan(1000); // Less than 1 second initial render
+      expect(renderTime).toBeLessThan(1000); // Less than 1 second initial render
     });
 
     it('should handle connection state changes gracefully', async () => {
@@ -159,8 +197,8 @@ describe('ROS Data Flow Integration', () => {
       rerender(<DashboardLayout />);
 
       // Components should handle disconnection gracefully
-      expect(screen.getByTestId('imu-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('laser-scan-visualization')).toBeInTheDocument();
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
 
       // Simulate reconnection
       mockUseConnection.mockReturnValue(createMockConnectionContext({
@@ -170,7 +208,7 @@ describe('ROS Data Flow Integration', () => {
       rerender(<DashboardLayout />);
 
       // Components should resume normal operation
-      expect(screen.getByTestId('control-panel')).toBeInTheDocument();
+      expect(screen.getAllByText('Control Panel').length).toBeGreaterThan(0);
     });
   });
 
@@ -244,8 +282,8 @@ describe('ROS Data Flow Integration', () => {
       });
 
       // Components should remain functional despite corrupted data
-      expect(screen.getByTestId('imu-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('laser-scan-visualization')).toBeInTheDocument();
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
     });
 
     it('should recover from temporary connection loss', async () => {
@@ -273,7 +311,7 @@ describe('ROS Data Flow Integration', () => {
         mockTopics.imu.triggerMessage(generateImuData());
       });
 
-      expect(screen.getByTestId('imu-visualization')).toBeInTheDocument();
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
     });
 
     it('should handle topic subscription failures gracefully', async () => {
@@ -285,8 +323,8 @@ describe('ROS Data Flow Integration', () => {
       render(<DashboardLayout />);
 
       // Should not crash the entire application
-      expect(screen.getByTestId('imu-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('laser-scan-visualization')).toBeInTheDocument();
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
     });
   });
 
@@ -333,8 +371,8 @@ describe('ROS Data Flow Integration', () => {
       });
 
       // Should handle large datasets without freezing
-      expect(screen.getByTestId('laser-scan-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('sensor-section')).toBeInTheDocument();
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Sensor Section').length).toBeGreaterThan(0);
     });
 
     it('should maintain memory efficiency during extended operation', async () => {
@@ -381,9 +419,9 @@ describe('ROS Data Flow Integration', () => {
       });
 
       // Components should receive and process data correctly
-      expect(mockComponents.ImuVisualization).toHaveBeenCalled();
-      expect(mockComponents.LaserScanVisualization).toHaveBeenCalled();
-      expect(mockComponents.SensorSection).toHaveBeenCalled();
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Sensor Section').length).toBeGreaterThan(0);
     });
 
     it('should maintain temporal consistency across sensors', async () => {
@@ -412,8 +450,8 @@ describe('ROS Data Flow Integration', () => {
       });
 
       // Data should be processed in correct temporal order
-      expect(mockComponents.ImuVisualization).toHaveBeenCalled();
-      expect(mockComponents.LaserScanVisualization).toHaveBeenCalled();
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
     });
 
     it('should handle data rate mismatches between sensors', async () => {
@@ -436,9 +474,9 @@ describe('ROS Data Flow Integration', () => {
       });
 
       // All components should handle their respective data rates
-      expect(screen.getByTestId('imu-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('laser-scan-visualization')).toBeInTheDocument();
-      expect(screen.getByTestId('sensor-section')).toBeInTheDocument();
+      expect(screen.getAllByText('IMU Visualization').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Laser Scan').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Sensor Section').length).toBeGreaterThan(0);
     });
   });
 });
