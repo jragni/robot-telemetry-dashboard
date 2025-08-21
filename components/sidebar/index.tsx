@@ -52,7 +52,7 @@ export default function DashboardSidebar() {
   return (
     <>
       {/* Full Sidebar */}
-      <Sidebar className={open ? 'block' : 'hidden'} side="left" variant="sidebar">
+      <Sidebar className={open ? 'block' : 'hidden'} side="left" variant="sidebar" data-testid="sidebar">
         <SidebarHeader>
           <div className="flex gap-2 justify-center items-center px-1 py-1">
             <Bot className="h-8 w-8"/>

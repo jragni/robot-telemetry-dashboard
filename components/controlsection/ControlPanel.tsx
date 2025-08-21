@@ -136,7 +136,7 @@ export default function ControlPanel(): React.ReactNode {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Control Panel</CardTitle>
+          <CardTitle>Controls</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -150,12 +150,12 @@ export default function ControlPanel(): React.ReactNode {
   }
 
   return (
-    <div className="p-3 h-fit">
+    <div className="p-3 h-fit" data-testid="control-panel">
       {/* Compact Header */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-xs sm:text-sm font-medium text-white uppercase tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>Controls</h3>
         <Select onValueChange={setSelectedTopic} value={selectedTopic}>
-          <SelectTrigger className="w-32 h-6 text-xs bg-gray-700 border-gray-500 text-gray-200">
+          <SelectTrigger className="w-32 h-6 text-xs bg-gray-700 border-gray-500 text-gray-200" data-testid="topic-selector">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -173,6 +173,7 @@ export default function ControlPanel(): React.ReactNode {
           <Label className="text-xs text-white w-12 shrink-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>Linear:</Label>
           <Slider
             className="flex-1"
+            data-testid="linear-velocity-slider"
             max={2}
             min={0}
             onValueChange={(val) => setLinearVelocity(val[0])}
@@ -185,6 +186,7 @@ export default function ControlPanel(): React.ReactNode {
           <Label className="text-xs text-white w-12 shrink-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>Angular:</Label>
           <Slider
             className="flex-1"
+            data-testid="angular-velocity-slider"
             max={2}
             min={0}
             onValueChange={(val) => setAngularVelocity(val[0])}
@@ -196,7 +198,7 @@ export default function ControlPanel(): React.ReactNode {
       </div>
 
       {/* Movement Grid - Compact for all screens */}
-      <div className="grid grid-cols-3 gap-1 mb-3 max-w-32 mx-auto">
+      <div className="grid grid-cols-3 gap-1 mb-3 max-w-32 mx-auto" data-testid="movement-grid">
         <div></div>
         <Button
           className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"

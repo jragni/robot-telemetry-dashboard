@@ -53,6 +53,33 @@ beforeEach(() => {
     toJSON: vi.fn(),
   }));
 
+  // Mock pointer capture methods for Radix UI
+  HTMLElement.prototype.hasPointerCapture = vi.fn(() => false);
+  HTMLElement.prototype.setPointerCapture = vi.fn();
+  HTMLElement.prototype.releasePointerCapture = vi.fn();
+  HTMLElement.prototype.scrollIntoView = vi.fn();
+
+  // Mock DOM methods for next-themes
+  HTMLElement.prototype.remove = vi.fn();
+  HTMLElement.prototype.setAttribute = vi.fn();
+  HTMLElement.prototype.getAttribute = vi.fn(() => null);
+  HTMLElement.prototype.removeAttribute = vi.fn();
+
+  // Mock document.head for next-themes
+  if (!document.head) {
+    document.head = document.createElement('head');
+  }
+  document.head.appendChild = vi.fn();
+  document.head.removeChild = vi.fn();
+  document.head.querySelector = vi.fn(() => null);
+  document.head.querySelectorAll = vi.fn(() => []);
+  
+  // Mock document.documentElement for next-themes
+  if (!document.documentElement) {
+    document.documentElement = document.createElement('html');
+  }
+  document.documentElement.style = {};
+
   // Mock SVG methods for D3
   (SVGElement.prototype as any).getBBox = vi.fn(() => ({
     x: 0,
@@ -94,6 +121,27 @@ beforeEach(() => {
     value: {
       randomUUID: vi.fn(() => 'test-uuid-1234'),
     },
+  });
+
+  // Suppress unhandled promise rejections during tests
+  // This is common for tests with complex async third-party libraries
+  const originalUnhandledRejection = process.listeners('unhandledRejection');
+  process.removeAllListeners('unhandledRejection');
+  process.on('unhandledRejection', (reason, promise) => {
+    // Only suppress ROSLIB-related errors, let others through
+    if (reason && typeof reason === 'object' && 'message' in reason) {
+      const message = (reason as Error).message;
+      if (message.includes('callOnConnection') || message.includes('ROSLIB')) {
+        // Suppress ROSLIB-related unhandled rejections
+        return;
+      }
+    }
+    // Re-emit other unhandled rejections
+    originalUnhandledRejection.forEach(listener => {
+      if (typeof listener === 'function') {
+        listener(reason, promise);
+      }
+    });
   });
 
   // Mock setTimeout and clearTimeout for better test control

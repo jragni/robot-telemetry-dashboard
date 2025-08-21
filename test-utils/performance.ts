@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 import { RenderResult, waitFor } from '@testing-library/react';
 
 // Performance measurement utilities

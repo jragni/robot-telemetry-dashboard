@@ -386,7 +386,7 @@ function LaserScanVisualization(): React.ReactNode {
 
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col" data-testid="laser-scan-visualization">
       {/* Header - Drone Operator Style */}
       <div className="px-3 py-2">
         {/* Desktop: Single row layout */}

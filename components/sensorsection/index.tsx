@@ -16,7 +16,7 @@ export default function SensorSection(): React.ReactNode {
   }
 
   return (
-    <div className="h-full">
+    <div className="h-full" data-testid="sensor-section">
       {/* Camera Feed - Full space on left side */}
       <div className="h-full">
         <CameraVisualization />

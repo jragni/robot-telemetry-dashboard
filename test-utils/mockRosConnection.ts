@@ -7,23 +7,48 @@ export const mockROSLIB = {
     url: options.url,
     socket: { binaryType: 'arraybuffer' },
     on: vi.fn(),
+    once: vi.fn(),
     close: vi.fn(),
     connect: vi.fn(),
     getTopics: vi.fn(),
+    callOnConnection: vi.fn((callback) => {
+      if (typeof callback === 'function') {
+        callback();
+      }
+    }),
   })),
-  Topic: vi.fn().mockImplementation((options: { ros: any; name: string; messageType: string }) => ({
-    ros: options.ros,
-    name: options.name,
-    messageType: options.messageType,
-    subscribe: vi.fn(),
-    unsubscribe: vi.fn(),
-    publish: vi.fn(),
-  })),
+  Topic: vi.fn().mockImplementation((options: { ros: any; name: string; messageType: string }) => {
+    const mockRos = options.ros || {
+      callOnConnection: vi.fn((callback) => {
+        if (typeof callback === 'function') {
+          callback();
+        }
+      }),
+      getTopics: vi.fn(),
+      on: vi.fn(),
+    };
+    return {
+      ros: mockRos,
+      name: options.name,
+      messageType: options.messageType,
+      subscribe: vi.fn(),
+      unsubscribe: vi.fn(),
+      publish: vi.fn(),
+      advertise: vi.fn(),
+      unadvertise: vi.fn(),
+      callForSubscribeAndAdvertise: vi.fn(),
+    };
+  }),
   Service: vi.fn().mockImplementation((options: { ros: any; name: string; serviceType: string }) => ({
     ros: options.ros,
     name: options.name,
     serviceType: options.serviceType,
-    callService: vi.fn(),
+    callService: vi.fn().mockImplementation((request, callback) => {
+      // Default implementation that calls success callback
+      if (typeof callback === 'function') {
+        queueMicrotask(() => callback({ topics: ['/scan', '/laser_scan'] }));
+      }
+    }),
   })),
   ServiceRequest: vi.fn().mockImplementation((request: any) => request),
   Message: vi.fn().mockImplementation((message: any) => message),
@@ -123,8 +148,17 @@ export const setupRosConnectionMocks = () => {
           queueMicrotask(() => callback());
         }
       }),
+      once: vi.fn().mockImplementation((event, callback) => {
+        // Execute callback once then remove it
+        queueMicrotask(() => callback());
+      }),
       close: vi.fn(),
       connect: vi.fn(),
+      callOnConnection: vi.fn((callback) => {
+        if (typeof callback === 'function') {
+          callback();
+        }
+      }),
       getTopics: vi.fn().mockImplementation((successCallback) => {
         queueMicrotask(() => successCallback(mockServiceResponses.getTopics));
       }),
