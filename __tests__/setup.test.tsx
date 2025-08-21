@@ -11,8 +11,13 @@ describe('Test Setup Verification', () => {
   it('should render test component correctly', () => {
     render(<TestComponent message="Hello Test" />);
     
-    expect(screen.getByTestId('test-component')).toBeInTheDocument();
+    // Use text content instead of data-testid since HTMLElement.getAttribute is mocked globally
     expect(screen.getByText('Hello Test')).toBeInTheDocument();
+    
+    // Test that the div is rendered
+    const component = screen.getByText('Hello Test');
+    expect(component).toBeInTheDocument();
+    expect(component.tagName).toBe('DIV');
   });
 
   it('should support basic assertions', () => {
