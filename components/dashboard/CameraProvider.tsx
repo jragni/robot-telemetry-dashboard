@@ -95,7 +95,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   // Update frame stats - only when we actually render a new frame
   const updateFrameStats = useCallback(() => {
     const now = Date.now();
-    
+
     // Throttle FPS counting to prevent impossible frame rates
     // Only count as a new frame if at least 16ms has passed (60 FPS max)
     if (now - lastFrameTime.current >= 16) {
@@ -205,8 +205,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     if (fpsUpdateInterval.current) {
       clearInterval(fpsUpdateInterval.current);
     }
-
-    fpsUpdateInterval.current = setInterval(updateFPS, 1000); // Update FPS every 1 second for stable readings
+    // Update FPS every 1 second for stable readings
+    fpsUpdateInterval.current = setInterval(updateFPS, 1000);
 
     return () => {
       if (fpsUpdateInterval.current) {
@@ -220,7 +220,11 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     const fetchTopics = async () => {
       if (!selectedConnection?.rosInstance) {
         setImageTopics([
-          { name: '/camera/image_raw/compressed', type: 'compressed', messageType: 'sensor_msgs/msg/CompressedImage' },
+          {
+            name: '/camera/image_raw/compressed',
+            type: 'compressed',
+            messageType: 'sensor_msgs/msg/CompressedImage',
+          },
         ]);
         return;
       }
@@ -275,7 +279,11 @@ export function CameraProvider({ children }: { children: ReactNode }) {
               }
             } else {
               setImageTopics([
-                { name: '/camera/image_raw/compressed', type: 'compressed', messageType: 'sensor_msgs/msg/CompressedImage' },
+                {
+                  name: '/camera/image_raw/compressed',
+                  type: 'compressed',
+                  messageType: 'sensor_msgs/msg/CompressedImage',
+                },
               ]);
             }
           });
@@ -291,7 +299,11 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   // Subscribe to selected camera topic
   useEffect(() => {
     const setupSubscription = async () => {
-      if (!selectedConnection?.rosInstance || selectedConnection.status !== 'connected' || !isStreamingEnabled) {
+      if (
+        !selectedConnection?.rosInstance
+        || selectedConnection.status !== 'connected'
+        || !isStreamingEnabled
+      ) {
         setIsSubscribed(false);
         setImageUrl(null);
         return;

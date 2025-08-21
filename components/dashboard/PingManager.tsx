@@ -106,5 +106,5 @@ export default function PingManager() {
     };
   }, [connections, setConnections]);
 
-  return null; // This component doesn't render anything
+  return <div data-testid="ping-manager" style={{ display: 'none' }} />; // Hidden component for testing
 }

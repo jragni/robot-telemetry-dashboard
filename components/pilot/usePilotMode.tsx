@@ -31,9 +31,13 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
       if ('screen' in window && 'orientation' in window.screen && 'lock' in window.screen.orientation) {
         try {
           // Try to lock to landscape first (better for pilot mode), fallback to current
-          await (window.screen.orientation as any).lock('landscape').catch(() =>
-            (window.screen.orientation as any).lock('any'),
-          );
+          const landscapePromise = (window.screen.orientation as any).lock('landscape');
+          if (landscapePromise && typeof landscapePromise.catch === 'function') {
+            await landscapePromise.catch(() => {
+              const anyPromise = (window.screen.orientation as any).lock('any');
+              return anyPromise && typeof anyPromise.catch === 'function' ? anyPromise : Promise.resolve();
+            });
+          }
         } catch (orientationError) {
           console.warn('Screen orientation lock not supported:', orientationError);
         }

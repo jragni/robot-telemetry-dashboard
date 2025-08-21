@@ -41,7 +41,7 @@ export default function TopicSection(): React.ReactNode {
   const totalSubscriptions = lightSubscriptions.length + heavySubscriptions.length;
 
   return (
-    <Card className="w-full">
+    <Card className="w-full" data-testid="topic-section">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm sm:text-lg">Topics</CardTitle>

@@ -542,7 +542,7 @@ function ImuVisualization(): React.ReactNode {
   }
 
   return (
-    <div className="w-full bg-gray-800 border border-gray-600 rounded flex flex-col">
+    <div className="w-full bg-gray-800 border border-gray-600 rounded flex flex-col" data-testid="imu-visualization">
       {/* Header - Drone Operator Style */}
       <div className="px-3 py-2 bg-gray-900/80 border-b border-gray-600">
         {/* Desktop: Single row layout */}

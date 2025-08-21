@@ -18,7 +18,7 @@ export default function PilotMode() {
   return (
     <div className={`fixed inset-0 z-50 bg-black ${isFullscreen ? 'mobile-fullscreen' : ''} ${
       orientation === 'landscape' ? 'mobile-landscape-layout' : ''
-    } mobile-safe-area`}>
+    } mobile-safe-area`} data-testid="pilot-mode">
       {/* Exit button - Top left */}
       <button
         onClick={exitPilotMode}

@@ -11,8 +11,11 @@ function Slider({
   value,
   min = 0,
   max = 100,
+  'data-testid': dataTestId,
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
+}: React.ComponentProps<typeof SliderPrimitive.Root> & {
+  'data-testid'?: string;
+}) {
   const _values = React.useMemo(
     () =>
       Array.isArray(value)
@@ -26,6 +29,7 @@ function Slider({
   return (
     <SliderPrimitive.Root
       data-slot="slider"
+      data-testid={dataTestId}
       defaultValue={defaultValue}
       max={max}
       min={min}
