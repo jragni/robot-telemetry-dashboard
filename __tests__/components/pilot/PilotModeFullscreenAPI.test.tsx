@@ -184,8 +184,9 @@ describe('PilotMode Fullscreen API Integration', () => {
     });
 
     it('should still enable pilot mode if fullscreen request fails', async () => {
-      // Suppress console errors for this test
+      // Suppress console errors and warnings for this test
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       
       mockFullscreenAPI.requestFullscreen.mockRejectedValue(new Error('Fullscreen not supported'));
       
@@ -206,6 +207,7 @@ describe('PilotMode Fullscreen API Integration', () => {
       });
       
       consoleError.mockRestore();
+      consoleWarn.mockRestore();
     });
 
     it('should set fullscreen state correctly when fullscreen succeeds', async () => {
@@ -230,8 +232,9 @@ describe('PilotMode Fullscreen API Integration', () => {
     });
 
     it('should handle orientation lock failure gracefully', async () => {
-      // Suppress console errors for this test
+      // Suppress console errors and warnings for this test
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       
       mockFullscreenAPI.requestFullscreen.mockResolvedValue(undefined);
       mockScreenOrientationAPI.lock.mockRejectedValue(new Error('Orientation lock not supported'));
@@ -252,6 +255,7 @@ describe('PilotMode Fullscreen API Integration', () => {
       });
       
       consoleError.mockRestore();
+      consoleWarn.mockRestore();
     });
   });
 

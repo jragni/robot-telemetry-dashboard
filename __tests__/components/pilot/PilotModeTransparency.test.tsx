@@ -33,6 +33,9 @@ vi.mock('@/components/pilot/usePilotMode', () => ({
   usePilotMode: vi.fn(),
   PilotModeProvider: vi.fn(({ children }: { children: React.ReactNode }) => <div data-testid="pilot-mode-provider">{children}</div>),
 }));
+vi.mock('@/components/sensorsection/LaserScanVisualization', () => ({
+  default: vi.fn(() => <div data-testid="laser-scan">LiDAR</div>)
+}));
 
 // Mock D3 with complete implementation
 vi.mock('d3', () => {
@@ -176,7 +179,7 @@ describe('PilotMode UI Transparency - Functional Tests', () => {
       render(<PilotMode />);
 
       // Essential text should be present and readable
-      expect(screen.getByText('Exit').closest('button')).toBeInTheDocument();
+      expect(screen.getByText('ESC - Exit')).toBeInTheDocument();
       expect(screen.getAllByText('Controls').length).toBeGreaterThan(0);
       expect(screen.getAllByText('LiDAR').length).toBeGreaterThan(0);
     });
@@ -185,7 +188,7 @@ describe('PilotMode UI Transparency - Functional Tests', () => {
       render(<PilotMode />);
 
       // All essential buttons should be visible
-      expect(screen.getByText('Exit').closest('button')).toBeInTheDocument();
+      expect(screen.getByText('ESC - Exit')).toBeInTheDocument();
       // Handle multiple "Exit Pilot" buttons
       const exitPilotButtons = screen.getAllByText('Exit Pilot');
       expect(exitPilotButtons.length).toBeGreaterThan(0);
@@ -201,7 +204,7 @@ describe('PilotMode UI Transparency - Functional Tests', () => {
       render(<PilotMode />);
 
       // All major components should be present
-      expect(screen.getByText('Exit').closest('button')).toBeInTheDocument();
+      expect(screen.getByText('ESC - Exit')).toBeInTheDocument();
       expect(screen.getByRole('img')).toBeInTheDocument(); // Camera
       expect(screen.getAllByText('Controls').length).toBeGreaterThan(0);
       expect(screen.getAllByText('LiDAR').length).toBeGreaterThan(0);
@@ -229,7 +232,7 @@ describe('PilotMode UI Transparency - Functional Tests', () => {
       render(<PilotMode />);
 
       // UI elements should be on top of camera
-      expect(screen.getByText('Exit').closest('button')).toBeInTheDocument();
+      expect(screen.getByText('ESC - Exit')).toBeInTheDocument();
       expect(screen.getByRole('img')).toBeInTheDocument();
     });
   });
@@ -239,7 +242,7 @@ describe('PilotMode UI Transparency - Functional Tests', () => {
       render(<PilotMode />);
 
       // All components should render without issues
-      expect(screen.getByText('Exit').closest('button')).toBeInTheDocument();
+      expect(screen.getByText('ESC - Exit')).toBeInTheDocument();
       expect(screen.getAllByText('Controls').length).toBeGreaterThan(0);
     });
   });
@@ -249,7 +252,7 @@ describe('PilotMode UI Transparency - Functional Tests', () => {
       render(<PilotMode />);
 
       // Exit options should be available
-      expect(screen.getByText('Exit').closest('button')).toBeInTheDocument();
+      expect(screen.getByText('ESC - Exit')).toBeInTheDocument();
       // Handle multiple "Exit Pilot" buttons
       const exitPilotButtons = screen.getAllByText('Exit Pilot');
       expect(exitPilotButtons.length).toBeGreaterThan(0);

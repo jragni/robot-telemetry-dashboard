@@ -130,7 +130,7 @@ export default function AddConnectionDialog(): React.ReactNode {
           <span>Add Data Source</span>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add Data Source to Dashboard</DialogTitle>
           <DialogDescription>Add Robot or Data Source</DialogDescription>
@@ -139,9 +139,9 @@ export default function AddConnectionDialog(): React.ReactNode {
         {/* Connection History */}
         {connectionHistory.length > 0 && (
           <div className="mb-4">
-            <Label className="text-xs sm:text-sm font-medium">Recent Connections:</Label>
+            <Label className="text-sm font-medium">Recent Connections:</Label>
             <div className="mt-2 space-y-2 max-h-32 overflow-y-auto">
-              {connectionHistory.slice(0, 5).map((item, index) => (
+              {connectionHistory.slice(0, 4).map((item, index) => (
                 <button
                   key={`${item.connectionName}-${item.webSocketUrl}-${index}`}
                   className="w-full text-left p-2 rounded border hover:bg-gray-50 transition-colors"
@@ -161,11 +161,11 @@ export default function AddConnectionDialog(): React.ReactNode {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="connection-name-input">Data Source Name:</Label>
             <Input
-              className="my-2"
+              className="mt-1"
               enterKeyHint="next"
               id="connection-name-input"
               inputMode="text"
@@ -179,7 +179,7 @@ export default function AddConnectionDialog(): React.ReactNode {
           <div>
             <Label htmlFor="websocket-url-input">WebSocket URL:</Label>
             <Input
-              className="my-2"
+              className="mt-1"
               enterKeyHint="done"
               id="websocket-url-input"
               inputMode="url"
@@ -190,10 +190,10 @@ export default function AddConnectionDialog(): React.ReactNode {
               value={formData.webSocketUrl}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 pt-2">
             <Button
               disabled={!formData.connectionName || !formData.webSocketUrl || isLoading}
-              size="lg"
+              className="flex-1"
               type="submit"
               variant="default"
             >

@@ -27,37 +27,58 @@ function LaserScanVisualization(): React.ReactNode {
   // NOTE arbitrarily set for best visualization of objects within close proximity
   const maxRange = 5;
 
+  // Performance optimization: add throttling and frame limiting
+  const lastUpdateTime = useRef<number>(0);
+  const animationFrame = useRef<number | null>(null);
+  
   const processLaserScan = useCallback((message: LaserScanMessage) => {
-    const points: ScanPoint[] = [];
-
-    // Data decimation for performance - skip every other point for high-resolution scans
-    const skipFactor = message.ranges.length > 720 ? 2 : 1; // Decimate if >720 points
-
-    for (let index = 0; index < message.ranges.length; index += skipFactor) {
-      const range = message.ranges[index];
-      if (
-        range >= message.range_min
-        && range <= message.range_max
-        && !isNaN(range)
-        && isFinite(range)
-        && range <= maxRange // Additional filter for visualization range
-      ) {
-        const angle = message.angle_min + (index * message.angle_increment);
-
-        // NOTE: To ensure up is always "up" shift the x and y by 90 degrees
-        const x = range * Math.cos(angle + (Math.PI / 2));
-        const y = range * Math.sin(angle + (Math.PI / 2));
-
-        points.push({
-          x,
-          y,
-          range,
-          angle,
-        });
-      }
+    const now = Date.now();
+    
+    // Throttle LiDAR updates to 30 FPS maximum for better performance
+    if (now - lastUpdateTime.current < 33) { // 33ms = ~30 FPS
+      return;
     }
+    
+    // Cancel any pending animation frame
+    if (animationFrame.current) {
+      cancelAnimationFrame(animationFrame.current);
+    }
+    
+    // Schedule update on next animation frame
+    animationFrame.current = requestAnimationFrame(() => {
+      const points: ScanPoint[] = [];
 
-    setScanData(points);
+      // Enhanced data decimation for better performance
+      const totalPoints = message.ranges.length;
+      const skipFactor = totalPoints > 1080 ? 3 : totalPoints > 720 ? 2 : 1;
+
+      for (let index = 0; index < totalPoints; index += skipFactor) {
+        const range = message.ranges[index];
+        if (
+          range >= message.range_min
+          && range <= message.range_max
+          && !isNaN(range)
+          && isFinite(range)
+          && range <= maxRange // Additional filter for visualization range
+        ) {
+          const angle = message.angle_min + (index * message.angle_increment);
+
+          // NOTE: To ensure up is always "up" shift the x and y by 90 degrees
+          const x = range * Math.cos(angle + (Math.PI / 2));
+          const y = range * Math.sin(angle + (Math.PI / 2));
+
+          points.push({
+            x,
+            y,
+            range,
+            angle,
+          });
+        }
+      }
+
+      setScanData(points);
+      lastUpdateTime.current = now;
+    });
   }, [maxRange]);
 
   // Fetch available LaserScan topics when connection changes
@@ -138,6 +159,11 @@ function LaserScanVisualization(): React.ReactNode {
       if (scanTopic) {
         scanTopic.unsubscribe();
         setIsSubscribed(false);
+      }
+      // Cancel any pending animation frames
+      if (animationFrame.current) {
+        cancelAnimationFrame(animationFrame.current);
+        animationFrame.current = null;
       }
     };
   }, [selectedConnection, selectedTopic, processLaserScan]);
