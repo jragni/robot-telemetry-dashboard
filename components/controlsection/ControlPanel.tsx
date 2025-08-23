@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import {
   ArrowDown,
@@ -26,16 +26,15 @@ import {
 import { useConnection } from '@/components/dashboard/ConnectionProvider';
 import useMounted from '@/hooks/useMounted';
 
+import { DEFAULT_ANGULAR_VELOCTITY } from './constants';
+
 /**
  * ControlPanel
  * NOTE: due to the roslib dependency, this component needs to be lazy loaded
  */
 export default function ControlPanel(): React.ReactNode {
   const [linearVelocity, setLinearVelocity] = useState<number>(0.15);
-  const [angularVelocity, setAngularVelocity] = useState<number>(
-    Math.floor((Math.PI / 8) * 100) / 100,
-  );
-  const [direction, setDirection] = useState<string>('stop');
+  const [angularVelocity, setAngularVelocity] = useState<number>(DEFAULT_ANGULAR_VELOCTITY);
   const [selectedTopic, setSelectedTopic] = useState<string>('/cmd_vel');
   const [twistTopics, setTwistTopics] = useState<string[]>(['/cmd_vel']);
 
@@ -81,10 +80,13 @@ export default function ControlPanel(): React.ReactNode {
     fetchTopics();
   }, [selectedConnection, selectedTopic]);
 
-  useEffect(() => {
-    const handleMove = async () => {
-      if (!selectedConnection?.rosInstance) return;
+  // Single command publishing - send one command per button press
+  const publishSingleCommand = useCallback(async (commandDirection: string) => {
+    if (!selectedConnection?.rosInstance || selectedConnection.status !== 'connected') {
+      return;
+    }
 
+    try {
       const { rosInstance } = selectedConnection;
       const ROSLIB = (await import('roslib')).default;
 
@@ -100,7 +102,7 @@ export default function ControlPanel(): React.ReactNode {
         angular: { x: 0, y: 0, z: 0 },
       };
 
-      switch (direction) {
+      switch (commandDirection) {
         case 'forward':
           message.linear.x = linearVelocity;
           break;
@@ -119,18 +121,12 @@ export default function ControlPanel(): React.ReactNode {
       }
 
       const rosMessage = new ROSLIB.Message(message);
-
-      // Immediate publish with priority
       twist.publish(rosMessage);
-    };
-    handleMove();
-  }, [
-    angularVelocity,
-    direction,
-    linearVelocity,
-    selectedConnection,
-    selectedTopic,
-  ]);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('Failed to publish command:', error);
+    }
+  }, [selectedConnection, selectedTopic, linearVelocity, angularVelocity]);
 
   if (!isMounted) {
     return (
@@ -153,7 +149,12 @@ export default function ControlPanel(): React.ReactNode {
     <div className="p-3 h-fit" data-testid="control-panel">
       {/* Compact Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs sm:text-sm font-medium text-white uppercase tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>Controls</h3>
+        <h3
+          className="text-xs sm:text-sm font-medium text-white uppercase tracking-wide"
+          style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
+        >
+          Controls
+        </h3>
         <Select onValueChange={setSelectedTopic} value={selectedTopic}>
           <SelectTrigger className="w-32 h-6 text-xs bg-gray-700 border-gray-500 text-gray-200" data-testid="topic-selector">
             <SelectValue />
@@ -174,7 +175,7 @@ export default function ControlPanel(): React.ReactNode {
           <Slider
             className="flex-1"
             data-testid="linear-velocity-slider"
-            max={2}
+            max={0.75}
             min={0}
             onValueChange={(val) => setLinearVelocity(val[0])}
             step={0.02}
@@ -202,7 +203,7 @@ export default function ControlPanel(): React.ReactNode {
         <div></div>
         <Button
           className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
-          onClick={() => setDirection('forward')}
+          onClick={() => publishSingleCommand('forward')}
           size="sm"
           variant="outline"
         >
@@ -212,7 +213,7 @@ export default function ControlPanel(): React.ReactNode {
 
         <Button
           className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
-          onClick={() => setDirection('ccw')}
+          onClick={() => publishSingleCommand('ccw')}
           size="sm"
           variant="outline"
         >
@@ -220,7 +221,7 @@ export default function ControlPanel(): React.ReactNode {
         </Button>
         <Button
           className="w-8 h-8 p-0 bg-red-700 border-red-600 hover:bg-red-600"
-          onClick={() => setDirection('stop')}
+          onClick={() => publishSingleCommand('stop')}
           size="sm"
           variant="destructive"
         >
@@ -228,7 +229,7 @@ export default function ControlPanel(): React.ReactNode {
         </Button>
         <Button
           className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
-          onClick={() => setDirection('cw')}
+          onClick={() => publishSingleCommand('cw')}
           size="sm"
           variant="outline"
         >
@@ -238,7 +239,7 @@ export default function ControlPanel(): React.ReactNode {
         <div></div>
         <Button
           className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
-          onClick={() => setDirection('backward')}
+          onClick={() => publishSingleCommand('backward')}
           size="sm"
           variant="outline"
         >
