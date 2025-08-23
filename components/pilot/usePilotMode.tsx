@@ -27,6 +27,9 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
 
   const enterPilotMode = useCallback(async () => {
     try {
+      // Prevent background scrolling by setting overflow hidden on body and adding CSS class
+      document.body.style.overflow = 'hidden';
+      document.documentElement?.classList?.add('pilot-mode-active');
       // On mobile, try to lock screen orientation to current or preferred orientation
       if ('screen' in window && 'orientation' in window.screen && 'lock' in window.screen.orientation) {
         try {
@@ -63,6 +66,9 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
 
   const exitPilotMode = useCallback(async () => {
     try {
+      // Restore background scrolling by removing overflow hidden and CSS class
+      document.body.style.overflow = '';
+      document.documentElement?.classList?.remove('pilot-mode-active');
       // Unlock screen orientation
       if ('screen' in window && 'orientation' in window.screen && 'unlock' in window.screen.orientation) {
         try {
@@ -82,6 +88,8 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.warn('Failed to exit fullscreen:', error);
       // Still exit pilot mode even if fullscreen fails
+      document.body.style.overflow = ''; // Always restore scrolling even if fullscreen fails
+      document.documentElement?.classList?.remove('pilot-mode-active');
       setIsPilotMode(false);
       setIsFullscreen(false);
     }
@@ -153,6 +161,16 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isPilotMode, exitPilotMode]);
+
+  // Cleanup: Ensure scroll is restored if component unmounts while pilot mode is active
+  useEffect(() => {
+    return () => {
+      if (isPilotMode) {
+        document.body.style.overflow = '';
+        document.documentElement?.classList?.remove('pilot-mode-active');
+      }
+    };
+  }, [isPilotMode]);
 
   return (
     <PilotModeContext.Provider value={{
