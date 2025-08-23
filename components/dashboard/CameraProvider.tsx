@@ -116,26 +116,24 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         const mimeType = message.format.toLowerCase().includes('png') ? 'image/png' : 'image/jpeg';
         imageDataUrl = `data:${mimeType};base64,${message.data}`;
       } else {
-        // Optimize base64 conversion for large arrays
+        // Highly optimized base64 conversion for real-time performance
         const uint8Data = message.data instanceof Uint8Array
           ? message.data
           : new Uint8Array(message.data);
-        // Use more efficient base64 conversion for large data
-        let base64String: string;if (uint8Data.length > 100000) {
-          // For large images, process in chunks to avoid call stack overflow
-          const chunkSize = 8192;
-          let result = '';
-          for (let i = 0; i < uint8Data.length; i += chunkSize) {
-            const chunk = uint8Data.subarray(i, i + chunkSize);
-            result += String.fromCharCode.apply(null, Array.from(chunk));
-          }
-          base64String = btoa(result);
-        } else {
-          base64String = btoa(String.fromCharCode(...uint8Data));
-        }
 
-        const mimeType = message.format.toLowerCase().includes('png') ? 'image/png' : 'image/jpeg';
-        imageDataUrl = `data:${mimeType};base64,${base64String}`;
+        // Use FileReader for efficient async conversion (non-blocking)
+        const blob = new Blob([uint8Data], {
+          type: message.format.toLowerCase().includes('png') ? 'image/png' : 'image/jpeg',
+        });
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            setImageUrl(reader.result);
+            updateFrameStats();
+          }
+        };
+        reader.readAsDataURL(blob);
+        return; // Exit early for async processing
       }
 
       setImageUrl(imageDataUrl);
@@ -252,6 +250,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
           // Fetch raw image topics
           const getRawTopics = new ROSLIB.Service({
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             ros: selectedConnection.rosInstance!,
             name: '/rosapi/topics_for_type',
             serviceType: 'rosapi/TopicsForType',
@@ -273,8 +272,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
             if (allTopics.length > 0) {
               setImageTopics(allTopics);
               if (!allTopics.find(t => t.name === selectedTopic)) {
-                const preferredTopic = allTopics.find(t => t.name.includes('compressed')) ??
-                                      allTopics[0];
+                const preferredTopic = allTopics.find(t => t.name.includes('compressed'))
+                  ?? allTopics[0];
                 setSelectedTopic(preferredTopic.name);
               }
             } else {
@@ -321,8 +320,11 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         });
 
         topic.subscribe((message: any) => {
-          // NO THROTTLING - process every frame immediately
-          processImageMessage(message);
+          // Add frame rate limiting for better performance
+          const now = Date.now();
+          if (now - lastFrameTime.current >= 33) { // Limit to ~30 FPS max
+            processImageMessage(message);
+          }
         });
 
         setIsSubscribed(true);
@@ -343,17 +345,19 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   }, [selectedConnection, selectedTopic, isStreamingEnabled, imageTopics, processImageMessage]);
 
   return (
-    <CameraContext.Provider value={{
-      imageUrl,
-      isSubscribed,
-      isStreamingEnabled,
-      currentFPS,
-      frameCount,
-      selectedTopic,
-      imageTopics,
-      setSelectedTopic,
-      setIsStreamingEnabled,
-    }}>
+    <CameraContext.Provider
+      value={{
+        imageUrl,
+        isSubscribed,
+        isStreamingEnabled,
+        currentFPS,
+        frameCount,
+        selectedTopic,
+        imageTopics,
+        setSelectedTopic,
+        setIsStreamingEnabled,
+      }}
+    >
       {children}
     </CameraContext.Provider>
   );

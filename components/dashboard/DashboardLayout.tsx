@@ -21,8 +21,8 @@ export default function DashboardLayout() {
       <DashboardSidebar />
       {/* Spacer for fixed collapsed sidebar */}
       {!open && <div className="w-16 shrink-0" />}
-      <main className="flex-1 overflow-hidden">
-        <div className="h-full overflow-hidden bg-gray-900 text-white">
+      <main className="flex-1" style={{ overflow: 'visible' }}>
+        <div className="h-full bg-gray-900 text-white" style={{ overflow: 'visible' }}>
           <div className="h-full flex flex-col">
             {/* Main Operator Console - Responsive Layout */}
             <div className="flex-1 p-2 min-h-0">
@@ -114,8 +114,8 @@ export default function DashboardLayout() {
 
             {/* Bottom Status Bar */}
             <div className="h-auto border-t border-gray-700 bg-gray-800/50">
-              <div className="flex items-center justify-between px-4 py-2">
-                <div className="flex-1">
+              <div className="flex items-center justify-between py-2" style={{ overflow: 'visible' }}>
+                <div style={{ width: '100%', overflow: 'visible' }}>
                   <TopicSection />
                 </div>
               </div>
