@@ -44,6 +44,7 @@ export default function PilotModeCamera(): React.ReactNode {
       isFullscreen ? 'mobile-fullscreen' : ''
     } mobile-camera-container`}>
       {imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           alt="Pilot Mode Camera Feed"
           onLoad={handleImageLoad}
