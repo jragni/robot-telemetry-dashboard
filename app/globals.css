@@ -124,9 +124,14 @@
 @layer components {
   /* Mobile fullscreen and orientation support */
   .mobile-fullscreen {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important; /* Dynamic viewport height for mobile browsers */
   }
   
   .mobile-safe-area {
@@ -175,23 +180,33 @@
     width: 100vh;
   }
   
-  @media (orientation: landscape) and (max-height: 600px) {
+  /* Landscape mode optimizations */
+  @media (orientation: landscape) and (max-height: 700px) {
     .mobile-landscape-layout {
       flex-direction: row;
-    }
-    
-    .mobile-landscape-layout .mobile-hud-bottom {
-      position: static;
-      width: auto;
-      height: 100%;
-      max-width: 300px;
-      display: flex;
-      flex-direction: column;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
     }
     
     .mobile-landscape-layout .mobile-camera-container {
       flex: 1;
       height: 100%;
+    }
+  }
+
+  /* Force fullscreen on mobile devices in landscape */
+  @media (max-width: 768px) and (orientation: landscape) {
+    .mobile-fullscreen {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      z-index: 9999 !important;
     }
   }
   
@@ -247,3 +262,68 @@
     opacity: 0.3;
   }
 }
+
+/* Pilot Mode - Only prevent body scroll when in pilot mode */
+.pilot-mode-active {
+  overflow: hidden !important;
+  height: 100vh;
+}
+
+/* Clean mobile table scrolling - no conflicts */
+.overflow-x-auto {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: none;
+  /* Ensure table is fully scrollable */
+  min-height: 1px;
+}
+
+/* Mobile table optimization */
+@media (max-width: 640px) {
+  /* Better touch scrolling for tables */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    /* Force enable scrollbar on mobile for visibility */
+    scrollbar-width: auto;
+  }
+  
+  /* Ensure table takes full available width and scrolls properly */
+  table {
+    min-width: 100%;
+    table-layout: fixed;
+  }
+  
+  /* Prevent text wrapping in narrow cells */
+  th, td {
+    white-space: nowrap;
+  }
+}
+
+/* Ensure tables are always scrollable on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .overflow-x-auto {
+    /* Force table to be wider than container */
+    contain: none;
+  }
+  
+  table {
+    width: max-content;
+    min-width: 100%;
+  }
+}
+
+/* Smooth collapse/expand animations */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure dropdowns work */
+[data-radix-popper-content-wrapper] {
+  z-index: 999999 !important;
+}
+
+
