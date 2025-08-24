@@ -78,7 +78,7 @@ export function usePing(
         const request = new ROSLIB.ServiceRequest({});
 
         service.callService(request,
-          (result: any) => {
+          (_result: unknown) => {
             if (!settled) {
               settled = true;
               clearTimeout(timeoutId);
@@ -86,7 +86,7 @@ export function usePing(
               resolve(latency);
             }
           },
-          (error: any) => {
+          (_error: unknown) => {
             // If /rosapi/nodes fails, try a simple topic list as fallback
             if (!settled) {
               rosInstance.getTopics(
@@ -109,7 +109,7 @@ export function usePing(
             }
           },
         );
-      } catch (error) {
+      } catch (_error) {
         if (!settled) {
           settled = true;
           clearTimeout(timeoutId);

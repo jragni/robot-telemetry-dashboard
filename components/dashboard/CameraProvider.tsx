@@ -319,11 +319,11 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           messageType: topicInfo.messageType,
         });
 
-        topic.subscribe((message: any) => {
+        topic.subscribe((message) => {
           // Add frame rate limiting for better performance
           const now = Date.now();
           if (now - lastFrameTime.current >= 33) { // Limit to ~30 FPS max
-            processImageMessage(message);
+            processImageMessage(message as ImageMessage);
           }
         });
 
@@ -337,8 +337,10 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     setupSubscription();
 
     return () => {
-      if (intervalRef.current) {
-        clearTimeout(intervalRef.current);
+      // Store ref value in a variable for cleanup
+      const timeoutId = intervalRef.current;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
       setIsSubscribed(false);
     };

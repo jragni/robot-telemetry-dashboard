@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
 import { useEffect, useRef, useState, useCallback, useMemo, memo } from 'react';
@@ -127,8 +128,8 @@ function ImuVisualization(): React.ReactNode {
             setSelectedTopic('/imu');
           }
         });
-      } catch (error) {
-        console.warn('Failed to fetch IMU topics:', error);
+      } catch {
+        // Failed to fetch IMU topics
         setImuTopics(['/imu']);
         setSelectedTopic('/imu');
       }
@@ -156,15 +157,20 @@ function ImuVisualization(): React.ReactNode {
         messageType: 'sensor_msgs/Imu',
       });
 
-      imuTopic.subscribe((message: any) => {
+      imuTopic.subscribe((message) => {
+        const typedMessage = message as {
+          orientation: { x: number; y: number; z: number; w: number };
+          linear_acceleration: { x: number; y: number; z: number };
+          angular_velocity: { x: number; y: number; z: number };
+        };
         const timestamp = Date.now();
-        const euler = quaternionToEuler(message.orientation);
+        const euler = quaternionToEuler(typedMessage.orientation);
 
         const dataPoint: ImuDataPoint = {
           timestamp,
           orientation: euler,
-          linearAcceleration: message.linear_acceleration,
-          angularVelocity: message.angular_velocity,
+          linearAcceleration: typedMessage.linear_acceleration,
+          angularVelocity: typedMessage.angular_velocity,
         };
 
         setImuDataHistory(prev => {
@@ -196,7 +202,7 @@ function ImuVisualization(): React.ReactNode {
   const measurePerformance = useCallback((renderTime: number, _pointCount: number) => {
     // Log performance warnings if needed
     if (renderTime > performanceThreshold) {
-      console.warn(`IMU render time exceeded threshold: ${renderTime.toFixed(2)}ms (threshold: ${performanceThreshold}ms)`);
+      // IMU render time exceeded threshold
     }
   }, [performanceThreshold]);
 
@@ -314,12 +320,14 @@ function ImuVisualization(): React.ReactNode {
     d3State.current.yScale = yScale;
 
     // Create/update axes only if necessary
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!d3State.current.g!.select('.x-axis').node()) {
-      const xAxis = d3State.current.g!.append('g')
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      d3State.current.g!.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(0,${height})`);
 
-      const yAxis = d3State.current.g!.append('g')
+      d3State.current.g!.append('g')
         .attr('class', 'y-axis');
 
       // Add axis labels
