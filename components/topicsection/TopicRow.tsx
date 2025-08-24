@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { RobotConnection } from '../dashboard/definitions';
 
 interface TopicMessage {
   [key: string]: unknown;
@@ -11,20 +12,23 @@ interface TopicMessage {
 interface TopicRowProps {
   topicName: string;
   messageType: string;
-  connection: {
-    ros?: unknown;
-  } | null;
+  connection: RobotConnection | null;
   isHeavy?: boolean;
 }
 
-export default function TopicRow({ topicName, messageType, connection, isHeavy = false }: TopicRowProps) {
+export default function TopicRow({
+  connection,
+  isHeavy = false,
+  messageType,
+  topicName,
+}: TopicRowProps) {
   const [message, setMessage] = useState<TopicMessage | null>(null);
   const [messageCount, setMessageCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const subscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
 
   useEffect(() => {
-    if (!connection?.ros || isHeavy) {
+    if (!connection?.rosInstance || isHeavy) {
       setIsLoading(false);
       return;
     }
@@ -32,7 +36,7 @@ export default function TopicRow({ topicName, messageType, connection, isHeavy =
     const subscribe = () => {
       try {
         const topic = new (window as any).ROSLIB.Topic({
-          ros: connection.ros,
+          ros: connection.rosInstance,
           name: topicName,
           messageType,
         });

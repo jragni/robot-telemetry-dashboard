@@ -30,20 +30,20 @@ function LaserScanVisualization(): React.ReactNode {
   // Performance optimization: add throttling and frame limiting
   const lastUpdateTime = useRef<number>(0);
   const animationFrame = useRef<number | null>(null);
-  
+
   const processLaserScan = useCallback((message: LaserScanMessage) => {
     const now = Date.now();
-    
+
     // Throttle LiDAR updates to 30 FPS maximum for better performance
     if (now - lastUpdateTime.current < 33) { // 33ms = ~30 FPS
       return;
     }
-    
+
     // Cancel any pending animation frame
     if (animationFrame.current) {
       cancelAnimationFrame(animationFrame.current);
     }
-    
+
     // Schedule update on next animation frame
     animationFrame.current = requestAnimationFrame(() => {
       const points: ScanPoint[] = [];
