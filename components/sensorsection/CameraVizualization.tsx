@@ -140,7 +140,7 @@ export default function CameraVisualization(): React.ReactNode {
               ref={imageRef}
               src={imageUrl}
               onError={() => {
-                console.warn('Error displaying camera image');
+                // Error displaying camera image
               }}
               onLoad={() => {
                 // Image loaded successfully

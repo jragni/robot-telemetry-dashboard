@@ -146,8 +146,8 @@ function LaserScanVisualization(): React.ReactNode {
         messageType: 'sensor_msgs/LaserScan',
       });
 
-      scanTopic.subscribe((message: any) => {
-        processLaserScan(message);
+      scanTopic.subscribe((message) => {
+        processLaserScan(message as LaserScanMessage);
       });
 
       setIsSubscribed(true);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   ArrowDown,
   ArrowLeft,
@@ -63,8 +63,8 @@ export default function MobilePilotControls({ orientation }: MobilePilotControls
 
       const rosMessage = new ROSLIB.Message(message);
       twist.publish(rosMessage);
-    } catch (error) {
-      console.warn('Failed to publish command:', error);
+    } catch {
+      // Failed to publish command
     }
   }, [selectedConnection, selectedTopic, linearVelocity, angularVelocity]);
 

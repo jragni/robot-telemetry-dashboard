@@ -34,15 +34,15 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
       if ('screen' in window && 'orientation' in window.screen && 'lock' in window.screen.orientation) {
         try {
           // Try to lock to landscape first (better for pilot mode), fallback to current
-          const landscapePromise = (window.screen.orientation as any).lock('landscape');
+          const landscapePromise = (window.screen.orientation as ScreenOrientation & { lock?: (orientation: string) => Promise<void> }).lock?.('landscape');
           if (landscapePromise && typeof landscapePromise.catch === 'function') {
             await landscapePromise.catch(() => {
-              const anyPromise = (window.screen.orientation as any).lock('any');
+              const anyPromise = (window.screen.orientation as ScreenOrientation & { lock?: (orientation: string) => Promise<void> }).lock?.('any');
               return anyPromise && typeof anyPromise.catch === 'function' ? anyPromise : Promise.resolve();
             });
           }
-        } catch (orientationError) {
-          console.warn('Screen orientation lock not supported:', orientationError);
+        } catch {
+          // Screen orientation lock not supported
         }
       }
 
@@ -56,8 +56,8 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
       }
 
       setIsPilotMode(true);
-    } catch (error) {
-      console.warn('Failed to enter fullscreen:', error);
+    } catch {
+      // Failed to enter fullscreen
       // Still enable pilot mode even if fullscreen fails
       setIsPilotMode(true);
       setIsFullscreen(false);
@@ -73,8 +73,8 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
       if ('screen' in window && 'orientation' in window.screen && 'unlock' in window.screen.orientation) {
         try {
           (window.screen.orientation as any).unlock();
-        } catch (orientationError) {
-          console.warn('Screen orientation unlock failed:', orientationError);
+        } catch {
+          // Screen orientation unlock failed
         }
       }
 
@@ -85,8 +85,8 @@ export function PilotModeProvider({ children }: { children: ReactNode }) {
 
       setIsPilotMode(false);
       setIsFullscreen(false);
-    } catch (error) {
-      console.warn('Failed to exit fullscreen:', error);
+    } catch {
+      // Failed to exit fullscreen
       // Still exit pilot mode even if fullscreen fails
       document.body.style.overflow = ''; // Always restore scrolling even if fullscreen fails
       document.documentElement?.classList?.remove('pilot-mode-active');
