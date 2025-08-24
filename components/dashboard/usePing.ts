@@ -66,6 +66,7 @@ export function usePing(
       try {
         // Use a simple service call to measure latency
         // ROS bridge typically has a /rosapi/nodes service that's lightweight
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const ROSLIB = require('roslib').default;
 
         const service = new ROSLIB.Service({

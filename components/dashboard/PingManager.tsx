@@ -33,7 +33,7 @@ export default function PingManager() {
 
       // This would ideally be a custom hook per connection
       // For now, we'll handle it in the parent component
-      const pingInterval = setInterval(async () => {
+      const pingInterval = setInterval(() => {
         if (!connection.rosInstance) return;
 
         const startTime = Date.now();
