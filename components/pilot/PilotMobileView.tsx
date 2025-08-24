@@ -5,10 +5,11 @@ import LaserScanVisualization from '@/components/sensorsection/LaserScanVisualiz
 import PingDisplay from '@/components/dashboard/PingDisplay';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { RobotConnection } from '../dashboard/definitions';
 
 interface PilotMobileViewProps {
   orientation: 'landscape' | 'portrait';
-  selectedConnection?: any;
+  selectedConnection?: RobotConnection | null;
   exitPilotMode?: () => void;
 }
 
