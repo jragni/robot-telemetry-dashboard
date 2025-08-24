@@ -28,6 +28,7 @@ import useMounted from '@/hooks/useMounted';
 
 import { DEFAULT_ANGULAR_VELOCTITY } from './constants';
 
+
 /**
  * ControlPanel
  * NOTE: due to the roslib dependency, this component needs to be lazy loaded
@@ -202,46 +203,111 @@ export default function ControlPanel(): React.ReactNode {
       <div className="grid grid-cols-3 gap-1 mb-3 max-w-32 mx-auto" data-testid="movement-grid">
         <div></div>
         <Button
-          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
-          onClick={() => publishSingleCommand('forward')}
+          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600 active:!outline-2 active:!outline-offset-2 active:!outline-blue-500 active:ring-4 active:ring-blue-500/40 active:scale-95 active:bg-blue-600 transition-all duration-150"
           size="sm"
           variant="outline"
+          onBlur={(e) => {
+            e.currentTarget.style.outline = '';
+            e.currentTarget.style.outlineOffset = '';
+            e.currentTarget.style.boxShadow = '';
+          }}
+          onClick={() => publishSingleCommand('forward')}
+          onFocus={(e) => {
+            e.currentTarget.style.outline = '2px solid #3b82f6';
+            e.currentTarget.style.outlineOffset = '2px';
+            e.currentTarget.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.4)';
+          }}
+          style={{
+            '--tw-ring-color': 'transparent',
+          } as React.CSSProperties}
         >
           <ArrowUp className="w-4 h-4 text-gray-200" />
         </Button>
         <div></div>
 
         <Button
-          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
-          onClick={() => publishSingleCommand('ccw')}
+          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600 active:!outline-2 active:!outline-offset-2 active:!outline-blue-500 active:ring-4 active:ring-blue-500/40 active:scale-95 active:bg-blue-600 transition-all duration-150"
           size="sm"
           variant="outline"
+          onBlur={(e) => {
+            e.currentTarget.style.outline = '';
+            e.currentTarget.style.outlineOffset = '';
+            e.currentTarget.style.boxShadow = '';
+          }}
+          onClick={() => publishSingleCommand('ccw')}
+          onFocus={(e) => {
+            e.currentTarget.style.outline = '2px solid #3b82f6';
+            e.currentTarget.style.outlineOffset = '2px';
+            e.currentTarget.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.4)';
+          }}
+          style={{
+            '--tw-ring-color': 'transparent',
+          } as React.CSSProperties}
         >
           <ArrowLeft className="w-4 h-4 text-gray-200" />
         </Button>
         <Button
-          className="w-8 h-8 p-0 bg-red-700 border-red-600 hover:bg-red-600"
-          onClick={() => publishSingleCommand('stop')}
+          className="w-8 h-8 p-0 bg-red-700 border-red-600 hover:bg-red-600 active:!outline-2 active:!outline-offset-2 active:!outline-red-500 active:ring-4 active:ring-red-500/40 active:scale-95 active:bg-red-500 transition-all duration-150"
           size="sm"
           variant="destructive"
+          onBlur={(e) => {
+            e.currentTarget.style.outline = '';
+            e.currentTarget.style.outlineOffset = '';
+            e.currentTarget.style.boxShadow = '';
+          }}
+          onClick={() => publishSingleCommand('stop')}
+          onFocus={(e) => {
+            e.currentTarget.style.outline = '2px solid #dc2626';
+            e.currentTarget.style.outlineOffset = '2px';
+            e.currentTarget.style.boxShadow = '0 0 0 4px rgba(220, 38, 38, 0.4)';
+          }}
+          style={{
+            '--tw-ring-color': 'transparent',
+          } as React.CSSProperties}
         >
           <Square className="w-4 h-4" />
         </Button>
         <Button
-          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
-          onClick={() => publishSingleCommand('cw')}
+          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600 active:!outline-2 active:!outline-offset-2 active:!outline-blue-500 active:ring-4 active:ring-blue-500/40 active:scale-95 active:bg-blue-600 transition-all duration-150"
           size="sm"
           variant="outline"
+          onBlur={(e) => {
+            e.currentTarget.style.outline = '';
+            e.currentTarget.style.outlineOffset = '';
+            e.currentTarget.style.boxShadow = '';
+          }}
+          onClick={() => publishSingleCommand('cw')}
+          onFocus={(e) => {
+            e.currentTarget.style.outline = '2px solid #3b82f6';
+            e.currentTarget.style.outlineOffset = '2px';
+            e.currentTarget.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.4)';
+          }}
+          style={{
+            '--tw-ring-color': 'transparent',
+          } as React.CSSProperties}
         >
           <ArrowRight className="w-4 h-4 text-gray-200" />
         </Button>
 
         <div></div>
         <Button
-          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600"
-          onClick={() => publishSingleCommand('backward')}
+          className="w-8 h-8 p-0 bg-gray-700 border-gray-500 hover:bg-gray-600 active:!outline-2 active:!outline-offset-2 active:!outline-blue-500 active:ring-4 active:ring-blue-500/40 active:scale-95 active:bg-blue-600 transition-all duration-150"
           size="sm"
           variant="outline"
+          onBlur={(e) => {
+            e.currentTarget.style.outline = '';
+            e.currentTarget.style.outlineOffset = '';
+            e.currentTarget.style.boxShadow = '';
+          }}
+          onClick={() => publishSingleCommand('backward')}
+          onFocus={(e) => {
+            e.currentTarget.style.outline = '2px solid #3b82f6';
+            e.currentTarget.style.outlineOffset = '2px';
+            e.currentTarget.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.4)';
+          }}
+          style={{
+            '--tw-ring-color': 'transparent',
+          } as React.CSSProperties}
         >
           <ArrowDown className="w-4 h-4 text-gray-200" />
         </Button>
