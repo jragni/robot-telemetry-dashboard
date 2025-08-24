@@ -22,7 +22,7 @@ describe('TopicRow', () => {
   const defaultProps = {
     topicName: '/test/topic',
     messageType: 'std_msgs/msg/String',
-    connection: { ros: { isConnected: true } },
+    connection: { rosInstance: { isConnected: true } },
     isHeavy: false,
   };
 
@@ -56,7 +56,11 @@ describe('TopicRow', () => {
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
 
-    expect(screen.getByText(/"data": "test message"/)).toBeInTheDocument();
+    // Check for the formatted JSON output
+    const messageElement = screen.getByText((content, element) => {
+      return element?.tagName === 'PRE' && content.includes('"data": "test message"');
+    });
+    expect(messageElement).toBeInTheDocument();
   });
 
   it('should show message count for live topics', async () => {

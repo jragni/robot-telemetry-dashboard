@@ -161,7 +161,7 @@ export default function AddConnectionDialog(): React.ReactNode {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="connection-name-input">Data Source Name:</Label>
             <Input
@@ -192,8 +192,8 @@ export default function AddConnectionDialog(): React.ReactNode {
           </div>
           <div className="flex gap-2 pt-2">
             <Button
-              disabled={!formData.connectionName || !formData.webSocketUrl || isLoading}
               className="flex-1"
+              disabled={!formData.connectionName || !formData.webSocketUrl || isLoading}
               type="submit"
               variant="default"
             >

@@ -3,6 +3,7 @@
 import React from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import TopicRow from './TopicRow';
+import { RobotConnection } from '../dashboard/definitions';
 
 interface Subscription {
   topicName: string;
@@ -11,9 +12,7 @@ interface Subscription {
 
 interface TopicTableProps {
   subscriptions: Subscription[];
-  selectedConnection: {
-    ros?: unknown;
-  } | null;
+  selectedConnection: RobotConnection | null
   isHeavyTopic: (messageType: string) => boolean;
 }
 

@@ -6,12 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Minimize2, Maximize2 } from 'lucide-react';
 
 interface TopicSectionHeaderProps {
-  subscriptionsCount: number;
   isMinimized: boolean;
   onToggleMinimize: () => void;
+  subscriptionsCount: number;
 }
 
-export default function TopicSectionHeader({ subscriptionsCount, isMinimized, onToggleMinimize }: TopicSectionHeaderProps) {
+export default function TopicSectionHeader({
+  isMinimized,
+  onToggleMinimize,
+  subscriptionsCount,
+}: TopicSectionHeaderProps) {
   if (isMinimized) {
     return (
       <CardHeader className="py-3">
