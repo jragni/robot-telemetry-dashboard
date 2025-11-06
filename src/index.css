@@ -2,32 +2,32 @@
 
 @layer base {
   :root {
-    /* Light theme - Navy and Slate inspired by jragni.github.io */
-    --background: 210 40% 98%;
-    --foreground: 215 25% 27%;
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
+    /* Light theme - Minimal black and white inspired by Anduril */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 0%;
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
-    --primary: 217 91% 60%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 215 25% 27%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 100% 95%;
-    --accent-foreground: 217 91% 40%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 217 91% 60%;
+    --border: 0 0% 90%;
+    --input: 0 0% 96%;
+    --ring: 0 0% 0%;
     --radius: 0.5rem;
-    --chart-1: 217 91% 60%;
-    --chart-2: 200 95% 45%;
-    --chart-3: 185 100% 35%;
-    --chart-4: 230 70% 55%;
-    --chart-5: 195 85% 50%;
+    --chart-1: 0 0% 0%;
+    --chart-2: 0 0% 20%;
+    --chart-3: 0 0% 40%;
+    --chart-4: 0 0% 60%;
+    --chart-5: 0 0% 80%;
   }
 
   .dark {
@@ -66,5 +66,29 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+  }
+
+  /* Custom scrollbar styling - minimal and theme-aware */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
   }
 }

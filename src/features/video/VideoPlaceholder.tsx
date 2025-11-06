@@ -1,8 +1,8 @@
 function VideoPlaceholder() {
   return (
-    <div className="relative w-full aspect-video bg-slate-900 border border-slate-700 rounded-sm overflow-hidden">
+    <div className="relative min-h-[300px] w-full aspect-video lg:aspect-auto lg:h-full bg-card border border-border rounded-sm overflow-hidden">
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-slate-600">
+        <div className="text-muted-foreground">
           <svg
             className="w-20 h-20 mb-4"
             fill="none"
@@ -17,22 +17,22 @@ function VideoPlaceholder() {
             />
           </svg>
         </div>
-        <p className="text-slate-500 text-sm font-mono tracking-wider">
+        <p className="text-muted-foreground text-sm font-mono tracking-wider">
           VIDEO FEED OFFLINE
         </p>
-        <p className="text-slate-600 text-xs font-mono mt-1">
+        <p className="text-muted-foreground/70 text-xs font-mono mt-1">
           WebRTC NOT CONNECTED
         </p>
       </div>
 
       <div className="absolute top-3 left-3">
-        <div className="flex items-center gap-2 bg-slate-950/80 px-2 py-1 rounded-sm border border-slate-800">
+        <div className="flex items-center gap-2 bg-background/80 px-2 py-1 rounded-sm border border-border">
           <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-          <span className="text-xs font-mono text-slate-400">REC</span>
+          <span className="text-xs font-mono text-muted-foreground">REC</span>
         </div>
       </div>
 
-      <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center text-xs font-mono text-slate-500">
+      <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center text-xs font-mono text-muted-foreground">
         <span>CAM-01</span>
         <span>00:00:00</span>
       </div>

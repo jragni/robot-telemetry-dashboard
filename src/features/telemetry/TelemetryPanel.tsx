@@ -9,6 +9,14 @@ import {
   PLOT_TOPIC_OPTIONS,
 } from './constants';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
 function TelemetryPanel() {
   const [lidarTopic, setLidarTopic] = useState(DEFAULT_LIDAR_TOPIC);
   const [plotTopic, setPlotTopic] = useState(DEFAULT_PLOT_TOPIC);
@@ -21,17 +29,18 @@ function TelemetryPanel() {
           <h3 className="text-xs font-mono text-slate-400 tracking-wider">
             LIDAR
           </h3>
-          <select
-            value={lidarTopic}
-            onChange={(e) => setLidarTopic(e.target.value)}
-            className="text-xs font-mono bg-slate-800 border border-slate-600 text-slate-300 px-2 py-1 rounded-sm"
-          >
-            {LIDAR_TOPIC_OPTIONS.map((topic) => (
-              <option key={topic} value={topic}>
-                {topic}
-              </option>
-            ))}
-          </select>
+          <Select value={lidarTopic} onValueChange={setLidarTopic}>
+            <SelectTrigger size="sm" className="text-xs font-mono w-auto">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {LIDAR_TOPIC_OPTIONS.map((topic) => (
+                <SelectItem key={topic} value={topic}>
+                  {topic}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="relative aspect-square bg-slate-950 border border-slate-800 rounded-sm overflow-hidden">
@@ -163,17 +172,18 @@ function TelemetryPanel() {
           <h3 className="text-xs font-mono text-slate-400 tracking-wider">
             TOPIC PLOT
           </h3>
-          <select
-            value={plotTopic}
-            onChange={(e) => setPlotTopic(e.target.value)}
-            className="text-xs font-mono bg-slate-800 border border-slate-600 text-slate-300 px-2 py-1 rounded-sm"
-          >
-            {PLOT_TOPIC_OPTIONS.map((topic) => (
-              <option key={topic} value={topic}>
-                {topic}
-              </option>
-            ))}
-          </select>
+          <Select value={plotTopic} onValueChange={setPlotTopic}>
+            <SelectTrigger size="sm" className="text-xs font-mono w-auto">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PLOT_TOPIC_OPTIONS.map((topic) => (
+                <SelectItem key={topic} value={topic}>
+                  {topic}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="relative h-32 bg-slate-950 border border-slate-800 rounded-sm">
