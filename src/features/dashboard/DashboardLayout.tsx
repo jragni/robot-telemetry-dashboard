@@ -9,6 +9,12 @@ import VideoPlaceholder from '../video/VideoPlaceholder';
 
 import Header from './Header';
 
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
+
 function DashboardLayout() {
   // TODO: Connect to actual ROS connection status
   const [isConnected] = useState(false);
@@ -30,7 +36,7 @@ function DashboardLayout() {
           <PilotModeLayout onExitPilotMode={() => setIsPilotMode(false)} />
         </div>
 
-        {/* Normal Mode - Grid layout */}
+        {/* Normal Mode - Resizable layout */}
         <div
           className={`absolute inset-0 transition-opacity duration-500 ${
             !isPilotMode
@@ -38,24 +44,81 @@ function DashboardLayout() {
               : 'opacity-0 pointer-events-none'
           }`}
         >
-          <main className="container mx-auto p-3 h-full overflow-auto lg:overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:h-full">
-              <div className="flex flex-col lg:col-span-2 gap-3">
-                <div className="lg:flex-1 lg:min-h-0">
-                  <VideoPlaceholder />
-                </div>
-                <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <ControlPanel
-                    onTogglePilotMode={() => setIsPilotMode(true)}
-                  />
-                  <IMUCard />
-                </div>
+          <main className="container mx-auto p-3 h-full overflow-hidden">
+            {/* Mobile: Stack layout */}
+            <div className="lg:hidden flex flex-col gap-3 h-full overflow-auto">
+              <VideoPlaceholder />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <ControlPanel onTogglePilotMode={() => setIsPilotMode(true)} />
+                <IMUCard />
               </div>
+              <LidarCard />
+              <TopicsList />
+            </div>
 
-              <div className="flex flex-col gap-3 lg:overflow-auto">
-                <LidarCard />
-                <TopicsList />
-              </div>
+            {/* Desktop: Resizable layout */}
+            <div className="hidden lg:block h-full">
+              <ResizablePanelGroup direction="horizontal">
+                {/* Left Section - Video + Controls */}
+                <ResizablePanel defaultSize={66} minSize={40}>
+                  <ResizablePanelGroup direction="vertical">
+                    {/* Video Feed */}
+                    <ResizablePanel defaultSize={65} minSize={30}>
+                      <div className="h-full pr-1.5">
+                        <VideoPlaceholder />
+                      </div>
+                    </ResizablePanel>
+
+                    <ResizableHandle />
+
+                    {/* Control Panel + IMU Card */}
+                    <ResizablePanel defaultSize={35} minSize={20}>
+                      <ResizablePanelGroup direction="horizontal">
+                        {/* Control Panel */}
+                        <ResizablePanel defaultSize={50} minSize={35}>
+                          <div className="h-full pr-1.5 pt-1.5">
+                            <ControlPanel
+                              onTogglePilotMode={() => setIsPilotMode(true)}
+                            />
+                          </div>
+                        </ResizablePanel>
+
+                        <ResizableHandle />
+
+                        {/* IMU Card */}
+                        <ResizablePanel defaultSize={50} minSize={35}>
+                          <div className="h-full pr-1.5 pt-1.5">
+                            <IMUCard />
+                          </div>
+                        </ResizablePanel>
+                      </ResizablePanelGroup>
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
+                </ResizablePanel>
+
+                <ResizableHandle />
+
+                {/* Right Section - Lidar + Topics */}
+                <ResizablePanel defaultSize={34} minSize={25}>
+                  <ResizablePanelGroup direction="vertical">
+                    {/* Lidar Card */}
+                    <ResizablePanel defaultSize={74} minSize={30}>
+                      <div className="h-full pl-1.5">
+                        <LidarCard />
+                      </div>
+                    </ResizablePanel>
+
+                    <ResizableHandle />
+
+                    {/* Topics List */}
+                    <ResizablePanel defaultSize={40} minSize={20}>
+                      <div className="h-full pl-1.5 pt-1.5 overflow-auto">
+                        <TopicsList />
+                      </div>
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             </div>
           </main>
         </div>
