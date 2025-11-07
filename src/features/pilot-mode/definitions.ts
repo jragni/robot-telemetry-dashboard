@@ -5,6 +5,5 @@ export interface PilotConnectionStatusProps {
 }
 
 export interface PilotModeLayoutProps {
-  isConnected: boolean;
   onExitPilotMode: () => void;
 }

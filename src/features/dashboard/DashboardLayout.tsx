@@ -27,10 +27,7 @@ function DashboardLayout() {
               : 'opacity-0 pointer-events-none'
           }`}
         >
-          <PilotModeLayout
-            isConnected={isConnected}
-            onExitPilotMode={() => setIsPilotMode(false)}
-          />
+          <PilotModeLayout onExitPilotMode={() => setIsPilotMode(false)} />
         </div>
 
         {/* Normal Mode - Grid layout */}

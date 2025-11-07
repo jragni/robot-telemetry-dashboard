@@ -25,12 +25,6 @@ function PilotVideoFeed() {
             WebRTC NOT CONNECTED
           </p>
         </div>
-
-        {/* TODO what is this for? remove maybe */}
-        <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center text-xs font-mono text-muted-foreground">
-          <span>CAM-01</span>
-          <span>00:00:00</span>
-        </div>
       </div>
     </div>
   );
