@@ -1,13 +1,15 @@
 import { useState } from 'react';
 
 import {
-  DEFAULT_LIDAR_TOPIC,
   DEFAULT_PLOT_TOPIC,
-  LIDAR_TOPIC_OPTIONS,
   MOCK_IMU,
-  MOCK_LIDAR,
   PLOT_TOPIC_OPTIONS,
-} from './constants';
+} from './imu/constants';
+import {
+  DEFAULT_LIDAR_TOPIC,
+  LIDAR_TOPIC_OPTIONS,
+  MOCK_LIDAR,
+} from './lidar/constants';
 
 import {
   Select,
@@ -24,16 +26,16 @@ function TelemetryPanel() {
   return (
     <div className="space-y-3">
       {/* Lidar Visualization */}
-      <div className="bg-slate-900 border border-slate-700 rounded-sm p-4">
+      <div className="bg-card border border-border rounded-sm p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-mono text-slate-400 tracking-wider">
+          <h3 className="text-sm font-mono font-semibold text-foreground tracking-wider">
             LIDAR
           </h3>
           <Select value={lidarTopic} onValueChange={setLidarTopic}>
             <SelectTrigger size="sm" className="text-xs font-mono w-auto">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
               {LIDAR_TOPIC_OPTIONS.map((topic) => (
                 <SelectItem key={topic} value={topic}>
                   {topic}
@@ -43,7 +45,7 @@ function TelemetryPanel() {
           </Select>
         </div>
 
-        <div className="relative aspect-square bg-slate-950 border border-slate-800 rounded-sm overflow-hidden">
+        <div className="relative aspect-square bg-secondary border border-border rounded-sm overflow-hidden">
           {/* Lidar polar grid */}
           <svg className="w-full h-full" viewBox="-100 -100 200 200">
             {/* Grid circles */}
@@ -101,38 +103,40 @@ function TelemetryPanel() {
             <circle cx="0" cy="0" r="3" fill="rgb(239 68 68)" />
           </svg>
 
-          <div className="absolute bottom-2 left-2 text-xs font-mono text-slate-500">
+          <div className="absolute bottom-2 left-2 text-xs font-mono text-muted-foreground">
             Range: {MOCK_LIDAR.rangeMax.toFixed(1)}m
           </div>
         </div>
       </div>
 
       {/* IMU Data */}
-      <div className="bg-slate-900 border border-slate-700 rounded-sm p-4">
-        <h3 className="text-xs font-mono text-slate-400 tracking-wider mb-3">
+      <div className="bg-card border border-border rounded-sm p-4">
+        <h3 className="text-sm font-mono font-semibold text-foreground tracking-wider mb-3">
           IMU
         </h3>
 
         <div className="space-y-3 text-xs font-mono">
           {/* Angular Velocity */}
           <div>
-            <span className="text-slate-500">ANGULAR VELOCITY (rad/s)</span>
+            <span className="text-muted-foreground">
+              ANGULAR VELOCITY (rad/s)
+            </span>
             <div className="grid grid-cols-3 gap-2 mt-1">
-              <div className="bg-slate-800 p-2 rounded-sm">
-                <span className="text-slate-400">X</span>
-                <p className="text-slate-100 font-bold">
+              <div className="bg-secondary p-2 rounded-sm">
+                <span className="text-muted-foreground">X</span>
+                <p className="text-foreground font-bold">
                   {MOCK_IMU.angularVelocity.x.toFixed(3)}
                 </p>
               </div>
-              <div className="bg-slate-800 p-2 rounded-sm">
-                <span className="text-slate-400">Y</span>
-                <p className="text-slate-100 font-bold">
+              <div className="bg-secondary p-2 rounded-sm">
+                <span className="text-muted-foreground">Y</span>
+                <p className="text-foreground font-bold">
                   {MOCK_IMU.angularVelocity.y.toFixed(3)}
                 </p>
               </div>
-              <div className="bg-slate-800 p-2 rounded-sm">
-                <span className="text-slate-400">Z</span>
-                <p className="text-slate-100 font-bold">
+              <div className="bg-secondary p-2 rounded-sm">
+                <span className="text-muted-foreground">Z</span>
+                <p className="text-foreground font-bold">
                   {MOCK_IMU.angularVelocity.z.toFixed(3)}
                 </p>
               </div>
@@ -141,23 +145,25 @@ function TelemetryPanel() {
 
           {/* Linear Acceleration */}
           <div>
-            <span className="text-slate-500">LINEAR ACCELERATION (m/s²)</span>
+            <span className="text-muted-foreground">
+              LINEAR ACCELERATION (m/s²)
+            </span>
             <div className="grid grid-cols-3 gap-2 mt-1">
-              <div className="bg-slate-800 p-2 rounded-sm">
-                <span className="text-slate-400">X</span>
-                <p className="text-slate-100 font-bold">
+              <div className="bg-secondary p-2 rounded-sm">
+                <span className="text-muted-foreground">X</span>
+                <p className="text-foreground font-bold">
                   {MOCK_IMU.linearAcceleration.x.toFixed(2)}
                 </p>
               </div>
-              <div className="bg-slate-800 p-2 rounded-sm">
-                <span className="text-slate-400">Y</span>
-                <p className="text-slate-100 font-bold">
+              <div className="bg-secondary p-2 rounded-sm">
+                <span className="text-muted-foreground">Y</span>
+                <p className="text-foreground font-bold">
                   {MOCK_IMU.linearAcceleration.y.toFixed(2)}
                 </p>
               </div>
-              <div className="bg-slate-800 p-2 rounded-sm">
-                <span className="text-slate-400">Z</span>
-                <p className="text-slate-100 font-bold">
+              <div className="bg-secondary p-2 rounded-sm">
+                <span className="text-muted-foreground">Z</span>
+                <p className="text-foreground font-bold">
                   {MOCK_IMU.linearAcceleration.z.toFixed(2)}
                 </p>
               </div>
@@ -167,16 +173,16 @@ function TelemetryPanel() {
       </div>
 
       {/* Topic Plotter */}
-      <div className="bg-slate-900 border border-slate-700 rounded-sm p-4">
+      <div className="bg-card border border-border rounded-sm p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-mono text-slate-400 tracking-wider">
+          <h3 className="text-sm font-mono font-semibold text-foreground tracking-wider">
             TOPIC PLOT
           </h3>
           <Select value={plotTopic} onValueChange={setPlotTopic}>
             <SelectTrigger size="sm" className="text-xs font-mono w-auto">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
               {PLOT_TOPIC_OPTIONS.map((topic) => (
                 <SelectItem key={topic} value={topic}>
                   {topic}
@@ -186,21 +192,21 @@ function TelemetryPanel() {
           </Select>
         </div>
 
-        <div className="relative h-32 bg-slate-950 border border-slate-800 rounded-sm">
+        <div className="relative h-32 bg-secondary border border-border rounded-sm">
           {/* Simple grid */}
           <div className="absolute inset-0 flex flex-col justify-between p-2">
             {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="border-b border-slate-800" />
+              <div key={i} className="border-b border-border" />
             ))}
           </div>
 
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-xs font-mono text-slate-600">
+            <p className="text-xs font-mono text-muted-foreground">
               NO DATA - CONNECT TO ROS
             </p>
           </div>
 
-          <div className="absolute bottom-2 left-2 text-xs font-mono text-slate-500">
+          <div className="absolute bottom-2 left-2 text-xs font-mono text-muted-foreground">
             Topic: {plotTopic}
           </div>
         </div>

@@ -1,6 +1,4 @@
-interface PilotConnectionStatusProps {
-  isConnected: boolean;
-}
+import type { PilotConnectionStatusProps } from './definitions';
 
 function PilotConnectionStatus({ isConnected }: PilotConnectionStatusProps) {
   return (

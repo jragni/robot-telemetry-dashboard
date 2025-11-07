@@ -57,7 +57,7 @@ function PilotControlPanel() {
       <Button
         variant="destructive"
         onClick={handleEmergencyStop}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:from-red-800 active:to-red-900 border-2 border-red-500 shadow-lg shadow-red-900/50 flex flex-col gap-0 transition-all duration-300"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:from-red-800 active:to-red-900 border-2 border-red-500 shadow-red-900/50 flex flex-col gap-0 transition-all duration-300"
       >
         <X className="w-6 h-6" strokeWidth={3} />
         <span className="text-[8px] font-bold tracking-wider">STOP</span>

@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 import ControlPanel from '../control/ControlPanel';
 import PilotModeLayout from '../pilot-mode/PilotModeLayout';
-import IMUCard from '../telemetry/IMUCard';
-import LidarCard from '../telemetry/LidarCard';
-import TopicsList from '../telemetry/TopicsList';
+import IMUCard from '../telemetry/imu/IMUCard';
+import LidarCard from '../telemetry/lidar/LidarCard';
+import TopicsList from '../telemetry/topics/TopicsList';
 import VideoPlaceholder from '../video/VideoPlaceholder';
 
 import Header from './Header';

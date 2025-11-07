@@ -1,3 +1,5 @@
 // Dashboard types, interfaces, and enums
 
-// TODO: Add dashboard-specific types
+export interface HeaderProps {
+  isConnected?: boolean;
+}

@@ -5,6 +5,7 @@ import {
   LIDAR_TOPIC_OPTIONS,
   MOCK_LIDAR,
 } from './constants';
+import type { LidarCardProps } from './definitions';
 
 import {
   Select,
@@ -13,10 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-interface LidarCardProps {
-  compact?: boolean;
-}
 
 function LidarCard({ compact = false }: LidarCardProps) {
   const [lidarTopic, setLidarTopic] = useState(DEFAULT_LIDAR_TOPIC);
@@ -32,7 +29,7 @@ function LidarCard({ compact = false }: LidarCardProps) {
             <SelectTrigger size="sm" className="text-xs font-mono w-auto">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
               {LIDAR_TOPIC_OPTIONS.map((topic) => (
                 <SelectItem key={topic} value={topic}>
                   {topic}
@@ -130,7 +127,7 @@ function LidarCard({ compact = false }: LidarCardProps) {
                 >
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
                   {LIDAR_TOPIC_OPTIONS.map((topic) => (
                     <SelectItem key={topic} value={topic}>
                       {topic}

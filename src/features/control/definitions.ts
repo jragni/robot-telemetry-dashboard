@@ -20,3 +20,7 @@ export interface ControlState {
   angularVelocity: number; // rad/s
   isActive: boolean;
 }
+
+export interface ControlPanelProps {
+  onTogglePilotMode?: () => void;
+}

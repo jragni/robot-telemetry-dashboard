@@ -1,4 +1,4 @@
-// Telemetry types, interfaces, and enums
+// IMU-related type definitions
 
 export interface IMUData {
   orientation: {
@@ -19,21 +19,6 @@ export interface IMUData {
   };
 }
 
-export interface LidarPoint {
-  angle: number;
-  distance: number;
-  intensity?: number;
-}
-
-export interface LidarData {
-  ranges: number[];
-  angleMin: number;
-  angleMax: number;
-  angleIncrement: number;
-  rangeMin: number;
-  rangeMax: number;
-}
-
 export interface PlotDataPoint {
   timestamp: number;
   value: number;
@@ -46,8 +31,17 @@ export interface TopicPlotConfig {
   data: PlotDataPoint[];
 }
 
-export interface TelemetryData {
-  imu: IMUData;
-  lidar: LidarData;
+export interface DataPoint {
   timestamp: number;
+  x: number;
+  y: number;
+  z: number;
 }
+
+export interface IMUPlotProps {
+  data: IMUData;
+  metric: 'angularVelocity' | 'linearAcceleration';
+}
+
+export type ViewMode = 'digital' | 'plot';
+export type PlotMetric = 'angularVelocity' | 'linearAcceleration';

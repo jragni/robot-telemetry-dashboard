@@ -1,11 +1,9 @@
 import { Moon, Sun } from 'lucide-react';
 
+import type { HeaderProps } from './definitions';
+
 import { useTheme } from '@/components/ThemeProvider';
 import { Button } from '@/components/ui/button';
-
-interface HeaderProps {
-  isConnected?: boolean;
-}
 
 function Header({ isConnected = false }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();

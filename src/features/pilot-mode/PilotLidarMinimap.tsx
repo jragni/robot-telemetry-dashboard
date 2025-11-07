@@ -1,4 +1,4 @@
-import { MOCK_LIDAR } from '../telemetry/constants';
+import { MOCK_LIDAR } from '../telemetry/lidar/constants';
 
 function PilotLidarMinimap() {
   return (
