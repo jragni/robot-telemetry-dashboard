@@ -1,12 +1,16 @@
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Settings, Sun } from 'lucide-react';
 
 import type { HeaderProps } from './definitions';
 
 import { useTheme } from '@/components/ThemeProvider';
 import { Button } from '@/components/ui/button';
+import { useRosContext } from '@/features/ros/RosContext';
 
-function Header({ isConnected = false }: HeaderProps) {
+function Header({ onToggleSidebar }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const { connectionState, activeRobot } = useRosContext();
+
+  const isRosConnected = connectionState === 'connected';
 
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm">
@@ -22,11 +26,21 @@ function Header({ isConnected = false }: HeaderProps) {
             </h1>
             {/* Hide subtitle on mobile */}
             <p className="hidden md:block text-xs text-muted-foreground font-mono">
-              RCS-1 // TELEOPERATION INTERFACE
-              {/* TODO add current robot name and view here */}
+              {activeRobot
+                ? `${activeRobot.name.toUpperCase()} // TELEOPERATION INTERFACE`
+                : 'NO ROBOT SELECTED // TELEOPERATION INTERFACE'}
             </p>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onToggleSidebar}
+              className="h-7 px-3 text-xs font-mono"
+            >
+              <Settings className="h-3 w-3 mr-1.5" />
+              CONNECTIONS
+            </Button>
             <Button
               variant="ghost"
               size="sm"
@@ -43,12 +57,12 @@ function Header({ isConnected = false }: HeaderProps) {
             <div className="flex items-center gap-1.5 md:gap-2">
               <div
                 className={`h-2 w-2 rounded-full ${
-                  isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'
+                  isRosConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'
                 }`}
               />
               {/* Hide status text on mobile */}
               <span className="hidden sm:inline text-xs font-mono text-muted-foreground">
-                {isConnected ? 'ONLINE' : 'OFFLINE'}
+                {isRosConnected ? 'ONLINE' : 'OFFLINE'}
               </span>
             </div>
           </div>

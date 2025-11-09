@@ -1,5 +1,5 @@
-// Dashboard types, interfaces, and enums
+// Dashboard definitions
 
 export interface HeaderProps {
-  isConnected?: boolean;
+  onToggleSidebar?: () => void;
 }
