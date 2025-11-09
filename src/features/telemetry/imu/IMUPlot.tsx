@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import type { DataPoint, IMUPlotProps } from './definitions';
 
+// TODO remove simulation data
 function IMUPlot({ data, metric }: IMUPlotProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [dataHistory, setDataHistory] = useState<DataPoint[]>([]);

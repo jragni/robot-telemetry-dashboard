@@ -2,8 +2,9 @@ import { BarChart3, Grid3x3 } from 'lucide-react';
 import { useState } from 'react';
 
 import { MOCK_IMU, PLOT_TOPIC_OPTIONS } from './constants';
-import type { ViewMode, PlotMetric } from './definitions';
-import IMUPlot from './IMUPlot';
+import type { ViewMode } from './definitions';
+import { DigitalView } from './DigitalView';
+import PlotView from './PlotView';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,8 +17,9 @@ import {
 
 function IMUCard() {
   const [viewMode, setViewMode] = useState<ViewMode>('digital');
-  const [selectedTopic, setSelectedTopic] = useState(PLOT_TOPIC_OPTIONS[0]);
-  const [plotMetric, setPlotMetric] = useState<PlotMetric>('angularVelocity');
+  const [selectedTopic, setSelectedTopic] = useState<string>(
+    PLOT_TOPIC_OPTIONS[0]
+  );
 
   return (
     <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col">
@@ -26,7 +28,10 @@ function IMUCard() {
           IMU
         </h3>
         <div className="flex items-center gap-2">
-          <Select onValueChange={setSelectedTopic} value={selectedTopic}>
+          <Select
+            onValueChange={(val) => setSelectedTopic(val)}
+            value={selectedTopic}
+          >
             <SelectTrigger size="sm" className="w-fit text-xs font-mono">
               <SelectValue />
             </SelectTrigger>
@@ -54,87 +59,10 @@ function IMUCard() {
           </Button>
         </div>
       </div>
-
       {viewMode === 'digital' ? (
-        <div className="space-y-3 text-xs font-mono flex-1 flex flex-col justify-center">
-          {/* Angular Velocity */}
-          <div>
-            <span className="text-muted-foreground">
-              ANGULAR VELOCITY (rad/s)
-            </span>
-            <div className="grid grid-cols-3 gap-2 mt-1">
-              <div className="bg-secondary p-2 rounded-sm">
-                <span className="text-muted-foreground">X</span>
-                <p className="text-foreground font-bold">
-                  {MOCK_IMU.angularVelocity.x.toFixed(3)}
-                </p>
-              </div>
-              <div className="bg-secondary p-2 rounded-sm">
-                <span className="text-muted-foreground">Y</span>
-                <p className="text-foreground font-bold">
-                  {MOCK_IMU.angularVelocity.y.toFixed(3)}
-                </p>
-              </div>
-              <div className="bg-secondary p-2 rounded-sm">
-                <span className="text-muted-foreground">Z</span>
-                <p className="text-foreground font-bold">
-                  {MOCK_IMU.angularVelocity.z.toFixed(3)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Linear Acceleration */}
-          <div>
-            <span className="text-muted-foreground">
-              LINEAR ACCELERATION (m/s²)
-            </span>
-            <div className="grid grid-cols-3 gap-2 mt-1">
-              <div className="bg-secondary p-2 rounded-sm">
-                <span className="text-muted-foreground">X</span>
-                <p className="text-foreground font-bold">
-                  {MOCK_IMU.linearAcceleration.x.toFixed(2)}
-                </p>
-              </div>
-              <div className="bg-secondary p-2 rounded-sm">
-                <span className="text-muted-foreground">Y</span>
-                <p className="text-foreground font-bold">
-                  {MOCK_IMU.linearAcceleration.y.toFixed(2)}
-                </p>
-              </div>
-              <div className="bg-secondary p-2 rounded-sm">
-                <span className="text-muted-foreground">Z</span>
-                <p className="text-foreground font-bold">
-                  {MOCK_IMU.linearAcceleration.z.toFixed(2)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <DigitalView data={MOCK_IMU} />
       ) : (
-        <div className="flex-1 flex flex-col">
-          <div className="mb-2">
-            <Select
-              value={plotMetric}
-              onValueChange={(value) => setPlotMetric(value as PlotMetric)}
-            >
-              <SelectTrigger size="sm" className="w-full text-xs font-mono">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
-                <SelectItem value="angularVelocity" className="text-xs">
-                  Angular Velocity (rad/s)
-                </SelectItem>
-                <SelectItem value="linearAcceleration" className="text-xs">
-                  Linear Acceleration (m/s²)
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex-1 min-h-0">
-            <IMUPlot data={MOCK_IMU} metric={plotMetric} />
-          </div>
-        </div>
+        <PlotView data={MOCK_IMU} />
       )}
     </div>
   );

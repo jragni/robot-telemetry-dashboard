@@ -19,8 +19,21 @@ export interface ControlState {
   linearVelocity: number; // m/s
   angularVelocity: number; // rad/s
   isActive: boolean;
+  selectedTopic: string; // ROS topic for cmd_vel
 }
 
 export interface ControlPanelProps {
   onTogglePilotMode?: () => void;
+}
+
+export interface TopicSelectorProps {
+  selectedTopic: string;
+  onTopicChange: (topic: string) => void;
+}
+
+export interface VelocitySlidersProps {
+  linearVelocity: number;
+  angularVelocity: number;
+  onLinearChange: (value: number) => void;
+  onAngularChange: (value: number) => void;
 }
