@@ -8,12 +8,18 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-import { VELOCITY_LIMITS, AVAILABLE_CONTROL_TOPICS } from './constants';
+import {
+  AVAILABLE_CONTROL_TOPICS,
+  CMD_VEL_MESSAGE_TYPE,
+  VELOCITY_LIMITS,
+} from './constants';
 import type { Direction, ControlState, ControlPanelProps } from './definitions';
 import TopicSelector from './TopicSelector';
 import VelocitySliders from './VelocitySliders';
 
 import { Button } from '@/components/ui/button';
+import { usePublisher } from '@/features/ros/usePublisher';
+import type { TwistMessage } from '@/types/ros';
 
 function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
   const [controlState, setControlState] = useState<ControlState>({
@@ -23,19 +29,53 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
     selectedTopic: AVAILABLE_CONTROL_TOPICS[0].value, // Default to first topic
   });
 
+  const { publish, isReady } = usePublisher<TwistMessage>({
+    topic: controlState.selectedTopic,
+    messageType: CMD_VEL_MESSAGE_TYPE,
+  });
+
+  const sendTwistCommand = (linear: number, angular: number) => {
+    const message: TwistMessage = {
+      linear: { x: linear, y: 0, z: 0 },
+      angular: { x: 0, y: 0, z: angular },
+    };
+    publish(message);
+  };
+
   const handleDirectionPress = (direction: Direction) => {
-    // TODO: Send command to robot via ROS
     setControlState({ ...controlState, isActive: direction !== 'stop' });
+
+    if (!isReady) return;
+
+    switch (direction) {
+      case 'forward':
+        sendTwistCommand(controlState.linearVelocity, 0);
+        break;
+      case 'backward':
+        sendTwistCommand(-controlState.linearVelocity, 0);
+        break;
+      case 'left':
+        sendTwistCommand(0, controlState.angularVelocity);
+        break;
+      case 'right':
+        sendTwistCommand(0, -controlState.angularVelocity);
+        break;
+      case 'stop':
+        sendTwistCommand(0, 0);
+        break;
+    }
   };
 
   const handleEmergencyStop = () => {
-    // TODO: Send emergency stop command to robot via ROS
     setControlState({ ...controlState, isActive: false });
+    if (isReady) {
+      sendTwistCommand(0, 0);
+    }
   };
 
   return (
-    <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-3">
+    <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col min-h-0">
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <h3 className="text-sm font-mono font-semibold text-foreground tracking-wider">
           CONTROL PANEL
         </h3>
@@ -51,14 +91,14 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
         variant="outline"
         size="sm"
         onClick={onTogglePilotMode}
-        className="h-7 w-35 px-2 text-xs font-mono mb-3"
+        className="h-7 w-35 px-2 text-xs font-mono mb-3 flex-shrink-0"
       >
         <Maximize2 className="h-3 w-3 mr-1.5" />
         PILOT MODE
       </Button>
 
       {/* Gamepad Controls + Vertical Sliders */}
-      <div className="flex items-center justify-center gap-6">
+      <div className="flex items-center justify-center gap-6 flex-1 min-h-0">
         {/* Gamepad */}
         <div className="flex flex-col items-center">
           <div className="relative w-[120px] h-[120px]">
