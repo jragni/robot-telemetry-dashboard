@@ -63,7 +63,6 @@ export default defineConfig([
       'no-debugger': 'error',
       'no-alert': 'warn',
       eqeqeq: ['error', 'always'],
-      curly: ['error', 'all'],
       'no-var': 'error',
       'prefer-const': 'error',
       'prefer-arrow-callback': 'warn',
