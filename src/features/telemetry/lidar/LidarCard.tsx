@@ -1,10 +1,6 @@
 import { useState } from 'react';
 
-import {
-  DEFAULT_LIDAR_TOPIC,
-  LIDAR_TOPIC_OPTIONS,
-  MOCK_LIDAR,
-} from './constants';
+import { DEFAULT_LIDAR_TOPIC, LIDAR_TOPIC_OPTIONS } from './constants';
 import type { LidarCardProps } from './definitions';
 
 import {
@@ -14,18 +10,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useRosContext } from '@/features/ros/RosContext';
+import { useSubscriber } from '@/features/ros/useSubscriber';
+import type { LaserScanMessage } from '@/types/ros';
 
 function LidarCard({ compact = false }: LidarCardProps) {
+  const { connectionState } = useRosContext();
   const [lidarTopic, setLidarTopic] = useState(DEFAULT_LIDAR_TOPIC);
 
+  const { data: lidarData, loading } = useSubscriber<LaserScanMessage>({
+    topic: lidarTopic,
+    messageType: 'sensor_msgs/msg/LaserScan',
+    throttleRate: 200, // 5 Hz
+    enabled: connectionState === 'connected',
+  });
+
+  const isConnected = connectionState === 'connected';
+
   return (
-    <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col">
+    <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col min-h-0">
       {!compact && (
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 flex-shrink-0">
           <h3 className="text-sm font-mono font-semibold text-foreground tracking-wider">
             LIDAR
           </h3>
-          <Select value={lidarTopic} onValueChange={setLidarTopic}>
+          <Select
+            value={lidarTopic}
+            onValueChange={setLidarTopic}
+            disabled={!isConnected}
+          >
             <SelectTrigger size="sm" className="text-xs font-mono w-auto">
               <SelectValue />
             </SelectTrigger>
@@ -43,84 +56,106 @@ function LidarCard({ compact = false }: LidarCardProps) {
       <div
         className={`relative ${compact ? 'h-full' : 'flex-1'} bg-secondary border border-border rounded-sm overflow-hidden`}
       >
-        {/* Lidar polar grid */}
-        <svg
-          className="w-full h-full"
-          viewBox="-100 -100 200 200"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          {/* Grid circles */}
-          {[25, 50, 75, 100].map((r) => (
-            <circle
-              key={r}
-              cx="0"
-              cy="0"
-              r={r}
-              fill="none"
-              stroke="rgb(51 65 85)"
-              strokeWidth="0.5"
-            />
-          ))}
+        {!isConnected ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <p className="text-xs font-mono text-muted-foreground text-center">
+              Not connected to robot
+            </p>
+          </div>
+        ) : loading || !lidarData ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <p className="text-xs font-mono text-muted-foreground">
+              Waiting for LIDAR data...
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Lidar polar grid */}
+            <svg
+              className="w-full h-full"
+              viewBox="-100 -100 200 200"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              {/* Grid circles */}
+              {[25, 50, 75, 100].map((r) => (
+                <circle
+                  key={r}
+                  cx="0"
+                  cy="0"
+                  r={r}
+                  fill="none"
+                  stroke="rgb(51 65 85)"
+                  strokeWidth="0.5"
+                />
+              ))}
 
-          {/* Grid lines */}
-          {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
-            const rad = (angle * Math.PI) / 180;
-            return (
-              <line
-                key={angle}
-                x1="0"
-                y1="0"
-                x2={Math.cos(rad) * 100}
-                y2={Math.sin(rad) * 100}
-                stroke="rgb(51 65 85)"
-                strokeWidth="0.5"
-              />
-            );
-          })}
+              {/* Grid lines */}
+              {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
+                const rad = (angle * Math.PI) / 180;
+                return (
+                  <line
+                    key={angle}
+                    x1="0"
+                    y1="0"
+                    x2={Math.cos(rad) * 100}
+                    y2={Math.sin(rad) * 100}
+                    stroke="rgb(51 65 85)"
+                    strokeWidth="0.5"
+                  />
+                );
+              })}
 
-          {/* Lidar points */}
-          {MOCK_LIDAR.ranges.map((range, i) => {
-            const angle =
-              MOCK_LIDAR.angleMin + i * MOCK_LIDAR.angleIncrement - Math.PI / 2;
-            const normalizedRange = (range / MOCK_LIDAR.rangeMax) * 100;
-            const x = Math.cos(angle) * normalizedRange;
-            const y = Math.sin(angle) * normalizedRange;
+              {/* Lidar points */}
+              {lidarData.ranges.map((range, i) => {
+                const angle =
+                  lidarData.angle_min +
+                  i * lidarData.angle_increment -
+                  Math.PI / 2;
+                const normalizedRange = (range / lidarData.range_max) * 100;
+                const x = Math.cos(angle) * normalizedRange;
+                const y = Math.sin(angle) * normalizedRange;
 
-            // Distance-based coloring: red (near) -> yellow -> green (far)
-            const distanceRatio = range / MOCK_LIDAR.rangeMax;
-            let color: string;
-            if (distanceRatio < 0.3) {
-              // Near: Red (danger)
-              color = 'rgb(239 68 68)';
-            } else if (distanceRatio < 0.6) {
-              // Medium: Yellow (caution)
-              color = 'rgb(234 179 8)';
-            } else {
-              // Far: Green (safe)
-              color = 'rgb(34 197 94)';
-            }
+                // Distance-based coloring: red (near) -> yellow -> green (far)
+                const distanceRatio = range / lidarData.range_max;
+                let color: string;
+                if (distanceRatio < 0.3) {
+                  // Near: Red (danger)
+                  color = 'rgb(239 68 68)';
+                } else if (distanceRatio < 0.6) {
+                  // Medium: Yellow (caution)
+                  color = 'rgb(234 179 8)';
+                } else {
+                  // Far: Green (safe)
+                  color = 'rgb(34 197 94)';
+                }
 
-            return (
-              <circle
-                key={i}
-                cx={x}
-                cy={y}
-                r="0.8"
-                fill={color}
-                opacity="0.8"
-              />
-            );
-          })}
+                return (
+                  <circle
+                    key={i}
+                    cx={x}
+                    cy={y}
+                    r="0.8"
+                    fill={color}
+                    opacity="0.8"
+                  />
+                );
+              })}
 
-          {/* Robot center */}
-          <circle cx="0" cy="0" r="3" fill="rgb(239 68 68)" />
-        </svg>
+              {/* Robot center */}
+              <circle cx="0" cy="0" r="3" fill="rgb(239 68 68)" />
+            </svg>
+          </>
+        )}
 
         {/* Compact mode overlays */}
-        {compact && (
+        {compact && isConnected && lidarData && (
           <>
             <div className="absolute top-2 left-2 right-2 z-10">
-              <Select value={lidarTopic} onValueChange={setLidarTopic}>
+              <Select
+                value={lidarTopic}
+                onValueChange={setLidarTopic}
+                disabled={!isConnected}
+              >
                 <SelectTrigger
                   size="sm"
                   className="text-xs font-mono w-auto bg-card/90 backdrop-blur-sm"
@@ -137,16 +172,16 @@ function LidarCard({ compact = false }: LidarCardProps) {
               </Select>
             </div>
             <div className="absolute bottom-2 left-2 text-xs font-mono text-muted-foreground bg-card/90 backdrop-blur-sm px-2 py-1 rounded-sm">
-              Range: {MOCK_LIDAR.rangeMax.toFixed(1)}m
+              Range: {lidarData.range_max.toFixed(1)}m
             </div>
           </>
         )}
 
         {/* Normal mode info */}
-        {!compact && (
+        {!compact && isConnected && lidarData && (
           <>
             <div className="absolute bottom-2 left-2 text-xs font-mono text-muted-foreground">
-              Range: {MOCK_LIDAR.rangeMax.toFixed(1)}m
+              Range: {lidarData.range_max.toFixed(1)}m
             </div>
             {/* Color legend */}
             <div className="absolute bottom-2 right-2 flex items-center gap-2 text-[10px] font-mono">
