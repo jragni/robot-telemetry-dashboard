@@ -59,7 +59,6 @@ export default defineConfig([
       ],
 
       // General code quality
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       'no-alert': 'warn',
       eqeqeq: ['error', 'always'],
