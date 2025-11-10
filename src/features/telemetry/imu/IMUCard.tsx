@@ -1,7 +1,6 @@
 import { BarChart3, Grid3x3 } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import { PLOT_TOPIC_OPTIONS } from './constants';
 import type { ViewMode } from './definitions';
 import { DigitalView } from './DigitalView';
 import PlotView from './PlotView';
@@ -14,21 +13,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import type { ImuMessage } from '@/features/ros/definitions';
 import { useRosContext } from '@/features/ros/RosContext';
 import { useSubscriber } from '@/features/ros/useSubscriber';
-import type { ImuMessage } from '@/types/ros';
+import { useTopics } from '@/features/ros/useTopics';
 
 function IMUCard() {
   const { connectionState } = useRosContext();
   const [viewMode, setViewMode] = useState<ViewMode>('digital');
   const [selectedTopic, setSelectedTopic] = useState<string>('/imu/data');
 
-  const { data: imuData, loading } = useSubscriber<ImuMessage>({
+  // Fetch available topics dynamically
+  const { topics } = useTopics();
+
+  // Filter topics to only show IMU topics
+  const imuTopics = useMemo(() => {
+    return topics
+      .filter((topic) => topic.type === 'sensor_msgs/msg/Imu')
+      .map((topic) => topic.name);
+  }, [topics]);
+
+  const { data: imuRawData, loading } = useSubscriber<ImuMessage>({
     topic: selectedTopic,
     messageType: 'sensor_msgs/msg/Imu',
     throttleRate: 100, // 10 Hz
     enabled: connectionState === 'connected',
   });
+
+  // Transform ROS message format to IMUData format
+  const imuData = useMemo(() => {
+    if (!imuRawData) return null;
+    return {
+      orientation: imuRawData.orientation,
+      angularVelocity: imuRawData.angular_velocity,
+      linearAcceleration: imuRawData.linear_acceleration,
+    };
+  }, [imuRawData]);
 
   const isConnected = connectionState === 'connected';
 
@@ -42,17 +62,23 @@ function IMUCard() {
           <Select
             onValueChange={(val) => setSelectedTopic(val)}
             value={selectedTopic}
-            disabled={!isConnected}
+            disabled={!isConnected || imuTopics.length === 0}
           >
             <SelectTrigger size="sm" className="w-fit text-xs font-mono">
-              <SelectValue />
+              <SelectValue placeholder="Select topic" />
             </SelectTrigger>
             <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
-              {PLOT_TOPIC_OPTIONS.map((topic) => (
-                <SelectItem key={topic} value={topic} className="text-xs">
-                  {topic}
+              {imuTopics.length > 0 ? (
+                imuTopics.map((topic) => (
+                  <SelectItem key={topic} value={topic} className="text-xs">
+                    {topic}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="none" disabled className="text-xs">
+                  No IMU topics found
                 </SelectItem>
-              ))}
+              )}
             </SelectContent>
           </Select>
           <Button

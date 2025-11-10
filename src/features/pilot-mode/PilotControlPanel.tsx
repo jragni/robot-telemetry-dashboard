@@ -1,27 +1,11 @@
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, X } from 'lucide-react';
-import { useState } from 'react';
 
-import { VELOCITY_LIMITS } from '../control/constants';
-import type { Direction, ControlState } from '../control/definitions';
+import { useControl } from '../control/ControlContext';
 
 import { Button } from '@/components/ui/button';
 
 function PilotControlPanel() {
-  const [controlState, setControlState] = useState<ControlState>({
-    linearVelocity: VELOCITY_LIMITS.linear.default,
-    angularVelocity: VELOCITY_LIMITS.angular.default,
-    isActive: false,
-  });
-
-  const handleDirectionPress = (direction: Direction) => {
-    // TODO: Send command to robot via ROS
-    setControlState({ ...controlState, isActive: direction !== 'stop' });
-  };
-
-  const handleEmergencyStop = () => {
-    // TODO: Send emergency stop command to robot via ROS
-    setControlState({ ...controlState, isActive: false });
-  };
+  const { handleDirectionPress, handleEmergencyStop } = useControl();
 
   return (
     <div className="relative min-w-[100px] min-h-[100px] md:min-w-[140px] md:min-h-[140px] mx-auto">

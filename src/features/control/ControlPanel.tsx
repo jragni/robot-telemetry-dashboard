@@ -6,72 +6,23 @@ import {
   Maximize2,
   X,
 } from 'lucide-react';
-import { useState } from 'react';
 
-import {
-  AVAILABLE_CONTROL_TOPICS,
-  CMD_VEL_MESSAGE_TYPE,
-  VELOCITY_LIMITS,
-} from './constants';
-import type { Direction, ControlState, ControlPanelProps } from './definitions';
+import { useControl } from './ControlContext';
+import type { ControlPanelProps } from './definitions';
 import TopicSelector from './TopicSelector';
 import VelocitySliders from './VelocitySliders';
 
 import { Button } from '@/components/ui/button';
-import { usePublisher } from '@/features/ros/usePublisher';
-import type { TwistMessage } from '@/types/ros';
 
 function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
-  const [controlState, setControlState] = useState<ControlState>({
-    linearVelocity: VELOCITY_LIMITS.linear.default,
-    angularVelocity: VELOCITY_LIMITS.angular.default,
-    isActive: false,
-    selectedTopic: AVAILABLE_CONTROL_TOPICS[0].value, // Default to first topic
-  });
-
-  const { publish, isReady } = usePublisher<TwistMessage>({
-    topic: controlState.selectedTopic,
-    messageType: CMD_VEL_MESSAGE_TYPE,
-  });
-
-  const sendTwistCommand = (linear: number, angular: number) => {
-    const message: TwistMessage = {
-      linear: { x: linear, y: 0, z: 0 },
-      angular: { x: 0, y: 0, z: angular },
-    };
-    publish(message);
-  };
-
-  const handleDirectionPress = (direction: Direction) => {
-    setControlState({ ...controlState, isActive: direction !== 'stop' });
-
-    if (!isReady) return;
-
-    switch (direction) {
-      case 'forward':
-        sendTwistCommand(controlState.linearVelocity, 0);
-        break;
-      case 'backward':
-        sendTwistCommand(-controlState.linearVelocity, 0);
-        break;
-      case 'left':
-        sendTwistCommand(0, controlState.angularVelocity);
-        break;
-      case 'right':
-        sendTwistCommand(0, -controlState.angularVelocity);
-        break;
-      case 'stop':
-        sendTwistCommand(0, 0);
-        break;
-    }
-  };
-
-  const handleEmergencyStop = () => {
-    setControlState({ ...controlState, isActive: false });
-    if (isReady) {
-      sendTwistCommand(0, 0);
-    }
-  };
+  const {
+    controlState,
+    updateLinearVelocity,
+    updateAngularVelocity,
+    updateSelectedTopic,
+    handleDirectionPress,
+    handleEmergencyStop,
+  } = useControl();
 
   return (
     <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col min-h-0">
@@ -81,9 +32,7 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
         </h3>
         <TopicSelector
           selectedTopic={controlState.selectedTopic}
-          onTopicChange={(topic) =>
-            setControlState({ ...controlState, selectedTopic: topic })
-          }
+          onTopicChange={updateSelectedTopic}
         />
       </div>
 
@@ -184,12 +133,8 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
         <VelocitySliders
           linearVelocity={controlState.linearVelocity}
           angularVelocity={controlState.angularVelocity}
-          onLinearChange={(value) =>
-            setControlState({ ...controlState, linearVelocity: value })
-          }
-          onAngularChange={(value) =>
-            setControlState({ ...controlState, angularVelocity: value })
-          }
+          onLinearChange={updateLinearVelocity}
+          onAngularChange={updateAngularVelocity}
         />
       </div>
     </div>

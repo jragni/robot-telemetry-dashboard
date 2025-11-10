@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { Minus, Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
-import { DEFAULT_LIDAR_TOPIC, LIDAR_TOPIC_OPTIONS } from './constants';
+import { DEFAULT_LIDAR_TOPIC } from './constants';
 import type { LidarCardProps } from './definitions';
+import { useLidarZoom } from './LidarZoomContext';
 
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -10,13 +13,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import type { LaserScanMessage } from '@/features/ros/definitions';
 import { useRosContext } from '@/features/ros/RosContext';
 import { useSubscriber } from '@/features/ros/useSubscriber';
-import type { LaserScanMessage } from '@/types/ros';
+import { useTopics } from '@/features/ros/useTopics';
 
 function LidarCard({ compact = false }: LidarCardProps) {
   const { connectionState } = useRosContext();
   const [lidarTopic, setLidarTopic] = useState(DEFAULT_LIDAR_TOPIC);
+  const { viewRange, zoomIn, zoomOut, canZoomIn, canZoomOut } = useLidarZoom();
+
+  // Fetch available topics dynamically
+  const { topics } = useTopics();
+
+  // Filter topics to only show LaserScan topics
+  const lidarTopics = useMemo(() => {
+    return topics
+      .filter((topic) => topic.type === 'sensor_msgs/msg/LaserScan')
+      .map((topic) => topic.name);
+  }, [topics]);
 
   const { data: lidarData, loading } = useSubscriber<LaserScanMessage>({
     topic: lidarTopic,
@@ -27,6 +42,17 @@ function LidarCard({ compact = false }: LidarCardProps) {
 
   const isConnected = connectionState === 'connected';
 
+  // Zoom controls - use context methods with max range from sensor
+  const maxRange = lidarData?.range_max
+    ? Math.max(lidarData.range_max, 50)
+    : 50;
+
+  const handleZoomIn = () => zoomIn();
+  const handleZoomOut = () => zoomOut(maxRange);
+
+  const canZoomInEnabled = canZoomIn;
+  const canZoomOutEnabled = canZoomOut(maxRange);
+
   return (
     <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col min-h-0">
       {!compact && (
@@ -34,22 +60,57 @@ function LidarCard({ compact = false }: LidarCardProps) {
           <h3 className="text-sm font-mono font-semibold text-foreground tracking-wider">
             LIDAR
           </h3>
-          <Select
-            value={lidarTopic}
-            onValueChange={setLidarTopic}
-            disabled={!isConnected}
-          >
-            <SelectTrigger size="sm" className="text-xs font-mono w-auto">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
-              {LIDAR_TOPIC_OPTIONS.map((topic) => (
-                <SelectItem key={topic} value={topic}>
-                  {topic}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            {/* Zoom controls */}
+            <div className="flex items-center gap-1 border border-border rounded-md bg-background">
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={handleZoomIn}
+                disabled={!isConnected || !canZoomInEnabled}
+                className="h-6 w-6"
+                aria-label="Zoom in"
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+              <div className="text-[10px] font-mono text-muted-foreground px-1 min-w-[40px] text-center">
+                {viewRange.toFixed(0)}m
+              </div>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={handleZoomOut}
+                disabled={!isConnected || !canZoomOutEnabled}
+                className="h-6 w-6"
+                aria-label="Zoom out"
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+            </div>
+            {/* Topic selector */}
+            <Select
+              value={lidarTopic}
+              onValueChange={setLidarTopic}
+              disabled={!isConnected || lidarTopics.length === 0}
+            >
+              <SelectTrigger size="sm" className="text-xs font-mono w-auto">
+                <SelectValue placeholder="Select topic" />
+              </SelectTrigger>
+              <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
+                {lidarTopics.length > 0 ? (
+                  lidarTopics.map((topic) => (
+                    <SelectItem key={topic} value={topic}>
+                      {topic}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="none" disabled>
+                    No LaserScan topics found
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       )}
 
@@ -107,16 +168,20 @@ function LidarCard({ compact = false }: LidarCardProps) {
 
               {/* Lidar points */}
               {lidarData.ranges.map((range, i) => {
+                // Skip points beyond view range
+                if (range > viewRange) return null;
+
                 const angle =
                   lidarData.angle_min +
                   i * lidarData.angle_increment -
                   Math.PI / 2;
-                const normalizedRange = (range / lidarData.range_max) * 100;
+                // Normalize based on view range instead of sensor max
+                const normalizedRange = (range / viewRange) * 100;
                 const x = Math.cos(angle) * normalizedRange;
                 const y = Math.sin(angle) * normalizedRange;
 
-                // Distance-based coloring: red (near) -> yellow -> green (far)
-                const distanceRatio = range / lidarData.range_max;
+                // Distance-based coloring relative to view range
+                const distanceRatio = range / viewRange;
                 let color: string;
                 if (distanceRatio < 0.3) {
                   // Near: Red (danger)
@@ -150,29 +215,62 @@ function LidarCard({ compact = false }: LidarCardProps) {
         {/* Compact mode overlays */}
         {compact && isConnected && lidarData && (
           <>
-            <div className="absolute top-2 left-2 right-2 z-10">
+            <div className="absolute top-2 left-2 right-2 z-10 flex items-center gap-2">
               <Select
                 value={lidarTopic}
                 onValueChange={setLidarTopic}
-                disabled={!isConnected}
+                disabled={!isConnected || lidarTopics.length === 0}
               >
                 <SelectTrigger
                   size="sm"
                   className="text-xs font-mono w-auto bg-card/90 backdrop-blur-sm"
                 >
-                  <SelectValue />
+                  <SelectValue placeholder="Select topic" />
                 </SelectTrigger>
                 <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
-                  {LIDAR_TOPIC_OPTIONS.map((topic) => (
-                    <SelectItem key={topic} value={topic}>
-                      {topic}
+                  {lidarTopics.length > 0 ? (
+                    lidarTopics.map((topic) => (
+                      <SelectItem key={topic} value={topic}>
+                        {topic}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="none" disabled>
+                      No LaserScan topics found
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
+              {/* Zoom controls */}
+              <div className="flex items-center gap-1 border border-border rounded-md bg-card/90 backdrop-blur-sm">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={handleZoomIn}
+                  disabled={!canZoomInEnabled}
+                  className="h-6 w-6"
+                  aria-label="Zoom in"
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+                <div className="text-[10px] font-mono text-muted-foreground px-1 min-w-[40px] text-center">
+                  {viewRange.toFixed(0)}m
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={handleZoomOut}
+                  disabled={!canZoomOutEnabled}
+                  className="h-6 w-6"
+                  aria-label="Zoom out"
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
             <div className="absolute bottom-2 left-2 text-xs font-mono text-muted-foreground bg-card/90 backdrop-blur-sm px-2 py-1 rounded-sm">
-              Range: {lidarData.range_max.toFixed(1)}m
+              View: {viewRange.toFixed(1)}m | Max:{' '}
+              {lidarData.range_max.toFixed(1)}m
             </div>
           </>
         )}
@@ -181,7 +279,8 @@ function LidarCard({ compact = false }: LidarCardProps) {
         {!compact && isConnected && lidarData && (
           <>
             <div className="absolute bottom-2 left-2 text-xs font-mono text-muted-foreground">
-              Range: {lidarData.range_max.toFixed(1)}m
+              View: {viewRange.toFixed(1)}m | Max:{' '}
+              {lidarData.range_max.toFixed(1)}m
             </div>
             {/* Color legend */}
             <div className="absolute bottom-2 right-2 flex items-center gap-2 text-[10px] font-mono">
