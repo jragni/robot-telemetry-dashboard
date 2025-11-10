@@ -57,9 +57,7 @@ export function useRos(options: UseRosOptions = {}): UseRosReturn {
 
       // Import ROSLIB dynamically to avoid issues during SSR
       void import('roslib').then(({ default: ROSLIB }) => {
-        const rosInstance = new ROSLIB.Ros({
-          url,
-        });
+        const rosInstance = new ROSLIB.Ros({ url });
 
         // Connection opened
         rosInstance.on('connection', () => {

@@ -116,14 +116,14 @@ export function AddRobotModal({ isOpen, onClose, onAdd }: AddRobotModalProps) {
               htmlFor="robot-url"
               className="block text-xs font-mono font-semibold"
             >
-              WEBSOCKET URL
+              BASE URL
             </label>
             <Input
               id="robot-url"
               type="text"
               value={url}
               onChange={handleUrlChange}
-              placeholder="ws://localhost:9090"
+              placeholder="wss://your-robot.loca.lt"
               className={`font-mono ${urlError ? 'border-destructive' : ''}`}
               aria-invalid={!!urlError}
               aria-describedby={urlError ? 'url-error' : 'url-help'}
@@ -141,7 +141,7 @@ export function AddRobotModal({ isOpen, onClose, onAdd }: AddRobotModalProps) {
                 id="url-help"
                 className="text-xs text-muted-foreground font-mono"
               >
-                Enter the WebSocket URL of your robot's rosbridge server
+                Enter your robot's base URL (paths will be added automatically)
               </p>
             )}
           </div>

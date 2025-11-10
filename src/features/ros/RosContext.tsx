@@ -8,6 +8,7 @@
 import { createContext, useContext, useState } from 'react';
 
 import type { ConnectionState, ROSLIB, RobotConnection } from './definitions';
+import { deriveRosbridgeUrl, deriveWebRTCUrl } from './helpers';
 import { useRos } from './useRos';
 
 interface RosContextValue {
@@ -17,6 +18,8 @@ interface RosContextValue {
   robots: RobotConnection[];
   activeRobotId: string | null;
   activeRobot: RobotConnection | null;
+  rosbridgeUrl: string; // Derived from base URL
+  webrtcUrl: string; // Derived from base URL (for WebRTC component)
   addRobot: (name: string, url: string) => void;
   selectRobot: (robotId: string) => void;
   deleteRobot: (robotId: string) => void;
@@ -53,8 +56,13 @@ export function RosProvider({ children }: RosProviderProps) {
 
   const activeRobot = robots.find((r) => r.id === activeRobotId) ?? null;
 
+  // Derive rosbridge and WebRTC URLs from base URL
+  const baseUrl = activeRobot?.url ?? '';
+  const rosbridgeUrl = deriveRosbridgeUrl(baseUrl);
+  const webrtcUrl = deriveWebRTCUrl(baseUrl);
+
   const { ros, connectionState, error, connect, disconnect } = useRos({
-    url: activeRobot?.url ?? '',
+    url: rosbridgeUrl,
     autoConnect: false, // Don't auto-connect, let user trigger it
   });
 
@@ -118,6 +126,8 @@ export function RosProvider({ children }: RosProviderProps) {
     robots,
     activeRobotId,
     activeRobot,
+    rosbridgeUrl,
+    webrtcUrl,
     addRobot,
     selectRobot,
     deleteRobot,
