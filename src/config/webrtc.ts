@@ -42,7 +42,7 @@ export const WEBRTC_CONFIG = {
   /**
    * Maximum reconnection attempts (0 = infinite)
    */
-  maxReconnectAttempts: 0,
+  maxReconnectAttempts: 3,
 
   /**
    * ICE servers configuration

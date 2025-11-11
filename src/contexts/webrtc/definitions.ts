@@ -81,6 +81,8 @@ export interface WebRTCContextValue {
   stream: MediaStream | null;
   connectionState: WebRTCConnectionState;
   error: Error | null;
+  connect: () => void;
+  disconnect: () => void;
 }
 
 /**

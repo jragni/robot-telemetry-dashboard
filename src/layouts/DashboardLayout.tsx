@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/resizable';
 import WebRTCVideo from '@/components/video/WebRTCVideo';
 import { useRosContext } from '@/contexts/ros/RosContext';
+import { useWebRTCContext } from '@/contexts/webrtc/WebRTCContext';
 
 function DashboardLayout() {
   const [isPilotMode, setIsPilotMode] = useState(false);
@@ -27,9 +28,24 @@ function DashboardLayout() {
     addRobot,
     selectRobot,
     deleteRobot,
-    connect,
-    disconnect,
+    connect: connectRos,
+    disconnect: disconnectRos,
   } = useRosContext();
+
+  const { connect: connectWebRTC, disconnect: disconnectWebRTC } =
+    useWebRTCContext();
+
+  // Combined connect that initiates both ROS and WebRTC connections
+  const connect = () => {
+    connectRos();
+    connectWebRTC();
+  };
+
+  // Combined disconnect that terminates both ROS and WebRTC connections
+  const disconnect = () => {
+    disconnectRos();
+    disconnectWebRTC();
+  };
 
   return (
     <div className="h-screen bg-background text-foreground flex flex-col">
