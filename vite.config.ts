@@ -12,4 +12,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // Base path for GitHub Pages deployment
+  base: '/robot-telemetry-dashboard/',
 });
