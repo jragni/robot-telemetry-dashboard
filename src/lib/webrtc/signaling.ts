@@ -41,6 +41,7 @@ export class SignalingClient {
     try {
       await fetch(this.url.replace(/\/offer$/, ''), {
         method: 'HEAD',
+        credentials: 'include', // Include cookies for localtunnel authentication
       }).catch(() => null);
 
       // Don't fail if HEAD request fails - server might not support it
@@ -85,6 +86,7 @@ export class SignalingClient {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Include cookies for localtunnel authentication
         body: JSON.stringify({
           sdp: offer.sdp,
           type: offer.type,

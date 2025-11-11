@@ -1,10 +1,10 @@
 // App.tsx - Main application entry point
 
-import { ControlProvider } from './features/control/ControlContext';
-import DashboardLayout from './features/dashboard/DashboardLayout';
-import { RosProvider } from './features/ros/RosContext';
-import { LidarZoomProvider } from './features/telemetry/lidar/LidarZoomContext';
-import { WebRTCProvider } from './features/video/WebRTCContext';
+import { ControlProvider } from './contexts/control/ControlContext';
+import { LidarZoomProvider } from './contexts/lidar-zoom/LidarZoomContext';
+import { RosProvider } from './contexts/ros/RosContext';
+import { WebRTCProvider } from './contexts/webrtc/WebRTCContext';
+import DashboardLayout from './layouts/DashboardLayout';
 
 function App() {
   return (
