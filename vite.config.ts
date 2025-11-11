@@ -14,6 +14,11 @@ export default defineConfig({
   },
   // Base path for GitHub Pages deployment
   base: '/robot-telemetry-dashboard/',
+  define: {
+    // Fix roslib's usage of 'this' in CommonJS modules
+    // roslib uses 'var ROSLIB = this.ROSLIB || {}' which fails in ES modules where 'this' is undefined
+    'this.ROSLIB': 'window.ROSLIB',
+  },
   build: {
     commonjsOptions: {
       transformMixedEsModules: true,
