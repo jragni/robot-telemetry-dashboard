@@ -14,4 +14,12 @@ export default defineConfig({
   },
   // Base path for GitHub Pages deployment
   base: '/robot-telemetry-dashboard/',
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
+  optimizeDeps: {
+    include: ['roslib'],
+  },
 });
