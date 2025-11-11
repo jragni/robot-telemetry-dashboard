@@ -65,9 +65,19 @@
   * {
     border-color: hsl(var(--border));
   }
+  html,
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    overscroll-behavior: none;
+  }
+  #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
   }
 
   /* Custom scrollbar styling - minimal and theme-aware */

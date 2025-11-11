@@ -50,7 +50,7 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
       <div className="flex items-center justify-center gap-6 flex-1 min-h-0">
         {/* Gamepad */}
         <div className="flex flex-col items-center">
-          <div className="relative w-[120px] h-[120px] select-none">
+          <div className="relative w-[140px] h-[140px] select-none">
             {/* Top - Forward */}
             <Button
               className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] active:bg-emerald-500/20 active:border-emerald-500 transition-all"
