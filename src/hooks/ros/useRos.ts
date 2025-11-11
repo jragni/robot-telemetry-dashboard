@@ -6,9 +6,10 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import ROSLIB from 'roslib';
 
 import { CONNECTION_CONFIG } from '@/config/ros';
-import type { ConnectionState, ROSLIB } from '@/contexts/ros/definitions';
+import type { ConnectionState } from '@/contexts/ros/definitions';
 
 interface UseRosOptions {
   url?: string; // Optional - can be set later via context
@@ -54,58 +55,49 @@ export function useRos(options: UseRosOptions = {}): UseRosReturn {
       setError(null);
       shouldConnectRef.current = true;
 
-      // Import ROSLIB dynamically to avoid issues during SSR
-      void import('roslib').then((module) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        const ROSLIB = (module as any).default ?? module;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        const rosInstance = new ROSLIB.Ros({ url }) as ROSLIB.Ros;
+      const rosInstance = new ROSLIB.Ros({ url });
 
-        // Connection opened
-
-        rosInstance.on('connection', () => {
-          console.log('Connected to ROS bridge');
-          setConnectionState('connected');
-          setError(null);
-        });
-
-        // Connection error
-
-        rosInstance.on('error', (err: unknown) => {
-          console.error('ROS connection error:', err);
-          setConnectionState('error');
-          setError(
-            new Error(
-              typeof err === 'string' ? err : 'ROS connection error occurred'
-            )
-          );
-
-          // Auto-reconnect if enabled
-          if (CONNECTION_CONFIG.autoReconnect && shouldConnectRef.current) {
-            reconnectTimeoutRef.current = setTimeout(() => {
-              console.log('Attempting to reconnect...');
-              connect();
-            }, CONNECTION_CONFIG.reconnectInterval);
-          }
-        });
-
-        // Connection closed
-
-        rosInstance.on('close', () => {
-          console.log('ROS connection closed');
-          setConnectionState('disconnected');
-
-          // Auto-reconnect if enabled and we should be connected
-          if (CONNECTION_CONFIG.autoReconnect && shouldConnectRef.current) {
-            reconnectTimeoutRef.current = setTimeout(() => {
-              console.log('Attempting to reconnect...');
-              connect();
-            }, CONNECTION_CONFIG.reconnectInterval);
-          }
-        });
-
-        setRos(rosInstance);
+      // Connection opened
+      rosInstance.on('connection', () => {
+        console.log('Connected to ROS bridge');
+        setConnectionState('connected');
+        setError(null);
       });
+
+      // Connection error
+      rosInstance.on('error', (err: unknown) => {
+        console.error('ROS connection error:', err);
+        setConnectionState('error');
+        setError(
+          new Error(
+            typeof err === 'string' ? err : 'ROS connection error occurred'
+          )
+        );
+
+        // Auto-reconnect if enabled
+        if (CONNECTION_CONFIG.autoReconnect && shouldConnectRef.current) {
+          reconnectTimeoutRef.current = setTimeout(() => {
+            console.log('Attempting to reconnect...');
+            connect();
+          }, CONNECTION_CONFIG.reconnectInterval);
+        }
+      });
+
+      // Connection closed
+      rosInstance.on('close', () => {
+        console.log('ROS connection closed');
+        setConnectionState('disconnected');
+
+        // Auto-reconnect if enabled and we should be connected
+        if (CONNECTION_CONFIG.autoReconnect && shouldConnectRef.current) {
+          reconnectTimeoutRef.current = setTimeout(() => {
+            console.log('Attempting to reconnect...');
+            connect();
+          }, CONNECTION_CONFIG.reconnectInterval);
+        }
+      });
+
+      setRos(rosInstance);
     } catch (err) {
       console.error('Failed to create ROS connection:', err);
       setError(err as Error);

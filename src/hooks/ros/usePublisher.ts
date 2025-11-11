@@ -6,8 +6,8 @@
  */
 
 import { useEffect, useRef } from 'react';
+import ROSLIB from 'roslib';
 
-import type { ROSLIB } from '@/contexts/ros/definitions';
 import { useRosContext } from '@/contexts/ros/RosContext';
 
 interface UsePublisherOptions {
@@ -35,22 +35,15 @@ export function usePublisher<T = unknown>(
       return;
     }
 
-    // Import ROSLIB dynamically
-    void import('roslib').then((module) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const ROSLIB = (module as any).default ?? module;
-      // Create topic for publishing
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      const rosTopic = new ROSLIB.Topic({
-        ros,
-        name: topic,
-        messageType,
-        queue_size: queueSize,
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      topicRef.current = rosTopic;
+    // Create topic for publishing
+    const rosTopic = new ROSLIB.Topic({
+      ros,
+      name: topic,
+      messageType,
+      queue_size: queueSize,
     });
+
+    topicRef.current = rosTopic;
 
     // Cleanup on unmount or when dependencies change
     return () => {
@@ -64,15 +57,8 @@ export function usePublisher<T = unknown>(
   const publish = (message: T) => {
     if (topicRef.current && connectionState === 'connected') {
       try {
-        // Import ROSLIB dynamically
-        void import('roslib').then((module) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          const ROSLIB = (module as any).default ?? module;
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-          const rosMessage = new ROSLIB.Message(message);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          topicRef.current?.publish(rosMessage);
-        });
+        const rosMessage = new ROSLIB.Message(message);
+        topicRef.current?.publish(rosMessage);
       } catch (err) {
         console.error(`Failed to publish to topic ${topic}:`, err);
       }
