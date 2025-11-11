@@ -7,7 +7,7 @@ import { useRosContext } from '../ros/RosContext';
 import IMUCard from '../telemetry/imu/IMUCard';
 import LidarCard from '../telemetry/lidar/LidarCard';
 import TopicsList from '../telemetry/topics/TopicsList';
-import VideoPlaceholder from '../video/VideoPlaceholder';
+import WebRTCVideo from '../video/WebRTCVideo';
 
 import Header from './Header';
 
@@ -75,7 +75,7 @@ function DashboardLayout() {
             {/* Mobile: Stack layout */}
             <div className="lg:hidden flex flex-col gap-3 h-full overflow-auto">
               <div className="min-h-[300px] flex-shrink-0">
-                <VideoPlaceholder />
+                <WebRTCVideo />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-shrink-0">
                 <div className="min-h-[250px]">
@@ -104,7 +104,7 @@ function DashboardLayout() {
                     {/* Video Feed */}
                     <ResizablePanel defaultSize={65} minSize={20}>
                       <div className="h-full pr-1.5">
-                        <VideoPlaceholder />
+                        <WebRTCVideo />
                       </div>
                     </ResizablePanel>
 
