@@ -6,8 +6,8 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import ROSLIB from 'roslib';
 
-import type { ROSLIB } from '@/contexts/ros/definitions';
 import { useRosContext } from '@/contexts/ros/RosContext';
 
 interface UseSubscriberOptions {
@@ -46,29 +46,21 @@ export function useSubscriber<T = unknown>(
     setError(null);
 
     try {
-      // Import ROSLIB dynamically
-      void import('roslib').then((module) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        const ROSLIB = (module as any).default ?? module;
-        // Create topic
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        const rosTopic = new ROSLIB.Topic({
-          ros,
-          name: topic,
-          messageType,
-          throttle_rate: throttleRate,
-        });
-
-        // Subscribe to topic
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-        rosTopic.subscribe((message: any) => {
-          setData(message as T);
-          setLoading(false);
-        });
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        topicRef.current = rosTopic;
+      // Create topic
+      const rosTopic = new ROSLIB.Topic({
+        ros,
+        name: topic,
+        messageType,
+        throttle_rate: throttleRate,
       });
+
+      // Subscribe to topic
+      rosTopic.subscribe((message) => {
+        setData(message as T);
+        setLoading(false);
+      });
+
+      topicRef.current = rosTopic;
     } catch (err) {
       console.error(`Failed to subscribe to topic ${topic}:`, err);
       setError(err as Error);
