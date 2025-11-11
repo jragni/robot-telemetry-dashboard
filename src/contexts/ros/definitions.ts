@@ -5,11 +5,6 @@
  * These match ROS2 message definitions for use with rosbridge_suite.
  */
 
-import type ROSLIB from 'roslib';
-
-// Re-export ROSLIB type for convenience
-export type { ROSLIB };
-
 // ============================================================================
 // Connection Types
 // ============================================================================

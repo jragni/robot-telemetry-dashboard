@@ -6,8 +6,9 @@
  */
 
 import { createContext, useContext, useState } from 'react';
+import type ROSLIB from 'roslib';
 
-import type { ConnectionState, ROSLIB, RobotConnection } from './definitions';
+import type { ConnectionState, RobotConnection } from './definitions';
 import { deriveRosbridgeUrl, deriveWebRTCUrl } from './helpers';
 
 import { useRos } from '@/hooks/ros/useRos';
