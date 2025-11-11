@@ -5,10 +5,10 @@
  * These match ROS2 message definitions for use with rosbridge_suite.
  */
 
-import ROSLIB from 'roslib';
+import type ROSLIB from 'roslib';
 
-// Re-export ROSLIB for convenience
-export { ROSLIB };
+// Re-export ROSLIB type for convenience
+export type { ROSLIB };
 
 // ============================================================================
 // Connection Types
