@@ -55,10 +55,14 @@ export function useRos(options: UseRosOptions = {}): UseRosReturn {
       shouldConnectRef.current = true;
 
       // Import ROSLIB dynamically to avoid issues during SSR
-      void import('roslib').then(({ default: ROSLIB }) => {
-        const rosInstance = new ROSLIB.Ros({ url });
+      void import('roslib').then((module) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        const ROSLIB = (module as any).default ?? module;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        const rosInstance = new ROSLIB.Ros({ url }) as ROSLIB.Ros;
 
         // Connection opened
+
         rosInstance.on('connection', () => {
           console.log('Connected to ROS bridge');
           setConnectionState('connected');
@@ -66,6 +70,7 @@ export function useRos(options: UseRosOptions = {}): UseRosReturn {
         });
 
         // Connection error
+
         rosInstance.on('error', (err: unknown) => {
           console.error('ROS connection error:', err);
           setConnectionState('error');
@@ -85,6 +90,7 @@ export function useRos(options: UseRosOptions = {}): UseRosReturn {
         });
 
         // Connection closed
+
         rosInstance.on('close', () => {
           console.log('ROS connection closed');
           setConnectionState('disconnected');
