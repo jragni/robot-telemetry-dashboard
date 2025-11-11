@@ -29,7 +29,7 @@ function VelocitySliders({
             step={0.01}
             value={[linearVelocity]}
             onValueChange={([value]) => onLinearChange(value)}
-            className="touch-none h-full min-w-[44px] flex-col"
+            className="touch-none h-full min-w-[44px] flex-col [&_[role=slider]]:border-2 [&_[role=slider]]:border-emerald-500 [&_[role=slider]]:bg-emerald-500 [&_[role=slider]]:shadow-[0_0_8px_rgba(16,185,129,0.5)] [&_[role=slider]]:hover:scale-125 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5 [&>span]:bg-[#2D5A3D]"
             aria-label={`Linear velocity: ${linearVelocity.toFixed(2)} meters per second`}
             aria-valuemin={VELOCITY_LIMITS.linear.min}
             aria-valuemax={VELOCITY_LIMITS.linear.max}
@@ -67,7 +67,7 @@ function VelocitySliders({
             step={0.1}
             value={[angularVelocity]}
             onValueChange={([value]) => onAngularChange(value)}
-            className="touch-none h-full min-w-[44px] flex-col"
+            className="touch-none h-full min-w-[44px] flex-col [&_[role=slider]]:border-2 [&_[role=slider]]:border-amber-500 [&_[role=slider]]:bg-amber-500 [&_[role=slider]]:shadow-[0_0_8px_rgba(245,158,11,0.5)] [&_[role=slider]]:hover:scale-125 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5 [&>span]:bg-[#78350f]"
             aria-label={`Angular velocity: ${angularVelocity.toFixed(2)} radians per second`}
             aria-valuemin={VELOCITY_LIMITS.angular.min}
             aria-valuemax={VELOCITY_LIMITS.angular.max}

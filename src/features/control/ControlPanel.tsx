@@ -40,7 +40,7 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
         variant="outline"
         size="sm"
         onClick={onTogglePilotMode}
-        className="h-7 w-35 px-2 text-xs font-mono mb-3 flex-shrink-0"
+        className="h-7 w-35 px-2 text-xs font-mono mb-3 flex-shrink-0 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] focus-visible:border-amber-600 transition-all"
       >
         <Maximize2 className="h-3 w-3 mr-1.5" />
         PILOT MODE
@@ -50,10 +50,10 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
       <div className="flex items-center justify-center gap-6 flex-1 min-h-0">
         {/* Gamepad */}
         <div className="flex flex-col items-center">
-          <div className="relative w-[120px] h-[120px]">
+          <div className="relative w-[120px] h-[120px] select-none">
             {/* Top - Forward */}
             <Button
-              className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 active:bg-green-500/20"
+              className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] active:bg-emerald-500/20 active:border-emerald-500 transition-all"
               onMouseDown={() => handleDirectionPress('forward')}
               onMouseLeave={() => handleDirectionPress('stop')}
               onMouseUp={() => handleDirectionPress('stop')}
@@ -74,7 +74,7 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
               onMouseLeave={() => handleDirectionPress('stop')}
               onTouchStart={() => handleDirectionPress('left')}
               onTouchEnd={() => handleDirectionPress('stop')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 active:bg-green-500/20"
+              className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] active:bg-emerald-500/20 active:border-emerald-500 transition-all"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -97,7 +97,7 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
               onMouseLeave={() => handleDirectionPress('stop')}
               onTouchStart={() => handleDirectionPress('right')}
               onTouchEnd={() => handleDirectionPress('stop')}
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 active:bg-green-500/20"
+              className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] active:bg-emerald-500/20 active:border-emerald-500 transition-all"
             >
               <ArrowRight className="w-5 h-5" />
             </Button>
@@ -111,7 +111,7 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
               onMouseLeave={() => handleDirectionPress('stop')}
               onTouchStart={() => handleDirectionPress('backward')}
               onTouchEnd={() => handleDirectionPress('stop')}
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-10 active:bg-green-500/20"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-10 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] active:bg-emerald-500/20 active:border-emerald-500 transition-all"
             >
               <ArrowDown className="w-5 h-5" />
             </Button>

@@ -1,6 +1,7 @@
 import { BarChart3, Grid3x3 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { DEFAULT_PLOT_TOPIC } from './constants';
 import type { ViewMode } from './definitions';
 import { DigitalView } from './DigitalView';
 import PlotView from './PlotView';
@@ -21,7 +22,8 @@ import { useTopics } from '@/features/ros/useTopics';
 function IMUCard() {
   const { connectionState } = useRosContext();
   const [viewMode, setViewMode] = useState<ViewMode>('digital');
-  const [selectedTopic, setSelectedTopic] = useState<string>('/imu/data');
+  const [selectedTopic, setSelectedTopic] =
+    useState<string>(DEFAULT_PLOT_TOPIC);
 
   // Fetch available topics dynamically
   const { topics } = useTopics();
@@ -32,6 +34,13 @@ function IMUCard() {
       .filter((topic) => topic.type === 'sensor_msgs/msg/Imu')
       .map((topic) => topic.name);
   }, [topics]);
+
+  // Auto-select first available IMU topic
+  useEffect(() => {
+    if (imuTopics.length > 0 && !imuTopics.includes(selectedTopic)) {
+      setSelectedTopic(imuTopics[0]);
+    }
+  }, [imuTopics, selectedTopic]);
 
   const { data: imuRawData, loading } = useSubscriber<ImuMessage>({
     topic: selectedTopic,
@@ -64,18 +73,25 @@ function IMUCard() {
             value={selectedTopic}
             disabled={!isConnected || imuTopics.length === 0}
           >
-            <SelectTrigger size="sm" className="w-fit text-xs font-mono">
+            <SelectTrigger
+              size="sm"
+              className="w-fit text-[13px] font-mono bg-card text-gray-900 dark:text-[#E8E8E8] border-2 border-[#4A4A4A] hover:bg-[#1A1A1A] hover:border-[#6A6A6A] focus-visible:border-amber-600 transition-all"
+            >
               <SelectValue placeholder="Select topic" />
             </SelectTrigger>
-            <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
+            <SelectContent className="bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-[#E8E8E8] border-2 border-gray-300 dark:border-[#5A5A5A] shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
               {imuTopics.length > 0 ? (
                 imuTopics.map((topic) => (
-                  <SelectItem key={topic} value={topic} className="text-xs">
+                  <SelectItem
+                    key={topic}
+                    value={topic}
+                    className="text-[13px] font-mono hover:bg-gray-100 dark:hover:bg-[#1A1A1A] focus:bg-gray-100 dark:focus:bg-[#1A1A1A] data-[state=checked]:bg-emerald-100 dark:data-[state=checked]:bg-[#1A4D2E] data-[state=checked]:text-emerald-900 dark:data-[state=checked]:text-white data-[state=checked]:font-semibold data-[state=checked]:border-l-4 data-[state=checked]:border-l-emerald-500 transition-colors cursor-pointer"
+                  >
                     {topic}
                   </SelectItem>
                 ))
               ) : (
-                <SelectItem value="none" disabled className="text-xs">
+                <SelectItem value="none" disabled className="text-[13px]">
                   No IMU topics found
                 </SelectItem>
               )}
@@ -87,7 +103,7 @@ function IMUCard() {
             onClick={() =>
               setViewMode((prev) => (prev === 'digital' ? 'plot' : 'digital'))
             }
-            className="h-8 px-2"
+            className="h-8 px-2 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] focus-visible:border-amber-600 transition-all"
           >
             {viewMode === 'digital' ? (
               <BarChart3 className="h-3 w-3" />

@@ -7,11 +7,7 @@
 
 import { createContext, useContext, useState } from 'react';
 
-import {
-  AVAILABLE_CONTROL_TOPICS,
-  CMD_VEL_MESSAGE_TYPE,
-  VELOCITY_LIMITS,
-} from './constants';
+import { CMD_VEL_MESSAGE_TYPE, VELOCITY_LIMITS } from './constants';
 import type { ControlState, Direction } from './definitions';
 
 import type { TwistMessage } from '@/features/ros/definitions';
@@ -37,7 +33,7 @@ export function ControlProvider({ children }: { children: React.ReactNode }) {
     linearVelocity: VELOCITY_LIMITS.linear.default,
     angularVelocity: VELOCITY_LIMITS.angular.default,
     isActive: false,
-    selectedTopic: AVAILABLE_CONTROL_TOPICS[0].value,
+    selectedTopic: '/cmd_vel', // Default to /cmd_vel
   });
 
   const { publish, isReady } = usePublisher<TwistMessage>({

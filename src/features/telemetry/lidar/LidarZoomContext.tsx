@@ -7,7 +7,7 @@
 
 import { createContext, useContext, useState } from 'react';
 
-const DEFAULT_VIEW_RANGE = 10; // Default 10 meter view range
+const DEFAULT_VIEW_RANGE = 5; // Default 5 meter view range
 const MIN_VIEW_RANGE = 2; // Minimum 2 meter view range
 const ZOOM_STEP = 2; // Zoom in/out by 2 meters
 

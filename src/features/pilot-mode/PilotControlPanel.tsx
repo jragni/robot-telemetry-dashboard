@@ -14,7 +14,7 @@ function PilotControlPanel() {
   const { handleDirectionPress, handleEmergencyStop } = useControl();
 
   return (
-    <div className="relative min-w-[100px] min-h-[100px] md:min-w-[140px] md:min-h-[140px] mx-auto">
+    <div className="relative min-w-[100px] min-h-[100px] md:min-w-[140px] md:min-h-[140px] mx-auto select-none">
       {/* Top - Forward */}
       <Button
         className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 md:w-10 md:h-10 active:bg-green-500/20 transition-all duration-200"

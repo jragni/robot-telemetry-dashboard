@@ -5,7 +5,7 @@
  */
 
 import { AlertCircle, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +14,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldSet,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
 interface AddRobotModalProps {
@@ -38,6 +45,23 @@ export function AddRobotModal({ isOpen, onClose, onAdd }: AddRobotModalProps) {
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
   const [urlError, setUrlError] = useState('');
+  const urlInputRef = useRef<HTMLInputElement>(null);
+
+  // Handle input focus to scroll into view on mobile
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Small delay to let keyboard appear
+    setTimeout(() => {
+      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  };
+
+  // Handle Enter key on name field - move to URL field
+  const handleNameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      urlInputRef.current?.focus();
+    }
+  };
 
   const validateUrl = (value: string) => {
     if (!value.trim()) {
@@ -85,85 +109,92 @@ export function AddRobotModal({ isOpen, onClose, onAdd }: AddRobotModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2 font-mono">
             <Plus className="w-5 h-5" />
             ADD ROBOT
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label
-              htmlFor="robot-name"
-              className="block text-xs font-mono font-semibold"
-            >
-              ROBOT NAME
-            </label>
-            <Input
-              id="robot-name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="My Robot"
-              className="font-mono"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label
-              htmlFor="robot-url"
-              className="block text-xs font-mono font-semibold"
-            >
-              BASE URL
-            </label>
-            <Input
-              id="robot-url"
-              type="text"
-              value={url}
-              onChange={handleUrlChange}
-              placeholder="wss://your-robot.loca.lt"
-              className={`font-mono ${urlError ? 'border-destructive' : ''}`}
-              aria-invalid={!!urlError}
-              aria-describedby={urlError ? 'url-error' : 'url-help'}
-            />
-            {urlError ? (
-              <div
-                id="url-error"
-                className="flex items-center gap-1 text-xs text-destructive font-mono"
+        <form
+          onSubmit={handleSubmit}
+          className="overflow-y-auto flex-1 min-h-0"
+        >
+          <FieldSet>
+            <Field>
+              <FieldLabel
+                htmlFor="robot-name"
+                className="text-xs font-mono font-semibold"
               >
-                <AlertCircle className="w-3 h-3" />
-                {urlError}
-              </div>
-            ) : (
-              <p
-                id="url-help"
-                className="text-xs text-muted-foreground font-mono"
-              >
-                Enter your robot's base URL (paths will be added automatically)
-              </p>
-            )}
-          </div>
+                ROBOT NAME
+              </FieldLabel>
+              <Input
+                id="robot-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onFocus={handleInputFocus}
+                onKeyDown={handleNameKeyDown}
+                placeholder="My Robot"
+                className="font-mono"
+                autoComplete="off"
+                enterKeyHint="next"
+              />
+            </Field>
 
-          {/* Action Buttons */}
-          <div className="flex gap-2 pt-2">
-            <Button
-              type="button"
-              onClick={handleClose}
-              variant="outline"
-              className="flex-1"
-            >
-              CANCEL
-            </Button>
-            <Button
-              type="submit"
-              disabled={!name.trim() || !url.trim() || !!urlError}
-              className="flex-1"
-            >
-              ADD ROBOT
-            </Button>
-          </div>
+            <Field data-invalid={!!urlError}>
+              <FieldLabel
+                htmlFor="robot-url"
+                className="text-xs font-mono font-semibold"
+              >
+                BASE URL
+              </FieldLabel>
+              <Input
+                ref={urlInputRef}
+                id="robot-url"
+                type="text"
+                value={url}
+                onChange={handleUrlChange}
+                onFocus={handleInputFocus}
+                placeholder="wss://your-robot.loca.lt"
+                className={`font-mono ${urlError ? 'border-destructive' : ''}`}
+                aria-invalid={!!urlError}
+                autoComplete="off"
+                enterKeyHint="done"
+              />
+              {urlError ? (
+                <FieldError className="flex items-center gap-1 text-xs font-mono">
+                  <AlertCircle className="w-3 h-3" />
+                  {urlError}
+                </FieldError>
+              ) : (
+                <FieldDescription className="text-xs font-mono">
+                  Enter your robot's base URL (paths will be added
+                  automatically)
+                </FieldDescription>
+              )}
+            </Field>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-2">
+              <Button
+                type="button"
+                onClick={handleClose}
+                variant="outline"
+                className="flex-1"
+              >
+                CANCEL
+              </Button>
+              <Button
+                type="submit"
+                disabled={!name.trim() || !url.trim() || !!urlError}
+                className="flex-1"
+              >
+                ADD ROBOT
+              </Button>
+            </div>
+          </FieldSet>
         </form>
       </DialogContent>
     </Dialog>

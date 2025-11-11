@@ -1,5 +1,5 @@
 import { Minus, Plus } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { DEFAULT_LIDAR_TOPIC } from './constants';
 import type { LidarCardProps } from './definitions';
@@ -33,6 +33,13 @@ function LidarCard({ compact = false }: LidarCardProps) {
       .map((topic) => topic.name);
   }, [topics]);
 
+  // Auto-select first available LIDAR topic
+  useEffect(() => {
+    if (lidarTopics.length > 0 && !lidarTopics.includes(lidarTopic)) {
+      setLidarTopic(lidarTopics[0]);
+    }
+  }, [lidarTopics, lidarTopic]);
+
   const { data: lidarData, loading } = useSubscriber<LaserScanMessage>({
     topic: lidarTopic,
     messageType: 'sensor_msgs/msg/LaserScan',
@@ -62,18 +69,18 @@ function LidarCard({ compact = false }: LidarCardProps) {
           </h3>
           <div className="flex items-center gap-2">
             {/* Zoom controls */}
-            <div className="flex items-center gap-1 border border-border rounded-md bg-background">
+            <div className="flex items-center gap-1 border-2 border-[#4A4A4A] rounded-md bg-background h-8">
               <Button
                 variant="ghost"
                 size="icon-sm"
                 onClick={handleZoomIn}
                 disabled={!isConnected || !canZoomInEnabled}
-                className="h-6 w-6"
+                className="h-8 w-8 hover:bg-[#1A1A1A] focus-visible:border-amber-600 transition-all"
                 aria-label="Zoom in"
               >
-                <Plus className="h-3 w-3" />
+                <Plus className="h-4 w-4" />
               </Button>
-              <div className="text-[10px] font-mono text-muted-foreground px-1 min-w-[40px] text-center">
+              <div className="text-[13px] font-mono text-gray-900 dark:text-[#E8E8E8] px-2 min-w-[45px] text-center">
                 {viewRange.toFixed(0)}m
               </div>
               <Button
@@ -81,10 +88,10 @@ function LidarCard({ compact = false }: LidarCardProps) {
                 size="icon-sm"
                 onClick={handleZoomOut}
                 disabled={!isConnected || !canZoomOutEnabled}
-                className="h-6 w-6"
+                className="h-8 w-8 hover:bg-[#1A1A1A] focus-visible:border-amber-600 transition-all"
                 aria-label="Zoom out"
               >
-                <Minus className="h-3 w-3" />
+                <Minus className="h-4 w-4" />
               </Button>
             </div>
             {/* Topic selector */}
@@ -93,18 +100,25 @@ function LidarCard({ compact = false }: LidarCardProps) {
               onValueChange={setLidarTopic}
               disabled={!isConnected || lidarTopics.length === 0}
             >
-              <SelectTrigger size="sm" className="text-xs font-mono w-auto">
+              <SelectTrigger
+                size="sm"
+                className="text-[13px] font-mono w-auto bg-card text-gray-900 dark:text-[#E8E8E8] border-2 border-[#4A4A4A] hover:bg-[#1A1A1A] hover:border-[#6A6A6A] focus-visible:border-amber-600 transition-all"
+              >
                 <SelectValue placeholder="Select topic" />
               </SelectTrigger>
-              <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
+              <SelectContent className="bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-[#E8E8E8] border-2 border-gray-300 dark:border-[#5A5A5A] shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
                 {lidarTopics.length > 0 ? (
                   lidarTopics.map((topic) => (
-                    <SelectItem key={topic} value={topic}>
+                    <SelectItem
+                      key={topic}
+                      value={topic}
+                      className="text-[13px] font-mono hover:bg-gray-100 dark:hover:bg-[#1A1A1A] focus:bg-gray-100 dark:focus:bg-[#1A1A1A] data-[state=checked]:bg-emerald-100 dark:data-[state=checked]:bg-[#1A4D2E] data-[state=checked]:text-emerald-900 dark:data-[state=checked]:text-white data-[state=checked]:font-semibold data-[state=checked]:border-l-4 data-[state=checked]:border-l-emerald-500 transition-colors cursor-pointer"
+                    >
                       {topic}
                     </SelectItem>
                   ))
                 ) : (
-                  <SelectItem value="none" disabled>
+                  <SelectItem value="none" disabled className="text-[13px]">
                     No LaserScan topics found
                   </SelectItem>
                 )}
@@ -145,8 +159,9 @@ function LidarCard({ compact = false }: LidarCardProps) {
                   cy="0"
                   r={r}
                   fill="none"
-                  stroke="rgb(51 65 85)"
-                  strokeWidth="0.5"
+                  stroke="rgb(100 116 139)"
+                  strokeWidth="0.7"
+                  opacity="0.6"
                 />
               ))}
 
@@ -160,8 +175,9 @@ function LidarCard({ compact = false }: LidarCardProps) {
                     y1="0"
                     x2={Math.cos(rad) * 100}
                     y2={Math.sin(rad) * 100}
-                    stroke="rgb(51 65 85)"
-                    strokeWidth="0.5"
+                    stroke="rgb(100 116 139)"
+                    strokeWidth="0.7"
+                    opacity="0.6"
                   />
                 );
               })}
@@ -223,37 +239,41 @@ function LidarCard({ compact = false }: LidarCardProps) {
               >
                 <SelectTrigger
                   size="sm"
-                  className="text-xs font-mono w-auto bg-card/90 backdrop-blur-sm"
+                  className="text-[13px] font-mono w-auto bg-card/90 backdrop-blur-sm text-gray-900 dark:text-[#E8E8E8] border-2 border-[#4A4A4A] hover:bg-[#1A1A1A] hover:border-[#6A6A6A] focus-visible:border-amber-600 transition-all"
                 >
                   <SelectValue placeholder="Select topic" />
                 </SelectTrigger>
-                <SelectContent className="bg-black text-white dark:bg-slate-900 dark:text-slate-100">
+                <SelectContent className="bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-[#E8E8E8] border-2 border-gray-300 dark:border-[#5A5A5A] shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
                   {lidarTopics.length > 0 ? (
                     lidarTopics.map((topic) => (
-                      <SelectItem key={topic} value={topic}>
+                      <SelectItem
+                        key={topic}
+                        value={topic}
+                        className="text-[13px] font-mono hover:bg-gray-100 dark:hover:bg-[#1A1A1A] focus:bg-gray-100 dark:focus:bg-[#1A1A1A] data-[state=checked]:bg-emerald-100 dark:data-[state=checked]:bg-[#1A4D2E] data-[state=checked]:text-emerald-900 dark:data-[state=checked]:text-white data-[state=checked]:font-semibold data-[state=checked]:border-l-4 data-[state=checked]:border-l-emerald-500 transition-colors cursor-pointer"
+                      >
                         {topic}
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem value="none" disabled>
+                    <SelectItem value="none" disabled className="text-[13px]">
                       No LaserScan topics found
                     </SelectItem>
                   )}
                 </SelectContent>
               </Select>
               {/* Zoom controls */}
-              <div className="flex items-center gap-1 border border-border rounded-md bg-card/90 backdrop-blur-sm">
+              <div className="flex items-center gap-1 border-2 border-[#4A4A4A] rounded-md bg-card/90 backdrop-blur-sm h-8">
                 <Button
                   variant="ghost"
                   size="icon-sm"
                   onClick={handleZoomIn}
                   disabled={!canZoomInEnabled}
-                  className="h-6 w-6"
+                  className="h-8 w-8 hover:bg-[#1A1A1A] focus-visible:border-amber-600 transition-all"
                   aria-label="Zoom in"
                 >
-                  <Plus className="h-3 w-3" />
+                  <Plus className="h-4 w-4" />
                 </Button>
-                <div className="text-[10px] font-mono text-muted-foreground px-1 min-w-[40px] text-center">
+                <div className="text-[13px] font-mono text-gray-900 dark:text-[#E8E8E8] px-2 min-w-[45px] text-center">
                   {viewRange.toFixed(0)}m
                 </div>
                 <Button
@@ -261,10 +281,10 @@ function LidarCard({ compact = false }: LidarCardProps) {
                   size="icon-sm"
                   onClick={handleZoomOut}
                   disabled={!canZoomOutEnabled}
-                  className="h-6 w-6"
+                  className="h-8 w-8 hover:bg-[#1A1A1A] focus-visible:border-amber-600 transition-all"
                   aria-label="Zoom out"
                 >
-                  <Minus className="h-3 w-3" />
+                  <Minus className="h-4 w-4" />
                 </Button>
               </div>
             </div>
