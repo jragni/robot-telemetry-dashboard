@@ -47,8 +47,11 @@ export function useSubscriber<T = unknown>(
 
     try {
       // Import ROSLIB dynamically
-      void import('roslib').then(({ default: ROSLIB }) => {
+      void import('roslib').then((module) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        const ROSLIB = (module as any).default ?? module;
         // Create topic
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const rosTopic = new ROSLIB.Topic({
           ros,
           name: topic,
@@ -57,11 +60,13 @@ export function useSubscriber<T = unknown>(
         });
 
         // Subscribe to topic
-        rosTopic.subscribe((message) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+        rosTopic.subscribe((message: any) => {
           setData(message as T);
           setLoading(false);
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         topicRef.current = rosTopic;
       });
     } catch (err) {
