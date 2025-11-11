@@ -151,7 +151,7 @@ function WebRTCVideo() {
                     : 'bg-muted'
             }`}
           />
-          <span className="text-xs font-mono text-muted-foreground">
+          <span className="text-xs font-mono text-gray-900 dark:text-[#E8E8E8]">
             {isConnected ? 'LIVE' : isConnecting ? 'CONNECTING' : 'OFFLINE'}
           </span>
         </div>
@@ -159,7 +159,7 @@ function WebRTCVideo() {
 
       {/* Camera Label */}
       {isConnected && (
-        <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center text-xs font-mono text-muted-foreground">
+        <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center text-xs font-mono text-gray-900 dark:text-[#E8E8E8]">
           <div className="bg-background/80 px-2 py-1 rounded-sm border border-border backdrop-blur-sm">
             <span>{activeRobot?.name ?? 'CAM-01'}</span>
           </div>

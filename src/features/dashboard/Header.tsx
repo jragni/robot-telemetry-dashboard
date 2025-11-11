@@ -25,7 +25,7 @@ function Header({ onToggleSidebar }: HeaderProps) {
               </span>
             </h1>
             {/* Hide subtitle on mobile */}
-            <p className="hidden md:block text-xs text-muted-foreground font-mono">
+            <p className="hidden md:block text-xs text-gray-900 dark:text-[#E8E8E8] font-mono">
               {activeRobot
                 ? `${activeRobot.name.toUpperCase()} // TELEOPERATION INTERFACE`
                 : 'NO ROBOT SELECTED // TELEOPERATION INTERFACE'}
@@ -61,7 +61,7 @@ function Header({ onToggleSidebar }: HeaderProps) {
                 }`}
               />
               {/* Hide status text on mobile */}
-              <span className="hidden sm:inline text-xs font-mono text-muted-foreground">
+              <span className="hidden sm:inline text-xs font-mono text-gray-900 dark:text-[#E8E8E8]">
                 {isRosConnected ? 'ONLINE' : 'OFFLINE'}
               </span>
             </div>
