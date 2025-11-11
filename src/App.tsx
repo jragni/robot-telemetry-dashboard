@@ -4,15 +4,18 @@ import { ControlProvider } from './features/control/ControlContext';
 import DashboardLayout from './features/dashboard/DashboardLayout';
 import { RosProvider } from './features/ros/RosContext';
 import { LidarZoomProvider } from './features/telemetry/lidar/LidarZoomContext';
+import { WebRTCProvider } from './features/video/WebRTCContext';
 
 function App() {
   return (
     <RosProvider>
-      <ControlProvider>
-        <LidarZoomProvider>
-          <DashboardLayout />
-        </LidarZoomProvider>
-      </ControlProvider>
+      <WebRTCProvider>
+        <ControlProvider>
+          <LidarZoomProvider>
+            <DashboardLayout />
+          </LidarZoomProvider>
+        </ControlProvider>
+      </WebRTCProvider>
     </RosProvider>
   );
 }
