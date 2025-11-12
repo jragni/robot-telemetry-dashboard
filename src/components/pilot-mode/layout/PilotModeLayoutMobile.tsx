@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 
 function PilotModeLayoutMobile({ onExitPilotMode }: PilotModeLayoutProps) {
   return (
-    <div className="fixed inset-0 md:hidden overflow-hidden touch-none overscroll-none z-50">
+    <div className="fixed inset-0 md:hidden overflow-hidden touch-none select-none overscroll-none z-50">
       {/* Video background layer */}
       <div className="absolute inset-0 z-0">
         <PilotVideoFeed />
