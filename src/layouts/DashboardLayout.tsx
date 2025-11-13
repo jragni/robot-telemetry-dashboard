@@ -117,7 +117,7 @@ function DashboardLayout() {
                 <ResizablePanel defaultSize={66} minSize={30}>
                   <ResizablePanelGroup direction="vertical">
                     {/* Video Feed */}
-                    <ResizablePanel defaultSize={65} minSize={20}>
+                    <ResizablePanel defaultSize={35} minSize={20}>
                       <div className="h-full pr-1.5">
                         <WebRTCVideo />
                       </div>
@@ -156,7 +156,7 @@ function DashboardLayout() {
                 <ResizablePanel defaultSize={34} minSize={20}>
                   <ResizablePanelGroup direction="vertical">
                     {/* Lidar Card */}
-                    <ResizablePanel defaultSize={74} minSize={20}>
+                    <ResizablePanel defaultSize={40} minSize={20}>
                       <div className="h-full pl-1.5">
                         <LidarCard />
                       </div>
