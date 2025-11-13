@@ -25,7 +25,7 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
   } = useControl();
 
   return (
-    <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col min-h-0">
+    <div className="bg-card border border-border rounded-sm p-4 h-full flex flex-col min-h-[297px]">
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <h3 className="text-sm font-mono font-semibold text-foreground tracking-wider">
           CONTROL PANEL
@@ -40,12 +40,11 @@ function ControlPanel({ onTogglePilotMode }: ControlPanelProps) {
         variant="outline"
         size="sm"
         onClick={onTogglePilotMode}
-        className="h-7 w-35 px-2 text-xs font-mono mb-3 flex-shrink-0 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] focus-visible:border-amber-600 transition-all"
+        className="h-7 w-30 px-2 text-xs font-mono mb-3 flex-shrink-0 border-2 border-[#4A4A4A] hover:border-[#6A6A6A] hover:bg-[#1A1A1A] focus-visible:border-amber-600 transition-all"
       >
         <Maximize2 className="h-3 w-3 mr-1.5" />
         PILOT MODE
       </Button>
-
       {/* Gamepad Controls + Vertical Sliders */}
       <div className="flex items-center justify-center gap-6 flex-1 min-h-0">
         {/* Gamepad */}
