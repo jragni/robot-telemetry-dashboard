@@ -54,5 +54,9 @@ Progress: █████████░ 93%
 ## Session Continuity
 
 Last session: 2026-03-16
-Stopped at: Phase 13 COMPLETE — ready for Phase 14 (View Wiring)
+Stopped at: Phase 13 COMPLETE — Phase 13.1 inserted before Phase 14
 Resume file: .planning/phases/13-component-conventions/13-06-SUMMARY.md
+
+## Roadmap Evolution
+
+- Phase 13.1 inserted after Phase 13: ConditionalRender component + code style fixes (ISS-001, ISS-002) (URGENT)

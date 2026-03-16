@@ -1,0 +1,35 @@
+# Issues & Enhancements
+
+## Open
+
+### ISS-001: Add ConditionalRender component to replace inline conditional rendering
+
+- **Phase:** 13 (Component Conventions)
+- **Priority:** Medium
+- **Type:** Enhancement
+- **Description:** Create a `<ConditionalRender>` component (or `<Show>`/`<When>` pattern) that replaces ternary and `&&` conditional rendering throughout the codebase. Centralizes conditional logic, improves readability, and prevents common pitfalls (e.g., `0 && <Component>` rendering "0").
+- **Scope:** Repo-wide — audit all `.tsx` files for conditional rendering patterns and replace with the new component.
+- **Discovered:** 2026-03-16 during Phase 13 convention pass
+- **Status:** Open — add as a future phase or extend Phase 13
+
+### ISS-002: Replace 3+ OR comparisons with [].includes() pattern
+
+- **Phase:** 13 (Component Conventions)
+- **Priority:** Low
+- **Type:** Code style
+- **Description:** Audit codebase for `x === 'a' || x === 'b' || x === 'c'` patterns (3+ OR gates) and replace with `['a', 'b', 'c'].includes(x)`. Known instance: `src/features/connections/hooks/useDisconnectHandler.ts:39`.
+- **Discovered:** 2026-03-16
+- **Status:** Open
+
+### ISS-003: Cross-feature imports violate one-way data flow
+
+- **Phase:** 13.1
+- **Priority:** High
+- **Type:** Architecture
+- **Description:** Features import from other features, violating the `shared → features → app` one-way data flow. Shared code (`useRosConnection`, `NoConnectionOverlay`, `VideoFeed`, `ControlPad`, `PanelComponentProps`) must be promoted to the shared layer (`src/components/shared/`, `src/hooks/`, `src/types/`).
+- **Discovered:** 2026-03-16 during audit against video research
+- **Status:** Open — folded into Phase 13.1
+
+## Closed
+
+(none)
