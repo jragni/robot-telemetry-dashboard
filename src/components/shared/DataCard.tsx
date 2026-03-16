@@ -1,21 +1,7 @@
-import type { ReactNode } from 'react';
-
+import type { DataCardProps } from './DataCard.types';
 import { StatusIndicator } from './StatusIndicator';
 
 import { cn } from '@/lib/utils';
-import type { ConnectionState } from '@/types';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface DataCardProps {
-  title: string;
-  children: ReactNode;
-  status?: ConnectionState;
-  className?: string;
-  headerActions?: ReactNode;
-}
 
 // ---------------------------------------------------------------------------
 // Component

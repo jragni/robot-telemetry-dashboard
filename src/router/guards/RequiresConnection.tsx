@@ -1,12 +1,9 @@
-import type { ReactNode } from 'react';
 import { Navigate } from 'react-router';
+
+import type { RequiresConnectionProps } from './RequiresConnection.types';
 
 import { useConnectionsStore } from '@/stores/connections.store';
 import { useRosStore } from '@/stores/ros.store';
-
-interface RequiresConnectionProps {
-  children: ReactNode;
-}
 
 export function RequiresConnection({ children }: RequiresConnectionProps) {
   const activeRobotId = useConnectionsStore((s) => s.activeRobotId);

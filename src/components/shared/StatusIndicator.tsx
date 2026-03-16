@@ -1,3 +1,5 @@
+import type { StatusIndicatorProps } from './StatusIndicator.types';
+
 import { cn } from '@/lib/utils';
 import type { ConnectionState } from '@/types';
 
@@ -13,16 +15,6 @@ const STATE_CLASSES: Record<ConnectionState, string> = {
   disconnected: 'bg-status-offline',
   error: 'bg-status-critical',
 };
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface StatusIndicatorProps {
-  state: ConnectionState;
-  label?: string;
-  className?: string;
-}
 
 // ---------------------------------------------------------------------------
 // Component

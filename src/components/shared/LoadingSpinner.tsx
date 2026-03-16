@@ -1,4 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
+
+import type { LoadingSpinnerProps } from './LoadingSpinner.types';
 
 import { cn } from '@/lib/utils';
 
@@ -6,7 +8,7 @@ import { cn } from '@/lib/utils';
 // CVA variants
 // ---------------------------------------------------------------------------
 
-const spinnerVariants = cva('animate-spin-slow', {
+export const spinnerVariants = cva('animate-spin-slow', {
   variants: {
     size: {
       sm: 'w-4 h-4',
@@ -18,14 +20,6 @@ const spinnerVariants = cva('animate-spin-slow', {
     size: 'md',
   },
 });
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface LoadingSpinnerProps extends VariantProps<typeof spinnerVariants> {
-  className?: string;
-}
 
 // ---------------------------------------------------------------------------
 // Component
