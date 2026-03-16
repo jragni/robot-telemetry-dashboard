@@ -1,13 +1,4 @@
-import type { TopicSubscriptionState } from '../topic-list.types';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface TopicRowProps {
-  topic: TopicSubscriptionState;
-  onToggle: (topicName: string) => void;
-}
+import type { TopicRowProps } from './TopicRow.types';
 
 // ---------------------------------------------------------------------------
 // Component

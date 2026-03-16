@@ -1,6 +1,5 @@
-import type { RobotStatus } from '../fleet.types';
-
 import { MiniPilotView } from './MiniPilotView';
+import type { SplitPilotGridProps } from './SplitPilotGrid.types';
 
 import { cn } from '@/lib/utils';
 
@@ -19,18 +18,6 @@ function gridColsClass(count: number): string {
   if (count <= 1) return 'grid-cols-1';
   if (count <= 4) return 'grid-cols-2';
   return 'grid-cols-3';
-}
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface SplitPilotGridProps {
-  robots: RobotStatus[];
-  /** Currently selected robot id. */
-  selectedRobotId?: string | null;
-  /** Called when a cell is clicked to select a robot for full control. */
-  onSelectRobot?: (robotId: string) => void;
 }
 
 // ---------------------------------------------------------------------------

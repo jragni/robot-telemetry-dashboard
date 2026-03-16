@@ -1,15 +1,9 @@
 import { CONTROL_DEFAULT_TOPIC, CONTROL_MESSAGE_TYPE } from '../control.types';
 
+import type { TopicSelectorProps } from './TopicSelector.types';
+
 import { useControlStore } from '@/stores/control.store';
 import { useRosStore } from '@/stores/ros.store';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface TopicSelectorProps {
-  robotId: string | undefined;
-}
 
 // ---------------------------------------------------------------------------
 // TopicSelector

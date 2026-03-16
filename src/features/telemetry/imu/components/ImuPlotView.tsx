@@ -3,15 +3,9 @@ import { useRef, useEffect } from 'react';
 
 import type { ImuDerivedData } from '../imu.types';
 
+import type { ImuPlotViewProps } from './ImuPlotView.types';
+
 import { useElementSize } from '@/hooks/useElementSize';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface ImuPlotViewProps {
-  history: ImuDerivedData[];
-}
 
 // ---------------------------------------------------------------------------
 // Layout constants

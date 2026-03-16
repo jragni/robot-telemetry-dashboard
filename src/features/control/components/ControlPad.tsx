@@ -10,27 +10,10 @@ import type { MouseEvent, TouchEvent } from 'react';
 import type { Direction } from '../control.types';
 import { useControlPublisher } from '../hooks/useControlPublisher';
 
+import type { ControlPadProps, DirButtonConfig } from './ControlPad.types';
+
 import { Button } from '@/components/ui/button';
 import { useControlStore } from '@/stores/control.store';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface ControlPadProps {
-  robotId: string | undefined;
-}
-
-// ---------------------------------------------------------------------------
-// Direction button config
-// ---------------------------------------------------------------------------
-
-interface DirButtonConfig {
-  direction: Direction;
-  label: string;
-  icon: React.ReactNode;
-  gridArea: string;
-}
 
 const DIRECTION_BUTTONS: DirButtonConfig[] = [
   {

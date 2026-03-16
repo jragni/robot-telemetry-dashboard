@@ -1,17 +1,7 @@
 import { useFleetStatus } from '../hooks/useFleetStatus';
 
+import type { FleetGridProps } from './FleetGrid.types';
 import { RobotCard } from './RobotCard';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface FleetGridProps {
-  /** Currently selected robot id (highlighted with primary border). */
-  selectedRobotId?: string | null;
-  /** Called when the user selects a robot card. */
-  onSelectRobot?: (robotId: string) => void;
-}
 
 // ---------------------------------------------------------------------------
 // FleetGrid

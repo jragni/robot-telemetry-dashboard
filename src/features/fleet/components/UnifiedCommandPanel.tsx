@@ -1,19 +1,12 @@
 import { useState } from 'react';
 
-import type { RobotStatus } from '../fleet.types';
 import { useUnifiedControl } from '../hooks/useUnifiedControl';
+
+import type { UnifiedCommandPanelProps } from './UnifiedCommandPanel.types';
 
 import { Button } from '@/components/ui/button';
 import { ControlPad } from '@/features/control/components/ControlPad';
 import { cn } from '@/lib/utils';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface UnifiedCommandPanelProps {
-  robots: RobotStatus[];
-}
 
 // ---------------------------------------------------------------------------
 // UnifiedCommandPanel

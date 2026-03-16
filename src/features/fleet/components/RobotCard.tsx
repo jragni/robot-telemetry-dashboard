@@ -1,25 +1,14 @@
 import { OctagonX, Radio, Unplug } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
-import type { RobotStatus } from '../fleet.types';
 import { useFleetConnectionManager } from '../hooks/useFleetConnectionManager';
+
+import type { RobotCardProps } from './RobotCard.types';
 
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useControlStore } from '@/stores/control.store';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface RobotCardProps {
-  status: RobotStatus;
-  /** If true the card border highlights as the selected robot. */
-  isSelected?: boolean;
-  /** Called when the user clicks the card body to select this robot. */
-  onSelect?: (robotId: string) => void;
-}
 
 // ---------------------------------------------------------------------------
 // RobotCard

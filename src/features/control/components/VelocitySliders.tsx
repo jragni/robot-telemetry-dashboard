@@ -1,13 +1,7 @@
+import type { VelocitySlidersProps } from './VelocitySliders.types';
+
 import { Slider } from '@/components/ui/slider';
 import { useControlStore } from '@/stores/control.store';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface VelocitySlidersProps {
-  robotId: string | undefined;
-}
 
 // ---------------------------------------------------------------------------
 // VelocitySliders
