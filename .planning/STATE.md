@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-16)
 ## Current Position
 
 Phase: 13 of 15 (Component Conventions)
-Plan: 4 of 6 complete
+Plan: 5 of 6 complete
 Status: In progress
-Last activity: 2026-03-16 — Completed 13-04 (stores → domain folders)
+Last activity: 2026-03-16 — Completed 13-05 (services → nested subfolders)
 
 Progress: █████████░ 93%
 
@@ -54,5 +54,5 @@ Progress: █████████░ 93%
 ## Session Continuity
 
 Last session: 2026-03-16
-Stopped at: Completed 13-04, ready for 13-05 (services)
-Resume file: .planning/phases/13-component-conventions/13-04-SUMMARY.md
+Stopped at: Completed 13-05, ready for 13-06 (hooks + constants + barrels)
+Resume file: .planning/phases/13-component-conventions/13-05-SUMMARY.md
