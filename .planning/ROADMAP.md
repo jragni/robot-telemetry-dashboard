@@ -29,7 +29,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 10: SLAM Map Visualization** — OccupancyGrid Canvas 2D renderer, d3-zoom, robot position, on-demand fetch
 - [ ] **Phase 11: Data Recording & Playback** — RxJS stream recording, IndexedDB storage, playback engine, export
 - [ ] **Phase 12: Integration & Polish** — Cross-feature integration, disconnect safety, responsive polish, deployment
-- [ ] **Phase 13: View Wiring** — Wire DashboardView and MapView to PanelGrid, fix integration gaps from overnight build
+- [ ] **Phase 13: Component Conventions** — Extract multi-component files, types to .types.ts, enforce one-component-per-file
+- [ ] **Phase 14: View Wiring** — Wire DashboardView and MapView to PanelGrid, fix integration gaps from overnight build
 
 ## Phase Details
 
