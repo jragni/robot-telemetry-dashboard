@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { Observable } from 'rxjs';
 
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('useObservable');
+
 export function useObservable<T>(
   observable$: Observable<T>,
   initialValue: T
@@ -10,7 +14,7 @@ export function useObservable<T>(
   useEffect(() => {
     const subscription = observable$.subscribe({
       next: setValue,
-      error: (err) => console.error('Observable error:', err),
+      error: (err) => log.error('Observable error:', err),
     });
     return () => subscription.unsubscribe();
   }, [observable$]);
