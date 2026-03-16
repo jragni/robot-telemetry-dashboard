@@ -8,21 +8,11 @@ import {
 } from '../slam.types';
 import { parseOccupancyGrid } from '../slam.utils';
 
+import type { UseSlamDataResult } from './useSlamData.types';
+
 import { useRosConnection } from '@/features/telemetry/shared';
 import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
-import type { ConnectionState } from '@/types';
 import type { OccupancyGridMessage } from '@/types/ros-messages';
-
-// ---------------------------------------------------------------------------
-// useSlamData
-// ---------------------------------------------------------------------------
-
-export interface UseSlamDataResult {
-  grid: ParsedOccupancyGrid | null;
-  connectionState: ConnectionState;
-  fetchMap: () => void;
-  isLoading: boolean;
-}
 
 /**
  * On-demand map fetch hook for nav_msgs/OccupancyGrid.

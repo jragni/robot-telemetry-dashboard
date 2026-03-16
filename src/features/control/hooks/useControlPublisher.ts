@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { CONTROL_MESSAGE_TYPE, type Direction } from '../control.types';
 
+import type { UseControlPublisherResult } from './useControlPublisher.types';
+
 import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import {
   createTopicPublisher,
@@ -9,15 +11,6 @@ import {
 } from '@/services/ros/publisher/TopicPublisher';
 import { useControlStore } from '@/stores/control/control.store';
 import type { Twist } from '@/types';
-
-// ---------------------------------------------------------------------------
-// Return type
-// ---------------------------------------------------------------------------
-
-export interface UseControlPublisherResult {
-  publish: (direction: Direction) => void;
-  isReady: boolean;
-}
 
 // ---------------------------------------------------------------------------
 // Twist message builders

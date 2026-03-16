@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { RecordingService } from '../recording.service';
 import type { RecordingSession, RecordingState } from '../recording.types';
 
+import type { UseRecordingReturn } from './useRecording.types';
+
 import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 
 // ---------------------------------------------------------------------------
@@ -25,16 +27,6 @@ function ensureInitialized(): Promise<void> {
 // ---------------------------------------------------------------------------
 // useRecording
 // ---------------------------------------------------------------------------
-
-export interface UseRecordingReturn {
-  state: RecordingState;
-  currentSession: RecordingSession | null;
-  sessions: RecordingSession[];
-  startRecording: (topics: string[]) => void;
-  stopRecording: () => void;
-  deleteSession: (id: string) => void;
-  refreshSessions: () => void;
-}
 
 export function useRecording(robotId: string | undefined): UseRecordingReturn {
   const { ros } = useRosConnection(robotId);

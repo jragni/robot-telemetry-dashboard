@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { EMPTY, type Observable } from 'rxjs';
 
-import type { PilotHudData } from '../pilot-mode.types';
+import type { UsePilotModeResult } from './usePilotMode.types';
 
 import { useRosConnection } from '@/features/telemetry/shared';
 import { useObservable } from '@/hooks/useObservable';
@@ -48,11 +48,6 @@ function quaternionToYawDegrees(
 // ---------------------------------------------------------------------------
 // usePilotMode
 // ---------------------------------------------------------------------------
-
-export interface UsePilotModeResult {
-  hudData: PilotHudData;
-  exit: () => void;
-}
 
 /**
  * Core hook for the FPOV pilot mode.

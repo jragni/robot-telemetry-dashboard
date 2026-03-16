@@ -1,12 +1,13 @@
 import * as d3 from 'd3';
-import { useRef, useEffect, type RefObject } from 'react';
+import { useRef, useEffect } from 'react';
+
+import type { ZoomTransform } from '../slam.types';
+import { renderOccupancyGrid, renderRobotMarker } from '../slam.utils';
 
 import type {
-  ParsedOccupancyGrid,
-  RobotPosition,
-  ZoomTransform,
-} from '../slam.types';
-import { renderOccupancyGrid, renderRobotMarker } from '../slam.utils';
+  UseSlamCanvasOptions,
+  UseSlamCanvasResult,
+} from './useSlamCanvas.types';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -14,19 +15,6 @@ import { renderOccupancyGrid, renderRobotMarker } from '../slam.utils';
 
 const ZOOM_SCALE_EXTENT: [number, number] = [0.5, 20];
 const IDENTITY_TRANSFORM: ZoomTransform = { k: 1, x: 0, y: 0 };
-
-// ---------------------------------------------------------------------------
-// Options / return type
-// ---------------------------------------------------------------------------
-
-export interface UseSlamCanvasOptions {
-  grid: ParsedOccupancyGrid | null;
-  robotPosition: RobotPosition | null;
-}
-
-export interface UseSlamCanvasResult {
-  canvasRef: RefObject<HTMLCanvasElement | null>;
-}
 
 // ---------------------------------------------------------------------------
 // useSlamCanvas

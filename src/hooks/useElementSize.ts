@@ -1,9 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 
-export interface ElementSize {
-  width: number;
-  height: number;
-}
+import type { ElementSize } from './useElementSize.types';
 
 /**
  * Returns a [ref, size] tuple.  Attach the ref to a DOM element and the hook

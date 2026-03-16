@@ -4,6 +4,8 @@ import { PlaybackService } from '../playback.service';
 import { RecordingService } from '../recording.service';
 import type { PlaybackState, RecordedMessage } from '../recording.types';
 
+import type { UsePlaybackReturn } from './usePlayback.types';
+
 // ---------------------------------------------------------------------------
 // Module-level singletons
 // ---------------------------------------------------------------------------
@@ -25,18 +27,6 @@ const playbackService = new PlaybackService(sharedRecordingService);
 // ---------------------------------------------------------------------------
 // usePlayback
 // ---------------------------------------------------------------------------
-
-export interface UsePlaybackReturn {
-  state: PlaybackState;
-  progress: { current: number; total: number; percentage: number };
-  currentMessage: RecordedMessage | null;
-  startPlayback: (sessionId: string) => void;
-  pausePlayback: () => void;
-  resumePlayback: () => void;
-  stopPlayback: () => void;
-  setSpeed: (speed: number) => void;
-  speed: number;
-}
 
 export function usePlayback(): UsePlaybackReturn {
   const [state, setState] = useState<PlaybackState>(() =>
