@@ -4,7 +4,7 @@ import { ActiveRobotBadge } from './ActiveRobotBadge';
 import { NavItem } from './NavItem';
 
 import { APP_CONFIG } from '@/config/constants';
-import { useUIStore } from '@/stores/ui.store';
+import { useUIStore } from '@/stores/ui/ui.store';
 
 /**
  * Top navigation bar.

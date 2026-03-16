@@ -41,7 +41,7 @@ vi.mock('@/services', () => ({
 
 let mockConnectionState = 'disconnected';
 
-vi.mock('@/stores/webrtc.store', () => ({
+vi.mock('@/stores/webrtc/webrtc.store', () => ({
   useWebRTCStore: vi.fn(
     (
       selector: (s: { getConnectionState: (id: string) => string }) => unknown

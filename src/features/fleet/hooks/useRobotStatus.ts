@@ -5,8 +5,8 @@ import {
   DEFAULT_CONTROL_STATE,
   useControlStore,
 } from '@/stores/control/control.store';
-import { useRosStore } from '@/stores/ros.store';
-import { useWebRTCStore } from '@/stores/webrtc.store';
+import { useRosStore } from '@/stores/ros/ros.store';
+import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';
 
 // ---------------------------------------------------------------------------
 // useRobotStatus

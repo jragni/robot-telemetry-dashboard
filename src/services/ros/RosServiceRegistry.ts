@@ -1,7 +1,7 @@
 import { RosTransport } from './RosTransport';
 
 import { createLogger } from '@/lib/logger';
-import { useRosStore } from '@/stores/ros.store';
+import { useRosStore } from '@/stores/ros/ros.store';
 
 const log = createLogger('RosServiceRegistry');
 

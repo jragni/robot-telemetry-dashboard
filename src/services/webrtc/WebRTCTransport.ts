@@ -5,7 +5,7 @@ import { SignalingClient } from './SignalingClient';
 
 import { DEFAULT_ICE_SERVERS, WEBRTC_CONFIG } from '@/config/webrtc';
 import { createLogger } from '@/lib/logger';
-import { useWebRTCStore } from '@/stores/webrtc.store';
+import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';
 import type { ConnectionError, ConnectionState } from '@/types';
 
 const log = createLogger('WebRTCTransport');

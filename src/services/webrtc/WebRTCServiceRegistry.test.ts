@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { WebRTCServiceRegistry } from './WebRTCServiceRegistry';
 
 import { useConnectionsStore } from '@/stores/connections/connections.store';
-import { useWebRTCStore } from '@/stores/webrtc.store';
+import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';
 
 // ---------------------------------------------------------------------------
 // WebRTCTransport mock — hoisted so it is in place before all static imports.

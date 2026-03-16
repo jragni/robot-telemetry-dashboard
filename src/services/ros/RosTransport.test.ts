@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { RosTransport } from './RosTransport';
 
-import { useRosStore } from '@/stores';
+import { useRosStore } from '@/stores/ros/ros.store';
 import { createMockRos, type MockRos } from '@/test/mocks/roslib.mock';
 import type { ConnectionState } from '@/types';
 

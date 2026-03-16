@@ -90,7 +90,7 @@ vi.mock('@/stores/connections/connections.store', () => ({
   useConnectionsStore: mockUseConnectionsStore,
 }));
 
-vi.mock('@/stores/ros.store', () => ({
+vi.mock('@/stores/ros/ros.store', () => ({
   useRosStore: vi.fn((selector: (s: unknown) => unknown) =>
     selector({
       getConnectionState: vi.fn((id: string) =>

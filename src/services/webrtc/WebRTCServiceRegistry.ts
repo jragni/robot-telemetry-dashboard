@@ -1,7 +1,7 @@
 import { WebRTCTransport } from './WebRTCTransport';
 
 import { createLogger } from '@/lib/logger';
-import { useWebRTCStore } from '@/stores/webrtc.store';
+import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';
 
 const log = createLogger('WebRTCServiceRegistry');
 

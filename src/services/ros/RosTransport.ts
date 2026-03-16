@@ -4,7 +4,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
 
 import { CONNECTION_CONFIG, ROSBRIDGE_PATH } from '@/config/ros';
 import { createLogger } from '@/lib/logger';
-import { useRosStore } from '@/stores';
+import { useRosStore } from '@/stores/ros/ros.store';
 import type { ConnectionError, ConnectionState } from '@/types';
 
 const log = createLogger('RosTransport');

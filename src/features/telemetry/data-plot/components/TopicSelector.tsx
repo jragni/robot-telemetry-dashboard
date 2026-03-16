@@ -1,6 +1,6 @@
 import type { TopicSelectorProps } from './DataPlotWidget.types';
 
-import { useRosStore } from '@/stores/ros.store';
+import { useRosStore } from '@/stores/ros/ros.store';
 
 export function TopicSelector({
   robotId,

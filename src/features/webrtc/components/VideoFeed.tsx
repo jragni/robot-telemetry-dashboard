@@ -9,7 +9,7 @@ import { useObservable } from '@/hooks/useObservable';
 import { cn } from '@/lib/utils';
 import { webRTCServiceRegistry } from '@/services';
 import { useConnectionsStore } from '@/stores/connections/connections.store';
-import { useWebRTCStore } from '@/stores/webrtc.store';
+import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';
 import type { ConnectionState } from '@/types';
 
 // ---------------------------------------------------------------------------

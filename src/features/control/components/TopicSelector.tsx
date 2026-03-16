@@ -3,7 +3,7 @@ import { CONTROL_DEFAULT_TOPIC, CONTROL_MESSAGE_TYPE } from '../control.types';
 import type { TopicSelectorProps } from './TopicSelector.types';
 
 import { useControlStore } from '@/stores/control/control.store';
-import { useRosStore } from '@/stores/ros.store';
+import { useRosStore } from '@/stores/ros/ros.store';
 
 // ---------------------------------------------------------------------------
 // TopicSelector

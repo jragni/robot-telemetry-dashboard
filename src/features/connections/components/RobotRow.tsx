@@ -4,7 +4,7 @@ import type { RobotRowProps } from './ConnectionsSidebar.types';
 
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
 import { cn } from '@/lib/utils';
-import { useRosStore } from '@/stores/ros.store';
+import { useRosStore } from '@/stores/ros/ros.store';
 
 function RobotRow({
   robot,

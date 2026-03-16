@@ -1,24 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-// ---------------------------------------------------------------------------
-// State shape
-// ---------------------------------------------------------------------------
-
-interface UIState {
-  sidebarOpen: boolean;
-  theme: 'dark' | 'light';
-}
-
-// ---------------------------------------------------------------------------
-// Actions shape
-// ---------------------------------------------------------------------------
-
-interface UIActions {
-  toggleSidebar(): void;
-  setSidebarOpen(open: boolean): void;
-  setTheme(theme: 'dark' | 'light'): void;
-}
+import type { UIActions, UIState } from './ui.types';
 
 // ---------------------------------------------------------------------------
 // Full store type

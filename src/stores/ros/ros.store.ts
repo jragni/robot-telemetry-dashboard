@@ -1,38 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import type { ConnectionError, ConnectionState, TopicInfo } from '@/types';
-
-// ---------------------------------------------------------------------------
-// Per-robot connection entry
-// ---------------------------------------------------------------------------
-
-interface RosConnectionEntry {
-  connectionState: ConnectionState;
-  error: ConnectionError | null;
-}
-
-// ---------------------------------------------------------------------------
-// State shape
-// ---------------------------------------------------------------------------
-
-interface RosState {
-  connections: Record<string, RosConnectionEntry>;
-  topics: Record<string, TopicInfo[]>;
-}
-
-// ---------------------------------------------------------------------------
-// Actions shape
-// ---------------------------------------------------------------------------
-
-interface RosActions {
-  setConnectionState(robotId: string, state: ConnectionState): void;
-  setConnectionError(robotId: string, error: ConnectionError | null): void;
-  removeConnection(robotId: string): void;
-  getConnectionState(robotId: string): ConnectionState;
-  setTopics(robotId: string, topics: TopicInfo[]): void;
-  getTopics(robotId: string): TopicInfo[];
-}
+import type { RosActions, RosConnectionEntry, RosState } from './ros.types';
 
 // ---------------------------------------------------------------------------
 // Full store type

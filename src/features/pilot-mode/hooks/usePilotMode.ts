@@ -14,7 +14,7 @@ import {
   DEFAULT_CONTROL_STATE,
   useControlStore,
 } from '@/stores/control/control.store';
-import { useWebRTCStore } from '@/stores/webrtc.store';
+import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';
 import type { BatteryStateMessage, ImuMessage } from '@/types';
 
 // ---------------------------------------------------------------------------

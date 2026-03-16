@@ -5,7 +5,7 @@ import { useRecording } from '../hooks/useRecording';
 
 import type { RecordingControlsProps } from './RecordingControls.types';
 
-import { useRosStore } from '@/stores/ros.store';
+import { useRosStore } from '@/stores/ros/ros.store';
 
 // ---------------------------------------------------------------------------
 // RecordingControls

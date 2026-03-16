@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { WebRTCTransport } from './WebRTCTransport';
 
 import { WEBRTC_CONFIG, DEFAULT_ICE_SERVERS } from '@/config/webrtc';
-import { useWebRTCStore } from '@/stores/webrtc.store';
+import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';
 import {
   createMockPeerConnection,
   createMockMediaStream,

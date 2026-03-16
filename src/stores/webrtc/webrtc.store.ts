@@ -1,35 +1,11 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import type { ConnectionError, ConnectionState } from '@/types';
-
-// ---------------------------------------------------------------------------
-// Per-robot connection entry
-// ---------------------------------------------------------------------------
-
-interface WebRTCConnectionEntry {
-  connectionState: ConnectionState;
-  error: ConnectionError | null;
-}
-
-// ---------------------------------------------------------------------------
-// State shape
-// ---------------------------------------------------------------------------
-
-interface WebRTCState {
-  connections: Record<string, WebRTCConnectionEntry>;
-}
-
-// ---------------------------------------------------------------------------
-// Actions shape
-// ---------------------------------------------------------------------------
-
-interface WebRTCActions {
-  setConnectionState(robotId: string, state: ConnectionState): void;
-  setConnectionError(robotId: string, error: ConnectionError | null): void;
-  removeConnection(robotId: string): void;
-  getConnectionState(robotId: string): ConnectionState;
-}
+import type {
+  WebRTCActions,
+  WebRTCConnectionEntry,
+  WebRTCState,
+} from './webrtc.types';
 
 // ---------------------------------------------------------------------------
 // Full store type

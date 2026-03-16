@@ -5,7 +5,7 @@ import { Header } from './Header';
 
 import { ConnectionsSidebar } from '@/features/connections/components/ConnectionsSidebar';
 import { cn } from '@/lib/utils';
-import { useUIStore } from '@/stores/ui.store';
+import { useUIStore } from '@/stores/ui/ui.store';
 
 // ---------------------------------------------------------------------------
 // DashboardShell

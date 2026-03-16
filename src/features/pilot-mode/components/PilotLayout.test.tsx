@@ -52,7 +52,7 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
-vi.mock('@/stores/webrtc.store', () => ({
+vi.mock('@/stores/webrtc/webrtc.store', () => ({
   useWebRTCStore: vi.fn(
     (
       selector: (s: { getConnectionState: (id: string) => string }) => unknown
@@ -60,7 +60,7 @@ vi.mock('@/stores/webrtc.store', () => ({
   ),
 }));
 
-vi.mock('@/stores/ros.store', () => ({
+vi.mock('@/stores/ros/ros.store', () => ({
   useRosStore: vi.fn(
     (
       selector: (s: { getConnectionState: (id: string) => string }) => unknown
