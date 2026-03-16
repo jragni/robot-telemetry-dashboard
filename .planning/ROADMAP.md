@@ -31,6 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 12: Integration & Polish** — Cross-feature integration, disconnect safety, responsive polish, deployment
 - [ ] **Phase 13: Component Conventions** — Extract multi-component files, types to .types.ts, enforce one-component-per-file
 - [ ] **Phase 14: View Wiring** — Wire DashboardView and MapView to PanelGrid, fix integration gaps from overnight build
+- [ ] **Phase 15: Mobile Responsive Nav** — Fix navigation accessibility on mobile/small viewports, dashboard/fleet/map nav buttons hidden on smaller screens
 
 ## Phase Details
 
