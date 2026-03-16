@@ -14,6 +14,7 @@ import { PanelPlaceholder } from './components/PanelPlaceholder';
 import type { PanelMeta, PanelTypeId } from './panel.types';
 
 import { ControlWidget } from '@/features/control';
+import { SlamMapWidget } from '@/features/slam';
 import { DataPlotWidget } from '@/features/telemetry/data-plot';
 import { DepthCameraWidget } from '@/features/telemetry/depth-camera';
 import { ImuWidget } from '@/features/telemetry/imu';
@@ -94,7 +95,7 @@ export const PANEL_REGISTRY: Record<PanelTypeId, PanelMeta> = {
     description: 'Occupancy grid and robot pose on the navigation map.',
     defaultSize: { w: 9, h: 14, minW: 4, minH: 6 },
     icon: Map,
-    component: (props) => PanelPlaceholder({ ...props, typeId: 'map-view' }),
+    component: SlamMapWidget,
   },
 
   'connection-status': {
