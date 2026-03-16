@@ -10,7 +10,7 @@ import { parseOccupancyGrid } from '../slam.utils';
 
 import type { UseSlamDataResult } from './useSlamData.types';
 
-import { useRosConnection } from '@/features/telemetry/shared';
+import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
 import type { OccupancyGridMessage } from '@/types/ros-messages';
 

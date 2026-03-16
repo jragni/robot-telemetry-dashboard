@@ -3,10 +3,10 @@ import type { Subscription } from 'rxjs';
 
 import type { TopicSubscriptionState } from '../topic-list.types';
 
-import { useRosConnection } from '@/features/telemetry/shared';
+import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { getTopics$ } from '@/services/ros/discovery/TopicDiscovery';
 import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
-import type { TopicInfo } from '@/types';
+import type { TopicInfo } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------
 // Hook return type

@@ -6,7 +6,7 @@ import { RobotRow } from './RobotRow';
 
 import { useFleetConnectionManager } from '@/features/fleet/hooks/useFleetConnectionManager';
 import { useConnectionsStore } from '@/stores/connections/connections.store';
-import type { RobotConnection } from '@/types';
+import type { RobotConnection } from '@/types/connection.types';
 
 /**
  * Left sidebar that lists all configured robots with status, connect/disconnect

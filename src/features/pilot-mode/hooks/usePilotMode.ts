@@ -4,7 +4,7 @@ import { EMPTY, type Observable } from 'rxjs';
 
 import type { UsePilotModeResult } from './usePilotMode.types';
 
-import { useRosConnection } from '@/features/telemetry/shared';
+import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { useObservable } from '@/hooks/useObservable';
 import {
   createTopicSubscription,
@@ -15,7 +15,7 @@ import {
   useControlStore,
 } from '@/stores/control/control.store';
 import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';
-import type { BatteryStateMessage, ImuMessage } from '@/types';
+import type { BatteryStateMessage, ImuMessage } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------
 // Constants

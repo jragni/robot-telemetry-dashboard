@@ -2,7 +2,11 @@ import { describe, it, expect, beforeEach } from 'vitest';
 
 import { useRosStore } from './ros.store';
 
-import type { ConnectionError, ConnectionState, TopicInfo } from '@/types';
+import type {
+  ConnectionError,
+  ConnectionState,
+} from '@/types/connection.types';
+import type { TopicInfo } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------
 // Helpers

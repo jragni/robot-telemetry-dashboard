@@ -1,10 +1,8 @@
 import { useState } from 'react';
 
-import {
-  FleetGrid,
-  SplitPilotGrid,
-  UnifiedCommandPanel,
-} from '@/features/fleet';
+import { FleetGrid } from '@/features/fleet/components/FleetGrid';
+import { SplitPilotGrid } from '@/features/fleet/components/SplitPilotGrid';
+import { UnifiedCommandPanel } from '@/features/fleet/components/UnifiedCommandPanel';
 import { useFleetStatus } from '@/features/fleet/hooks/useFleetStatus';
 import { useMobile } from '@/hooks/use-mobile';
 

@@ -7,9 +7,9 @@ import {
   extractSample,
 } from '../data-plot.utils';
 
-import { useRosConnection } from '@/features/telemetry/shared';
+import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
-import type { TopicInfo } from '@/types';
+import type { TopicInfo } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------
 // Constants

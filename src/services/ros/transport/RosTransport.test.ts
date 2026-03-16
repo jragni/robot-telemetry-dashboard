@@ -5,7 +5,7 @@ import { RosTransport } from './RosTransport';
 
 import { useRosStore } from '@/stores/ros/ros.store';
 import { createMockRos, type MockRos } from '@/test/mocks/roslib.mock';
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // roslib mock — hoisted so it is in place before all static imports resolve.

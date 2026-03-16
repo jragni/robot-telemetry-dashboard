@@ -1,6 +1,7 @@
 import { Navigate, useParams } from 'react-router';
 
-import { PilotLayout, PilotMobileLayout } from '@/features/pilot-mode';
+import { PilotLayout } from '@/features/pilot-mode/components/PilotLayout';
+import { PilotMobileLayout } from '@/features/pilot-mode/components/PilotMobileLayout';
 import { useMobile } from '@/hooks/use-mobile';
 
 // ---------------------------------------------------------------------------

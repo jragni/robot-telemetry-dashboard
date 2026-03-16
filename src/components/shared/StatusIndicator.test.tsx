@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { StatusIndicator } from './StatusIndicator';
 
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // Test suite

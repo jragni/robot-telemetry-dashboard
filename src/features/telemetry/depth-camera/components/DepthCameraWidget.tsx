@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useDepthCamera } from '../hooks/useDepthCamera';
 
 import type { PanelComponentProps } from '@/features/panels/panel.types';
-import { NoConnectionOverlay } from '@/features/telemetry/shared';
+import { NoConnectionOverlay } from '@/features/telemetry/shared/NoConnectionOverlay';
 import { useElementSize } from '@/hooks/useElementSize';
 
 // ---------------------------------------------------------------------------

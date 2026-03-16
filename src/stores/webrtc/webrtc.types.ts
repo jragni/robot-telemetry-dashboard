@@ -1,4 +1,7 @@
-import type { ConnectionError, ConnectionState } from '@/types';
+import type {
+  ConnectionError,
+  ConnectionState,
+} from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // Per-robot connection entry

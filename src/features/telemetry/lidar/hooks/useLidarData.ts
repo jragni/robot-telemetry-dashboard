@@ -8,7 +8,7 @@ import {
 } from '../lidar.types';
 import { transformLaserScan } from '../lidar.utils';
 
-import { useRosConnection } from '@/features/telemetry/shared';
+import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { useObservable } from '@/hooks/useObservable';
 import {
   createTopicSubscription,

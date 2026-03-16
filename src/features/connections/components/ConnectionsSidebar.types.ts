@@ -1,4 +1,4 @@
-import type { RobotConnection } from '@/types';
+import type { RobotConnection } from '@/types/connection.types';
 
 export interface DeleteConfirmDialogProps {
   robot: RobotConnection;

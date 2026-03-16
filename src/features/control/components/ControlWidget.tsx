@@ -3,7 +3,7 @@ import { TopicSelector } from './TopicSelector';
 import { VelocitySliders } from './VelocitySliders';
 
 import type { PanelComponentProps } from '@/features/panels/panel.types';
-import { NoConnectionOverlay } from '@/features/telemetry/shared';
+import { NoConnectionOverlay } from '@/features/telemetry/shared/NoConnectionOverlay';
 import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 
 // ---------------------------------------------------------------------------

@@ -1,4 +1,8 @@
-import type { ConnectionError, ConnectionState, TopicInfo } from '@/types';
+import type {
+  ConnectionError,
+  ConnectionState,
+} from '@/types/connection.types';
+import type { TopicInfo } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------
 // Per-robot connection entry

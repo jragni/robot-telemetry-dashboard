@@ -13,13 +13,13 @@ import {
 import { PanelPlaceholder } from './components/PanelPlaceholder';
 import type { PanelMeta, PanelTypeId } from './panel.types';
 
-import { ControlWidget } from '@/features/control';
-import { SlamMapWidget } from '@/features/slam';
-import { DataPlotWidget } from '@/features/telemetry/data-plot';
-import { DepthCameraWidget } from '@/features/telemetry/depth-camera';
-import { ImuWidget } from '@/features/telemetry/imu';
-import { LidarWidget } from '@/features/telemetry/lidar';
-import { TopicListWidget } from '@/features/telemetry/topic-list';
+import { ControlWidget } from '@/features/control/components/ControlWidget';
+import { SlamMapWidget } from '@/features/slam/components/SlamMapWidget';
+import { DataPlotWidget } from '@/features/telemetry/data-plot/components/DataPlotWidget';
+import { DepthCameraWidget } from '@/features/telemetry/depth-camera/components/DepthCameraWidget';
+import { ImuWidget } from '@/features/telemetry/imu/components/ImuWidget';
+import { LidarWidget } from '@/features/telemetry/lidar/components/LidarWidget';
+import { TopicListWidget } from '@/features/telemetry/topic-list/components/TopicListWidget';
 
 // ---------------------------------------------------------------------------
 // Registry

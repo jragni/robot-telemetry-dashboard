@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react';
 import type { NoConnectionOverlayProps } from './NoConnectionOverlay.types';
 
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // State → message map

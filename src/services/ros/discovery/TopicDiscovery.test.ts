@@ -1,7 +1,7 @@
 import type ROSLIB from 'roslib';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import type { TopicInfo } from '@/types';
+import type { TopicInfo } from '@/types/ros-messages';
 
 // getTopics$ is a pure Observable factory — no roslib imports needed in the
 // implementation, so no module mock is required here.

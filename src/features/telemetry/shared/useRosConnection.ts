@@ -3,7 +3,7 @@ import type ROSLIB from 'roslib';
 
 import { rosServiceRegistry } from '@/services/ros/registry/RosServiceRegistry';
 import { useRosStore } from '@/stores/ros/ros.store';
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // useRosConnection

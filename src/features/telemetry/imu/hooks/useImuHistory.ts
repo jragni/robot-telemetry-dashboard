@@ -4,7 +4,7 @@ import { type ImuDerivedData, IMU_DEFAULT_TOPIC } from '../imu.types';
 
 import { useImuData } from './useImuData';
 
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // Constants

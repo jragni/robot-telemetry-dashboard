@@ -3,7 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 
 import type { ConnectionsActions, ConnectionsState } from './connections.types';
 
-import type { RobotConnection } from '@/types';
+import type { RobotConnection } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // Full store type

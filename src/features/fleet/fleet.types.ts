@@ -1,4 +1,7 @@
-import type { ConnectionState, RobotConnection } from '@/types';
+import type {
+  ConnectionState,
+  RobotConnection,
+} from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // RobotStatus

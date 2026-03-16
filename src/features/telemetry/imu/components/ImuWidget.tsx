@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
-import { usePanelConfig, NoConnectionOverlay } from '../../shared';
+import { NoConnectionOverlay } from '../../shared/NoConnectionOverlay';
+import { usePanelConfig } from '../../shared/usePanelConfig';
 import { useImuData } from '../hooks/useImuData';
 import { useImuHistory } from '../hooks/useImuHistory';
 import { type ImuViewMode, IMU_DEFAULT_TOPIC } from '../imu.types';

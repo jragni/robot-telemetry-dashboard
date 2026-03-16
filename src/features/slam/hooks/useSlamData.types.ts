@@ -1,6 +1,6 @@
 import type { ParsedOccupancyGrid } from '../slam.types';
 
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 export interface UseSlamDataResult {
   grid: ParsedOccupancyGrid | null;

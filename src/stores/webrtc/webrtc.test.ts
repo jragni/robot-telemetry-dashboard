@@ -2,7 +2,10 @@ import { describe, it, expect, beforeEach } from 'vitest';
 
 import { useWebRTCStore } from './webrtc.store';
 
-import type { ConnectionError, ConnectionState } from '@/types';
+import type {
+  ConnectionError,
+  ConnectionState,
+} from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // Helpers

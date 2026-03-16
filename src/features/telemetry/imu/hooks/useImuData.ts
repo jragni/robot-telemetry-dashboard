@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { EMPTY, type Observable } from 'rxjs';
 
-import { useRosConnection } from '../../shared';
+import { useRosConnection } from '../../shared/useRosConnection';
 import {
   type ImuDerivedData,
   IMU_DEFAULT_TOPIC,
@@ -14,7 +14,8 @@ import {
   createTopicSubscription,
   TOPIC_THROTTLE_MS,
 } from '@/services/ros/subscriber/TopicSubscriber';
-import type { ConnectionState, ImuMessage } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
+import type { ImuMessage } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------
 // Return type

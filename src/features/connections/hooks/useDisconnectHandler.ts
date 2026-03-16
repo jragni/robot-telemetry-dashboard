@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { useControlStore } from '@/stores/control/control.store';
 import { useRosStore } from '@/stores/ros/ros.store';
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // useDisconnectHandler

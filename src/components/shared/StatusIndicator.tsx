@@ -1,7 +1,7 @@
 import type { StatusIndicatorProps } from './StatusIndicator.types';
 
 import { cn } from '@/lib/utils';
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // State → Tailwind class map

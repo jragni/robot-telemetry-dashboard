@@ -2,7 +2,7 @@ import type ROSLIB from 'roslib';
 import { Observable } from 'rxjs';
 
 import { createLogger } from '@/lib/logger';
-import type { TopicInfo } from '@/types';
+import type { TopicInfo } from '@/types/ros-messages';
 
 const log = createLogger('TopicDiscovery');
 

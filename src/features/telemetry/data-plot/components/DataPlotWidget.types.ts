@@ -1,4 +1,4 @@
-import type { TopicInfo } from '@/types';
+import type { TopicInfo } from '@/types/ros-messages';
 
 export interface TopicSelectorProps {
   robotId: string | undefined;

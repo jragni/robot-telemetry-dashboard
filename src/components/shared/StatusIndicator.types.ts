@@ -1,4 +1,4 @@
-import type { ConnectionState } from '@/types';
+import type { ConnectionState } from '@/types/connection.types';
 
 export interface StatusIndicatorProps {
   state: ConnectionState;

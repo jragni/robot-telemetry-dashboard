@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 
 import { useConnectionsStore } from './connections.store';
 
-import type { RobotConnection } from '@/types';
+import type { RobotConnection } from '@/types/connection.types';
 
 // ---------------------------------------------------------------------------
 // Helpers
