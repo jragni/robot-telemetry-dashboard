@@ -31,7 +31,7 @@ mockWebRTCGetTransport.mockReturnValue({
 // Module mocks
 // ---------------------------------------------------------------------------
 
-vi.mock('@/services/webrtc/WebRTCServiceRegistry', () => ({
+vi.mock('@/services/webrtc/registry/WebRTCServiceRegistry', () => ({
   webRTCServiceRegistry: {
     connect: mockWebRTCConnect,
     disconnect: mockWebRTCDisconnect,

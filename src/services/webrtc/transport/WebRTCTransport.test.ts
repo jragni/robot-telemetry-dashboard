@@ -30,7 +30,7 @@ vi.stubGlobal(
 // Mock SignalingClient
 // ---------------------------------------------------------------------------
 
-vi.mock('./SignalingClient', () => ({
+vi.mock('../signaling/SignalingClient', () => ({
   // eslint-disable-next-line prefer-arrow-callback -- must use function() for new-ability
   SignalingClient: vi.fn(function () {
     return {
@@ -239,7 +239,8 @@ describe('WebRTCTransport', () => {
       transport.connect(BASE_URL);
       await flushMicrotasks();
 
-      const { SignalingClient: SC } = await import('./SignalingClient');
+      const { SignalingClient: SC } =
+        await import('../signaling/SignalingClient');
       const instances = (SC as ReturnType<typeof vi.fn>).mock.instances as {
         sendOffer: ReturnType<typeof vi.fn>;
       }[];
@@ -256,7 +257,8 @@ describe('WebRTCTransport', () => {
       transport.connect(BASE_URL);
       await flushMicrotasks(); // setLocalDescription fires onicegatheringstatechange
 
-      const { SignalingClient: SC } = await import('./SignalingClient');
+      const { SignalingClient: SC } =
+        await import('../signaling/SignalingClient');
       const instances = (SC as ReturnType<typeof vi.fn>).mock.instances as {
         sendOffer: ReturnType<typeof vi.fn>;
       }[];
@@ -559,7 +561,7 @@ describe('WebRTCTransport', () => {
       transport.destroy();
     });
 
-    it('2nd retry fires after 4000 ms (2^1 × initialReconnectDelay)', async () => {
+    it('2nd retry fires after 4000 ms (2^1 x initialReconnectDelay)', async () => {
       vi.useFakeTimers();
 
       const transport = new WebRTCTransport(ROBOT_ID);
@@ -568,7 +570,7 @@ describe('WebRTCTransport', () => {
 
       const PcCtor = RTCPeerConnection as ReturnType<typeof vi.fn>;
 
-      // First failure → 2000 ms backoff
+      // First failure -> 2000 ms backoff
       mockPc._triggerConnectionStateChange('failed');
       await flushMicrotasks();
       await vi.advanceTimersByTimeAsync(WEBRTC_CONFIG.initialReconnectDelay);
@@ -576,7 +578,7 @@ describe('WebRTCTransport', () => {
 
       const callsAfterFirstRetry = PcCtor.mock.calls.length;
 
-      // Second failure → 4000 ms backoff
+      // Second failure -> 4000 ms backoff
       mockPc._triggerConnectionStateChange('failed');
       await flushMicrotasks();
 
@@ -595,7 +597,7 @@ describe('WebRTCTransport', () => {
       transport.destroy();
     });
 
-    it('3rd retry fires after 8000 ms (2^2 × initialReconnectDelay)', async () => {
+    it('3rd retry fires after 8000 ms (2^2 x initialReconnectDelay)', async () => {
       vi.useFakeTimers();
 
       const transport = new WebRTCTransport(ROBOT_ID);
@@ -604,13 +606,13 @@ describe('WebRTCTransport', () => {
 
       const PcCtor = RTCPeerConnection as ReturnType<typeof vi.fn>;
 
-      // Fail 1 → 2000 ms
+      // Fail 1 -> 2000 ms
       mockPc._triggerConnectionStateChange('failed');
       await flushMicrotasks();
       await vi.advanceTimersByTimeAsync(WEBRTC_CONFIG.initialReconnectDelay);
       await flushMicrotasks();
 
-      // Fail 2 → 4000 ms
+      // Fail 2 -> 4000 ms
       mockPc._triggerConnectionStateChange('failed');
       await flushMicrotasks();
       await vi.advanceTimersByTimeAsync(
@@ -620,7 +622,7 @@ describe('WebRTCTransport', () => {
 
       const callsAfterSecondRetry = PcCtor.mock.calls.length;
 
-      // Fail 3 → 8000 ms
+      // Fail 3 -> 8000 ms
       mockPc._triggerConnectionStateChange('failed');
       await flushMicrotasks();
 
@@ -652,7 +654,7 @@ describe('WebRTCTransport', () => {
       await flushMicrotasks();
 
       // For the cap test, just validate that advancing 30001 ms from the
-      // last failure is sufficient to trigger the retry (it should fire at ≤30000 ms).
+      // last failure is sufficient to trigger the retry (it should fire at <=30000 ms).
       mockPc._triggerConnectionStateChange('failed');
       await flushMicrotasks();
 

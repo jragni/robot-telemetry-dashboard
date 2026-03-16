@@ -1,4 +1,4 @@
-import { WebRTCTransport } from './WebRTCTransport';
+import { WebRTCTransport } from '../transport/WebRTCTransport';
 
 import { createLogger } from '@/lib/logger';
 import { useWebRTCStore } from '@/stores/webrtc/webrtc.store';

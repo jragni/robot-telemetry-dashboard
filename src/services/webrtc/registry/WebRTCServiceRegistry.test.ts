@@ -18,7 +18,7 @@ const mockTransport = {
   getMediaStream$: vi.fn(),
 };
 
-vi.mock('./WebRTCTransport', () => ({
+vi.mock('../transport/WebRTCTransport', () => ({
   // eslint-disable-next-line prefer-arrow-callback
   WebRTCTransport: vi.fn(function () {
     return mockTransport;
@@ -72,7 +72,7 @@ describe('WebRTCServiceRegistry', () => {
     });
 
     it('calling connect twice for same robotId does not create second transport (idempotent)', async () => {
-      const { WebRTCTransport } = await import('./WebRTCTransport');
+      const { WebRTCTransport } = await import('../transport/WebRTCTransport');
       const MockedTransport = vi.mocked(WebRTCTransport);
 
       registry.connect(ROBOT_ID, BASE_URL);

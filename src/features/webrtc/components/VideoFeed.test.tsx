@@ -25,7 +25,7 @@ mockGetTransport.mockReturnValue({
   getMediaStream$: vi.fn(() => mockMediaStream$),
 });
 
-vi.mock('@/services/webrtc/WebRTCServiceRegistry', () => ({
+vi.mock('@/services/webrtc/registry/WebRTCServiceRegistry', () => ({
   webRTCServiceRegistry: {
     connect: mockConnect,
     disconnect: mockDisconnect,

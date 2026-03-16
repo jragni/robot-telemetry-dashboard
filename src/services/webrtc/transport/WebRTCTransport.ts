@@ -1,7 +1,7 @@
 import { BehaviorSubject, type Observable } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
-import { SignalingClient } from './SignalingClient';
+import { SignalingClient } from '../signaling/SignalingClient';
 
 import { DEFAULT_ICE_SERVERS, WEBRTC_CONFIG } from '@/config/webrtc';
 import { createLogger } from '@/lib/logger';

@@ -1,28 +1,12 @@
+import type { SdpAnswer, SdpOffer } from './SignalingClient.types';
+
 import { WEBRTC_CONFIG, WEBRTC_PATH } from '@/config/webrtc';
 import { SignalingError } from '@/features/webrtc/webrtc.types';
 import { createLogger } from '@/lib/logger';
 
 const log = createLogger('SignalingClient');
 
-// ---------------------------------------------------------------------------
-// Public types
-// ---------------------------------------------------------------------------
-
-export interface SdpOffer {
-  sdp: string;
-  type: RTCSdpType;
-  video?: boolean;
-  audio?: boolean;
-}
-
-export interface SdpAnswer {
-  sdp: string;
-  type: RTCSdpType;
-}
-
-// ---------------------------------------------------------------------------
-// SignalingClient
-// ---------------------------------------------------------------------------
+export type { SdpOffer, SdpAnswer } from './SignalingClient.types';
 
 /**
  * Thin HTTP client responsible for the SDP offer/answer exchange with the
