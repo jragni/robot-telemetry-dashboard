@@ -1,15 +1,8 @@
+import { MAX_VEL, MIN_VEL, STEP_VEL } from './VelocitySliders.constants';
 import type { VelocitySlidersProps } from './VelocitySliders.types';
 
 import { Slider } from '@/components/ui/slider';
 import { useControlStore } from '@/stores/control/control.store';
-
-// ---------------------------------------------------------------------------
-// VelocitySliders
-// ---------------------------------------------------------------------------
-
-const MIN_VEL = 0.1;
-const MAX_VEL = 2.0;
-const STEP_VEL = 0.1;
 
 /**
  * Sliders for tuning the linear and angular velocity limits that

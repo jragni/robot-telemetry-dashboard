@@ -10,18 +10,11 @@ import {
 } from 'react-grid-layout';
 
 import { PanelFrame } from './PanelFrame';
+import { BREAKPOINTS, COLS, ROW_HEIGHT } from './PanelGrid.constants';
 import type { PanelGridProps } from './PanelGrid.types';
 
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/stores/layout/layout.store';
-
-// ---------------------------------------------------------------------------
-// Grid configuration
-// ---------------------------------------------------------------------------
-
-const BREAKPOINTS = { lg: 1200, md: 768, sm: 0 } as const;
-const COLS = { lg: 12, md: 6, sm: 2 } as const;
-const ROW_HEIGHT = 60;
 
 type Breakpoint = keyof typeof BREAKPOINTS;
 

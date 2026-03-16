@@ -3,20 +3,10 @@ import { useRef, useEffect } from 'react';
 
 import type { ImuDerivedData } from '../imu.types';
 
+import { LINE_COLORS, MARGIN } from './ImuPlotView.constants';
 import type { ImuPlotViewProps } from './ImuPlotView.types';
 
 import { useElementSize } from '@/hooks/useElementSize';
-
-// ---------------------------------------------------------------------------
-// Layout constants
-// ---------------------------------------------------------------------------
-
-const MARGIN = { top: 8, right: 12, bottom: 24, left: 36 };
-const LINE_COLORS = {
-  x: '#f87171', // red-400
-  y: '#4ade80', // green-400
-  z: '#60a5fa', // blue-400
-} as const;
 
 // ---------------------------------------------------------------------------
 // D3 rendering helper
