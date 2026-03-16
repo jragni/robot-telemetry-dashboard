@@ -15,7 +15,7 @@ import type { TopicConfig } from './recording.types';
 // Subject map keyed by topic name — allows tests to emit messages manually.
 const subjectMap = new Map<string, Subject<unknown>>();
 
-vi.mock('@/services/ros/TopicSubscriber', () => ({
+vi.mock('@/services/ros/subscriber/TopicSubscriber', () => ({
   createTopicSubscription: (
     _ros: unknown,
     topicName: string,

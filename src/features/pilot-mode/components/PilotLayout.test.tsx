@@ -31,12 +31,15 @@ mockWebRTCGetTransport.mockReturnValue({
 // Module mocks
 // ---------------------------------------------------------------------------
 
-vi.mock('@/services', () => ({
+vi.mock('@/services/webrtc/WebRTCServiceRegistry', () => ({
   webRTCServiceRegistry: {
     connect: mockWebRTCConnect,
     disconnect: mockWebRTCDisconnect,
     getTransport: mockWebRTCGetTransport,
   },
+}));
+
+vi.mock('@/services/ros/registry/RosServiceRegistry', () => ({
   rosServiceRegistry: {
     getTransport: vi.fn(() => ({
       getRosInstance: vi.fn(() => null),

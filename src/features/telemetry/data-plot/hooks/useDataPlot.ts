@@ -8,7 +8,7 @@ import {
 } from '../data-plot.utils';
 
 import { useRosConnection } from '@/features/telemetry/shared';
-import { createTopicSubscription } from '@/services/ros';
+import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
 import type { TopicInfo } from '@/types';
 
 // ---------------------------------------------------------------------------

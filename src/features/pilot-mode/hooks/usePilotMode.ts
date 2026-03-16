@@ -9,7 +9,7 @@ import { useObservable } from '@/hooks/useObservable';
 import {
   createTopicSubscription,
   TOPIC_THROTTLE_MS,
-} from '@/services/ros/TopicSubscriber';
+} from '@/services/ros/subscriber/TopicSubscriber';
 import {
   DEFAULT_CONTROL_STATE,
   useControlStore,

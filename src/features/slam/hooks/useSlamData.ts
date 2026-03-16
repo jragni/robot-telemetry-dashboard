@@ -9,7 +9,7 @@ import {
 import { parseOccupancyGrid } from '../slam.utils';
 
 import { useRosConnection } from '@/features/telemetry/shared';
-import { createTopicSubscription } from '@/services/ros/TopicSubscriber';
+import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
 import type { ConnectionState } from '@/types';
 import type { OccupancyGridMessage } from '@/types/ros-messages';
 

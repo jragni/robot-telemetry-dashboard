@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useControlPublisher } from './useControlPublisher';
 
 import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
-import { createTopicPublisher } from '@/services/ros/TopicPublisher';
+import { createTopicPublisher } from '@/services/ros/publisher/TopicPublisher';
 import { useControlStore } from '@/stores/control/control.store';
 import { useRosStore } from '@/stores/ros/ros.store';
 
@@ -21,7 +21,7 @@ vi.mock('@/features/telemetry/shared/useRosConnection', () => ({
 const mockPublish = vi.fn();
 const mockDestroy = vi.fn();
 
-vi.mock('@/services/ros/TopicPublisher', () => ({
+vi.mock('@/services/ros/publisher/TopicPublisher', () => ({
   createTopicPublisher: vi.fn(() => ({
     publish: mockPublish,
     destroy: mockDestroy,

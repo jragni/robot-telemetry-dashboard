@@ -8,7 +8,7 @@ import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import {
   createTopicPublisher,
   type TopicPublisherHandle,
-} from '@/services/ros/TopicPublisher';
+} from '@/services/ros/publisher/TopicPublisher';
 import { useControlStore } from '@/stores/control/control.store';
 import type { Twist } from '@/types';
 

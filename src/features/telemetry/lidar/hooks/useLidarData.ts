@@ -13,7 +13,7 @@ import { useObservable } from '@/hooks/useObservable';
 import {
   createTopicSubscription,
   TOPIC_THROTTLE_MS,
-} from '@/services/ros/TopicSubscriber';
+} from '@/services/ros/subscriber/TopicSubscriber';
 import type { LaserScanMessage } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------

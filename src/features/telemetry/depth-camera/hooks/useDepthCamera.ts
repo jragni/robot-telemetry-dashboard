@@ -5,7 +5,7 @@ import { DEPTH_DEFAULT_TOPIC, DEPTH_MESSAGE_TYPE } from '../depth-camera.types';
 
 import { useRosConnection } from '@/features/telemetry/shared';
 import { useObservable } from '@/hooks/useObservable';
-import { createTopicSubscription } from '@/services/ros';
+import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
 import type { CompressedImageMessage } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------

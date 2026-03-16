@@ -2,13 +2,13 @@ import ROSLIB from 'roslib';
 import { Observable, asyncScheduler } from 'rxjs';
 import { shareReplay, throttleTime } from 'rxjs/operators';
 
+import type { TopicSubscriptionOptions } from './TopicSubscriber.types';
+
 import { createLogger } from '@/lib/logger';
 
 const log = createLogger('TopicSubscriber');
 
-export interface TopicSubscriptionOptions {
-  throttleMs?: number;
-}
+export type { TopicSubscriptionOptions } from './TopicSubscriber.types';
 
 export const TOPIC_THROTTLE_MS = {
   LIDAR: 200,

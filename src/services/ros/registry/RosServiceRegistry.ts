@@ -1,4 +1,4 @@
-import { RosTransport } from './RosTransport';
+import { RosTransport } from '../transport/RosTransport';
 
 import { createLogger } from '@/lib/logger';
 import { useRosStore } from '@/stores/ros/ros.store';

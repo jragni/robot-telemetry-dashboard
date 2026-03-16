@@ -10,7 +10,7 @@ import type {
 } from './recording.types';
 
 import { createLogger } from '@/lib/logger';
-import { createTopicSubscription } from '@/services/ros/TopicSubscriber';
+import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
 
 const log = createLogger('RecordingService');
 

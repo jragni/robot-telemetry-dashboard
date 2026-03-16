@@ -1,15 +1,12 @@
 import ROSLIB from 'roslib';
 
+import type { TopicPublisherHandle } from './TopicPublisher.types';
+
 import { createLogger } from '@/lib/logger';
 
 const log = createLogger('TopicPublisher');
 
-export interface TopicPublisherHandle<T> {
-  /** Wraps `message` in a ROSLIB.Message and publishes it to the ROS topic. */
-  publish: (message: T) => void;
-  /** Calls unadvertise on the underlying ROSLIB.Topic and releases resources. */
-  destroy: () => void;
-}
+export type { TopicPublisherHandle } from './TopicPublisher.types';
 
 /**
  * Creates a publisher for a ROS topic.
