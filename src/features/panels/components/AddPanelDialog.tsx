@@ -1,3 +1,5 @@
+import type { AddPanelDialogProps } from './AddPanelDialog.types';
+
 import {
   Dialog,
   DialogContent,
@@ -5,18 +7,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { PANEL_REGISTRY } from '@/features/panels/panel.registry';
-import type { PanelTypeId, ViewId } from '@/features/panels/panel.types';
+import type { PanelTypeId } from '@/features/panels/panel.types';
 import { useLayoutStore } from '@/stores/layout.store';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface AddPanelDialogProps {
-  viewId: ViewId;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
 
 // ---------------------------------------------------------------------------
 // Component

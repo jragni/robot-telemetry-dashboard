@@ -3,15 +3,9 @@ import { useState } from 'react';
 
 import { useRecording } from '../hooks/useRecording';
 
+import type { RecordingControlsProps } from './RecordingControls.types';
+
 import { useRosStore } from '@/stores/ros.store';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface RecordingControlsProps {
-  robotId: string | undefined;
-}
 
 // ---------------------------------------------------------------------------
 // RecordingControls

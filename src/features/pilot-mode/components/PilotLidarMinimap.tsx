@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import type { PilotLidarMinimapProps } from './PilotLidarMinimap.types';
+
 import { useLidarCanvas } from '@/features/telemetry/lidar/hooks/useLidarCanvas';
 import { useLidarData } from '@/features/telemetry/lidar/hooks/useLidarData';
 
@@ -11,14 +13,6 @@ const MINIMAP_SIZE = 200;
 // Fixed scale for the minimap — no zoom controls. 30 px/m gives a wider field
 // of view than the default 50 px/m, which is better for the small canvas.
 const MINIMAP_SCALE = 30;
-
-// ---------------------------------------------------------------------------
-// PilotLidarMinimap
-// ---------------------------------------------------------------------------
-
-interface PilotLidarMinimapProps {
-  robotId: string;
-}
 
 /**
  * Compact 200x200 LiDAR canvas overlay for the pilot mode layout.

@@ -4,17 +4,10 @@ import { usePilotMode } from '../hooks/usePilotMode';
 
 import { PilotExitButton } from './PilotExitButton';
 import { PilotHud } from './PilotHud';
+import type { PilotMobileLayoutProps } from './PilotMobileLayout.types';
 
 import { ControlPad } from '@/features/control/components/ControlPad';
 import { VideoFeed } from '@/features/webrtc/components/VideoFeed';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface PilotMobileLayoutProps {
-  robotId: string;
-}
 
 // ---------------------------------------------------------------------------
 // PilotMobileLayout

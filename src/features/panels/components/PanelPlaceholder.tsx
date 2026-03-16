@@ -1,18 +1,7 @@
 import { getPanelMeta } from '../panel.registry';
-import type { PanelComponentProps, PanelTypeId } from '../panel.types';
+import type { PanelTypeId } from '../panel.types';
 
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface PanelPlaceholderProps extends PanelComponentProps {
-  /**
-   * The panel type drives which icon and title are shown. When omitted the
-   * component renders a generic fallback so callers can still render during
-   * bootstrapping before a typeId is resolved.
-   */
-  typeId?: string;
-}
+import type { PanelPlaceholderProps } from './PanelPlaceholder.types';
 
 // ---------------------------------------------------------------------------
 // Component

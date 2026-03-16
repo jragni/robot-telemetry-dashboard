@@ -2,19 +2,11 @@ import { LayoutDashboard, PlusCircle, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
 import { AddPanelDialog } from './AddPanelDialog';
+import type { PanelToolbarProps } from './PanelToolbar.types';
 
 import { Button } from '@/components/ui/button';
-import type { ViewId } from '@/features/panels/panel.types';
 import { useMobile } from '@/hooks/use-mobile';
 import { useLayoutStore } from '@/stores/layout.store';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface PanelToolbarProps {
-  viewId: ViewId;
-}
 
 // ---------------------------------------------------------------------------
 // Component

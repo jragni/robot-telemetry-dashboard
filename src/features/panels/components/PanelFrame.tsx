@@ -1,22 +1,12 @@
 import { GripVertical, X } from 'lucide-react';
 import { memo, useCallback } from 'react';
 
+import type { PanelFrameProps } from './PanelFrame.types';
+
 import { DataCard } from '@/components/shared/DataCard';
 import { Button } from '@/components/ui/button';
 import { getPanelMeta } from '@/features/panels/panel.registry';
-import type { PanelInstance, ViewId } from '@/features/panels/panel.types';
 import { useLayoutStore } from '@/stores/layout.store';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface PanelFrameProps {
-  instance: PanelInstance;
-  viewId: ViewId;
-  editMode: boolean;
-  robotId?: string;
-}
 
 // ---------------------------------------------------------------------------
 // Component

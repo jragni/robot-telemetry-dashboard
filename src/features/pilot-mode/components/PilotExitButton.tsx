@@ -1,13 +1,7 @@
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface PilotExitButtonProps {
-  onExit: () => void;
-}
+import type { PilotExitButtonProps } from './PilotExitButton.types';
 
 // ---------------------------------------------------------------------------
 // PilotExitButton

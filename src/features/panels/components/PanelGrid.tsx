@@ -10,8 +10,8 @@ import {
 } from 'react-grid-layout';
 
 import { PanelFrame } from './PanelFrame';
+import type { PanelGridProps } from './PanelGrid.types';
 
-import type { ViewId } from '@/features/panels/panel.types';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/stores/layout.store';
 
@@ -24,16 +24,6 @@ const COLS = { lg: 12, md: 6, sm: 2 } as const;
 const ROW_HEIGHT = 60;
 
 type Breakpoint = keyof typeof BREAKPOINTS;
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface PanelGridProps {
-  viewId: ViewId;
-  className?: string;
-  robotId?: string;
-}
 
 // ---------------------------------------------------------------------------
 // Component

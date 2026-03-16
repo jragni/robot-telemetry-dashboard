@@ -2,18 +2,11 @@ import { usePilotMode } from '../hooks/usePilotMode';
 
 import { PilotExitButton } from './PilotExitButton';
 import { PilotHud } from './PilotHud';
+import type { PilotLayoutProps } from './PilotLayout.types';
 import { PilotLidarMinimap } from './PilotLidarMinimap';
 
 import { ControlPad } from '@/features/control/components/ControlPad';
 import { VideoFeed } from '@/features/webrtc/components/VideoFeed';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface PilotLayoutProps {
-  robotId: string;
-}
 
 // ---------------------------------------------------------------------------
 // PilotLayout
