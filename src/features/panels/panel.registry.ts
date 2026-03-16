@@ -7,10 +7,17 @@ import {
   BarChart3,
   Map,
   Wifi,
+  Camera,
 } from 'lucide-react';
 
 import { PanelPlaceholder } from './components/PanelPlaceholder';
 import type { PanelMeta, PanelTypeId } from './panel.types';
+
+import { DataPlotWidget } from '@/features/telemetry/data-plot';
+import { DepthCameraWidget } from '@/features/telemetry/depth-camera';
+import { ImuWidget } from '@/features/telemetry/imu';
+import { LidarWidget } from '@/features/telemetry/lidar';
+import { TopicListWidget } from '@/features/telemetry/topic-list';
 
 // ---------------------------------------------------------------------------
 // Registry
@@ -32,7 +39,7 @@ export const PANEL_REGISTRY: Record<PanelTypeId, PanelMeta> = {
     description: 'Real-time LiDAR point cloud visualisation.',
     defaultSize: { w: 6, h: 8, minW: 3, minH: 4 },
     icon: Radar,
-    component: (props) => PanelPlaceholder({ ...props, typeId: 'lidar-view' }),
+    component: LidarWidget,
   },
 
   'imu-display': {
@@ -41,7 +48,7 @@ export const PANEL_REGISTRY: Record<PanelTypeId, PanelMeta> = {
     description: 'Inertial measurement unit orientation and acceleration.',
     defaultSize: { w: 4, h: 6, minW: 2, minH: 3 },
     icon: Activity,
-    component: (props) => PanelPlaceholder({ ...props, typeId: 'imu-display' }),
+    component: ImuWidget,
   },
 
   'control-pad': {
@@ -59,7 +66,7 @@ export const PANEL_REGISTRY: Record<PanelTypeId, PanelMeta> = {
     description: 'Browse and inspect active ROS topics.',
     defaultSize: { w: 4, h: 6, minW: 2, minH: 3 },
     icon: List,
-    component: (props) => PanelPlaceholder({ ...props, typeId: 'topic-list' }),
+    component: TopicListWidget,
   },
 
   'data-plot': {
@@ -68,7 +75,16 @@ export const PANEL_REGISTRY: Record<PanelTypeId, PanelMeta> = {
     description: 'Time-series chart for numeric topic data.',
     defaultSize: { w: 6, h: 6, minW: 3, minH: 3 },
     icon: BarChart3,
-    component: (props) => PanelPlaceholder({ ...props, typeId: 'data-plot' }),
+    component: DataPlotWidget,
+  },
+
+  'depth-camera': {
+    typeId: 'depth-camera',
+    title: 'Depth Camera',
+    description: 'Compressed depth image stream from the robot.',
+    defaultSize: { w: 6, h: 8, minW: 3, minH: 4 },
+    icon: Camera,
+    component: DepthCameraWidget,
   },
 
   'map-view': {

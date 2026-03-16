@@ -19,7 +19,8 @@ let mockPc: MockPeerConnection;
 
 vi.stubGlobal(
   'RTCPeerConnection',
-  vi.fn(function () {
+  // Must use function() — arrow functions cannot be 'new'-ed
+  vi.fn(() => {
     mockPc = createMockPeerConnection();
     return mockPc;
   })
@@ -30,7 +31,8 @@ vi.stubGlobal(
 // ---------------------------------------------------------------------------
 
 vi.mock('./SignalingClient', () => ({
-  SignalingClient: vi.fn(function () {
+  // Must use function() — arrow functions cannot be 'new'-ed
+  SignalingClient: vi.fn(() => {
     return {
       sendOffer: vi
         .fn()
@@ -227,7 +229,7 @@ describe('WebRTCTransport', () => {
         });
       // Must use function() — arrow functions cannot be 'new'-ed
       (RTCPeerConnection as ReturnType<typeof vi.fn>).mockImplementationOnce(
-        function () {
+        () => {
           mockPc = pendingPc;
           return pendingPc;
         }
@@ -721,7 +723,7 @@ describe('WebRTCTransport', () => {
       hangingPc.setLocalDescription = vi.fn().mockResolvedValue(undefined);
       // Must use function() — arrow functions cannot be 'new'-ed
       (RTCPeerConnection as ReturnType<typeof vi.fn>).mockImplementationOnce(
-        function () {
+        () => {
           mockPc = hangingPc;
           return hangingPc;
         }
@@ -773,7 +775,7 @@ describe('WebRTCTransport', () => {
       hangingPc.setLocalDescription = vi.fn().mockResolvedValue(undefined);
       // Must use function() — arrow functions cannot be 'new'-ed
       (RTCPeerConnection as ReturnType<typeof vi.fn>).mockImplementationOnce(
-        function () {
+        () => {
           mockPc = hangingPc;
           return hangingPc;
         }

@@ -13,6 +13,7 @@ export type PanelTypeId =
   | 'control-pad'
   | 'topic-list'
   | 'data-plot'
+  | 'depth-camera'
   | 'map-view'
   | 'connection-status';
 
