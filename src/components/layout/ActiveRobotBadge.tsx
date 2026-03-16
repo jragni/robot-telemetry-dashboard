@@ -1,5 +1,5 @@
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
-import { useConnectionsStore } from '@/stores/connections.store';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
 import { useRosStore } from '@/stores/ros.store';
 
 export function ActiveRobotBadge() {

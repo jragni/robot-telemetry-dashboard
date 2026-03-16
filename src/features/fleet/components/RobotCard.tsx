@@ -8,7 +8,7 @@ import type { RobotCardProps } from './RobotCard.types';
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useControlStore } from '@/stores/control.store';
+import { useControlStore } from '@/stores/control/control.store';
 
 // ---------------------------------------------------------------------------
 // RobotCard

@@ -13,7 +13,7 @@ import { useControlPublisher } from '../hooks/useControlPublisher';
 import type { ControlPadProps, DirButtonConfig } from './ControlPad.types';
 
 import { Button } from '@/components/ui/button';
-import { useControlStore } from '@/stores/control.store';
+import { useControlStore } from '@/stores/control/control.store';
 
 const DIRECTION_BUTTONS: DirButtonConfig[] = [
   {

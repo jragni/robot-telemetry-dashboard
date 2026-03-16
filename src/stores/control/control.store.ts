@@ -1,16 +1,11 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-// ---------------------------------------------------------------------------
-// Per-robot control entry
-// ---------------------------------------------------------------------------
-
-interface RobotControlEntry {
-  linearVelocity: number;
-  angularVelocity: number;
-  selectedTopic: string;
-  isEStopActive: boolean;
-}
+import type {
+  ControlActions,
+  ControlState,
+  RobotControlEntry,
+} from './control.types';
 
 // ---------------------------------------------------------------------------
 // Exported defaults (consumed by store and tests)
@@ -22,27 +17,6 @@ export const DEFAULT_CONTROL_STATE: RobotControlEntry = {
   selectedTopic: '/cmd_vel',
   isEStopActive: false,
 };
-
-// ---------------------------------------------------------------------------
-// State shape
-// ---------------------------------------------------------------------------
-
-interface ControlState {
-  robotControls: Record<string, RobotControlEntry>;
-}
-
-// ---------------------------------------------------------------------------
-// Actions shape
-// ---------------------------------------------------------------------------
-
-interface ControlActions {
-  setLinearVelocity(robotId: string, velocity: number): void;
-  setAngularVelocity(robotId: string, velocity: number): void;
-  setSelectedTopic(robotId: string, topic: string): void;
-  activateEStop(robotId: string): void;
-  deactivateEStop(robotId: string): void;
-  getControlState(robotId: string): RobotControlEntry;
-}
 
 // ---------------------------------------------------------------------------
 // Full store type

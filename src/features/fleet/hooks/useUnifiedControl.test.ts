@@ -5,7 +5,7 @@ import { useUnifiedControl } from './useUnifiedControl';
 
 import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { createTopicPublisher } from '@/services/ros/TopicPublisher';
-import { useControlStore } from '@/stores/control.store';
+import { useControlStore } from '@/stores/control/control.store';
 import { useRosStore } from '@/stores/ros.store';
 
 // ---------------------------------------------------------------------------

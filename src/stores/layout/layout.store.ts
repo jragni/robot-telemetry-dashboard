@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+import type { LayoutStoreActions, LayoutStoreState } from './layout.types';
+
 import { STORAGE_KEYS } from '@/config/constants';
 import {
   createDefaultLayout,
@@ -14,32 +16,6 @@ import type {
   PanelInstance,
   PanelTypeId,
 } from '@/features/panels/panel.types';
-
-// ---------------------------------------------------------------------------
-// State shape
-// ---------------------------------------------------------------------------
-
-interface LayoutStoreState {
-  layouts: LayoutState;
-  editMode: boolean;
-}
-
-// ---------------------------------------------------------------------------
-// Actions shape
-// ---------------------------------------------------------------------------
-
-interface LayoutStoreActions {
-  setBreakpointLayouts(
-    viewId: string,
-    breakpoint: 'lg' | 'md' | 'sm',
-    items: GridItemLayout[]
-  ): void;
-  addPanel(viewId: string, typeId: string): string;
-  removePanel(viewId: string, panelId: string): void;
-  resetLayout(viewId: string): void;
-  setEditMode(enabled: boolean): void;
-  getViewLayout(viewId: string): PersistedViewLayout;
-}
 
 // ---------------------------------------------------------------------------
 // Full store type

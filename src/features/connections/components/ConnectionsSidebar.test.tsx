@@ -86,7 +86,7 @@ vi.mock('@/features/fleet/hooks/useFleetConnectionManager', () => ({
   })),
 }));
 
-vi.mock('@/stores/connections.store', () => ({
+vi.mock('@/stores/connections/connections.store', () => ({
   useConnectionsStore: mockUseConnectionsStore,
 }));
 

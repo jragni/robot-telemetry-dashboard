@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { PANEL_REGISTRY } from '@/features/panels/panel.registry';
 import type { PanelTypeId } from '@/features/panels/panel.types';
-import { useLayoutStore } from '@/stores/layout.store';
+import { useLayoutStore } from '@/stores/layout/layout.store';
 
 // ---------------------------------------------------------------------------
 // Component

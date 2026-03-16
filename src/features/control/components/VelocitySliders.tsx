@@ -1,7 +1,7 @@
 import type { VelocitySlidersProps } from './VelocitySliders.types';
 
 import { Slider } from '@/components/ui/slider';
-import { useControlStore } from '@/stores/control.store';
+import { useControlStore } from '@/stores/control/control.store';
 
 // ---------------------------------------------------------------------------
 // VelocitySliders

@@ -6,7 +6,7 @@ import type { PanelToolbarProps } from './PanelToolbar.types';
 
 import { Button } from '@/components/ui/button';
 import { useMobile } from '@/hooks/use-mobile';
-import { useLayoutStore } from '@/stores/layout.store';
+import { useLayoutStore } from '@/stores/layout/layout.store';
 
 // ---------------------------------------------------------------------------
 // Component

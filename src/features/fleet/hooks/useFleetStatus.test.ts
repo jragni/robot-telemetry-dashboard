@@ -3,8 +3,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { useFleetStatus } from './useFleetStatus';
 
-import { useConnectionsStore } from '@/stores/connections.store';
-import { useControlStore } from '@/stores/control.store';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
+import { useControlStore } from '@/stores/control/control.store';
 import { useRosStore } from '@/stores/ros.store';
 import { useWebRTCStore } from '@/stores/webrtc.store';
 

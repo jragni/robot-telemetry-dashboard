@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { rosServiceRegistry } from '@/services/ros/RosServiceRegistry';
 import { webRTCServiceRegistry } from '@/services/webrtc/WebRTCServiceRegistry';
-import { useConnectionsStore } from '@/stores/connections.store';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
 
 // ---------------------------------------------------------------------------
 // useFleetConnectionManager

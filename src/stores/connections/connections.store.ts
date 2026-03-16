@@ -1,27 +1,9 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+import type { ConnectionsActions, ConnectionsState } from './connections.types';
+
 import type { RobotConnection } from '@/types';
-
-// ---------------------------------------------------------------------------
-// State shape
-// ---------------------------------------------------------------------------
-
-interface ConnectionsState {
-  robots: RobotConnection[];
-  activeRobotId: string | null;
-}
-
-// ---------------------------------------------------------------------------
-// Actions shape
-// ---------------------------------------------------------------------------
-
-interface ConnectionsActions {
-  addRobot(robot: Omit<RobotConnection, 'id' | 'createdAt'>): string;
-  removeRobot(id: string): void;
-  setActiveRobot(id: string | null): void;
-  getActiveRobot(): RobotConnection | undefined;
-}
 
 // ---------------------------------------------------------------------------
 // Full store type

@@ -5,7 +5,7 @@ import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RobotRow } from './RobotRow';
 
 import { useFleetConnectionManager } from '@/features/fleet/hooks/useFleetConnectionManager';
-import { useConnectionsStore } from '@/stores/connections.store';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
 import type { RobotConnection } from '@/types';
 
 /**

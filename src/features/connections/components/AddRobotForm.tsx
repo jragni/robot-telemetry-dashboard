@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { useFleetConnectionManager } from '@/features/fleet/hooks/useFleetConnectionManager';
-import { useConnectionsStore } from '@/stores/connections.store';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
 
 // ---------------------------------------------------------------------------
 // AddRobotForm

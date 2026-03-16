@@ -6,7 +6,7 @@ import type { PanelFrameProps } from './PanelFrame.types';
 import { DataCard } from '@/components/shared/DataCard';
 import { Button } from '@/components/ui/button';
 import { getPanelMeta } from '@/features/panels/panel.registry';
-import { useLayoutStore } from '@/stores/layout.store';
+import { useLayoutStore } from '@/stores/layout/layout.store';
 
 // ---------------------------------------------------------------------------
 // Component

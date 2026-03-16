@@ -13,7 +13,7 @@ import { PanelFrame } from './PanelFrame';
 import type { PanelGridProps } from './PanelGrid.types';
 
 import { cn } from '@/lib/utils';
-import { useLayoutStore } from '@/stores/layout.store';
+import { useLayoutStore } from '@/stores/layout/layout.store';
 
 // ---------------------------------------------------------------------------
 // Grid configuration

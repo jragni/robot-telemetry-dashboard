@@ -52,7 +52,7 @@ vi.mock('@/stores/webrtc.store', () => ({
   ),
 }));
 
-vi.mock('@/stores/connections.store', () => ({
+vi.mock('@/stores/connections/connections.store', () => ({
   useConnectionsStore: vi.fn(
     (
       selector: (s: {

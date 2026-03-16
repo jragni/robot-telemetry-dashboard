@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { WebRTCServiceRegistry } from './WebRTCServiceRegistry';
 
-import { useConnectionsStore } from '@/stores/connections.store';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
 import { useWebRTCStore } from '@/stores/webrtc.store';
 
 // ---------------------------------------------------------------------------

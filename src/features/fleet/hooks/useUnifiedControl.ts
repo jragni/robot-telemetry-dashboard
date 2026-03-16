@@ -9,7 +9,7 @@ import {
   createTopicPublisher,
   type TopicPublisherHandle,
 } from '@/services/ros/TopicPublisher';
-import { useControlStore } from '@/stores/control.store';
+import { useControlStore } from '@/stores/control/control.store';
 import type { Twist } from '@/types';
 
 // ---------------------------------------------------------------------------

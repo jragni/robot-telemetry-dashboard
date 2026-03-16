@@ -1,5 +1,5 @@
 import { useDisconnectHandler } from '@/features/connections/hooks/useDisconnectHandler';
-import { useConnectionsStore } from '@/stores/connections.store';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
 
 /**
  * Invisible component that activates disconnect safety monitoring for the

@@ -10,7 +10,10 @@ import {
   createTopicSubscription,
   TOPIC_THROTTLE_MS,
 } from '@/services/ros/TopicSubscriber';
-import { DEFAULT_CONTROL_STATE, useControlStore } from '@/stores/control.store';
+import {
+  DEFAULT_CONTROL_STATE,
+  useControlStore,
+} from '@/stores/control/control.store';
 import { useWebRTCStore } from '@/stores/webrtc.store';
 import type { BatteryStateMessage, ImuMessage } from '@/types';
 

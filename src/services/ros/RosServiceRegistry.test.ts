@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { RosServiceRegistry } from './RosServiceRegistry';
 
-import { useConnectionsStore } from '@/stores/connections.store';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
 import { useRosStore } from '@/stores/ros.store';
 import { createMockRos, type MockRos } from '@/test/mocks/roslib.mock';
 

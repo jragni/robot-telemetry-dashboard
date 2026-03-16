@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useLayoutStore } from '@/stores/layout.store';
+import { useLayoutStore } from '@/stores/layout/layout.store';
 
 // ---------------------------------------------------------------------------
 // usePanelConfig

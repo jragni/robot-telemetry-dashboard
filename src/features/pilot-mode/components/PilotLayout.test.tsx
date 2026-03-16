@@ -68,7 +68,7 @@ vi.mock('@/stores/ros.store', () => ({
   ),
 }));
 
-vi.mock('@/stores/connections.store', () => ({
+vi.mock('@/stores/connections/connections.store', () => ({
   useConnectionsStore: vi.fn(
     (
       selector: (s: {
@@ -83,7 +83,7 @@ vi.mock('@/stores/connections.store', () => ({
   ),
 }));
 
-vi.mock('@/stores/control.store', () => ({
+vi.mock('@/stores/control/control.store', () => ({
   useControlStore: Object.assign(
     vi.fn(
       (

@@ -32,7 +32,7 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
-vi.mock('@/stores/control.store', () => ({
+vi.mock('@/stores/control/control.store', () => ({
   useControlStore: Object.assign(
     vi.fn((selector: (s: unknown) => unknown) =>
       selector({
