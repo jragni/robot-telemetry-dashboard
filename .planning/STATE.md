@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-16)
 ## Current Position
 
 Phase: 13 of 15 (Component Conventions)
-Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-03-16 — Phase 13 complete, Phase 15 added to roadmap
+Plan: 4 of 6 complete
+Status: In progress
+Last activity: 2026-03-16 — Completed 13-04 (stores → domain folders)
 
 Progress: █████████░ 93%
 
@@ -54,5 +54,5 @@ Progress: █████████░ 93%
 ## Session Continuity
 
 Last session: 2026-03-16
-Stopped at: Phase 13 complete, ready for Phase 14 (View Wiring)
-Resume file: .planning/phases/13-component-conventions/13-03-SUMMARY.md
+Stopped at: Completed 13-04, ready for 13-05 (services)
+Resume file: .planning/phases/13-component-conventions/13-04-SUMMARY.md
