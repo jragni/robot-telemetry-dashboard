@@ -1,71 +1,10 @@
 import { Menu, X } from 'lucide-react';
-import { NavLink } from 'react-router';
 
-import { StatusIndicator } from '@/components/shared/StatusIndicator';
+import { ActiveRobotBadge } from './ActiveRobotBadge';
+import { NavItem } from './NavItem';
+
 import { APP_CONFIG } from '@/config/constants';
-import { cn } from '@/lib/utils';
-import { useConnectionsStore } from '@/stores/connections.store';
-import { useRosStore } from '@/stores/ros.store';
 import { useUIStore } from '@/stores/ui.store';
-
-// ---------------------------------------------------------------------------
-// NavItem helper
-// ---------------------------------------------------------------------------
-
-interface NavItemProps {
-  to: string;
-  label: string;
-}
-
-function NavItem({ to, label }: NavItemProps) {
-  return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        cn(
-          'px-3 py-1 rounded text-xs font-mono font-medium uppercase tracking-wider transition-colors',
-          isActive
-            ? 'bg-primary/15 text-primary'
-            : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-        )
-      }
-    >
-      {label}
-    </NavLink>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// ActiveRobotBadge
-// ---------------------------------------------------------------------------
-
-function ActiveRobotBadge() {
-  const activeRobot = useConnectionsStore((s) => s.getActiveRobot());
-  const connectionState = useRosStore((s) =>
-    activeRobot ? s.getConnectionState(activeRobot.id) : 'disconnected'
-  );
-
-  if (!activeRobot) {
-    return (
-      <span className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-        No robot selected
-      </span>
-    );
-  }
-
-  return (
-    <span className="hidden sm:flex items-center gap-1.5">
-      <StatusIndicator state={connectionState} />
-      <span className="font-mono text-xs text-foreground truncate max-w-[120px]">
-        {activeRobot.name}
-      </span>
-    </span>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Header
-// ---------------------------------------------------------------------------
 
 /**
  * Top navigation bar.
