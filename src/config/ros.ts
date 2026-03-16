@@ -1,16 +1,10 @@
-/**
- * ROS2 Configuration
- *
- * Minimal configuration for ROS2 communication via rosbridge_suite.
- * Topics, message types, and throttle rates are managed dynamically.
- */
+export const ROSBRIDGE_PATH = '/rosbridge' as const;
 
-// Connection settings
 export const CONNECTION_CONFIG = {
-  // Auto-reconnect on connection loss
-  autoReconnect: true,
-  // Reconnect interval in milliseconds
+  /** Milliseconds to wait before attempting a reconnect. */
   reconnectInterval: 3000,
-  // Connection timeout in milliseconds
+  /** Maximum number of reconnect attempts before giving up. */
+  maxReconnectAttempts: 3,
+  /** Milliseconds to wait for the initial connection to establish. */
   connectionTimeout: 10000,
 } as const;

@@ -5,7 +5,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": ["vite/client", "vitest/globals"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -16,7 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
+    /* Strict checks */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -24,7 +24,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    /* Path Mapping */
+    /* Path mapping */
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

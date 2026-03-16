@@ -22,13 +22,16 @@ export default defineConfig([
       jsxA11y.flatConfigs.recommended,
       importPlugin.flatConfigs.recommended,
       importPlugin.flatConfigs.typescript,
+      // prettier must be last so it overrides all formatting rules
       prettierConfig,
     ],
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 2022,
       globals: globals.browser,
       parserOptions: {
-        project: ['./tsconfig.app.json', './tsconfig.node.json'],
+        // projectService replaces the legacy project array — uses the TS
+        // language service directly so no manual tsconfig path maintenance
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -36,7 +39,8 @@ export default defineConfig([
       prettier,
     },
     rules: {
-      // Prettier integration
+      // Prettier integration (must be active after prettierConfig disables
+      // conflicting formatting rules)
       'prettier/prettier': 'error',
 
       // TypeScript strict rules
@@ -67,7 +71,7 @@ export default defineConfig([
       'prefer-arrow-callback': 'warn',
       'no-duplicate-imports': 'error',
 
-      // Import rules
+      // Import ordering
       'import/order': [
         'error',
         {
@@ -83,10 +87,11 @@ export default defineConfig([
           alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
-      'import/no-unresolved': 'off', // TypeScript handles this
-      'import/named': 'off', // TypeScript handles this
-      'import/namespace': 'off', // TypeScript handles this
-      'import/default': 'off', // TypeScript handles this
+      // TypeScript handles resolution — disable redundant import checks
+      'import/no-unresolved': 'off',
+      'import/named': 'off',
+      'import/namespace': 'off',
+      'import/default': 'off',
       'import/no-duplicates': 'error',
       'import/newline-after-import': 'warn',
 
@@ -98,7 +103,7 @@ export default defineConfig([
         { allowConstantExport: true },
       ],
 
-      // Accessibility rules (already included via jsx-a11y plugin)
+      // Accessibility
       'jsx-a11y/click-events-have-key-events': 'warn',
       'jsx-a11y/no-static-element-interactions': 'warn',
     },
