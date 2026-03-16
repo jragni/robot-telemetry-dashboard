@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import type { PlotSample } from '../data-plot.types';
 import { useDataPlot } from '../hooks/useDataPlot';
 
+import { TopicSelector } from './TopicSelector';
+
 import type { PanelComponentProps } from '@/features/panels/panel.types';
 import { NoConnectionOverlay } from '@/features/telemetry/shared';
 import { useElementSize } from '@/hooks/useElementSize';
-import { useRosStore } from '@/stores/ros.store';
-import type { TopicInfo } from '@/types';
 
 // ---------------------------------------------------------------------------
 // Chart helpers
@@ -113,39 +113,6 @@ function drawChart(
       .attr('stroke-width', 1.5)
       .attr('d', line);
   });
-}
-
-// ---------------------------------------------------------------------------
-// TopicSelector sub-component
-// ---------------------------------------------------------------------------
-
-interface TopicSelectorProps {
-  robotId: string | undefined;
-  selected: TopicInfo | null;
-  onSelect: (topic: TopicInfo | null) => void;
-}
-
-function TopicSelector({ robotId, selected, onSelect }: TopicSelectorProps) {
-  const topics = useRosStore((s) => (robotId ? s.getTopics(robotId) : []));
-
-  return (
-    <select
-      aria-label="Select topic to plot"
-      value={selected?.name ?? ''}
-      onChange={(e) => {
-        const t = topics.find((x) => x.name === e.target.value);
-        onSelect(t ?? null);
-      }}
-      className="rounded border border-border/50 bg-muted/30 px-2 py-0.5 font-mono text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-    >
-      <option value="">— select topic —</option>
-      {topics.map((t) => (
-        <option key={t.name} value={t.name}>
-          {t.name}
-        </option>
-      ))}
-    </select>
-  );
 }
 
 // ---------------------------------------------------------------------------
