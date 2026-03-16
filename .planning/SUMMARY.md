@@ -1,100 +1,153 @@
 # Overnight Build Summary — 2026-03-16
 
-## Status: In Progress (4/12 phases complete)
+## Status: ALL 12 PHASES COMPLETE
 
 ### Branch: `EPIC/v2-rebuild`
 
 ---
 
-## Completed Phases
+## Final Metrics
 
-### Phase 1: Foundation & Scaffold ✓
-**Commit:** `1fbdf1d`
-- Wiped v1 src/ completely — clean slate
-- Vite 7 + @vitejs/plugin-react v5.2 + Tailwind CSS v4
-- Zustand v5, RxJS 7.8, React Router v7
-- Vitest v4 + Playwright configured
-- ESLint 9 flat config, Prettier, Husky
-- Scalable folder structure: features/, stores/, services/, views/, types/
-- **64 tests passing**
+| Metric                | Value                                  |
+| --------------------- | -------------------------------------- |
+| **Phases completed**  | 12/12 (100%)                           |
+| **Vitest tests**      | 510 passing across 34 test files       |
+| **TypeScript errors** | 0                                      |
+| **ESLint errors**     | 0                                      |
+| **Production build**  | Successful (1.22s)                     |
+| **Source files**      | ~188 .ts/.tsx files                    |
+| **Build size**        | ~210 KB JS gzipped, ~10 KB CSS gzipped |
+| **E2E tests**         | 8 Playwright smoke tests               |
 
-**Blocker resolved:** Vite 8 incompatible with @tailwindcss/vite → stayed on Vite 7
+---
 
-### Phase 2: Design System ✓
-**Commit:** `d303732`
-- Defense-contractor OKLCH palette (dark charcoal + electric cerulean blue)
-- Dual-layer CSS: `:root` for shadcn + `@theme inline` for Tailwind utilities
-- Inter (sans) + IBM Plex Mono (mono) typography
-- 10 shadcn/ui components installed and themed
-- 3 custom components: StatusIndicator, DataCard, LoadingSpinner
-- **94 tests passing** (+30 component tests)
+## All Commits (chronological)
 
-### Phase 3: ROS Communication Layer ✓
-**Commit:** `192a1c2`
-- RosTransport: Per-robot ROSLIB.Ros wrapper with BehaviorSubject state
-- Auto-reconnect: 3 attempts, 3s interval, Zustand bridge
-- TopicSubscriber: RxJS Observable with shareReplay(refCount:true), throttleTime
-- TopicPublisher: Typed publish with advertise/unadvertise lifecycle
-- TopicDiscovery: One-shot Observable wrapping ros.getTopics
+```
+1fbdf1d  feat(01): foundation & scaffold — clean slate v2
+d303732  feat(02): design system — defense-contractor theme + shadcn
+192a1c2  feat(03): ROS communication layer — RxJS + roslib + Zustand
+7763944  feat(04): WebRTC video layer — signaling, transport, VideoFeed
+2280ea2  feat(05): panel system — grid drag & drop, registry, persistence
+f2268f2  feat(06): telemetry widgets — IMU, LiDAR, TopicList, DataPlot, DepthCamera
+03f8213  feat(07): robot control — button pad, velocity sliders, topic selector
+3f2333c  feat(08): FPOV pilot mode — immersive split-view with HUD overlay
+94afa79  feat(09): multi-robot fleet — simultaneous control, split pilot, unified commands
+bef7c77  feat(10): SLAM map — OccupancyGrid Canvas 2D renderer with d3-zoom
+9ca6a7a  feat(11): data recording & playback — IndexedDB storage, RxJS tap, export
+c76c935  feat(12): integration & polish — sidebar, header, disconnect safety, e2e
+```
+
+---
+
+## Phase-by-Phase Summary
+
+### Phase 1: Foundation & Scaffold (64 tests)
+
+- Clean slate: wiped v1 src/, fresh directory structure
+- Vite 7 + React 19 + TypeScript 5.9 + Tailwind v4
+- Zustand v5 stores (5 stores, 64 TDD tests)
+- RxJS 7.8, React Router v7, Vitest v4, Playwright
+- **Blocker resolved:** Vite 8 incompatible with @tailwindcss/vite → stayed on Vite 7
+
+### Phase 2: Design System (30 tests)
+
+- OKLCH color palette: dark charcoal + electric cerulean blue
+- Dual-layer CSS: `:root` for shadcn + `@theme inline` for Tailwind
+- Inter + IBM Plex Mono typography
+- 10 shadcn/ui components, 3 custom (StatusIndicator, DataCard, LoadingSpinner)
+
+### Phase 3: ROS Communication (75 tests)
+
+- RosTransport: Per-robot ROSLIB.Ros with BehaviorSubject + auto-reconnect
+- TopicSubscriber: RxJS Observable with shareReplay(refCount:true)
+- TopicPublisher, TopicDiscovery
 - RosServiceRegistry: Per-robot transport manager
-- ros.store extended with topics support
-- **169 tests passing** (+75 service tests)
+- RxJS → Zustand bridge pattern
 
-### Phase 4: WebRTC Video Layer ✓
-**Commit:** `7763944`
-- SignalingClient: REST SDP exchange with AbortController timeout
-- WebRTCTransport: RTCPeerConnection lifecycle, exponential backoff (2s/4s/8s)
-- Generation counter for stale-async-callback prevention
-- WebRTCServiceRegistry: Per-robot transport manager
-- VideoFeed component: <video> with srcObject binding, status overlay
-- **260 tests passing** (+91 WebRTC tests)
+### Phase 4: WebRTC Video (91 tests)
+
+- SignalingClient: REST SDP with AbortController timeout
+- WebRTCTransport: Exponential backoff, generation counter
+- VideoFeed: <video> with srcObject binding + status overlay
+
+### Phase 5: Panel System (27 tests)
+
+- react-grid-layout v2: drag & drop, resize, snap-to-grid
+- Panel registry: 8 panel types with metadata
+- Layout persistence per view in localStorage
+- Responsive: 12/6/2 columns at lg/md/sm breakpoints
+
+### Phase 6: Telemetry Widgets (63 tests)
+
+- IMU: quaternionToEuler + digital/plot views + D3 time-series
+- LiDAR: Canvas 2D polar scan rendering + zoom controls
+- Topic List: Dynamic discovery + subscribe/unsubscribe + JSON preview
+- Data Plot: Auto-detect strategy + recursive numeric path extraction
+- Depth Camera: CompressedImage base64 → Canvas drawImage + colormap
+
+### Phase 7: Robot Control (23 tests)
+
+- Button-based d-pad: forward/backward/left/right/e-stop
+- Twist message construction from direction + velocity
+- VelocitySliders + TopicSelector
+- Touch-optimized for mobile-web
+
+### Phase 8: FPOV Pilot Mode (16 tests)
+
+- Full-viewport video background with HUD overlay
+- LiDAR minimap (200x200), heading indicator, battery
+- Mobile layout: video 60dvh top, controls 40% bottom
+- Escape key + exit button navigation
+
+### Phase 9: Multi-Robot Fleet (36 tests)
+
+- Fleet overview: RobotCard grid with status + actions
+- Split pilot views: 2x2/3x2 responsive mini-pilot grid
+- Unified command: Broadcast to selected robots simultaneously
+- 8-slot fixed hook pattern for Rules of Hooks compliance
+
+### Phase 10: SLAM Map (29 tests)
+
+- OccupancyGrid parser + Canvas 2D renderer
+- d3-zoom for pan/zoom (transform in useRef, not state)
+- Robot position overlay from odometry
+- On-demand fetch pattern (bandwidth-safe)
+
+### Phase 11: Data Recording (42 tests)
+
+- RecordingService: RxJS tap into streams → IndexedDB
+- PlaybackService: Subject stream with speed-adjusted setTimeout
+- Export: JSON + CSV download with RFC 4180 escaping
+- Session management UI with topic selection
+
+### Phase 12: Integration & Polish (14 tests)
+
+- ConnectionsSidebar: Robot CRUD + status + connect/disconnect
+- Header: Navigation + active robot badge
+- Disconnect safety: E-Stop on disconnect, toast alerts
+- Responsive sidebar: Mobile overlay, desktop collapsible
+- E2E smoke tests (Playwright)
 
 ---
 
-## Decisions Made Overnight
+## Key Decisions Made
 
-| Decision | Rationale |
-|----------|-----------|
-| Stay on Vite 7 (not 8) | @tailwindcss/vite doesn't support Vite 8 yet (merged but unreleased) |
-| @vitejs/plugin-react v5.2 (not v6) | v6 requires Vite 8 |
-| `src/types/` for shared types | Research: Grafana/Total TypeScript hybrid approach beats @types or fully colocated |
-| `ComponentName.types.ts` for component types | Community standard over `definitions.ts` (non-standard) |
-| OKLCH color space throughout | Perceptually uniform, defense industry standard for status colors |
-| `:root` + `@theme inline` dual-layer | Only way to satisfy both shadcn variables and Tailwind v4 utilities |
-| Per-robot service instances | RosServiceRegistry/WebRTCServiceRegistry with Map<robotId, Transport> |
-| RxJS in service layer, NOT in Zustand | Keeps stores serializable, streams are event infrastructure not state |
-| High-freq data → useObservable directly | IMU/LiDAR bypass Zustand (would cause excessive re-renders) |
-| Low-freq state → Zustand bridge | Connection state, topics, errors go through Zustand for React |
-| Generation counter for WebRTC | Prevents stale async callbacks from superseded connection attempts |
-| Exponential backoff for WebRTC | 2s initial, doubles each retry, capped at 30s, 3 max attempts |
-| ISA-101 status colors | Green nominal, amber degraded, red critical, gray offline (defense standard) |
-
----
-
-## Test Summary
-
-| Phase | Test Files | Tests | Status |
-|-------|-----------|-------|--------|
-| Phase 1 (Stores) | 5 | 64 | ✓ All passing |
-| Phase 2 (Components) | 3 | 30 | ✓ All passing |
-| Phase 3 (ROS Services) | 5 | 75 | ✓ All passing |
-| Phase 4 (WebRTC Services) | 4 | 91 | ✓ All passing |
-| **Total** | **17** | **260** | **✓ All passing** |
-
----
-
-## Remaining Phases
-
-| Phase | Status | Description |
-|-------|--------|-------------|
-| 5. Panel System | Not started | Grid drag & drop, layout persistence |
-| 6. Telemetry Widgets | Not started | IMU, LiDAR, plotting, depth camera |
-| 7. Robot Control | Not started | Button controls, velocity, e-stop |
-| 8. FPOV Pilot Mode | Not started | Split-view pilot station, HUD |
-| 9. Multi-Robot & Fleet | Not started | Simultaneous control, fleet overview |
-| 10. SLAM Map | Not started | OccupancyGrid Canvas 2D renderer |
-| 11. Data Recording | Not started | RxJS recording, IndexedDB, export |
-| 12. Integration & Polish | Not started | E2E testing, deployment |
+| Decision                           | Rationale                                                      |
+| ---------------------------------- | -------------------------------------------------------------- |
+| Vite 7 (not 8)                     | @tailwindcss/vite peer dep incompatibility                     |
+| @vitejs/plugin-react v5.2          | v6 requires Vite 8                                             |
+| `src/types/` for shared types      | Grafana/Total TypeScript hybrid approach                       |
+| OKLCH throughout                   | Perceptually uniform, defense standard                         |
+| Per-robot service instances        | Registry pattern with Map<robotId, Transport>                  |
+| RxJS in service layer              | Keeps Zustand stores serializable                              |
+| High-freq → useObservable          | Bypasses Zustand for IMU/LiDAR (prevents excessive re-renders) |
+| Canvas 2D for LiDAR/SLAM           | 5x faster than SVG at scan point counts                        |
+| react-grid-layout v2               | Grafana-proven, responsive breakpoints, JSON serialization     |
+| On-demand SLAM fetch               | Prevents 40-600KB/update bandwidth issues                      |
+| 8-slot fixed hooks for fleet       | Rules of Hooks compliance for dynamic robot count              |
+| Generation counter for WebRTC      | Prevents stale async callbacks                                 |
+| fake-indexeddb for recording tests | jsdom has no IndexedDB                                         |
 
 ---
 
@@ -107,14 +160,26 @@ git checkout EPIC/v2-rebuild
 # See all commits
 git log --oneline
 
-# Run tests
+# Install dependencies
+npm install
+
+# Run all 510 tests
 npm test
+
+# Run E2E smoke tests
+npm run e2e
 
 # Start dev server
 npm run dev
 
 # Build for production
 npm run build
+
+# Full CI pipeline
+npm run ci
 ```
 
-*Generated: 2026-03-16 overnight autonomous build session*
+---
+
+_Completed: 2026-03-16 overnight autonomous build session_
+_12 phases, 510 tests, 0 errors_
