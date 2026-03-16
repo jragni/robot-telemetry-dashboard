@@ -1,14 +1,6 @@
-import type { ImuDerivedData } from '../imu.types';
-
-import { cn } from '@/lib/utils';
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface ImuDigitalViewProps {
-  data: ImuDerivedData;
-}
+import type { ImuDigitalViewProps } from './ImuDigitalView.types';
+import { ImuSection } from './ImuSection';
+import { MetricRow } from './MetricRow';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -16,43 +8,6 @@ interface ImuDigitalViewProps {
 
 function fmt(value: number, decimals = 2): string {
   return value.toFixed(decimals);
-}
-
-interface MetricRowProps {
-  label: string;
-  value: string;
-  unit: string;
-  valueClassName?: string;
-}
-
-function MetricRow({ label, value, unit, valueClassName }: MetricRowProps) {
-  return (
-    <div className="flex items-center justify-between gap-2 py-0.5">
-      <span className="text-xs text-muted-foreground w-24 shrink-0">
-        {label}
-      </span>
-      <span className={cn('font-mono text-xs tabular-nums', valueClassName)}>
-        {value}
-        <span className="ml-1 text-muted-foreground">{unit}</span>
-      </span>
-    </div>
-  );
-}
-
-interface SectionProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-function Section({ title, children }: SectionProps) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground pb-1 border-b border-border">
-        {title}
-      </p>
-      {children}
-    </div>
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -68,7 +23,7 @@ export function ImuDigitalView({ data }: ImuDigitalViewProps) {
   return (
     <div className="flex flex-col gap-4 p-3 overflow-auto h-full">
       {/* Orientation */}
-      <Section title="Orientation">
+      <ImuSection title="Orientation">
         <MetricRow
           label="Roll"
           value={fmt(data.roll)}
@@ -87,10 +42,10 @@ export function ImuDigitalView({ data }: ImuDigitalViewProps) {
           unit="deg"
           valueClassName="text-blue-400"
         />
-      </Section>
+      </ImuSection>
 
       {/* Linear Acceleration */}
-      <Section title="Acceleration">
+      <ImuSection title="Acceleration">
         <MetricRow
           label="X"
           value={fmt(data.accelX)}
@@ -115,10 +70,10 @@ export function ImuDigitalView({ data }: ImuDigitalViewProps) {
           unit="m/s²"
           valueClassName="text-foreground"
         />
-      </Section>
+      </ImuSection>
 
       {/* Angular Velocity */}
-      <Section title="Angular Velocity">
+      <ImuSection title="Angular Velocity">
         <MetricRow
           label="X"
           value={fmt(data.angularVelX, 4)}
@@ -143,7 +98,7 @@ export function ImuDigitalView({ data }: ImuDigitalViewProps) {
           unit="rad/s"
           valueClassName="text-foreground"
         />
-      </Section>
+      </ImuSection>
     </div>
   );
 }

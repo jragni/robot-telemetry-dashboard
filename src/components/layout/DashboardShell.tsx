@@ -1,27 +1,11 @@
 import { Outlet } from 'react-router';
 
+import { DisconnectGuard } from './DisconnectGuard';
 import { Header } from './Header';
 
 import { ConnectionsSidebar } from '@/features/connections/components/ConnectionsSidebar';
-import { useDisconnectHandler } from '@/features/connections/hooks/useDisconnectHandler';
 import { cn } from '@/lib/utils';
-import { useConnectionsStore } from '@/stores/connections.store';
 import { useUIStore } from '@/stores/ui.store';
-
-// ---------------------------------------------------------------------------
-// DisconnectGuard
-// ---------------------------------------------------------------------------
-
-/**
- * Invisible component that activates disconnect safety monitoring for the
- * currently active robot. Rendered inside DashboardShell so it is always
- * present while any dashboard view is open.
- */
-function DisconnectGuard() {
-  const activeRobotId = useConnectionsStore((s) => s.activeRobotId);
-  useDisconnectHandler(activeRobotId ?? '');
-  return null;
-}
 
 // ---------------------------------------------------------------------------
 // DashboardShell

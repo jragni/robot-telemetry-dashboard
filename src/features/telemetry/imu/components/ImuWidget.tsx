@@ -1,4 +1,3 @@
-import { BarChart3, Hash } from 'lucide-react';
 import { useState } from 'react';
 
 import { usePanelConfig, NoConnectionOverlay } from '../../shared';
@@ -8,50 +7,10 @@ import { type ImuViewMode, IMU_DEFAULT_TOPIC } from '../imu.types';
 
 import { ImuDigitalView } from './ImuDigitalView';
 import { ImuPlotView } from './ImuPlotView';
+import type { ImuPanelConfig } from './ImuWidget.types';
+import { ViewToggle } from './ViewToggle';
 
 import type { PanelComponentProps } from '@/features/panels/panel.types';
-
-// ---------------------------------------------------------------------------
-// Panel config shape
-// ---------------------------------------------------------------------------
-
-interface ImuPanelConfig {
-  topicName?: string;
-}
-
-// ---------------------------------------------------------------------------
-// View toggle button
-// ---------------------------------------------------------------------------
-
-interface ViewToggleProps {
-  viewMode: ImuViewMode;
-  onToggle: () => void;
-}
-
-function ViewToggle({ viewMode, onToggle }: ViewToggleProps) {
-  const isDigital = viewMode === 'digital';
-
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-label={isDigital ? 'Switch to plot view' : 'Switch to digital view'}
-      className="flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-    >
-      {isDigital ? (
-        <>
-          <BarChart3 className="h-3 w-3" aria-hidden="true" />
-          Plot
-        </>
-      ) : (
-        <>
-          <Hash className="h-3 w-3" aria-hidden="true" />
-          Digital
-        </>
-      )}
-    </button>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // ImuWidget
