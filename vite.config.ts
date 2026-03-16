@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import path from 'path';
 
 import tailwindcss from '@tailwindcss/vite';
@@ -43,6 +44,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/utils/setup.ts'],
+    // Exclude Playwright e2e specs from Vitest
+    exclude: ['node_modules', 'dist', 'e2e/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

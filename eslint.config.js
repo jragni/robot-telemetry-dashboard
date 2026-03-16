@@ -30,8 +30,11 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: {
         // projectService replaces the legacy project array — uses the TS
-        // language service directly so no manual tsconfig path maintenance
-        projectService: true,
+        // language service directly so no manual tsconfig path maintenance.
+        // allowDefaultProject includes files outside any tsconfig (e.g. e2e/).
+        projectService: {
+          allowDefaultProject: ['e2e/*.ts'],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },
