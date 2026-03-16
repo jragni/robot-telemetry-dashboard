@@ -19,8 +19,8 @@ let mockPc: MockPeerConnection;
 
 vi.stubGlobal(
   'RTCPeerConnection',
-  // Must use function() — arrow functions cannot be 'new'-ed
-  vi.fn(() => {
+  // eslint-disable-next-line prefer-arrow-callback -- must use function() for new-ability
+  vi.fn(function () {
     mockPc = createMockPeerConnection();
     return mockPc;
   })
@@ -31,8 +31,8 @@ vi.stubGlobal(
 // ---------------------------------------------------------------------------
 
 vi.mock('./SignalingClient', () => ({
-  // Must use function() — arrow functions cannot be 'new'-ed
-  SignalingClient: vi.fn(() => {
+  // eslint-disable-next-line prefer-arrow-callback -- must use function() for new-ability
+  SignalingClient: vi.fn(function () {
     return {
       sendOffer: vi
         .fn()
@@ -227,9 +227,9 @@ describe('WebRTCTransport', () => {
           pendingPc.localDescription = desc;
           // Do NOT fire onicegatheringstatechange — gathering stays in-progress
         });
-      // Must use function() — arrow functions cannot be 'new'-ed
       (RTCPeerConnection as ReturnType<typeof vi.fn>).mockImplementationOnce(
-        () => {
+        // eslint-disable-next-line prefer-arrow-callback -- must use function() for new-ability
+        function () {
           mockPc = pendingPc;
           return pendingPc;
         }
@@ -721,9 +721,9 @@ describe('WebRTCTransport', () => {
       // Prevent setLocalDescription from completing ICE gathering automatically
       const hangingPc = createMockPeerConnection();
       hangingPc.setLocalDescription = vi.fn().mockResolvedValue(undefined);
-      // Must use function() — arrow functions cannot be 'new'-ed
       (RTCPeerConnection as ReturnType<typeof vi.fn>).mockImplementationOnce(
-        () => {
+        // eslint-disable-next-line prefer-arrow-callback -- must use function() for new-ability
+        function () {
           mockPc = hangingPc;
           return hangingPc;
         }
@@ -773,9 +773,9 @@ describe('WebRTCTransport', () => {
       // Prevent ICE gathering from completing so the connection timeout arms
       const hangingPc = createMockPeerConnection();
       hangingPc.setLocalDescription = vi.fn().mockResolvedValue(undefined);
-      // Must use function() — arrow functions cannot be 'new'-ed
       (RTCPeerConnection as ReturnType<typeof vi.fn>).mockImplementationOnce(
-        () => {
+        // eslint-disable-next-line prefer-arrow-callback -- must use function() for new-ability
+        function () {
           mockPc = hangingPc;
           return hangingPc;
         }

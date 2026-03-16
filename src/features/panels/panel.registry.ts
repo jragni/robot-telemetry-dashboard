@@ -13,6 +13,7 @@ import {
 import { PanelPlaceholder } from './components/PanelPlaceholder';
 import type { PanelMeta, PanelTypeId } from './panel.types';
 
+import { ControlWidget } from '@/features/control';
 import { DataPlotWidget } from '@/features/telemetry/data-plot';
 import { DepthCameraWidget } from '@/features/telemetry/depth-camera';
 import { ImuWidget } from '@/features/telemetry/imu';
@@ -57,7 +58,7 @@ export const PANEL_REGISTRY: Record<PanelTypeId, PanelMeta> = {
     description: 'Manual directional control input for the robot.',
     defaultSize: { w: 4, h: 6, minW: 2, minH: 4 },
     icon: Gamepad2,
-    component: (props) => PanelPlaceholder({ ...props, typeId: 'control-pad' }),
+    component: ControlWidget,
   },
 
   'topic-list': {
