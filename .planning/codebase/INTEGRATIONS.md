@@ -1,128 +1,135 @@
 # External Integrations
 
-**Analysis Date:** 2026-03-15
+**Analysis Date:** 2026-03-16
 
 ## APIs & External Services
 
-**ROS Bridge Suite (rosbridge_websocket):**
-- Primary robot communication channel via WebSocket
-  - Client: roslib 1.4.1 (`src/hooks/ros/useRos.ts`)
-  - Configuration: `src/config/ros.ts` (CONNECTION_CONFIG)
-  - Connection management: `src/contexts/ros/RosContext.tsx`
-  - Auth: None (direct WebSocket connection)
-  - Protocol: ws:// or wss:// to `/rosbridge` path
-  - Auto-reconnect: 3 attempts at 3-second intervals
+**ROS Bridge (Robot Operating System):**
 
-**WebRTC Signaling Server (aiortc-based):**
-- Low-latency video streaming from robot cameras
-  - Client: Custom signaling client (`src/lib/webrtc/signaling.ts`)
-  - Hook: `src/hooks/webrtc/useWebRTC.ts`
-  - Configuration: `src/config/webrtc.ts`
-  - Auth: None (REST-based SDP offer/answer exchange)
-  - Endpoint: HTTP POST to `/offer` on robot's WebRTC server
-  - Auto-reconnect: 3 attempts with exponential backoff (2s-30s)
+- roslib 1.4.1 - WebSocket communication with ROS2 robots
+  - SDK/Client: roslib npm package + `@types/roslib`
+  - Auth: None (direct WebSocket connection on local network)
+  - Connection: `ws://{robotBaseUrl}/rosbridge` endpoint
+  - Config: `src/config/ros.ts` (3000ms reconnect, 10000ms timeout, 3 retries)
+  - Services:
+    - `src/services/ros/RosTransport.ts` - Connection lifecycle with auto-reconnect
+    - `src/services/ros/TopicSubscriber.ts` - RxJS Observable wrapper for topic subscription
+    - `src/services/ros/TopicPublisher.ts` - Publish Twist/control messages
+    - `src/services/ros/TopicDiscovery.ts` - Query available ROS topics
+    - `src/services/ros/RosServiceRegistry.ts` - Per-robot transport singleton manager
 
-**Google STUN Servers (NAT traversal):**
-- Used by WebRTC for peer-to-peer connection establishment
-  - `stun:stun.l.google.com:19302`
-  - `stun:stun1.l.google.com:19302`
-  - `stun:stun2.l.google.com:19302`
-  - `stun:stun3.l.google.com:19302`
-  - Config: `src/config/webrtc.ts` in `DEFAULT_ICE_SERVERS`
+**WebRTC (Video Streaming):**
+
+- Native WebRTC API - Peer-to-peer video from robot cameras
+  - SDK/Client: Browser RTCPeerConnection API
+  - Auth: None
+  - Signaling: Custom SDP exchange via `src/services/webrtc/SignalingClient.ts`
+  - Config: `src/config/webrtc.ts` (3 reconnects, 2s initial backoff, 30s max backoff, 15s timeout)
+  - Services:
+    - `src/services/webrtc/WebRTCTransport.ts` - Peer connection lifecycle with exponential backoff
+    - `src/services/webrtc/SignalingClient.ts` - REST SDP offer/answer negotiation
+    - `src/services/webrtc/WebRTCServiceRegistry.ts` - Per-robot transport singleton manager
 
 ## Data Storage
 
 **Databases:**
-- None (frontend-only application)
+
+- IndexedDB (browser) - Recording session storage
+  - Database: `rtd-recordings` (version 1)
+  - Object stores: `sessions` (metadata), `messages` (recorded topic data)
+  - Indexes: `sessionId`, `topicName`
+  - Service: `src/features/recording/recording.service.ts`
+  - Types: `src/features/recording/recording.types.ts`
+
+**Persistent State:**
+
+- Browser localStorage - UI state persistence
+  - Keys defined in `src/config/constants.ts`:
+    - `rtd-robots` - Saved robot connections
+    - `rtd-active-robot` - Currently selected robot
+    - `rtd-theme` - Dark/light theme preference
+    - `rtd-panel-layouts` - Dashboard panel arrangements
 
 **File Storage:**
-- None
+
+- Not applicable (no server-side storage)
 
 **Caching:**
-- Browser localStorage for:
-  - Robot connections list (base URLs, names) - `src/contexts/ros/RosContext.tsx`
-  - Active robot selection - `src/contexts/ros/RosContext.tsx`
-  - Theme preference - `src/components/ThemeProvider.tsx`
+
+- Not applicable
 
 ## Authentication & Identity
 
 **Auth Provider:**
-- None (no user authentication)
-- Direct connection to robot infrastructure
+
+- None - Direct-connect model, no login system
+- Explicitly out of scope per PROJECT.md
 
 ## Monitoring & Observability
 
 **Error Tracking:**
-- None (console.error/console.warn only)
+
+- None (no Sentry, Datadog, etc.)
 
 **Analytics:**
-- None
+
+- None (no Mixpanel, Segment, etc.)
 
 **Logs:**
-- Browser console only (extensive in WebRTC and ROS hooks)
-- Sonner toast notifications for user-facing errors (`src/hooks/ros/useRos.ts`)
+
+- Custom structured logger: `src/lib/logger.ts`
+  - Module-prefixed log messages with timestamps
+  - Environment-based log levels
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- GitHub Pages - Static site hosting
-  - Base path: `/robot-telemetry-dashboard/` (`vite.config.ts`)
-  - Deployment: Manual or GitHub Actions
+
+- GitHub Pages - Static site deployment
+  - Base path: `/robot-telemetry-dashboard/`
+  - Source: Vite production build
 
 **CI Pipeline:**
-- `.github/workflows/` directory exists
-- Pre-commit hooks via Husky + lint-staged
 
-## ROS Message Types Handled
+- `npm run ci` script: lint → type check → test → build
+- Pre-commit hooks via Husky + lint-staged (eslint --fix, prettier --write)
 
-**Subscribed Topics (Robot -> Dashboard):**
-- `sensor_msgs/msg/LaserScan` - LiDAR data (`src/components/telemetry/lidar/LidarCard.tsx`)
-- `sensor_msgs/msg/Imu` - IMU telemetry (`src/components/telemetry/imu/IMUCard.tsx`)
-- `sensor_msgs/CompressedImage` / `sensor_msgs/Image` - Camera feeds (`src/components/video/`)
-- `nav_msgs/Odometry` - Odometry data (topic discovery supported)
-- `sensor_msgs/BatteryState` - Battery status
+## External Network Dependencies
 
-**Published Topics (Dashboard -> Robot):**
-- `geometry_msgs/Twist` - Movement commands to `/cmd_vel` (`src/contexts/control/ControlContext.tsx`)
+**Google STUN Servers** (standard WebRTC requirement):
 
-## Communication Protocols
-
-- **WebSocket** (ws:// / wss://) - rosbridge connection for telemetry and commands
-- **WebRTC** - Peer-to-peer video with REST-based signaling
-- **HTTP/REST** - WebRTC offer/answer exchange (`src/lib/webrtc/signaling.ts`)
-
-## Robot-Side Infrastructure (Documented, Not in Repo)
-
-- **Nginx reverse proxy** - Multiplexes rosbridge (9090) and WebRTC (8080) on single port 8000
-  - Documentation: `ROBOT_NGINX_SETUP.md`
-- **ngrok tunneling** (optional) - Secure remote access
-  - Documentation: `README.md` "Remote Access with ngrok" section
-- **ROS2 Humble** on Ubuntu 22.04
-- **rosbridge_suite** WebSocket server
-- **Custom WebRTC server** (Python aiortc)
+- stun.l.google.com:19302
+- stun1.l.google.com:19302
+- stun2.l.google.com:19302
+- stun3.l.google.com:19302
+- stun4.l.google.com:19302
+- Config: `src/config/webrtc.ts`
 
 ## Environment Configuration
 
 **Development:**
-- No env vars required
-- Robot URL configured via UI at runtime
-- Works with local or remote robots
+
+- No environment variables required
+- No .env files present
+- All configuration hardcoded in `src/config/`
+- Robot connections added at runtime via UI
 
 **Production:**
-- Static deployment, no server-side configuration
-- Robot URLs stored in user's browser localStorage
 
-## Not Detected
+- Same as development (static SPA)
+- Robots connect via user-provided base URLs in the dashboard
 
-- Payment processing
-- External authentication providers
-- Third-party analytics
-- CDN services
-- Database backends
-- API gateways
-- Message brokers
+## Webhooks & Callbacks
+
+**Incoming:**
+
+- None
+
+**Outgoing:**
+
+- None
 
 ---
 
-*Integration audit: 2026-03-15*
-*Update when adding/removing external services*
+_Integration audit: 2026-03-16_
+_Update when adding/removing external services_

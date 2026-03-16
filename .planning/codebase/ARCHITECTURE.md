@@ -1,169 +1,178 @@
 # Architecture
 
-**Analysis Date:** 2026-03-15
+**Analysis Date:** 2026-03-16
 
 ## Pattern Overview
 
-**Overall:** React SPA with Context-Driven, Hooks-Based Architecture
+**Overall:** Frontend SPA with Layered Feature-Module Architecture
 
 **Key Characteristics:**
-- Single Page Application (no server-side rendering)
-- Context providers for global state management (ROS, WebRTC, Control, LidarZoom)
-- Custom hooks as data integration layer between contexts and components
-- Feature-scoped component organization
-- Real-time bidirectional communication with robots
+
+- Single-page React application with client-side routing
+- Three-layer data architecture: roslib (transport) → RxJS (streams) → Zustand (UI state)
+- Feature-module organization with self-contained domains
+- Observable-driven reactive data flow
+- Registry pattern for per-robot service instances
 
 ## Layers
 
-**Presentation Layer:**
-- Purpose: Render UI components and handle user interactions
-- Contains: React components, layouts, UI primitives
-- Location: `src/components/`, `src/layouts/`
-- Depends on: State management layer (contexts via hooks)
-- Used by: End users via browser
+**Presentation Layer (Views + Components):**
 
-**State Management Layer:**
-- Purpose: Manage global application state and connection lifecycle
-- Contains: React Context providers with state, actions, and derived values
-- Location: `src/contexts/ros/`, `src/contexts/webrtc/`, `src/contexts/control/`, `src/contexts/lidar-zoom/`
-- Depends on: Data integration layer (hooks), configuration
-- Used by: Presentation layer via context hooks
+- Purpose: Route-level pages and reusable UI components
+- Contains: View components, layout shells, shadcn/ui primitives, shared components
+- Location: `src/views/`, `src/components/layout/`, `src/components/ui/`, `src/components/shared/`
+- Depends on: Feature modules, stores
+- Used by: Router
 
-**Data Integration Layer:**
-- Purpose: Bridge between application state and external systems (ROS, WebRTC)
-- Contains: Custom React hooks managing connections, subscriptions, publications
-- Location: `src/hooks/ros/`, `src/hooks/webrtc/`, `src/hooks/control/`
-- Depends on: External libraries (roslib, WebRTC APIs), configuration
-- Used by: State management layer (contexts)
+**Feature Module Layer:**
 
-**Configuration Layer:**
-- Purpose: Connection parameters, retry logic, default values
-- Contains: TypeScript config objects
-- Location: `src/config/ros.ts`, `src/config/webrtc.ts`
+- Purpose: Domain-specific business logic, components, and hooks
+- Contains: Self-contained feature directories with components/, hooks/, types, utils
+- Location: `src/features/` (connections, control, fleet, panels, pilot-mode, recording, slam, telemetry)
+- Depends on: Services, stores, types
+- Used by: Views
+
+**State Management Layer (Zustand):**
+
+- Purpose: Reactive UI state with persistence
+- Contains: Sliced stores for connections, ROS state, WebRTC state, control, layout, UI
+- Location: `src/stores/`
+- Depends on: Types
+- Used by: Feature modules, components
+
+**Service Layer:**
+
+- Purpose: Singleton transport management and communication lifecycle
+- Contains: ROS and WebRTC transport classes, service registries
+- Location: `src/services/ros/`, `src/services/webrtc/`
+- Depends on: roslib, WebRTC browser API, RxJS, config
+- Used by: Feature hooks, stores (via bridge pattern)
+
+**Types & Config Layer:**
+
+- Purpose: Shared type definitions and application configuration
+- Contains: ROS message types, connection types, config constants
+- Location: `src/types/`, `src/config/`
 - Depends on: Nothing
-- Used by: Data integration layer
-
-**Library/Utility Layer:**
-- Purpose: Shared helpers, signaling client, UI utilities
-- Contains: WebRTC signaling client, class utilities, global helpers
-- Location: `src/lib/`, `src/utils/`
-- Depends on: External APIs (fetch, WebRTC)
-- Used by: Data integration layer, presentation layer
+- Used by: All layers
 
 ## Data Flow
 
-**Robot Connection Flow:**
+**Telemetry Data Flow (e.g., LiDAR scan):**
 
-1. User adds robot URL in `ConnectionsSidebar.tsx`
-2. `RosContext` stores connection in localStorage
-3. User clicks "Connect" in `DashboardLayout.tsx`
-4. `RosContext.connect()` -> `useRos` creates `ROSLIB.Ros` WebSocket instance
-5. `WebRTCContext.connect()` -> `useWebRTC` creates `RTCPeerConnection`
-6. Connection states propagate through contexts to all components
+1. ROS robot publishes LaserScan messages over rosbridge WebSocket
+2. `RosTransport` maintains WebSocket via roslib (`src/services/ros/RosTransport.ts`)
+3. `TopicSubscriber` wraps roslib topic as RxJS Observable with throttle (`src/services/ros/TopicSubscriber.ts`)
+4. Feature hook subscribes via `useObservable()` or direct subscription (`src/features/telemetry/lidar/hooks/useLidarData.ts`)
+5. Hook transforms raw message → domain data (e.g., polar → cartesian points)
+6. React component renders via Canvas 2D (`src/features/telemetry/lidar/hooks/useLidarCanvas.ts`)
+7. Optionally: RecordingService taps stream → IndexedDB (`src/features/recording/recording.service.ts`)
 
-**Telemetry Subscription Flow (Robot -> Dashboard):**
+**Robot Control Flow:**
 
-1. ROS topic published on robot (e.g., `/imu`, `/scan`)
-2. rosbridge_suite forwards via WebSocket
-3. `useSubscriber<T>` hook receives message, casts to typed interface
-4. Component state updated (e.g., `IMUCard`, `LidarCard`)
-5. D3.js visualizations re-render with new data
+1. User interacts with ControlWidget buttons (`src/features/control/components/ControlWidget.tsx`)
+2. Actions update `control.store` (velocity, direction) (`src/stores/control.store.ts`)
+3. `useControlPublisher` hook reads store, builds Twist message (`src/features/control/hooks/useControlPublisher.ts`)
+4. `TopicPublisher` sends Twist to ROS topic (`src/services/ros/TopicPublisher.ts`)
+5. Robot receives command via rosbridge → motor controller
 
-**Control Command Flow (Dashboard -> Robot):**
+**Connection Lifecycle:**
 
-1. User presses direction button in `ControlPanel.tsx`
-2. `ControlContext.sendTwistCommand()` constructs `geometry_msgs/Twist`
-3. `usePublisher` hook publishes via `ROSLIB.Topic`
-4. Message sent over WebSocket to rosbridge
-5. Robot receives and executes movement command
-
-**Video Stream Flow:**
-
-1. `WebRTCContext` triggers connection via `useWebRTC`
-2. `SignalingClient` exchanges SDP offer/answer via REST (`src/lib/webrtc/signaling.ts`)
-3. `RTCPeerConnection.ontrack` fires with `MediaStream`
-4. `WebRTCVideo.tsx` renders stream in `<video>` element
+1. User adds robot via `ConnectionsSidebar` → `connections.store.addRobot()` → persisted to localStorage
+2. User selects robot → `setActiveRobot()` triggers connection
+3. `RosServiceRegistry` creates/reuses `RosTransport` for robot ID
+4. Transport connects with auto-reconnect → emits `connectionState$` BehaviorSubject
+5. `ros.store` updates per-robot connection state for UI consumption
 
 **State Management:**
-- Connection state: React Context (in-memory)
-- Robot configurations: Browser localStorage (persistent)
-- Theme preference: Browser localStorage (persistent)
-- No server-side state
+
+- Zustand stores: Serializable UI state with `persist` middleware → localStorage
+- RxJS streams: High-frequency data (IMU/LiDAR) bypasses Zustand via `useObservable()` hook to prevent re-render floods
+- Bridge pattern: `RxJS → Zustand` for data that React components need reactively
 
 ## Key Abstractions
 
-**Context Provider:**
-- Purpose: Encapsulate domain-specific global state
-- Examples: `RosContext`, `WebRTCContext`, `ControlContext`, `LidarZoomContext`
-- Pattern: createContext + Provider component + useContext hook
-- Convention: Each throws error if used outside Provider
+**Transport (RosTransport, WebRTCTransport):**
 
-**Generic Subscriber/Publisher Hooks:**
-- Purpose: Type-safe ROS topic communication
-- Examples: `useSubscriber<ImuMessage>`, `usePublisher<TwistMessage>`
-- Pattern: Generics with `<T = unknown>` default
-- Features: Conditional enabling, throttling, cleanup on unmount
+- Purpose: Abstract connection lifecycle with retry logic
+- Examples: `src/services/ros/RosTransport.ts`, `src/services/webrtc/WebRTCTransport.ts`
+- Pattern: BehaviorSubject state emission, exponential backoff, generation counter for stale callbacks
 
-**Signaling Client:**
-- Purpose: WebRTC SDP exchange abstraction
-- Location: `src/lib/webrtc/signaling.ts`
-- Pattern: Event emitter with typed events
-- Features: Server availability check, connection timeout
+**Service Registry (RosServiceRegistry, WebRTCServiceRegistry):**
+
+- Purpose: Singleton managers for per-robot transport instances
+- Examples: `src/services/ros/RosServiceRegistry.ts`, `src/services/webrtc/WebRTCServiceRegistry.ts`
+- Pattern: Map<robotId, Transport> with create-on-first-access, proper cleanup
+
+**Panel Registry:**
+
+- Purpose: Declarative widget type system for dashboard panels
+- Examples: `src/features/panels/panel.registry.ts`
+- Pattern: Map of PanelTypeId → PanelMeta (title, icon, default size, component)
 
 **Feature Module:**
-- Purpose: Self-contained domain (IMU, LiDAR, Control, etc.)
-- Structure: Main component + sub-components + definitions.ts + helpers.ts
-- Pattern: Each feature owns its types and helpers
+
+- Purpose: Self-contained domain with components, hooks, types
+- Examples: `src/features/telemetry/lidar/`, `src/features/control/`, `src/features/recording/`
+- Pattern: `{feature}/components/`, `{feature}/hooks/`, `{feature}/index.ts` barrel export
 
 ## Entry Points
 
-**Application Entry:**
-- Location: `src/main.tsx`
-- Triggers: Browser loads `index.html`
-- Responsibilities: Mount React app to DOM
+**Application:**
 
-**Root Component:**
+- Location: `index.html` → `src/main.tsx`
+- Triggers: Browser page load
+- Responsibilities: Create React root, render `<App />`
+
+**App Component:**
+
 - Location: `src/App.tsx`
 - Triggers: React render
-- Responsibilities: Context provider tree (ThemeProvider -> RosProvider -> WebRTCProvider -> ControlProvider -> LidarZoomProvider), layout routing
+- Responsibilities: TooltipProvider + AppShell + Sonner toast
 
-**Main Layout:**
-- Location: `src/layouts/DashboardLayout.tsx`
-- Triggers: App render
-- Responsibilities: Dashboard vs Pilot Mode switching, connection orchestration, responsive layout
+**Router:**
+
+- Location: `src/router/index.tsx`
+- Triggers: URL navigation
+- Routes:
+  - `/` → redirect to `/dashboard`
+  - `/dashboard` → DashboardShell + DashboardView
+  - `/fleet` → DashboardShell + FleetView
+  - `/map` → DashboardShell + MapView
+  - `/pilot/:robotId` → PilotView (fullscreen, no shell)
+  - `*` → NotFoundView
 
 ## Error Handling
 
-**Strategy:** Hook-level error capture with context-level state propagation and user-facing toasts
+**Strategy:** RxJS error callbacks at subscription boundaries, Zustand error state per robot
 
 **Patterns:**
-- Connection errors: State set to `'error'`, toast notification via Sonner
-- Hook errors: `{ error, loading }` return pattern
-- Async errors: try-catch in hooks, console.error for debugging
-- Reconnection: Automatic retry with configurable limits (3 attempts)
+
+- Transport services: Exponential backoff retry with max attempts, error state in BehaviorSubject
+- Connection errors: Stored per-robot in `ros.store` and `webrtc.store` with message + timestamp
+- Disconnect safety: `DisconnectGuard` in `DashboardShell.tsx` triggers e-stop on connection loss
+- UI feedback: Sonner toast notifications for connection events
+- Recording: `console.error` in hooks (should use structured logger)
 
 ## Cross-Cutting Concerns
 
 **Logging:**
-- Console.log/warn/error throughout hooks (development-oriented)
-- Sonner toast notifications for user-facing messages
-- No structured logging framework
+
+- Custom logger utility: `src/lib/logger.ts`
+- Module-prefixed messages with environment-based log levels
+- Note: Some features still use `console.error` directly
 
 **Validation:**
-- TypeScript type casting for ROS messages (no runtime validation)
-- Connection URL validation in UI
 
-**Theme:**
-- next-themes with dark/light/system modes
-- CSS custom properties via Tailwind
-- Persisted in localStorage
+- TypeScript strict mode enforces compile-time type safety
+- No runtime schema validation (Zod not used)
+- Input validated at component level (form inputs for robot connections)
 
-**Responsiveness:**
-- `use-mobile` hook for breakpoint detection
-- Resizable panels (desktop) vs stacked layout (mobile)
-- Separate pilot mode layouts for desktop/mobile
+**Authentication:**
+
+- None — explicitly out of scope. Direct-connect model on local networks.
 
 ---
 
-*Architecture analysis: 2026-03-15*
-*Update when major patterns change*
+_Architecture analysis: 2026-03-16_
+_Update when major patterns change_

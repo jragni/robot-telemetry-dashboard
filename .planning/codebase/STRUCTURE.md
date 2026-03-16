@@ -1,210 +1,235 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-03-15
+**Analysis Date:** 2026-03-16
 
 ## Directory Layout
 
 ```
 robot-telemetry-dashboard/
-├── public/                    # Static assets
-├── src/                       # Application source code
-│   ├── main.tsx              # Vite entry point
-│   ├── App.tsx               # Root component with context providers
-│   ├── style.css             # Global styles (Tailwind imports)
-│   ├── vite-env.d.ts         # Vite type declarations
-│   │
-│   ├── layouts/              # Page-level layouts
-│   ├── components/           # Feature-scoped React components
-│   │   ├── ui/              # Shadcn/Radix UI primitives
-│   │   ├── connections/     # Robot connection management
-│   │   ├── control/         # Robot movement controls
-│   │   ├── telemetry/       # Sensor data visualization
-│   │   │   ├── imu/        # IMU telemetry
-│   │   │   ├── lidar/      # LiDAR visualization
-│   │   │   └── topics/     # Generic topic inspector
-│   │   ├── pilot-mode/      # Immersive teleoperation
-│   │   ├── video/           # WebRTC video display
-│   │   └── ThemeProvider.tsx
-│   │
-│   ├── contexts/             # React Context providers
-│   │   ├── ros/             # ROS connection management
-│   │   ├── webrtc/          # Video streaming state
-│   │   ├── control/         # Robot movement state
-│   │   └── lidar-zoom/     # LiDAR zoom sync
-│   │
-│   ├── hooks/                # Custom React hooks
-│   │   ├── ros/             # ROS communication hooks
-│   │   ├── webrtc/          # WebRTC hooks
-│   │   ├── control/         # Control-specific hooks
-│   │   └── use-mobile.ts   # Responsive breakpoint hook
-│   │
-│   ├── lib/                  # Library code
-│   │   ├── webrtc/          # WebRTC signaling client
-│   │   └── utils.ts         # Class utilities (cn)
-│   │
-│   ├── config/               # Application configuration
-│   │   ├── ros.ts           # ROS connection settings
-│   │   └── webrtc.ts        # WebRTC settings
-│   │
-│   └── utils/                # Utility functions
-│       └── globalHelpers.ts # Shared helpers (clamp, etc.)
-│
-├── .husky/                    # Git hooks
-├── .github/                   # GitHub workflows
-├── index.html                 # HTML entry point
-├── vite.config.ts             # Build configuration
-├── tsconfig.json              # TypeScript config (references)
-├── tsconfig.app.json          # App TypeScript config
-├── eslint.config.js           # ESLint flat config
-├── .prettierrc                # Prettier config
-├── components.json            # shadcn/ui config
-├── package.json               # Dependencies and scripts
-├── package-lock.json          # Lockfile
-├── README.md                  # Project documentation
-├── ROBOT_NGINX_SETUP.md       # Robot-side nginx setup guide
-└── CLAUDE.md                  # Claude Code instructions
+├── .planning/              # GSD project planning documents
+│   └── codebase/          # Codebase analysis (this directory)
+├── e2e/                    # Playwright E2E tests
+├── public/                 # Static assets
+├── src/                    # Application source code
+│   ├── @types/            # Ambient type declarations
+│   ├── assets/            # Static assets (images, etc.)
+│   ├── components/        # Shared React components
+│   │   ├── layout/       # App shells and navigation
+│   │   ├── shared/       # Reusable domain components
+│   │   └── ui/           # shadcn/ui primitives
+│   ├── config/            # Application configuration
+│   ├── features/          # Feature modules (domain logic)
+│   │   ├── connections/  # Robot connection management
+│   │   ├── control/      # Movement control
+│   │   ├── fleet/        # Multi-robot overview
+│   │   ├── panels/       # Dashboard panel grid system
+│   │   ├── pilot-mode/   # FPOV operator interface
+│   │   ├── recording/    # Data recording & playback
+│   │   ├── slam/         # SLAM map visualization
+│   │   └── telemetry/    # Sensor visualization
+│   │       ├── data-plot/
+│   │       ├── depth-camera/
+│   │       ├── imu/
+│   │       ├── lidar/
+│   │       ├── shared/
+│   │       └── topic-list/
+│   ├── hooks/             # App-wide custom hooks
+│   ├── lib/               # Shared utilities
+│   ├── router/            # React Router configuration
+│   ├── services/          # Business logic services
+│   │   ├── ros/          # ROS communication
+│   │   └── webrtc/       # WebRTC video streaming
+│   ├── stores/            # Zustand state stores
+│   ├── streams/           # RxJS stream definitions
+│   ├── test/              # Test utilities & mocks
+│   │   ├── mocks/        # Mock factories
+│   │   └── utils/        # Test setup
+│   ├── types/             # Shared TypeScript types
+│   └── views/             # Route-level view components
+├── eslint.config.js        # ESLint flat config
+├── index.html              # HTML entry point
+├── package.json            # Dependencies and scripts
+├── playwright.config.ts    # Playwright E2E config
+├── tsconfig.app.json       # TypeScript config (app)
+├── tsconfig.json           # TypeScript project references
+├── tsconfig.node.json      # TypeScript config (tooling)
+└── vite.config.ts          # Vite + Vitest config
 ```
 
 ## Directory Purposes
 
-**src/layouts/**
-- Purpose: Page-level layout components
-- Contains: `DashboardLayout.tsx` (main), `PilotModeLayout.tsx` (immersive), `Header.tsx` (nav bar)
-- Key files: `DashboardLayout.tsx` - primary application layout with resizable panels
-- Subdirectories: None
+**src/components/layout/**
 
-**src/components/connections/**
-- Purpose: Robot connection management UI
-- Contains: Sidebar, add/edit modals, robot list, delete confirmation
-- Key files: `ConnectionsSidebar.tsx`, `AddRobotModal.tsx`, `RobotList.tsx`, `DeleteRobotDialog.tsx`
-
-**src/components/control/**
-- Purpose: Robot movement control interface
-- Contains: Gamepad-style controls, velocity sliders, topic selector
-- Key files: `ControlPanel.tsx`, `VelocitySliders.tsx`, `TopicSelector.tsx`
-
-**src/components/telemetry/**
-- Purpose: Sensor data visualization
-- Contains: IMU, LiDAR, and generic topic display
-- Subdirectories: `imu/` (IMU card + plot), `lidar/` (LiDAR card + canvas), `topics/` (topic list)
-
-**src/components/pilot-mode/**
-- Purpose: Immersive teleoperation mode
-- Contains: Desktop/mobile layouts, pilot controls, video feed, LiDAR minimap
-- Key files: `PilotModeLayoutDesktop.tsx`, `PilotControlPanel.tsx`, `PilotVideoFeed.tsx`
-
-**src/components/video/**
-- Purpose: WebRTC video stream display
-- Key files: `WebRTCVideo.tsx`
+- Purpose: Application shell and navigation components
+- Contains: `AppShell.tsx`, `DashboardShell.tsx`, `Header.tsx`
+- Key pattern: DashboardShell wraps non-pilot routes with sidebar + header
 
 **src/components/ui/**
-- Purpose: Reusable shadcn/Radix UI primitive components
-- Contains: Button, Card, Dialog, Select, Slider, Tooltip, Sidebar, etc.
-- Note: These are generated/managed by shadcn CLI
 
-**src/contexts/**
-- Purpose: Global state management via React Context
-- Structure: Each subdirectory has `*Context.tsx` + `definitions.ts` + `helpers.ts`
-- Subdirectories: `ros/`, `webrtc/`, `control/`, `lidar-zoom/`
+- Purpose: shadcn/ui primitive components themed to defense-contractor aesthetic
+- Contains: Button, Card, Dialog, Select, Input, Tooltip, Slider, AlertDialog, Label, Separator
+- Key pattern: Built on Radix UI, styled with Tailwind + CVA variants
 
-**src/hooks/**
-- Purpose: Custom React hooks for data integration
-- Structure: Domain-organized matching contexts
-- Subdirectories: `ros/` (useRos, useSubscriber, usePublisher, useTopics), `webrtc/` (useWebRTC), `control/` (useAvailableControlTopics)
+**src/components/shared/**
 
-**src/lib/**
-- Purpose: Non-React library code
-- Key files: `webrtc/signaling.ts` (WebRTC signaling client), `utils.ts` (cn class utility)
+- Purpose: Reusable domain-specific components
+- Contains: `StatusIndicator.tsx`, `DataCard.tsx`, `LoadingSpinner.tsx`
+
+**src/features/**
+
+- Purpose: Self-contained feature modules with components, hooks, types
+- Contains: One directory per feature domain
+- Key pattern: Each feature has `components/`, `hooks/`, `{feature}.types.ts`, `index.ts` barrel
+
+**src/services/**
+
+- Purpose: Singleton transport and communication services
+- Contains: ROS and WebRTC transport classes, registries
+- Key pattern: Registry → Transport → RxJS Observable emission
+
+**src/stores/**
+
+- Purpose: Zustand state management stores
+- Contains: `connections.store.ts`, `ros.store.ts`, `webrtc.store.ts`, `control.store.ts`, `layout.store.ts`, `ui.store.ts`, `index.ts`
+- Key pattern: Persist middleware for localStorage, devtools for debugging
+
+**src/types/**
+
+- Purpose: Shared TypeScript type definitions
+- Contains: `connection.types.ts`, `ros-messages.ts`, `index.ts`
+- Key pattern: ROS message types (Twist, LaserScan, IMU, OccupancyGrid, etc.)
 
 **src/config/**
-- Purpose: Application configuration constants
-- Key files: `ros.ts` (connection params, retry config), `webrtc.ts` (STUN servers, reconnect limits)
+
+- Purpose: Application constants and service configuration
+- Contains: `constants.ts`, `ros.ts`, `webrtc.ts`
+
+**src/hooks/**
+
+- Purpose: App-wide custom React hooks
+- Contains: `useObservable.ts`, `useElementSize.ts`, `use-mobile.ts`
+
+**src/lib/**
+
+- Purpose: Shared utility functions
+- Contains: `logger.ts` (structured logging), `utils.ts` (cn() class merge)
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/main.tsx` - Application bootstrap, mounts React to DOM
-- `src/App.tsx` - Root component, context provider tree
-- `src/layouts/DashboardLayout.tsx` - Main layout orchestrator
+
+- `index.html` - HTML shell
+- `src/main.tsx` - React root creation
+- `src/App.tsx` - App component with providers
+- `src/router/index.tsx` - Route definitions
 
 **Configuration:**
-- `vite.config.ts` - Build config, path aliases, roslib workaround
-- `tsconfig.app.json` - TypeScript strict config, ES2022 target
-- `eslint.config.js` - ESLint 9 flat config
-- `.prettierrc` - Formatting rules
-- `components.json` - shadcn/ui component config
+
+- `vite.config.ts` - Build + test config
+- `tsconfig.app.json` - TypeScript strict config
+- `eslint.config.js` - Linting rules
+- `.prettierrc` - Code formatting
+- `playwright.config.ts` - E2E test config
 
 **Core Logic:**
-- `src/contexts/ros/RosContext.tsx` - ROS connection lifecycle
-- `src/contexts/webrtc/WebRTCContext.tsx` - WebRTC stream management
-- `src/contexts/control/ControlContext.tsx` - Robot movement commands
-- `src/hooks/ros/useRos.ts` - ROS bridge connection with auto-reconnect
-- `src/hooks/webrtc/useWebRTC.ts` - WebRTC peer connection management
-- `src/lib/webrtc/signaling.ts` - WebRTC SDP signaling client
 
-**Type Definitions:**
-- `src/contexts/ros/definitions.ts` - ROS message types (Twist, Imu, LaserScan, etc.)
-- `src/contexts/webrtc/definitions.ts` - WebRTC state types
-- `src/contexts/control/definitions.ts` - Control state and direction types
-- `src/contexts/lidar-zoom/definitions.ts` - LiDAR zoom types
+- `src/services/ros/RosTransport.ts` - ROS connection lifecycle
+- `src/services/ros/RosServiceRegistry.ts` - Per-robot transport manager
+- `src/services/webrtc/WebRTCTransport.ts` - WebRTC connection lifecycle
+- `src/features/panels/panel.registry.ts` - Widget type registry
+- `src/features/recording/recording.service.ts` - IndexedDB recording engine
 
 **Testing:**
-- No test files or test configuration present
+
+- `src/test/utils/setup.ts` - Global test setup
+- `src/test/mocks/roslib.mock.ts` - ROS mock factory
+- `src/test/mocks/webrtc.mock.ts` - WebRTC mock factory
+- `e2e/smoke.spec.ts` - E2E navigation tests
 
 ## Naming Conventions
 
 **Files:**
-- PascalCase.tsx: React components (`ControlPanel.tsx`, `IMUCard.tsx`, `WebRTCVideo.tsx`)
-- kebab-case.tsx: shadcn/ui primitives (`alert-dialog.tsx`, `field.tsx`)
-- camelCase.ts: Hooks (`useRos.ts`, `useSubscriber.ts`), helpers (`globalHelpers.ts`)
-- lowercase.ts: Config files (`ros.ts`, `webrtc.ts`)
-- definitions.ts / helpers.ts / constants.ts: Per-feature support files
+
+- `PascalCase.tsx` - React components (e.g., `LidarWidget.tsx`, `PilotLayout.tsx`)
+- `camelCase.ts` with `use` prefix - Hooks (e.g., `useLidarData.ts`, `useControlPublisher.ts`)
+- `kebab-case.store.ts` - Zustand stores (e.g., `ros.store.ts`, `layout.store.ts`)
+- `PascalCase.ts` - Service classes (e.g., `RosTransport.ts`, `RecordingService.ts`)
+- `kebab-case.types.ts` - Type files (e.g., `panel.types.ts`, `recording.types.ts`)
+- `kebab-case.utils.ts` - Utility files (e.g., `slam.utils.ts`, `export.utils.ts`)
+- `*.test.ts` / `*.test.tsx` - Test files co-located with source
 
 **Directories:**
-- kebab-case: All directories (`pilot-mode/`, `lidar-zoom/`)
-- Feature-organized: Grouped by domain, not by type
+
+- kebab-case for all directories (e.g., `pilot-mode/`, `data-plot/`, `topic-list/`)
+- Feature modules: `{feature}/components/`, `{feature}/hooks/`
 
 **Special Patterns:**
-- No index.ts barrel files (direct imports)
-- `definitions.ts` for type exports per feature
-- `helpers.ts` for feature-specific utilities (many are placeholder)
+
+- `index.ts` barrel files for public API exports per feature
+- `$` suffix for RxJS Observables (e.g., `connectionState$`, `mediaStream$`)
+- `use{Feature}` naming for custom hooks
 
 ## Where to Add New Code
 
-**New Telemetry Sensor:**
-- Component: `src/components/telemetry/{sensor-name}/`
-- Types: `src/components/telemetry/{sensor-name}/definitions.ts`
-- Subscribe via: `useSubscriber<SensorMessage>` in component
+**New Feature:**
 
-**New Context Provider:**
-- Implementation: `src/contexts/{domain}/`
-- Files: `{Domain}Context.tsx` + `definitions.ts` + `helpers.ts`
-- Wire up in: `src/App.tsx` provider tree
+- Primary code: `src/features/{feature-name}/`
+- Components: `src/features/{feature-name}/components/`
+- Hooks: `src/features/{feature-name}/hooks/`
+- Types: `src/features/{feature-name}/{feature-name}.types.ts`
+- Barrel: `src/features/{feature-name}/index.ts`
+- Tests: Co-located `*.test.ts` files
 
-**New Custom Hook:**
-- Implementation: `src/hooks/{domain}/use{HookName}.ts`
-- Follow patterns in existing hooks (useSubscriber, usePublisher)
+**New Panel Widget:**
 
-**New UI Component:**
-- shadcn primitive: `src/components/ui/` (use shadcn CLI)
-- Feature component: `src/components/{feature}/`
+- Widget component: `src/features/{domain}/components/{Name}Widget.tsx`
+- Register in: `src/features/panels/panel.registry.ts`
+- Default layout: `src/features/panels/panel.defaults.ts`
 
-**New Configuration:**
-- Config: `src/config/{domain}.ts`
+**New Zustand Store:**
+
+- Store: `src/stores/{name}.store.ts`
+- Tests: `src/stores/{name}.store.test.ts`
+- Export from: `src/stores/index.ts`
+
+**New ROS Service:**
+
+- Service: `src/services/ros/{Name}.ts`
+- Tests: `src/services/ros/{Name}.test.ts`
+- Export from: `src/services/ros/index.ts`
+
+**New View/Route:**
+
+- View: `src/views/{Name}View.tsx`
+- Route: Add to `src/router/index.tsx`
+
+**Utilities:**
+
+- Shared helpers: `src/lib/`
+- Shared types: `src/types/`
+- Shared hooks: `src/hooks/`
 
 ## Special Directories
 
-**src/components/ui/**
-- Purpose: Generated shadcn/ui components
-- Source: Generated via shadcn CLI (`components.json` config)
-- Committed: Yes
-- Note: Should not be manually edited extensively
+**src/@types/**
 
-**.husky/**
-- Purpose: Git pre-commit hooks (lint-staged)
+- Purpose: Ambient type declarations for untyped modules
 - Committed: Yes
+- Note: Reserved for `.d.ts` files only
+
+**src/test/**
+
+- Purpose: Test infrastructure (setup, mocks)
+- Committed: Yes
+- Note: Not for actual test files (those are co-located)
+
+**.planning/**
+
+- Purpose: GSD project planning and codebase analysis
+- Committed: Yes
+- Note: Contains roadmap, state, summaries, codebase docs
 
 ---
 
-*Structure analysis: 2026-03-15*
-*Update when directory structure changes*
+_Structure analysis: 2026-03-16_
+_Update when directory structure changes_

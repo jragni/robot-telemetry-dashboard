@@ -1,158 +1,166 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-03-15
+**Analysis Date:** 2026-03-16
 
 ## Naming Patterns
 
 **Files:**
-- PascalCase.tsx for React components (`ConnectionsSidebar.tsx`, `IMUCard.tsx`)
-- kebab-case.tsx for shadcn/ui primitives (`alert-dialog.tsx`, `field.tsx`)
-- camelCase.ts with `use` prefix for hooks (`useRos.ts`, `useSubscriber.ts`)
-- camelCase.ts for utilities and config (`globalHelpers.ts`, `ros.ts`)
-- `definitions.ts`, `helpers.ts`, `constants.ts` for per-feature support files
+
+- PascalCase.tsx for React components (`LidarWidget.tsx`, `PilotLayout.tsx`)
+- camelCase with `use` prefix for hooks (`useLidarData.ts`, `useControlPublisher.ts`)
+- kebab-case.store.ts for stores (`ros.store.ts`, `layout.store.ts`)
+- PascalCase.ts for service classes (`RosTransport.ts`, `RecordingService.ts`)
+- kebab-case.types.ts for types (`panel.types.ts`, `recording.types.ts`)
+- kebab-case.utils.ts for utilities (`slam.utils.ts`, `export.utils.ts`)
+- \*.test.ts co-located alongside source files
 
 **Functions:**
-- camelCase for all functions (`deriveRosbridgeUrl`, `extractBaseUrl`)
-- `on` prefix for event handlers (`onConnect`, `onClose`, `onTogglePilotMode`)
-- `handle` prefix for UI interaction handlers (`handleDirectionPress`)
-- `use` prefix for custom hooks (`useRos`, `useSubscriber`)
-- No special prefix for async functions
+
+- camelCase for all functions
+- `handle{Action}` for event handlers
+- `use{Feature}` for custom hooks
+- `create{Thing}` for factory functions (`createTopicSubscription`, `createLogger`)
 
 **Variables:**
-- camelCase for variables (`connectionState`, `activeRobotId`, `linearVelocity`)
-- UPPER_SNAKE_CASE for constants (`STORAGE_KEY_ROBOTS`, `VELOCITY_LIMITS`, `CMD_VEL_MESSAGE_TYPE`)
-- Underscore prefix for intentionally unused params (ESLint: `argsIgnorePattern: '^_'`)
-- `const` preferred over `let` (ESLint: `prefer-const: 'error'`)
+
+- camelCase for variables
+- UPPER_SNAKE_CASE for constants (`TOPIC_THROTTLE_MS`, `DEFAULT_ICE_SERVERS`)
+- `$` suffix for RxJS Observables (`connectionState$`, `mediaStream$`)
 
 **Types:**
-- PascalCase for interfaces and types, no `I` prefix
-- `*Message` suffix for ROS message types (`TwistMessage`, `ImuMessage`, `LaserScanMessage`)
-- `*Props` suffix for component props (`ConnectionsSidebarProps`, `ControlPanelProps`)
-- `*State` suffix for state objects (`ControlState`)
-- `*Config` suffix for configuration objects (`UseSubscriberConfig`)
-- `*ContextValue` suffix for context values (`RosContextValue`, `WebRTCContextValue`)
-- Union string literals for states: `type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error'`
+
+- PascalCase for interfaces and type aliases (`RobotConnection`, `ConnectionState`)
+- No `I` prefix on interfaces
+- Suffix with `Props`, `State`, `Actions` for component/store types
+- `PanelTypeId` union type for panel identifiers
 
 ## Code Style
 
-**Formatting (`.prettierrc`):**
-- Prettier with `.prettierrc` config
+**Formatting:**
+
+- Prettier via `.prettierrc`
 - 80 character line length
 - Single quotes for strings
 - Semicolons required
-- 2 space indentation
-- Trailing commas in ES5 positions
-- Arrow function parentheses always required
-- LF line endings
+- 2-space indentation
+- Arrow parens: always
+- End of line: LF
 
-**Linting (`eslint.config.js`):**
-- ESLint 9 with flat config format
-- typescript-eslint with strict type checking
-- `@typescript-eslint/no-explicit-any: 'error'` - No `any` types allowed
-- `@typescript-eslint/consistent-type-imports: 'warn'` - Use `import type`
-- `prefer-const: 'error'`
-- react-hooks/exhaustive-deps as warning
-- jsx-a11y accessibility rules
-- eslint-plugin-import with alphabetized ordering
-- eslint-config-prettier to avoid conflicts
-- Run: `npm run lint` / `npm run lint:fix`
+**Linting:**
 
-**Pre-commit (Husky + lint-staged):**
-- `.ts`/`.tsx` files: eslint --fix then prettier --write
-- `.js`/`.jsx`/`.json`/`.css`/`.md` files: prettier --write only
+- ESLint 9 flat config (`eslint.config.js`)
+- Extends: typescript-eslint strict type checking
+- Key rules:
+  - `@typescript-eslint/no-explicit-any`: error
+  - `@typescript-eslint/no-floating-promises`: error
+  - `@typescript-eslint/no-misused-promises`: error
+  - `@typescript-eslint/consistent-type-imports`: prefer type-imports
+  - `eqeqeq`: always
+  - `no-var`: error
+  - `prefer-const`: error
+  - `no-debugger`: error
+- Plugins: react-hooks, react-refresh, jsx-a11y, import, prettier
+- Run: `npm run lint`
 
 ## Import Organization
 
-**Order (enforced by eslint-plugin-import):**
-1. Builtin modules
-2. External packages (`react`, `roslib`, `d3`)
-3. Internal absolute paths (`@/hooks/...`, `@/contexts/...`)
-4. Parent directories (`../`)
-5. Sibling files (`./`)
-6. Index files
+**Order:**
+
+1. External packages (react, rxjs, zustand, d3)
+2. Internal modules (@/lib, @/stores, @/services)
+3. Relative imports (./components, ../hooks)
+4. Type imports (import type {})
 
 **Grouping:**
-- Alphabetized within each group
-- Blank line between groups
 
-**Type Imports:**
-- `import type { SomeType } from 'module'` pattern enforced
-- Separate from value imports
+- Blank line between groups
+- eslint-plugin-import enforces ordering with newlines between: builtin, external, internal, parent, sibling, index
 
 **Path Aliases:**
+
 - `@/` maps to `src/` (configured in `tsconfig.app.json` and `vite.config.ts`)
 
 ## Error Handling
 
 **Patterns:**
-- try-catch in hooks and async operations
-- Error state stored in hook return: `{ data, loading, error }`
-- Context-level connection states: `'disconnected' | 'connecting' | 'connected' | 'error'`
-- Errors logged: `console.error()` for debugging
-- User-facing: Sonner toast notifications (`toast.error()`)
 
-**Connection Errors:**
-- Automatic retry with configurable max attempts (3)
-- ROS: Fixed interval retry (3s)
-- WebRTC: Exponential backoff (2s-30s)
-- Manual disconnect prevents auto-reconnect
+- RxJS: Error callbacks in `.subscribe({ error: ... })` at subscription boundaries
+- Transports: Exponential backoff retry with max attempts, BehaviorSubject error state
+- Stores: Per-robot error state with message + timestamp
+- UI: Sonner toast notifications for user-visible errors
+- Disconnect safety: `DisconnectGuard` component triggers e-stop on connection loss
+
+**Error Types:**
+
+- Connection errors stored in Zustand stores per robot
+- Transport errors emit via RxJS BehaviorSubject
+- Recording errors caught in try/catch within async handlers
 
 ## Logging
 
 **Framework:**
-- Browser console (console.log, console.warn, console.error)
-- No structured logging library
+
+- Custom structured logger: `src/lib/logger.ts`
+- Factory: `createLogger(moduleName)` returns prefixed logger instance
 
 **Patterns:**
-- Extensive logging in connection hooks (development-oriented)
-- Toast notifications for user-facing status/errors
-- No log levels or environment-based filtering
+
+- Module-prefixed messages: `[RosTransport] Connected to robot-1`
+- Environment-based log levels
+- Note: Some recording hooks still use `console.error` directly (should migrate)
 
 ## Comments
 
 **When to Comment:**
-- JSDoc-style file headers for major modules
-- JSDoc with `@param`, `@returns`, `@example` for utility functions
-- Inline comments for non-obvious logic
-- Minimal commenting overall - code is self-documenting
+
+- Section headers with 79-char separator lines (`// -------- Section Name --------`)
+- JSDoc for public API functions with `@example` tags
+- Inline comments for non-obvious logic (ROS workarounds, browser API quirks)
+
+**JSDoc/TSDoc:**
+
+- Used on public service methods and exported hooks
+- `@param`, `@returns` tags on complex functions
 
 **TODO Comments:**
+
 - Format: `// TODO: description`
-- Many placeholder TODOs in empty helper files
+- Few TODOs present (codebase is post-build)
 
 ## Function Design
 
 **Size:**
-- Most functions under 50 lines
-- Some hooks are larger (useWebRTC ~425 lines) due to connection lifecycle complexity
+
+- Components: Decompose over ~100-150 lines of TSX
+- Functions: Extract helpers for complex logic
 
 **Parameters:**
-- Config objects for hooks: `useSubscriber<T>(config: UseSubscriberConfig<T>)`
-- Destructured props for components: `function Component({ prop1, prop2 }: Props)`
+
+- Destructure props in React components
+- Options objects for 3+ parameters
+- `robotId` as first parameter convention for per-robot functions
 
 **Return Values:**
-- Hooks return typed objects: `{ data, loading, error }` or `{ publish, isReady }`
+
+- Explicit returns
 - Early returns for guard clauses
+- Hooks return objects with named fields
 
 ## Module Design
 
 **Exports:**
+
 - Named exports preferred
-- Default exports not used
-- No barrel files (index.ts) - direct file imports
-- Each context exports its Provider and custom hook
+- `export function` for components (no default exports)
+- Barrel `index.ts` files re-export public API per feature
 
-**Context Pattern:**
-- `createContext<ContextValue | undefined>(undefined)`
-- Provider component wraps children
-- Custom hook with guard: `if (!context) throw new Error('...must be used within...Provider')`
+**Barrel Files:**
 
-**Generic Hooks:**
-- `<T = unknown>` default type parameter
-- Conditional enabling via `enabled` prop
-- Cleanup via useEffect return
+- Every feature has `index.ts` for public exports
+- Keep internal components private (only export via index)
+- `src/stores/index.ts` re-exports all stores
 
 ---
 
-*Convention analysis: 2026-03-15*
-*Update when patterns change*
+_Convention analysis: 2026-03-16_
+_Update when patterns change_
