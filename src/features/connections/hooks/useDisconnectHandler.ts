@@ -35,8 +35,9 @@ export function useDisconnectHandler(robotId: string): void {
     if (prev === curr) return;
 
     const wasConnected = prev === 'connected';
-    const isNowLost =
-      curr === 'disconnected' || curr === 'error' || curr === 'connecting';
+    const isNowLost = (
+      ['disconnected', 'error', 'connecting'] as ConnectionState[]
+    ).includes(curr);
     const isNowConnected = curr === 'connected';
 
     if (wasConnected && isNowLost) {

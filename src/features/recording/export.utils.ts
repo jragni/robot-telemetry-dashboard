@@ -64,7 +64,7 @@ export function exportSessionAsCsv(
   messages: RecordedMessage[]
 ): void {
   const csvEscape = (value: string): string => {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+    if ([',', '"', '\n'].some((char) => value.includes(char))) {
       return `"${value.replace(/"/g, '""')}"`;
     }
     return value;
