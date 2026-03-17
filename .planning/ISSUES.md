@@ -32,4 +32,8 @@
 
 ## Closed
 
-(none)
+### ISS-001: CLOSED — Show component created, all conditionals replaced (Phase 13.1-02, commit da97d36)
+
+### ISS-002: CLOSED — [].includes()/.some() pattern applied (Phase 13.1-02, commit 111e35e)
+
+### ISS-003: CLOSED — Cross-feature imports promoted to shared layer (Phase 13.1-01, commits a75784a + 0ccc986)
