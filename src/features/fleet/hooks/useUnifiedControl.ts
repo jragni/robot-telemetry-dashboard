@@ -4,7 +4,7 @@ import {
   CONTROL_MESSAGE_TYPE,
   type Direction,
 } from '@/features/control/control.types';
-import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
+import { useRosConnection } from '@/hooks/useRosConnection';
 import {
   createTopicPublisher,
   type TopicPublisherHandle,

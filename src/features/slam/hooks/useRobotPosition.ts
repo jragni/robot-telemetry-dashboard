@@ -8,8 +8,8 @@ import {
   type RobotPosition,
 } from '../slam.types';
 
-import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { useObservable } from '@/hooks/useObservable';
+import { useRosConnection } from '@/hooks/useRosConnection';
 import {
   createTopicSubscription,
   TOPIC_THROTTLE_MS,

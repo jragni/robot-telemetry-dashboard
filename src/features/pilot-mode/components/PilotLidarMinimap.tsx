@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { MINIMAP_SCALE, MINIMAP_SIZE } from './PilotLidarMinimap.constants';
 import type { PilotLidarMinimapProps } from './PilotLidarMinimap.types';
 
-import { useLidarCanvas } from '@/features/telemetry/lidar/hooks/useLidarCanvas';
-import { useLidarData } from '@/features/telemetry/lidar/hooks/useLidarData';
+import { useLidarCanvas } from '@/hooks/useLidarCanvas';
+import { useLidarData } from '@/hooks/useLidarData';
 
 /**
  * Compact 200x200 LiDAR canvas overlay for the pilot mode layout.

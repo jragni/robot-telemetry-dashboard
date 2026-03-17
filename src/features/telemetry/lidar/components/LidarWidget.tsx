@@ -1,11 +1,10 @@
 import { ZoomIn, ZoomOut } from 'lucide-react';
 
-import { useLidarCanvas } from '../hooks/useLidarCanvas';
-import { useLidarData } from '../hooks/useLidarData';
-
 import type { PanelComponentProps } from '@/features/panels/panel.types';
 import { NoConnectionOverlay } from '@/features/telemetry/shared/NoConnectionOverlay';
 import { useElementSize } from '@/hooks/useElementSize';
+import { useLidarCanvas } from '@/hooks/useLidarCanvas';
+import { useLidarData } from '@/hooks/useLidarData';
 
 // ---------------------------------------------------------------------------
 // LidarWidget

@@ -4,8 +4,8 @@ import { EMPTY, type Observable } from 'rxjs';
 
 import type { UsePilotModeResult } from './usePilotMode.types';
 
-import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { useObservable } from '@/hooks/useObservable';
+import { useRosConnection } from '@/hooks/useRosConnection';
 import {
   createTopicSubscription,
   TOPIC_THROTTLE_MS,

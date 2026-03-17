@@ -3,8 +3,8 @@ import { EMPTY } from 'rxjs';
 
 import { DEPTH_DEFAULT_TOPIC, DEPTH_MESSAGE_TYPE } from '../depth-camera.types';
 
-import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
 import { useObservable } from '@/hooks/useObservable';
+import { useRosConnection } from '@/hooks/useRosConnection';
 import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
 import type { CompressedImageMessage } from '@/types/ros-messages';
 

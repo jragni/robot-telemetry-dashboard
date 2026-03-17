@@ -77,7 +77,7 @@ const {
 // Module mocks
 // ---------------------------------------------------------------------------
 
-vi.mock('@/features/fleet/hooks/useFleetConnectionManager', () => ({
+vi.mock('@/hooks/useFleetConnectionManager', () => ({
   useFleetConnectionManager: vi.fn(() => ({
     connectAll: vi.fn(),
     disconnectAll: vi.fn(),

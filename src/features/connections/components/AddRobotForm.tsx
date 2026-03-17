@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useFleetConnectionManager } from '@/features/fleet/hooks/useFleetConnectionManager';
+import { useFleetConnectionManager } from '@/hooks/useFleetConnectionManager';
 import { useConnectionsStore } from '@/stores/connections/connections.store';
 
 // ---------------------------------------------------------------------------

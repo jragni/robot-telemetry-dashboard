@@ -5,7 +5,7 @@ import type { RecordingSession, RecordingState } from '../recording.types';
 
 import type { UseRecordingReturn } from './useRecording.types';
 
-import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
+import { useRosConnection } from '@/hooks/useRosConnection';
 
 // ---------------------------------------------------------------------------
 // Module-level singleton — one service instance shared across all hook calls.

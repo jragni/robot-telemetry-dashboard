@@ -5,11 +5,10 @@ import {
   LIDAR_DEFAULT_TOPIC,
   LIDAR_MESSAGE_TYPE,
   type LidarRenderData,
-} from '../lidar.types';
-import { transformLaserScan } from '../lidar.utils';
-
-import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
+} from '@/features/telemetry/lidar/lidar.types';
+import { transformLaserScan } from '@/features/telemetry/lidar/lidar.utils';
 import { useObservable } from '@/hooks/useObservable';
+import { useRosConnection } from '@/hooks/useRosConnection';
 import {
   createTopicSubscription,
   TOPIC_THROTTLE_MS,

@@ -1,12 +1,11 @@
 import { OctagonX, Radio, Unplug } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
-import { useFleetConnectionManager } from '../hooks/useFleetConnectionManager';
-
 import type { RobotCardProps } from './RobotCard.types';
 
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
 import { Button } from '@/components/ui/button';
+import { useFleetConnectionManager } from '@/hooks/useFleetConnectionManager';
 import { cn } from '@/lib/utils';
 import { useControlStore } from '@/stores/control/control.store';
 

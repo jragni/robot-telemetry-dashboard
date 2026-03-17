@@ -134,7 +134,7 @@ vi.mock('@/stores/control/control.store', () => ({
 }));
 
 // LiDAR hooks — return no data (no ROS connection in tests)
-vi.mock('@/features/telemetry/lidar/hooks/useLidarData', () => ({
+vi.mock('@/hooks/useLidarData', () => ({
   useLidarData: vi.fn(() => ({
     data: null,
     connectionState: 'disconnected',
@@ -142,7 +142,7 @@ vi.mock('@/features/telemetry/lidar/hooks/useLidarData', () => ({
   })),
 }));
 
-vi.mock('@/features/telemetry/lidar/hooks/useLidarCanvas', () => ({
+vi.mock('@/hooks/useLidarCanvas', () => ({
   useLidarCanvas: vi.fn(() => ({
     canvasRef: { current: null },
     scale: 30,

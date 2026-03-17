@@ -7,7 +7,7 @@ import {
   extractSample,
 } from '../data-plot.utils';
 
-import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
+import { useRosConnection } from '@/hooks/useRosConnection';
 import { createTopicSubscription } from '@/services/ros/subscriber/TopicSubscriber';
 import type { TopicInfo } from '@/types/ros-messages';
 

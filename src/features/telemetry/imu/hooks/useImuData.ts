@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { EMPTY, type Observable } from 'rxjs';
 
-import { useRosConnection } from '../../shared/useRosConnection';
 import {
   type ImuDerivedData,
   IMU_DEFAULT_TOPIC,
@@ -10,6 +9,7 @@ import {
 import { transformImuMessage } from '../imu.utils';
 
 import { useObservable } from '@/hooks/useObservable';
+import { useRosConnection } from '@/hooks/useRosConnection';
 import {
   createTopicSubscription,
   TOPIC_THROTTLE_MS,

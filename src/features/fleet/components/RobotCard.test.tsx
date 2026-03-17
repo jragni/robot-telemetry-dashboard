@@ -13,7 +13,7 @@ import type { RobotStatus } from '@/features/fleet/fleet.types';
 const mockConnectRobot = vi.fn();
 const mockDisconnectRobot = vi.fn();
 
-vi.mock('@/features/fleet/hooks/useFleetConnectionManager', () => ({
+vi.mock('@/hooks/useFleetConnectionManager', () => ({
   useFleetConnectionManager: vi.fn(() => ({
     connectAll: vi.fn(),
     disconnectAll: vi.fn(),

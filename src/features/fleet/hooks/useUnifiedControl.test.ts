@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { useUnifiedControl } from './useUnifiedControl';
 
-import { useRosConnection } from '@/features/telemetry/shared/useRosConnection';
+import { useRosConnection } from '@/hooks/useRosConnection';
 import { createTopicPublisher } from '@/services/ros/publisher/TopicPublisher';
 import { useControlStore } from '@/stores/control/control.store';
 import { useRosStore } from '@/stores/ros/ros.store';
@@ -12,7 +12,7 @@ import { useRosStore } from '@/stores/ros/ros.store';
 // Mocks
 // ---------------------------------------------------------------------------
 
-vi.mock('@/features/telemetry/shared/useRosConnection', () => ({
+vi.mock('@/hooks/useRosConnection', () => ({
   useRosConnection: vi.fn(),
 }));
 

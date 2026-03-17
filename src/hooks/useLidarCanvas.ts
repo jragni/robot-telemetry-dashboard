@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 
-import type { LidarRenderData } from '../lidar.types';
-import { renderLidarFrame } from '../lidar.utils';
+import type { LidarRenderData } from '@/features/telemetry/lidar/lidar.types';
+import { renderLidarFrame } from '@/features/telemetry/lidar/lidar.utils';
 
 // ---------------------------------------------------------------------------
 // Constants
