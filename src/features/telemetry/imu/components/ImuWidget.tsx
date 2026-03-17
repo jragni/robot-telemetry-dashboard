@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { NoConnectionOverlay } from '../../shared/NoConnectionOverlay';
 import { usePanelConfig } from '../../shared/usePanelConfig';
 import { useImuData } from '../hooks/useImuData';
 import { useImuHistory } from '../hooks/useImuHistory';
@@ -11,7 +10,8 @@ import { ImuPlotView } from './ImuPlotView';
 import type { ImuPanelConfig } from './ImuWidget.types';
 import { ViewToggle } from './ViewToggle';
 
-import type { PanelComponentProps } from '@/features/panels/panel.types';
+import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
+import type { PanelComponentProps } from '@/types/panel.types';
 
 // ---------------------------------------------------------------------------
 // ImuWidget

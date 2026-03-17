@@ -1,7 +1,7 @@
 import type { MiniPilotViewProps } from './MiniPilotView.types';
 
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
-import { VideoFeed } from '@/features/webrtc/components/VideoFeed';
+import { VideoFeed } from '@/components/shared/VideoFeed';
 import { cn } from '@/lib/utils';
 
 // ---------------------------------------------------------------------------

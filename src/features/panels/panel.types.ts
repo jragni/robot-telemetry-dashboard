@@ -48,13 +48,10 @@ export interface PanelMeta {
 }
 
 // ---------------------------------------------------------------------------
-// Props passed into every panel component
+// Props passed into every panel component (promoted to shared layer)
 // ---------------------------------------------------------------------------
 
-export interface PanelComponentProps {
-  robotId?: string;
-  panelId: string;
-}
+export type { PanelComponentProps } from '@/types/panel.types';
 
 // ---------------------------------------------------------------------------
 // Runtime panel instance (placed on a view)

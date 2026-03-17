@@ -7,9 +7,9 @@ import { useDataPlot } from '../hooks/useDataPlot';
 import { LINE_COLOURS, MARGIN } from './DataPlotWidget.constants';
 import { TopicSelector } from './TopicSelector';
 
-import type { PanelComponentProps } from '@/features/panels/panel.types';
-import { NoConnectionOverlay } from '@/features/telemetry/shared/NoConnectionOverlay';
+import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
 import { useElementSize } from '@/hooks/useElementSize';
+import type { PanelComponentProps } from '@/types/panel.types';
 
 function drawChart(
   svg: SVGSVGElement,

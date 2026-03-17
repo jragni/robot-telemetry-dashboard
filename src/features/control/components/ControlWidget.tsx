@@ -1,10 +1,10 @@
-import { ControlPad } from './ControlPad';
 import { TopicSelector } from './TopicSelector';
 import { VelocitySliders } from './VelocitySliders';
 
-import type { PanelComponentProps } from '@/features/panels/panel.types';
-import { NoConnectionOverlay } from '@/features/telemetry/shared/NoConnectionOverlay';
+import { ControlPad } from '@/components/shared/ControlPad';
+import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
 import { useRosConnection } from '@/hooks/useRosConnection';
+import type { PanelComponentProps } from '@/types/panel.types';
 
 // ---------------------------------------------------------------------------
 // ControlWidget

@@ -1,4 +1,4 @@
-import type { Direction } from '../control.types';
+import type { Direction } from '@/types/control.types';
 
 export interface ControlPadProps {
   robotId: string | undefined;

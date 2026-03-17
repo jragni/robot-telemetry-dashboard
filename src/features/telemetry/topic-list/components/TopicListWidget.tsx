@@ -4,8 +4,8 @@ import { useTopicList } from '../hooks/useTopicList';
 
 import { TopicRow } from './TopicRow';
 
-import type { PanelComponentProps } from '@/features/panels/panel.types';
-import { NoConnectionOverlay } from '@/features/telemetry/shared/NoConnectionOverlay';
+import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
+import type { PanelComponentProps } from '@/types/panel.types';
 
 // ---------------------------------------------------------------------------
 // Component

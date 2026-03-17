@@ -10,7 +10,7 @@ import { ControlPad } from './ControlPad';
 const mockPublish = vi.fn();
 const mockActivateEStop = vi.fn();
 
-vi.mock('../hooks/useControlPublisher', () => ({
+vi.mock('@/features/control/hooks/useControlPublisher', () => ({
   useControlPublisher: vi.fn(() => ({
     publish: mockPublish,
     isReady: true,

@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
-import type { VideoFeedProps, VideoFeedStatus } from '../webrtc.types';
+import type { VideoFeedProps, VideoFeedStatus } from './VideoFeed.types';
 
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { StatusIndicator } from '@/components/shared/StatusIndicator';

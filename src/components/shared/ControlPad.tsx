@@ -7,13 +7,12 @@ import {
 } from 'lucide-react';
 import type { MouseEvent, TouchEvent } from 'react';
 
-import type { Direction } from '../control.types';
-import { useControlPublisher } from '../hooks/useControlPublisher';
-
 import type { ControlPadProps, DirButtonConfig } from './ControlPad.types';
 
 import { Button } from '@/components/ui/button';
+import { useControlPublisher } from '@/features/control/hooks/useControlPublisher';
 import { useControlStore } from '@/stores/control/control.store';
+import type { Direction } from '@/types/control.types';
 
 const DIRECTION_BUTTONS: DirButtonConfig[] = [
   {

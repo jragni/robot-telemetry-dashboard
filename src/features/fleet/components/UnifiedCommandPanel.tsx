@@ -4,8 +4,8 @@ import { useUnifiedControl } from '../hooks/useUnifiedControl';
 
 import type { UnifiedCommandPanelProps } from './UnifiedCommandPanel.types';
 
+import { ControlPad } from '@/components/shared/ControlPad';
 import { Button } from '@/components/ui/button';
-import { ControlPad } from '@/features/control/components/ControlPad';
 import { cn } from '@/lib/utils';
 
 // ---------------------------------------------------------------------------

@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import {
-  CONTROL_MESSAGE_TYPE,
-  type Direction,
-} from '@/features/control/control.types';
 import { useRosConnection } from '@/hooks/useRosConnection';
 import {
   createTopicPublisher,
   type TopicPublisherHandle,
 } from '@/services/ros/publisher/TopicPublisher';
 import { useControlStore } from '@/stores/control/control.store';
+import { CONTROL_MESSAGE_TYPE, type Direction } from '@/types/control.types';
 import type { Twist } from '@/types/ros-messages';
 
 // ---------------------------------------------------------------------------

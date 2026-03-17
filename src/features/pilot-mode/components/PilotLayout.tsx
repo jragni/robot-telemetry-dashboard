@@ -5,8 +5,8 @@ import { PilotHud } from './PilotHud';
 import type { PilotLayoutProps } from './PilotLayout.types';
 import { PilotLidarMinimap } from './PilotLidarMinimap';
 
-import { ControlPad } from '@/features/control/components/ControlPad';
-import { VideoFeed } from '@/features/webrtc/components/VideoFeed';
+import { ControlPad } from '@/components/shared/ControlPad';
+import { VideoFeed } from '@/components/shared/VideoFeed';
 
 // ---------------------------------------------------------------------------
 // PilotLayout
