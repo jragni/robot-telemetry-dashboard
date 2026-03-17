@@ -3,6 +3,7 @@ import { VelocitySliders } from './VelocitySliders';
 
 import { ControlPad } from '@/components/shared/ControlPad';
 import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
+import { Show } from '@/components/shared/Show';
 import { useRosConnection } from '@/hooks/useRosConnection';
 import type { PanelComponentProps } from '@/types/panel.types';
 
@@ -32,9 +33,9 @@ export function ControlWidget({
   return (
     <div className="relative flex flex-col w-full h-full overflow-hidden">
       {/* Connection overlay (renders on top when not connected) */}
-      {!isConnected && (
+      <Show when={!isConnected}>
         <NoConnectionOverlay connectionState={connectionState} />
-      )}
+      </Show>
 
       {/* Panel content */}
       <div className="flex flex-col gap-4 p-3 overflow-y-auto flex-1 min-h-0">

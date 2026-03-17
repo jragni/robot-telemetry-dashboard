@@ -7,6 +7,7 @@ import { PilotHud } from './PilotHud';
 import type { PilotMobileLayoutProps } from './PilotMobileLayout.types';
 
 import { ControlPad } from '@/components/shared/ControlPad';
+import { Show } from '@/components/shared/Show';
 import { VideoFeed } from '@/components/shared/VideoFeed';
 
 // ---------------------------------------------------------------------------
@@ -63,7 +64,9 @@ export function PilotMobileLayout({ robotId }: PilotMobileLayoutProps) {
         />
 
         {/* HUD overlay within the video section */}
-        {hudVisible && <PilotHud hudData={hudData} onExit={exit} />}
+        <Show when={hudVisible}>
+          <PilotHud hudData={hudData} onExit={exit} />
+        </Show>
 
         {/* Exit button — always visible regardless of HUD toggle */}
         <div className="absolute right-3 top-3 z-20">
@@ -71,13 +74,13 @@ export function PilotMobileLayout({ robotId }: PilotMobileLayoutProps) {
         </div>
 
         {/* Swipe hint */}
-        {hudVisible && (
+        <Show when={hudVisible}>
           <div className="absolute bottom-2 left-1/2 z-20 -translate-x-1/2">
             <span className="font-mono text-[9px] uppercase tracking-wider text-white/40">
               swipe up to toggle hud
             </span>
           </div>
-        )}
+        </Show>
       </div>
 
       {/* Control section — 40% height */}

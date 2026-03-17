@@ -1,4 +1,5 @@
 import type { DataCardProps } from './DataCard.types';
+import { Show } from './Show';
 import { StatusIndicator } from './StatusIndicator';
 
 import { cn } from '@/lib/utils';
@@ -27,11 +28,13 @@ export function DataCard({
           <span className="text-[11px] font-mono font-semibold tracking-[0.15em] uppercase text-primary">
             {title}
           </span>
-          {status !== undefined && <StatusIndicator state={status} />}
+          <Show when={status !== undefined}>
+            <StatusIndicator state={status!} />
+          </Show>
         </div>
-        {headerActions !== undefined && (
+        <Show when={headerActions !== undefined}>
           <div className="flex items-center gap-1">{headerActions}</div>
-        )}
+        </Show>
       </div>
 
       {/* Body */}

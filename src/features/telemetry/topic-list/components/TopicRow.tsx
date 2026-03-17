@@ -1,5 +1,7 @@
 import type { TopicRowProps } from './TopicRow.types';
 
+import { Show } from '@/components/shared/Show';
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -26,11 +28,11 @@ export function TopicRow({ topic, onToggle }: TopicRowProps) {
           <p className="truncate font-mono text-xs text-muted-foreground">
             {messageType}
           </p>
-          {lastMessageAt !== null && (
+          <Show when={lastMessageAt !== null}>
             <p className="text-xs text-muted-foreground/60">
-              {new Date(lastMessageAt).toLocaleTimeString()}
+              {new Date(lastMessageAt!).toLocaleTimeString()}
             </p>
-          )}
+          </Show>
         </div>
 
         <button
@@ -53,14 +55,14 @@ export function TopicRow({ topic, onToggle }: TopicRowProps) {
         </button>
       </div>
 
-      {isSubscribed && lastMessage !== null && (
+      <Show when={isSubscribed && lastMessage !== null}>
         <pre
           data-testid="topic-row-preview"
           className="mt-1 max-h-32 overflow-auto rounded bg-muted/50 p-1 font-mono text-xs"
         >
           {JSON.stringify(lastMessage, null, 2)}
         </pre>
-      )}
+      </Show>
     </div>
   );
 }

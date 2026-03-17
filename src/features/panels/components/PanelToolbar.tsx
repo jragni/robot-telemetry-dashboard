@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AddPanelDialog } from './AddPanelDialog';
 import type { PanelToolbarProps } from './PanelToolbar.types';
 
+import { Show } from '@/components/shared/Show';
 import { Button } from '@/components/ui/button';
 import { useMobile } from '@/hooks/use-mobile';
 import { useLayoutStore } from '@/stores/layout/layout.store';
@@ -36,7 +37,7 @@ export function PanelToolbar({ viewId }: PanelToolbarProps) {
         </Button>
 
         {/* Actions only visible during edit mode */}
-        {editMode && (
+        <Show when={editMode}>
           <>
             <Button
               variant="outline"
@@ -56,7 +57,7 @@ export function PanelToolbar({ viewId }: PanelToolbarProps) {
               Reset Layout
             </Button>
           </>
-        )}
+        </Show>
       </div>
 
       <AddPanelDialog

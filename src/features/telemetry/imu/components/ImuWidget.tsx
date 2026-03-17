@@ -11,6 +11,7 @@ import type { ImuPanelConfig } from './ImuWidget.types';
 import { ViewToggle } from './ViewToggle';
 
 import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
+import { Show } from '@/components/shared/Show';
 import type { PanelComponentProps } from '@/types/panel.types';
 
 // ---------------------------------------------------------------------------
@@ -52,21 +53,25 @@ export function ImuWidget({ robotId, panelId }: PanelComponentProps) {
 
       {/* Content */}
       <div className="relative flex-1 min-h-0">
-        {!isConnected && (
+        <Show when={!isConnected}>
           <NoConnectionOverlay connectionState={connectionState} />
-        )}
+        </Show>
 
-        {viewMode === 'digital' ? (
-          data !== null ? (
-            <ImuDigitalView data={data} />
-          ) : (
-            <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
-              Waiting for data...
-            </div>
-          )
-        ) : (
-          <ImuPlotView history={history} />
-        )}
+        <Show
+          when={viewMode === 'digital'}
+          fallback={<ImuPlotView history={history} />}
+        >
+          <Show
+            when={data !== null}
+            fallback={
+              <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
+                Waiting for data...
+              </div>
+            }
+          >
+            <ImuDigitalView data={data!} />
+          </Show>
+        </Show>
       </div>
     </div>
   );

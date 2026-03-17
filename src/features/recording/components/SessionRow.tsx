@@ -2,6 +2,8 @@ import { Download, Play, Trash2 } from 'lucide-react';
 
 import type { SessionRowProps } from './SessionList.types';
 
+import { Show } from '@/components/shared/Show';
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -58,17 +60,17 @@ export function SessionRow({
 
       {/* Actions */}
       <div className="flex items-center gap-1 mt-1">
-        {onPlay && (
+        <Show when={onPlay !== undefined}>
           <button
             type="button"
-            onClick={() => onPlay(session.id)}
+            onClick={() => onPlay?.(session.id)}
             className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
             title="Play session"
           >
             <Play className="w-3 h-3" />
             Play
           </button>
-        )}
+        </Show>
 
         <button
           type="button"

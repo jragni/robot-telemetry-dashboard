@@ -1,3 +1,4 @@
+import { Show } from './Show';
 import type { StatusIndicatorProps } from './StatusIndicator.types';
 
 import { cn } from '@/lib/utils';
@@ -31,14 +32,14 @@ export function StatusIndicator({
         data-slot="status-dot"
         className={cn('rounded-full w-2 h-2 shrink-0', STATE_CLASSES[state])}
       />
-      {label !== undefined && (
+      <Show when={label !== undefined}>
         <span
           data-slot="status-label"
           className="text-xs font-mono uppercase tracking-wider text-muted-foreground"
         >
           {label}
         </span>
-      )}
+      </Show>
     </span>
   );
 }

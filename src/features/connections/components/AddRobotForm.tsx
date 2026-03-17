@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { Show } from '@/components/shared/Show';
 import { useFleetConnectionManager } from '@/hooks/useFleetConnectionManager';
 import { useConnectionsStore } from '@/stores/connections/connections.store';
 
@@ -81,11 +82,11 @@ export function AddRobotForm() {
         className="h-7 w-full rounded border border-border bg-background px-2 text-xs font-mono text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
       />
 
-      {error !== null && (
+      <Show when={error !== null}>
         <p role="alert" className="text-xs text-destructive">
           {error}
         </p>
-      )}
+      </Show>
 
       <button
         type="submit"

@@ -1,6 +1,7 @@
 import { Loader2 } from 'lucide-react';
 
 import type { NoConnectionOverlayProps } from './NoConnectionOverlay.types';
+import { Show } from './Show';
 
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
 import type { ConnectionState } from '@/types/connection.types';
@@ -41,12 +42,12 @@ export function NoConnectionOverlay({
       <StatusIndicator state={connectionState} />
 
       <div className="flex items-center gap-2">
-        {isConnecting && (
+        <Show when={isConnecting}>
           <Loader2
             className="h-4 w-4 animate-spin text-muted-foreground"
             aria-hidden="true"
           />
-        )}
+        </Show>
         <p className="text-sm text-muted-foreground">{message}</p>
       </div>
     </div>

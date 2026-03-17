@@ -5,6 +5,7 @@ import { useSlamCanvas } from '../hooks/useSlamCanvas';
 import { useSlamData } from '../hooks/useSlamData';
 
 import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
+import { Show } from '@/components/shared/Show';
 import { useElementSize } from '@/hooks/useElementSize';
 import type { PanelComponentProps } from '@/types/panel.types';
 
@@ -50,7 +51,7 @@ export function SlamMapWidget({ robotId }: PanelComponentProps) {
       />
 
       {/* Empty state — connected but no map fetched yet */}
-      {isConnected && grid === null && !isLoading && (
+      <Show when={isConnected && grid === null && !isLoading}>
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
           <Map
             className="h-10 w-10 text-muted-foreground/30"
@@ -60,10 +61,10 @@ export function SlamMapWidget({ robotId }: PanelComponentProps) {
             No map loaded — click Fetch Map to load
           </p>
         </div>
-      )}
+      </Show>
 
       {/* Loading spinner overlay */}
-      {isLoading && (
+      <Show when={isLoading}>
         <div
           role="status"
           aria-label="Loading map data"
@@ -75,10 +76,10 @@ export function SlamMapWidget({ robotId }: PanelComponentProps) {
           />
           <span className="sr-only">Loading map data...</span>
         </div>
-      )}
+      </Show>
 
       {/* Toolbar — fetch button + zoom hint */}
-      {isConnected && (
+      <Show when={isConnected}>
         <div className="absolute bottom-3 right-3 flex flex-col gap-1">
           <button
             onClick={fetchMap}
@@ -94,21 +95,21 @@ export function SlamMapWidget({ robotId }: PanelComponentProps) {
             Fetch Map
           </button>
         </div>
-      )}
+      </Show>
 
       {/* Zoom hint label */}
-      {isConnected && grid !== null && (
+      <Show when={isConnected && grid !== null}>
         <div className="absolute bottom-3 left-3 pointer-events-none">
           <p className="text-[10px] text-muted-foreground/40 select-none">
             Scroll to zoom · Drag to pan · Double-click to reset
           </p>
         </div>
-      )}
+      </Show>
 
       {/* Connection overlay — blocks interaction when not connected */}
-      {!isConnected && (
+      <Show when={!isConnected}>
         <NoConnectionOverlay connectionState={connectionState} />
-      )}
+      </Show>
     </div>
   );
 }

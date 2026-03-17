@@ -13,6 +13,7 @@ import { PanelFrame } from './PanelFrame';
 import { BREAKPOINTS, COLS, ROW_HEIGHT } from './PanelGrid.constants';
 import type { PanelGridProps } from './PanelGrid.types';
 
+import { Show } from '@/components/shared/Show';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/stores/layout/layout.store';
 
@@ -56,7 +57,7 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
 
   return (
     <div ref={containerRef} className={cn('w-full', className)}>
-      {width > 0 && (
+      <Show when={width > 0}>
         <Responsive
           className="layout"
           width={width}
@@ -84,7 +85,7 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
             </div>
           ))}
         </Responsive>
-      )}
+      </Show>
     </div>
   );
 }

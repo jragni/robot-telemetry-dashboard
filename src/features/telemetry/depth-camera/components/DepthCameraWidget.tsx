@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useDepthCamera } from '../hooks/useDepthCamera';
 
 import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
+import { Show } from '@/components/shared/Show';
 import { useElementSize } from '@/hooks/useElementSize';
 import type { PanelComponentProps } from '@/types/panel.types';
 
@@ -75,11 +76,11 @@ export function DepthCameraWidget({ robotId, panelId }: PanelComponentProps) {
         height={containerSize.height || 480}
       />
 
-      {connectionState === 'connected' && !frame && (
+      <Show when={connectionState === 'connected' && !frame}>
         <p className="absolute text-xs text-muted-foreground">
           Waiting for depth frame…
         </p>
-      )}
+      </Show>
     </div>
   );
 }

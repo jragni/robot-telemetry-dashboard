@@ -8,6 +8,7 @@ import { LINE_COLOURS, MARGIN } from './DataPlotWidget.constants';
 import { TopicSelector } from './TopicSelector';
 
 import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
+import { Show } from '@/components/shared/Show';
 import { useElementSize } from '@/hooks/useElementSize';
 import type { PanelComponentProps } from '@/types/panel.types';
 
@@ -160,11 +161,11 @@ export function DataPlotWidget({ robotId, panelId }: PanelComponentProps) {
           onSelect={setSelectedTopic}
         />
 
-        {selectedTopic && (
+        <Show when={selectedTopic !== null}>
           <span className="font-mono text-xs text-muted-foreground">
             {strategy.label}
           </span>
-        )}
+        </Show>
 
         <button
           type="button"
@@ -177,7 +178,7 @@ export function DataPlotWidget({ robotId, panelId }: PanelComponentProps) {
       </div>
 
       {/* Legend */}
-      {legendKeys.length > 0 && (
+      <Show when={legendKeys.length > 0}>
         <div className="flex shrink-0 flex-wrap gap-2 px-3 py-1">
           {legendKeys.map((key, i) => (
             <span
@@ -195,21 +196,21 @@ export function DataPlotWidget({ robotId, panelId }: PanelComponentProps) {
             </span>
           ))}
         </div>
-      )}
+      </Show>
 
       {/* Chart area */}
       <div className="relative flex-1 overflow-hidden">
-        {!selectedTopic && connectionState === 'connected' && (
+        <Show when={!selectedTopic && connectionState === 'connected'}>
           <p className="absolute inset-0 flex items-center justify-center font-mono text-xs text-muted-foreground">
             Select a topic to start plotting.
           </p>
-        )}
+        </Show>
 
-        {selectedTopic && samples.length === 0 && (
+        <Show when={selectedTopic !== null && samples.length === 0}>
           <p className="absolute inset-0 flex items-center justify-center font-mono text-xs text-muted-foreground">
             Waiting for data…
           </p>
-        )}
+        </Show>
 
         <svg
           ref={svgRef}

@@ -4,6 +4,7 @@ import { AddRobotForm } from './AddRobotForm';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RobotRow } from './RobotRow';
 
+import { Show } from '@/components/shared/Show';
 import { useFleetConnectionManager } from '@/hooks/useFleetConnectionManager';
 import { useConnectionsStore } from '@/stores/connections/connections.store';
 import type { RobotConnection } from '@/types/connection.types';
@@ -50,11 +51,11 @@ export function ConnectionsSidebar() {
 
         {/* Robot list */}
         <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-1.5">
-          {robots.length === 0 && (
+          <Show when={robots.length === 0}>
             <p className="px-1 py-3 text-xs italic text-muted-foreground">
               No robots configured yet.
             </p>
-          )}
+          </Show>
 
           {robots.map((robot) => (
             <RobotRow
@@ -76,13 +77,13 @@ export function ConnectionsSidebar() {
       </nav>
 
       {/* Delete confirmation dialog (rendered via portal-like positioning) */}
-      {pendingDelete !== null && (
+      <Show when={pendingDelete !== null}>
         <DeleteConfirmDialog
-          robot={pendingDelete}
+          robot={pendingDelete!}
           onConfirm={handleDeleteConfirm}
           onCancel={() => setPendingDelete(null)}
         />
-      )}
+      </Show>
     </>
   );
 }

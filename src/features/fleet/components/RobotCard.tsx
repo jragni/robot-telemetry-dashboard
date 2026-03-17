@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 
 import type { RobotCardProps } from './RobotCard.types';
 
+import { Show } from '@/components/shared/Show';
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
 import { Button } from '@/components/ui/button';
 import { useFleetConnectionManager } from '@/hooks/useFleetConnectionManager';
@@ -84,7 +85,7 @@ export function RobotCard({
       </div>
 
       {/* Compact velocity readout — only when connected */}
-      {isConnected && (
+      <Show when={isConnected}>
         <div className="flex gap-4 rounded border border-border/40 bg-muted/30 px-2 py-1">
           <span className="flex items-center gap-1.5">
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -103,7 +104,7 @@ export function RobotCard({
             </span>
           </span>
         </div>
-      )}
+      </Show>
 
       {/* Action buttons */}
       <div className="flex gap-2">
@@ -118,17 +119,20 @@ export function RobotCard({
           }}
           aria-label={isConnected ? 'Disconnect' : 'Connect'}
         >
-          {isConnected ? (
+          <Show
+            when={isConnected}
+            fallback={
+              <>
+                <Radio className="size-3 mr-1" aria-hidden="true" />
+                Connect
+              </>
+            }
+          >
             <>
               <Unplug className="size-3 mr-1" aria-hidden="true" />
               Disconnect
             </>
-          ) : (
-            <>
-              <Radio className="size-3 mr-1" aria-hidden="true" />
-              Connect
-            </>
-          )}
+          </Show>
         </Button>
 
         {/* Pilot */}
@@ -146,7 +150,7 @@ export function RobotCard({
         </Button>
 
         {/* E-Stop — only when connected */}
-        {isConnected && (
+        <Show when={isConnected}>
           <Button
             size="sm"
             variant="destructive"
@@ -159,7 +163,7 @@ export function RobotCard({
           >
             <OctagonX className="size-3" aria-hidden="true" />
           </Button>
-        )}
+        </Show>
       </div>
     </div>
   );

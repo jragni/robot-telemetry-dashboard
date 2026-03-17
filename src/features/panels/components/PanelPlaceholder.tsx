@@ -3,6 +3,8 @@ import type { PanelTypeId } from '../panel.types';
 
 import type { PanelPlaceholderProps } from './PanelPlaceholder.types';
 
+import { Show } from '@/components/shared/Show';
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -33,7 +35,9 @@ export function PanelPlaceholder({ panelId, typeId }: PanelPlaceholderProps) {
       data-panel-id={panelId}
       className="flex h-full w-full flex-col items-center justify-center gap-3 text-muted-foreground"
     >
-      {Icon !== null && <Icon size={32} className="opacity-40" />}
+      <Show when={Icon !== null}>
+        {Icon ? <Icon size={32} className="opacity-40" /> : null}
+      </Show>
       <span className="text-xs font-mono font-semibold tracking-widest uppercase opacity-60">
         {title}
       </span>

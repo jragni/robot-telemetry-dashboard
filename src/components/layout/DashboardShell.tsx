@@ -3,6 +3,7 @@ import { Outlet } from 'react-router';
 import { DisconnectGuard } from './DisconnectGuard';
 import { Header } from './Header';
 
+import { Show } from '@/components/shared/Show';
 import { ConnectionsSidebar } from '@/features/connections/components/ConnectionsSidebar';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui/ui.store';
@@ -44,13 +45,13 @@ export function DashboardShell() {
         {/* ---------------------------------------------------------------- */}
 
         {/* Mobile overlay backdrop */}
-        {sidebarOpen && (
+        <Show when={sidebarOpen}>
           <div
             className="fixed inset-0 z-20 bg-black/40 md:hidden"
             aria-hidden="true"
             onClick={() => useUIStore.getState().setSidebarOpen(false)}
           />
-        )}
+        </Show>
 
         <aside
           aria-label="Connections sidebar"

@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import type { VideoFeedProps, VideoFeedStatus } from './VideoFeed.types';
 
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { Show } from '@/components/shared/Show';
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
 import { useObservable } from '@/hooks/useObservable';
 import { cn } from '@/lib/utils';
@@ -139,14 +140,14 @@ export function VideoFeed({
       </video>
 
       {/* Status overlay */}
-      {showStatusOverlay && status !== 'streaming' && (
+      <Show when={showStatusOverlay && status !== 'streaming'}>
         <div
           data-testid="video-status-overlay"
           className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/60"
         >
-          {status === 'connecting' && (
+          <Show when={status === 'connecting'}>
             <LoadingSpinner size="lg" className="text-status-degraded" />
-          )}
+          </Show>
 
           <StatusIndicator
             state={indicatorState}
@@ -158,17 +159,17 @@ export function VideoFeed({
             <StatusIndicator state={indicatorState} />
           </span>
         </div>
-      )}
+      </Show>
 
       {/* Streaming badge — always visible so operators have continuous confirmation */}
-      {status === 'streaming' && showStatusOverlay && (
+      <Show when={status === 'streaming' && showStatusOverlay}>
         <div
           data-testid="video-status-overlay"
           className="absolute bottom-2 right-2"
         >
           <StatusIndicator state="connected" label="LIVE" />
         </div>
-      )}
+      </Show>
 
       {children}
     </div>

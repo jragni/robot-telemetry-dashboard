@@ -2,6 +2,8 @@ import { Pause, Play, Square } from 'lucide-react';
 
 import { usePlayback } from '../hooks/usePlayback';
 
+import { Show } from '@/components/shared/Show';
+
 // ---------------------------------------------------------------------------
 // PlaybackControls
 // ---------------------------------------------------------------------------
@@ -63,7 +65,21 @@ export function PlaybackControls() {
     <div className="flex flex-col gap-2 p-2">
       {/* Transport buttons */}
       <div className="flex items-center gap-1">
-        {isPlaying ? (
+        <Show
+          when={isPlaying}
+          fallback={
+            <button
+              type="button"
+              onClick={resumePlayback}
+              disabled={!isPaused}
+              className="flex items-center gap-1 px-2 py-1.5 rounded bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              title="Resume"
+            >
+              <Play className="w-3.5 h-3.5" />
+              Resume
+            </button>
+          }
+        >
           <button
             type="button"
             onClick={pausePlayback}
@@ -73,18 +89,7 @@ export function PlaybackControls() {
             <Pause className="w-3.5 h-3.5" />
             Pause
           </button>
-        ) : (
-          <button
-            type="button"
-            onClick={resumePlayback}
-            disabled={!isPaused}
-            className="flex items-center gap-1 px-2 py-1.5 rounded bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            title="Resume"
-          >
-            <Play className="w-3.5 h-3.5" />
-            Resume
-          </button>
-        )}
+        </Show>
 
         <button
           type="button"
@@ -97,11 +102,11 @@ export function PlaybackControls() {
         </button>
 
         {/* Elapsed time */}
-        {isActive && (
+        <Show when={isActive}>
           <span className="ml-auto text-xs font-mono text-muted-foreground">
             {formatMs(elapsedMs)}
           </span>
-        )}
+        </Show>
       </div>
 
       {/* Progress bar */}

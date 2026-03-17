@@ -1,6 +1,7 @@
 import { ZoomIn, ZoomOut } from 'lucide-react';
 
 import { NoConnectionOverlay } from '@/components/shared/NoConnectionOverlay';
+import { Show } from '@/components/shared/Show';
 import { useElementSize } from '@/hooks/useElementSize';
 import { useLidarCanvas } from '@/hooks/useLidarCanvas';
 import { useLidarData } from '@/hooks/useLidarData';
@@ -68,9 +69,9 @@ export function LidarWidget({ robotId }: PanelComponentProps) {
       </div>
 
       {/* Connection overlay */}
-      {!isConnected && (
+      <Show when={!isConnected}>
         <NoConnectionOverlay connectionState={connectionState} />
-      )}
+      </Show>
     </div>
   );
 }

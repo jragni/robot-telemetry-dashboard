@@ -5,6 +5,7 @@ import { useRecording } from '../hooks/useRecording';
 
 import type { RecordingControlsProps } from './RecordingControls.types';
 
+import { Show } from '@/components/shared/Show';
 import { useRosStore } from '@/stores/ros/ros.store';
 
 // ---------------------------------------------------------------------------
@@ -64,15 +65,15 @@ export function RecordingControls({ robotId }: RecordingControlsProps) {
         <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {isRecording ? 'Recording' : 'Idle'}
         </span>
-        {isRecording && currentSession && (
+        <Show when={isRecording && currentSession !== null}>
           <span className="text-xs text-muted-foreground ml-auto">
-            {currentSession.messageCount} msg
+            {currentSession?.messageCount} msg
           </span>
-        )}
+        </Show>
       </div>
 
       {/* Topic checkboxes — disabled while recording */}
-      {availableTopics.length > 0 && (
+      <Show when={availableTopics.length > 0}>
         <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
             Topics to record
@@ -95,13 +96,13 @@ export function RecordingControls({ robotId }: RecordingControlsProps) {
             </label>
           ))}
         </div>
-      )}
+      </Show>
 
-      {availableTopics.length === 0 && !isRecording && (
+      <Show when={availableTopics.length === 0 && !isRecording}>
         <p className="text-xs text-muted-foreground italic">
           No topics available. Connect to a robot first.
         </p>
-      )}
+      </Show>
 
       {/* Start / Stop button */}
       <button
@@ -114,17 +115,20 @@ export function RecordingControls({ robotId }: RecordingControlsProps) {
             : 'bg-primary hover:bg-primary/90 text-primary-foreground'
         }`}
       >
-        {isRecording ? (
+        <Show
+          when={isRecording}
+          fallback={
+            <>
+              <Circle className="w-3.5 h-3.5 fill-current text-red-400" />
+              Start Recording
+            </>
+          }
+        >
           <>
             <Square className="w-3.5 h-3.5 fill-current" />
             Stop Recording
           </>
-        ) : (
-          <>
-            <Circle className="w-3.5 h-3.5 fill-current text-red-400" />
-            Start Recording
-          </>
-        )}
+        </Show>
       </button>
     </div>
   );

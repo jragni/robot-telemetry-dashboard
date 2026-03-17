@@ -1,5 +1,6 @@
 import type { MiniPilotViewProps } from './MiniPilotView.types';
 
+import { Show } from '@/components/shared/Show';
 import { StatusIndicator } from '@/components/shared/StatusIndicator';
 import { VideoFeed } from '@/components/shared/VideoFeed';
 import { cn } from '@/lib/utils';
@@ -73,9 +74,9 @@ export function MiniPilotView({
       </div>
 
       {/* Selected indicator overlay */}
-      {isSelected && (
+      <Show when={isSelected}>
         <div className="absolute inset-0 pointer-events-none border-2 border-primary rounded-sm" />
-      )}
+      </Show>
     </div>
   );
 }

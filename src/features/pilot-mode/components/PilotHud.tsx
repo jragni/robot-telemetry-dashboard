@@ -4,6 +4,8 @@ import { HeadingIndicator } from './HeadingIndicator';
 import type { PilotHudProps } from './PilotHud.types';
 import { VelocityReadout } from './VelocityReadout';
 
+import { Show } from '@/components/shared/Show';
+
 /**
  * Full HUD overlay layer. Renders all data badges as absolutely-positioned
  * elements within the pilot layout's viewport container.
@@ -32,11 +34,11 @@ export function PilotHud({ hudData }: PilotHudProps) {
       </div>
 
       {/* Top-center: Heading indicator (only if IMU data available) */}
-      {heading !== undefined && (
+      <Show when={heading !== undefined}>
         <div className="absolute left-1/2 top-3 z-20 -translate-x-1/2">
-          <HeadingIndicator heading={heading} />
+          <HeadingIndicator heading={heading!} />
         </div>
-      )}
+      </Show>
 
       {/* Top-right area reserved for exit button (rendered by parent) */}
 
@@ -49,11 +51,11 @@ export function PilotHud({ hudData }: PilotHudProps) {
       </div>
 
       {/* Battery indicator positioned above velocity readout when available */}
-      {batteryPercentage !== undefined && (
+      <Show when={batteryPercentage !== undefined}>
         <div className="absolute bottom-24 left-3 z-20">
-          <BatteryIndicator batteryPercentage={batteryPercentage} />
+          <BatteryIndicator batteryPercentage={batteryPercentage!} />
         </div>
-      )}
+      </Show>
     </>
   );
 }
