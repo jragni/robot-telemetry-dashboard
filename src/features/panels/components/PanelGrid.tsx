@@ -54,14 +54,10 @@ function computeRowHeight(
 
 export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
   const viewLayout = useLayoutStore((s) => s.getViewLayout(viewId));
-  const editMode = useLayoutStore((s) => s.editMode);
 
   const [containerRef, { width, height }] = useElementSize<HTMLDivElement>();
 
   const [currentBreakpoint, setCurrentBreakpoint] = useState<Breakpoint>('lg');
-
-  const isMobileBreakpoint = currentBreakpoint === 'sm';
-  const canInteract = editMode && !isMobileBreakpoint;
 
   const handleLayoutChange = useCallback(
     (_layout: Layout, allLayouts: Partial<Record<string, Layout>>) => {
@@ -99,9 +95,11 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
           cols={COLS}
           rowHeight={rowHeight}
           compactType="vertical"
-          isDraggable={canInteract}
-          isResizable={canInteract}
+          isDraggable={true}
+          isResizable={true}
+          resizeHandles={['nw', 'ne', 'sw', 'se']}
           draggableHandle=".panel-drag-handle"
+          draggableCancel=".panel-action-button"
           onLayoutChange={handleLayoutChange}
           onBreakpointChange={handleBreakpointChange}
           margin={[GRID_MARGIN, GRID_MARGIN]}
@@ -112,7 +110,6 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
               <PanelFrame
                 instance={instance}
                 viewId={viewId}
-                editMode={editMode}
                 robotId={robotId}
               />
             </div>
