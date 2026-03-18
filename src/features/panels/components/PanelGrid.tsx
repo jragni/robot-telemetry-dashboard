@@ -1,19 +1,15 @@
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import { useRef, useState, useCallback } from 'react';
-import {
-  Responsive,
-  useContainerWidth,
-  type Layout,
-  type LayoutItem,
-} from 'react-grid-layout';
+import { useState, useCallback } from 'react';
+import { Responsive, type Layout, type LayoutItem } from 'react-grid-layout';
 
 import { PanelFrame } from './PanelFrame';
 import { BREAKPOINTS, COLS, ROW_HEIGHT } from './PanelGrid.constants';
 import type { PanelGridProps } from './PanelGrid.types';
 
 import { Show } from '@/components/shared/Show';
+import { useElementSize } from '@/hooks/useElementSize';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/stores/layout/layout.store';
 
@@ -27,8 +23,7 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
   const viewLayout = useLayoutStore((s) => s.getViewLayout(viewId));
   const editMode = useLayoutStore((s) => s.editMode);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { width } = useContainerWidth({ ref: containerRef });
+  const [containerRef, { width }] = useElementSize<HTMLDivElement>();
 
   const [currentBreakpoint, setCurrentBreakpoint] = useState<Breakpoint>('lg');
 
