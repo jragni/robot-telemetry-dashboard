@@ -4,6 +4,8 @@ import 'react-resizable/css/styles.css';
 import { useState, useCallback, useMemo } from 'react';
 import { Responsive, type Layout, type LayoutItem } from 'react-grid-layout';
 
+import { AddPanelDialog } from './AddPanelDialog';
+import { PanelContextMenu } from './PanelContextMenu';
 import { PanelFrame } from './PanelFrame';
 import { BREAKPOINTS, COLS, GRID_MARGIN } from './PanelGrid.constants';
 import type { PanelGridProps } from './PanelGrid.types';
@@ -58,6 +60,7 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
   const [containerRef, { width, height }] = useElementSize<HTMLDivElement>();
 
   const [currentBreakpoint, setCurrentBreakpoint] = useState<Breakpoint>('lg');
+  const [addPanelOpen, setAddPanelOpen] = useState(false);
 
   const handleLayoutChange = useCallback(
     (_layout: Layout, allLayouts: Partial<Record<string, Layout>>) => {
@@ -85,37 +88,57 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
   );
 
   return (
-    <div ref={containerRef} className={cn('h-full w-full', className)}>
-      <Show when={width > 0}>
-        <Responsive
-          className="layout"
-          width={width}
-          layouts={breakpoints}
-          breakpoints={BREAKPOINTS}
-          cols={COLS}
-          rowHeight={rowHeight}
-          compactType="vertical"
-          isDraggable={true}
-          isResizable={true}
-          resizeHandles={['nw', 'ne', 'sw', 'se']}
-          draggableHandle=".panel-drag-handle"
-          draggableCancel=".panel-action-button"
-          onLayoutChange={handleLayoutChange}
-          onBreakpointChange={handleBreakpointChange}
-          margin={[GRID_MARGIN, GRID_MARGIN]}
-          containerPadding={[0, 0]}
-        >
-          {panels.map((instance) => (
-            <div key={instance.id}>
-              <PanelFrame
-                instance={instance}
-                viewId={viewId}
-                robotId={robotId}
-              />
-            </div>
-          ))}
-        </Responsive>
-      </Show>
-    </div>
+    <>
+      <PanelContextMenu
+        viewId={viewId}
+        onAddPanel={() => setAddPanelOpen(true)}
+      >
+        <div ref={containerRef} className={cn('h-full w-full', className)}>
+          <Show when={width > 0}>
+            <Responsive
+              className="layout"
+              width={width}
+              layouts={breakpoints}
+              breakpoints={BREAKPOINTS}
+              cols={COLS}
+              rowHeight={rowHeight}
+              compactType="vertical"
+              isDraggable={true}
+              isResizable={true}
+              resizeHandles={['nw', 'ne', 'sw', 'se']}
+              draggableHandle=".panel-drag-handle"
+              draggableCancel=".panel-action-button"
+              onLayoutChange={handleLayoutChange}
+              onBreakpointChange={handleBreakpointChange}
+              margin={[GRID_MARGIN, GRID_MARGIN]}
+              containerPadding={[0, 0]}
+            >
+              {panels.map((instance) => (
+                <div key={instance.id}>
+                  <PanelContextMenu
+                    viewId={viewId}
+                    panelId={instance.id}
+                    panelTypeId={instance.type}
+                    onAddPanel={() => setAddPanelOpen(true)}
+                  >
+                    <PanelFrame
+                      instance={instance}
+                      viewId={viewId}
+                      robotId={robotId}
+                    />
+                  </PanelContextMenu>
+                </div>
+              ))}
+            </Responsive>
+          </Show>
+        </div>
+      </PanelContextMenu>
+
+      <AddPanelDialog
+        viewId={viewId}
+        open={addPanelOpen}
+        onOpenChange={setAddPanelOpen}
+      />
+    </>
   );
 }

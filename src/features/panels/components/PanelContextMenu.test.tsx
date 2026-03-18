@@ -13,7 +13,6 @@ import { useLayoutStore } from '@/stores/layout/layout.store';
 function resetStore() {
   useLayoutStore.setState({
     layouts: useLayoutStore.getState().layouts,
-    editMode: false,
   });
 }
 

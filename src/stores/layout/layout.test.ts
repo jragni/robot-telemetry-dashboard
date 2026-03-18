@@ -61,7 +61,6 @@ function resetStore() {
       map: { breakpoints: { lg: [], md: [], sm: [] }, panels: [] },
       pilot: { breakpoints: { lg: [], md: [], sm: [] }, panels: [] },
     },
-    editMode: false,
   });
 
   localStorage.clear();
@@ -89,10 +88,6 @@ describe('layout store', () => {
         expect(layouts[viewId].breakpoints).toBeDefined();
         expect(layouts[viewId].panels).toBeDefined();
       }
-    });
-
-    it('editMode defaults to false', () => {
-      expect(useLayoutStore.getState().editMode).toBe(false);
     });
   });
 
@@ -262,25 +257,6 @@ describe('layout store', () => {
       const dashboardAfter =
         useLayoutStore.getState().layouts.dashboard.breakpoints.lg;
       expect(dashboardAfter).toEqual([{ i: 'p1', x: 0, y: 0, w: 4, h: 4 }]);
-    });
-  });
-
-  // -------------------------------------------------------------------------
-  // setEditMode
-  // -------------------------------------------------------------------------
-
-  describe('setEditMode', () => {
-    it('sets editMode to true', () => {
-      useLayoutStore.getState().setEditMode(true);
-
-      expect(useLayoutStore.getState().editMode).toBe(true);
-    });
-
-    it('sets editMode to false', () => {
-      useLayoutStore.getState().setEditMode(true);
-      useLayoutStore.getState().setEditMode(false);
-
-      expect(useLayoutStore.getState().editMode).toBe(false);
     });
   });
 

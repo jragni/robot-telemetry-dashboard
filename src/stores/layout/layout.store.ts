@@ -38,7 +38,6 @@ const EMPTY_VIEW_LAYOUT: PersistedViewLayout = {
 
 const initialState: LayoutStoreState = {
   layouts: createDefaultLayout(),
-  editMode: false,
 };
 
 // ---------------------------------------------------------------------------
@@ -165,10 +164,6 @@ export const useLayoutStore = create<LayoutStore>()(
             false,
             'layout/resetLayout'
           );
-        },
-
-        setEditMode(enabled) {
-          set({ editMode: enabled }, false, 'layout/setEditMode');
         },
 
         getViewLayout(viewId) {
