@@ -60,3 +60,4 @@ Resume file: .planning/phases/13.1-conditional-render-and-code-style/13.1-02-SUM
 ## Roadmap Evolution
 
 - Phase 13.1 inserted after Phase 13: ConditionalRender component + code style fixes (ISS-001, ISS-002) (URGENT)
+- Phase 13.2 inserted after Phase 13.1: Fix all lint errors + warnings with legitimate code fixes (URGENT)
