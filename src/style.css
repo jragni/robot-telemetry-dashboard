@@ -12,7 +12,7 @@
 /* ----------------------------------------------------------
    Section 1: Tailwind Import
    ---------------------------------------------------------- */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ----------------------------------------------------------
    Section 2: :root — All shadcn semantic variables in OKLCH
@@ -45,7 +45,7 @@
   --muted-foreground: oklch(0.58 0.012 250);
 
   /* ---- Accent ---- */
-  --accent: oklch(0.20 0.018 250);
+  --accent: oklch(0.2 0.018 250);
   --accent-foreground: oklch(0.92 0.008 250);
 
   /* ---- Destructive ---- */
@@ -61,20 +61,20 @@
   --radius: 0.25rem;
 
   /* ---- Sidebar ---- */
-  --sidebar: oklch(0.10 0.012 250);
+  --sidebar: oklch(0.1 0.012 250);
   --sidebar-foreground: oklch(0.88 0.008 250);
   --sidebar-primary: oklch(0.62 0.22 230);
   --sidebar-primary-foreground: oklch(0.13 0.015 250);
   --sidebar-accent: oklch(0.18 0.018 250);
   --sidebar-accent-foreground: oklch(0.92 0.008 250);
-  --sidebar-border: oklch(0.20 0.015 250);
+  --sidebar-border: oklch(0.2 0.015 250);
   --sidebar-ring: oklch(0.62 0.22 230);
 
   /* ---- Telemetry Status ---- */
   --status-nominal: oklch(0.68 0.19 155);
   --status-degraded: oklch(0.72 0.18 80);
   --status-critical: oklch(0.58 0.22 25);
-  --status-offline: oklch(0.40 0.01 250);
+  --status-offline: oklch(0.4 0.01 250);
   --status-connecting: oklch(0.62 0.22 230);
 
   /* ---- Data Visualization ---- */
@@ -111,7 +111,7 @@
   --muted: oklch(0.16 0.012 250);
   --muted-foreground: oklch(0.58 0.012 250);
 
-  --accent: oklch(0.20 0.018 250);
+  --accent: oklch(0.2 0.018 250);
   --accent-foreground: oklch(0.92 0.008 250);
 
   --destructive: oklch(0.58 0.22 25);
@@ -123,19 +123,19 @@
 
   --radius: 0.25rem;
 
-  --sidebar: oklch(0.10 0.012 250);
+  --sidebar: oklch(0.1 0.012 250);
   --sidebar-foreground: oklch(0.88 0.008 250);
   --sidebar-primary: oklch(0.62 0.22 230);
   --sidebar-primary-foreground: oklch(0.13 0.015 250);
   --sidebar-accent: oklch(0.18 0.018 250);
   --sidebar-accent-foreground: oklch(0.92 0.008 250);
-  --sidebar-border: oklch(0.20 0.015 250);
+  --sidebar-border: oklch(0.2 0.015 250);
   --sidebar-ring: oklch(0.62 0.22 230);
 
   --status-nominal: oklch(0.68 0.19 155);
   --status-degraded: oklch(0.72 0.18 80);
   --status-critical: oklch(0.58 0.22 25);
-  --status-offline: oklch(0.40 0.01 250);
+  --status-offline: oklch(0.4 0.01 250);
   --status-connecting: oklch(0.62 0.22 230);
 
   --data-blue: oklch(0.62 0.22 230);
@@ -152,10 +152,12 @@
    ---------------------------------------------------------- */
 @theme inline {
   /* ---- Typography ---- */
-  --font-sans: "Inter", "Inter Variable", ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo,
-    Consolas, "Liberation Mono", monospace;
+  --font-sans:
+    'Inter', 'Inter Variable', ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:
+    'IBM Plex Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
 
   /* ---- shadcn Surfaces ---- */
   --color-background: var(--background);
@@ -240,7 +242,7 @@
 
   body {
     font-family: var(--font-sans);
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -288,4 +290,41 @@
 
 .animate-spin-slow {
   animation: spin 3s linear infinite;
+}
+
+/* ---------------------------------------------------------------- */
+/* react-grid-layout dark theme overrides                           */
+/* ---------------------------------------------------------------- */
+
+/* Make resize handles always partially visible */
+.react-grid-item > .react-resizable-handle {
+  opacity: 0.4;
+  z-index: 10;
+}
+
+.react-grid-item:hover > .react-resizable-handle {
+  opacity: 1;
+}
+
+/* Electric blue handle accents (replace invisible black) */
+.react-grid-item > .react-resizable-handle::after {
+  border-right-color: oklch(0.62 0.22 230 / 0.6);
+  border-bottom-color: oklch(0.62 0.22 230 / 0.6);
+}
+
+.react-grid-item:hover > .react-resizable-handle::after {
+  border-right-color: oklch(0.62 0.22 230);
+  border-bottom-color: oklch(0.62 0.22 230);
+}
+
+/* Remove default black SVG background on resize handle */
+.react-resizable-handle {
+  background-image: none !important;
+}
+
+/* Electric blue drag placeholder instead of default red */
+.react-grid-item.react-grid-placeholder {
+  background: oklch(0.62 0.22 230);
+  opacity: 0.15;
+  border-radius: 2px;
 }
