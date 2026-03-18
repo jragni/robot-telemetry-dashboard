@@ -1,7 +1,7 @@
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { Responsive, type Layout, type LayoutItem } from 'react-grid-layout';
 
 import { AddPanelDialog } from './AddPanelDialog';
@@ -62,8 +62,16 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
   const [currentBreakpoint, setCurrentBreakpoint] = useState<Breakpoint>('lg');
   const [addPanelOpen, setAddPanelOpen] = useState(false);
 
+  // Skip the next onLayoutChange after a reset to prevent react-grid-layout
+  // from immediately re-saving the stale layout over the fresh defaults.
+  const skipNextSaveRef = useRef(false);
+
   const handleLayoutChange = useCallback(
     (_layout: Layout, allLayouts: Partial<Record<string, Layout>>) => {
+      if (skipNextSaveRef.current) {
+        skipNextSaveRef.current = false;
+        return;
+      }
       const bpLayout = allLayouts[currentBreakpoint];
       if (bpLayout !== undefined) {
         useLayoutStore
@@ -80,6 +88,11 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
     setCurrentBreakpoint(breakpoint as Breakpoint);
   }, []);
 
+  const handleResetLayout = useCallback(() => {
+    skipNextSaveRef.current = true;
+    useLayoutStore.getState().resetLayout(viewId);
+  }, [viewId]);
+
   const { panels, breakpoints } = viewLayout;
 
   const rowHeight = useMemo(
@@ -92,6 +105,7 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
       <PanelContextMenu
         viewId={viewId}
         onAddPanel={() => setAddPanelOpen(true)}
+        onResetLayout={handleResetLayout}
       >
         <div ref={containerRef} className={cn('h-full w-full', className)}>
           <Show when={width > 0}>
@@ -120,6 +134,7 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
                     panelId={instance.id}
                     panelTypeId={instance.type}
                     onAddPanel={() => setAddPanelOpen(true)}
+                    onResetLayout={handleResetLayout}
                   >
                     <PanelFrame
                       instance={instance}

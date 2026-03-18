@@ -8,4 +8,5 @@ export interface PanelContextMenuProps {
   panelId?: string;
   panelTypeId?: string;
   onAddPanel: () => void;
+  onResetLayout: () => void;
 }

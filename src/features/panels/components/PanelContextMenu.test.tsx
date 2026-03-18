@@ -28,7 +28,11 @@ describe('PanelContextMenu', () => {
 
   it('renders children', () => {
     render(
-      <PanelContextMenu viewId="dashboard" onAddPanel={vi.fn()}>
+      <PanelContextMenu
+        viewId="dashboard"
+        onAddPanel={vi.fn()}
+        onResetLayout={vi.fn()}
+      >
         <div data-testid="child">Panel Content</div>
       </PanelContextMenu>
     );
@@ -44,6 +48,7 @@ describe('PanelContextMenu', () => {
         viewId="dashboard"
         panelId="panel-1"
         onAddPanel={vi.fn()}
+        onResetLayout={vi.fn()}
       >
         <div data-testid="trigger">Panel Content</div>
       </PanelContextMenu>
@@ -65,7 +70,11 @@ describe('PanelContextMenu', () => {
     const onAddPanel = vi.fn();
 
     render(
-      <PanelContextMenu viewId="dashboard" onAddPanel={onAddPanel}>
+      <PanelContextMenu
+        viewId="dashboard"
+        onAddPanel={onAddPanel}
+        onResetLayout={vi.fn()}
+      >
         <div data-testid="trigger">Panel Content</div>
       </PanelContextMenu>
     );
@@ -79,12 +88,16 @@ describe('PanelContextMenu', () => {
     expect(onAddPanel).toHaveBeenCalledOnce();
   });
 
-  it('calls resetLayout when Reset Layout is clicked', async () => {
+  it('calls onResetLayout when Reset Layout is clicked', async () => {
     const user = userEvent.setup();
-    const resetSpy = vi.spyOn(useLayoutStore.getState(), 'resetLayout');
+    const onResetLayout = vi.fn();
 
     render(
-      <PanelContextMenu viewId="dashboard" onAddPanel={vi.fn()}>
+      <PanelContextMenu
+        viewId="dashboard"
+        onAddPanel={vi.fn()}
+        onResetLayout={onResetLayout}
+      >
         <div data-testid="trigger">Panel Content</div>
       </PanelContextMenu>
     );
@@ -95,7 +108,7 @@ describe('PanelContextMenu', () => {
     });
     await user.click(screen.getByText('Reset Layout'));
 
-    expect(resetSpy).toHaveBeenCalledWith('dashboard');
+    expect(onResetLayout).toHaveBeenCalledOnce();
   });
 
   it('disables Remove when no panelId provided', async () => {
@@ -124,6 +137,7 @@ describe('PanelContextMenu', () => {
         viewId="dashboard"
         panelId="panel-1"
         onAddPanel={vi.fn()}
+        onResetLayout={vi.fn()}
       >
         <div data-testid="trigger">Panel Content</div>
       </PanelContextMenu>

@@ -20,15 +20,12 @@ export function PanelContextMenu({
   viewId,
   panelId,
   onAddPanel,
+  onResetLayout,
 }: PanelContextMenuProps) {
   function handleRemove() {
     if (panelId) {
       useLayoutStore.getState().removePanel(viewId, panelId);
     }
-  }
-
-  function handleResetLayout() {
-    useLayoutStore.getState().resetLayout(viewId);
   }
 
   return (
@@ -59,7 +56,7 @@ export function PanelContextMenu({
 
         <ContextMenuSeparator />
 
-        <ContextMenuItem onClick={handleResetLayout}>
+        <ContextMenuItem onClick={onResetLayout}>
           <RotateCcw size={14} />
           Reset Layout
         </ContextMenuItem>
