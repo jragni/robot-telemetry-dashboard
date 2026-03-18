@@ -34,6 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 13.2: Lint Zero Warnings** — Fix all 14 lint issues (2 errors + 12 warnings) with legitimate code fixes, expert-driven fix loop until zero (INSERTED)
 - [ ] **Phase 14: View Wiring** — Wire DashboardView and MapView to PanelGrid, fix integration gaps from overnight build
 - [ ] **Phase 15: Mobile Responsive Nav** — Fix navigation accessibility on mobile/small viewports, dashboard/fleet/map nav buttons hidden on smaller screens
+- [ ] **Phase 16: Video Stream Fix** — Debug and fix WebRTC video feed on live robots (LiDAR + controls work, video does not)
 
 ## Phase Details
 

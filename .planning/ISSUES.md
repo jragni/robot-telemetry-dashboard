@@ -30,6 +30,24 @@
 - **Discovered:** 2026-03-16 during audit against video research
 - **Status:** Open — folded into Phase 13.1
 
+### ISS-006: Move hamburger menu button below Header
+
+- **Phase:** 14
+- **Priority:** Medium
+- **Type:** UX
+- **Description:** The sidebar toggle (hamburger menu) should be positioned below the Header bar, not inside it. Better visual hierarchy for the telemetry dashboard layout.
+- **Discovered:** 2026-03-18
+- **Status:** Open — fold into Phase 14 UX plan
+
+### ISS-007: Video stream not working on live robot
+
+- **Phase:** TBD (new phase needed)
+- **Priority:** High
+- **Type:** Bug
+- **Description:** On a live robot, the video feed does not work despite LiDAR and controls functioning correctly. The WebRTC video stream fails to connect or render. LiDAR (ROS topic subscription) and controls (ROS publishing) work, so the rosbridge connection is healthy — the issue is isolated to the WebRTC/video pipeline.
+- **Discovered:** 2026-03-18 during live robot testing
+- **Status:** Open — needs dedicated debugging phase
+
 ### ISS-004: Panel resize cursor feedback missing
 
 - **Phase:** 14
