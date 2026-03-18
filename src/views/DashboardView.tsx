@@ -1,9 +1,12 @@
+import { PanelGrid } from '@/features/panels/components/PanelGrid';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
+
 export function DashboardView() {
+  const activeRobotId = useConnectionsStore((s) => s.activeRobotId);
+
   return (
-    <div className="flex flex-1 items-center justify-center p-8">
-      <p className="text-gray-400 text-lg">
-        Dashboard — Phase 5 will add panels here
-      </p>
+    <div className="flex flex-1 overflow-hidden">
+      <PanelGrid viewId="dashboard" robotId={activeRobotId ?? undefined} />
     </div>
   );
 }
