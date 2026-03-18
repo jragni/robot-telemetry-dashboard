@@ -47,6 +47,17 @@
 
 ### ISS-003: CLOSED — Cross-feature imports promoted to shared layer (Phase 13.1-01, commits a75784a + 0ccc986)
 
+### ISS-008: Panel grid infinite growth on responsive breakpoint transition
+
+- **Phase:** 15
+- **Priority:** Critical
+- **Type:** Bug
+- **Description:** When viewport resizes from desktop to tablet/mobile, the panel grid enters an infinite growth loop crashing the browser at 16M pixels. Root cause: `computeRowHeight` uses container height from ResizeObserver, but the container grows with content (autoSize). Smaller breakpoints stack panels vertically (26+ rows), container grows → ResizeObserver fires → bigger rowHeight → taller grid → infinite loop. Fix: use viewport-relative height or set `autoSize={false}`.
+- **Discovered:** 2026-03-18 during Playwright responsive testing
+- **Status:** Open — Critical, must fix before Phase 15
+
+## Closed
+
 ### ISS-004: CLOSED — Panel resize cursor feedback addressed (Phase 14-04)
 
 ### ISS-005: CLOSED — Layout toolbar UX redesigned (Phase 14-04)
