@@ -1,11 +1,11 @@
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Responsive, type Layout, type LayoutItem } from 'react-grid-layout';
 
 import { PanelFrame } from './PanelFrame';
-import { BREAKPOINTS, COLS, ROW_HEIGHT } from './PanelGrid.constants';
+import { BREAKPOINTS, COLS, GRID_MARGIN } from './PanelGrid.constants';
 import type { PanelGridProps } from './PanelGrid.types';
 
 import { Show } from '@/components/shared/Show';
@@ -16,6 +16,39 @@ import { useLayoutStore } from '@/stores/layout/layout.store';
 type Breakpoint = keyof typeof BREAKPOINTS;
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute the maximum row extent for the current breakpoint layout.
+ * Each item occupies rows from `y` to `y + h`, so the grid's total
+ * row count is the highest `y + h` across all items.
+ */
+function getMaxRow(layout: LayoutItem[]): number {
+  return layout.reduce((max, item) => Math.max(max, item.y + item.h), 0);
+}
+
+/**
+ * Derive a rowHeight that makes the default layout fit exactly within
+ * the available container height, with no scroll required.
+ *
+ * Formula: availableHeight = (maxRows × rowHeight) + ((maxRows - 1) × marginY)
+ * Solving:  rowHeight = (availableHeight - (maxRows - 1) × marginY) / maxRows
+ *
+ * Falls back to 60px if the container height is unknown or the layout is empty.
+ */
+function computeRowHeight(
+  containerHeight: number,
+  layout: LayoutItem[]
+): number {
+  const maxRows = getMaxRow(layout);
+  if (maxRows === 0 || containerHeight <= 0) return 60;
+  const totalMargin = (maxRows - 1) * GRID_MARGIN;
+  const rowHeight = (containerHeight - totalMargin) / maxRows;
+  return Math.max(rowHeight, 20);
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -23,7 +56,7 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
   const viewLayout = useLayoutStore((s) => s.getViewLayout(viewId));
   const editMode = useLayoutStore((s) => s.editMode);
 
-  const [containerRef, { width }] = useElementSize<HTMLDivElement>();
+  const [containerRef, { width, height }] = useElementSize<HTMLDivElement>();
 
   const [currentBreakpoint, setCurrentBreakpoint] = useState<Breakpoint>('lg');
 
@@ -50,8 +83,13 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
 
   const { panels, breakpoints } = viewLayout;
 
+  const rowHeight = useMemo(
+    () => computeRowHeight(height, breakpoints[currentBreakpoint] ?? []),
+    [height, breakpoints, currentBreakpoint]
+  );
+
   return (
-    <div ref={containerRef} className={cn('w-full', className)}>
+    <div ref={containerRef} className={cn('h-full w-full', className)}>
       <Show when={width > 0}>
         <Responsive
           className="layout"
@@ -59,14 +97,14 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
           layouts={breakpoints}
           breakpoints={BREAKPOINTS}
           cols={COLS}
-          rowHeight={ROW_HEIGHT}
+          rowHeight={rowHeight}
           compactType="vertical"
           isDraggable={canInteract}
           isResizable={canInteract}
           draggableHandle=".panel-drag-handle"
           onLayoutChange={handleLayoutChange}
           onBreakpointChange={handleBreakpointChange}
-          margin={[8, 8]}
+          margin={[GRID_MARGIN, GRID_MARGIN]}
           containerPadding={[0, 0]}
         >
           {panels.map((instance) => (
