@@ -2,6 +2,7 @@ import { Outlet } from 'react-router';
 
 import { DisconnectGuard } from './DisconnectGuard';
 import { Header } from './Header';
+import { SidebarToggle } from './SidebarToggle';
 
 import { Show } from '@/components/shared/Show';
 import { ConnectionsSidebar } from '@/features/connections/components/ConnectionsSidebar';
@@ -18,15 +19,19 @@ import { useUIStore } from '@/stores/ui/ui.store';
  * Structure:
  *   ┌────────────────────────────────────────┐
  *   │ Header (h-12, full width)              │
- *   ├──────────┬─────────────────────────────┤
- *   │ Sidebar  │ <Outlet /> (main content)   │
- *   │ (w-64,   │                             │
- *   │ collaps) │                             │
- *   └──────────┴─────────────────────────────┘
+ *   ├──┬───────┬─────────────────────────────┤
+ *   │☰ │Sidebar│ <Outlet /> (main content)   │
+ *   │  │(w-64, │                             │
+ *   │  │collap)│                             │
+ *   └──┴───────┴─────────────────────────────┘
+ *
+ * The sidebar toggle (hamburger) sits at the left edge of the content area,
+ * between the sidebar and main content. It is always visible — even when the
+ * sidebar is collapsed — so the user can always re-open it.
  *
  * Responsive behaviour:
- *   - Mobile (<md): sidebar hidden by default, toggled via hamburger in Header
- *   - Desktop (≥md): sidebar visible, collapsible via hamburger
+ *   - Mobile (<md): sidebar overlays as a drawer, toggle always visible
+ *   - Desktop (≥md): sidebar pushes content, toggle always visible
  */
 export function DashboardShell() {
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
@@ -71,6 +76,11 @@ export function DashboardShell() {
         >
           <ConnectionsSidebar />
         </aside>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Sidebar toggle strip                                              */}
+        {/* ---------------------------------------------------------------- */}
+        <SidebarToggle open={sidebarOpen} />
 
         {/* ---------------------------------------------------------------- */}
         {/* Main content                                                      */}

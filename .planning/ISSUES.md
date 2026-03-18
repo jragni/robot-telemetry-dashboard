@@ -30,15 +30,6 @@
 - **Discovered:** 2026-03-16 during audit against video research
 - **Status:** Open — folded into Phase 13.1
 
-### ISS-006: Move hamburger menu button below Header
-
-- **Phase:** 14
-- **Priority:** Medium
-- **Type:** UX
-- **Description:** The sidebar toggle (hamburger menu) should be positioned below the Header bar, not inside it. Better visual hierarchy for the telemetry dashboard layout.
-- **Discovered:** 2026-03-18
-- **Status:** Open — fold into Phase 14 UX plan
-
 ### ISS-007: Video stream not working on live robot
 
 - **Phase:** TBD (new phase needed)
@@ -48,24 +39,6 @@
 - **Discovered:** 2026-03-18 during live robot testing
 - **Status:** Open — needs dedicated debugging phase
 
-### ISS-004: Panel resize cursor feedback missing
-
-- **Phase:** 14
-- **Priority:** Medium
-- **Type:** UX
-- **Description:** When hovering over panel resize handles, the cursor doesn't change to indicate resizability. Users can't tell panels are resizable until they try. Need cursor: resize hints on drag/resize handles.
-- **Discovered:** 2026-03-18 during Phase 14 checkpoint verification
-- **Status:** Open — needs /frontend-design review
-
-### ISS-005: Layout toolbar UX redesign needed
-
-- **Phase:** 14
-- **Priority:** Medium
-- **Type:** UX/Design
-- **Description:** The PanelToolbar (Edit Layout / Add Panel / Reset Layout) was wired in during Phase 14 but its placement and design needs a UX review. Should evaluate: where to position it, how it integrates with the defense-contractor aesthetic, and whether the interaction model is intuitive.
-- **Discovered:** 2026-03-18 during Phase 14 checkpoint verification
-- **Status:** Open — needs /frontend-design evaluation
-
 ## Closed
 
 ### ISS-001: CLOSED — Show component created, all conditionals replaced (Phase 13.1-02, commit da97d36)
@@ -73,3 +46,9 @@
 ### ISS-002: CLOSED — [].includes()/.some() pattern applied (Phase 13.1-02, commit 111e35e)
 
 ### ISS-003: CLOSED — Cross-feature imports promoted to shared layer (Phase 13.1-01, commits a75784a + 0ccc986)
+
+### ISS-004: CLOSED — Panel resize cursor feedback addressed (Phase 14-04)
+
+### ISS-005: CLOSED — Layout toolbar UX redesigned (Phase 14-04)
+
+### ISS-006: CLOSED — Sidebar toggle moved below Header into DashboardShell (Phase 14-04)

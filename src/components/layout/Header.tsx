@@ -1,43 +1,24 @@
-import { Menu, X } from 'lucide-react';
-
 import { ActiveRobotBadge } from './ActiveRobotBadge';
 import { NavItem } from './NavItem';
 
 import { APP_CONFIG } from '@/config/constants';
-import { useUIStore } from '@/stores/ui/ui.store';
 
 /**
  * Top navigation bar.
  *
- * Left:   hamburger (mobile) + app title
+ * Left:   app title
  * Center: Dashboard | Fleet | Map NavLinks (hidden on mobile)
  * Right:  active robot status indicator
+ *
+ * The sidebar toggle (hamburger) lives in DashboardShell beside the sidebar,
+ * not in the header — it controls the sidebar, not the navigation.
  */
 export function Header() {
-  const sidebarOpen = useUIStore((s) => s.sidebarOpen);
-  // Use getState() to avoid the unbound-method lint warning on store actions
-  const handleToggleSidebar = () => useUIStore.getState().toggleSidebar();
-
   return (
     <header
       role="banner"
       className="h-12 shrink-0 border-b border-border bg-card px-3 flex items-center gap-3 z-30"
     >
-      {/* Sidebar toggle (hamburger) */}
-      <button
-        type="button"
-        onClick={handleToggleSidebar}
-        aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-        aria-expanded={sidebarOpen}
-        className="flex items-center justify-center w-7 h-7 rounded text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors shrink-0"
-      >
-        {sidebarOpen ? (
-          <X className="w-4 h-4" aria-hidden="true" />
-        ) : (
-          <Menu className="w-4 h-4" aria-hidden="true" />
-        )}
-      </button>
-
       {/* App title */}
       <span className="font-mono text-sm font-semibold tracking-widest text-primary uppercase shrink-0">
         {APP_CONFIG.APP_NAME}
