@@ -30,23 +30,38 @@ function getMaxRow(layout: LayoutItem[]): number {
   return layout.reduce((max, item) => Math.max(max, item.y + item.h), 0);
 }
 
+/** Static row height for stacked layouts (md/sm breakpoints). */
+const STATIC_ROW_HEIGHT = 60;
+
 /**
  * Derive a rowHeight that makes the default layout fit exactly within
- * the available container height, with no scroll required.
+ * the available height, with no scroll required.
  *
- * Formula: availableHeight = (maxRows × rowHeight) + ((maxRows - 1) × marginY)
- * Solving:  rowHeight = (availableHeight - (maxRows - 1) × marginY) / maxRows
+ * Only used at `lg` breakpoint where panels are in a multi-column grid.
+ * At `md`/`sm` breakpoints, panels stack vertically and a static row
+ * height is used instead — otherwise the ResizeObserver creates a
+ * feedback loop (container grows → bigger rowHeight → taller grid → ∞).
  *
- * Falls back to 60px if the container height is unknown or the layout is empty.
+ * Uses `window.innerHeight` minus a fixed header offset as the
+ * available height, NOT the container's observed height. This prevents
+ * the infinite growth loop since window height is stable.
  */
 function computeRowHeight(
-  containerHeight: number,
+  breakpoint: Breakpoint,
   layout: LayoutItem[]
 ): number {
+  if (breakpoint !== 'lg') return STATIC_ROW_HEIGHT;
+
   const maxRows = getMaxRow(layout);
-  if (maxRows === 0 || containerHeight <= 0) return 60;
+  if (maxRows === 0) return STATIC_ROW_HEIGHT;
+
+  // Use viewport height minus header (48px) and margins as the target.
+  // This is stable — it doesn't change when the grid content grows.
+  const availableHeight =
+    typeof window !== 'undefined' ? window.innerHeight - 48 : 800;
+
   const totalMargin = (maxRows - 1) * GRID_MARGIN;
-  const rowHeight = (containerHeight - totalMargin) / maxRows;
+  const rowHeight = (availableHeight - totalMargin) / maxRows;
   return Math.max(rowHeight, 20);
 }
 
@@ -57,7 +72,7 @@ function computeRowHeight(
 export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
   const viewLayout = useLayoutStore((s) => s.getViewLayout(viewId));
 
-  const [containerRef, { width, height }] = useElementSize<HTMLDivElement>();
+  const [containerRef, { width }] = useElementSize<HTMLDivElement>();
 
   const [currentBreakpoint, setCurrentBreakpoint] = useState<Breakpoint>('lg');
   const [addPanelOpen, setAddPanelOpen] = useState(false);
@@ -96,8 +111,9 @@ export function PanelGrid({ viewId, className, robotId }: PanelGridProps) {
   const { panels, breakpoints } = viewLayout;
 
   const rowHeight = useMemo(
-    () => computeRowHeight(height, breakpoints[currentBreakpoint] ?? []),
-    [height, breakpoints, currentBreakpoint]
+    () =>
+      computeRowHeight(currentBreakpoint, breakpoints[currentBreakpoint] ?? []),
+    [breakpoints, currentBreakpoint]
   );
 
   return (
