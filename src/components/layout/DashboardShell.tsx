@@ -60,15 +60,13 @@ export function DashboardShell() {
             'fixed md:relative z-20 md:z-auto',
             // Height
             'top-12 md:top-auto h-[calc(100vh-3rem)] md:h-auto',
-            // Width — always 16rem
-            'w-64',
             // Sidebar-specific background token
             'shrink-0 border-r border-sidebar-border bg-sidebar',
-            // Slide transition
-            'transition-transform duration-200 ease-in-out',
+            // Width + slide transition — collapse to 0 width on desktop when closed
+            'overflow-hidden transition-all duration-200 ease-in-out',
             sidebarOpen
-              ? 'translate-x-0'
-              : '-translate-x-full md:-translate-x-full'
+              ? 'w-64 translate-x-0'
+              : 'w-0 -translate-x-full md:translate-x-0 md:border-r-0'
           )}
         >
           <ConnectionsSidebar />
