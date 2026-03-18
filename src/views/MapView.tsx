@@ -1,7 +1,12 @@
+import { PanelGrid } from '@/features/panels/components/PanelGrid';
+import { useConnectionsStore } from '@/stores/connections/connections.store';
+
 export function MapView() {
+  const activeRobotId = useConnectionsStore((s) => s.activeRobotId);
+
   return (
-    <div className="flex flex-1 items-center justify-center p-8">
-      <p className="text-gray-400 text-lg">SLAM Map — Phase 10</p>
+    <div className="flex flex-1 overflow-hidden">
+      <PanelGrid viewId="map" robotId={activeRobotId ?? undefined} />
     </div>
   );
 }
