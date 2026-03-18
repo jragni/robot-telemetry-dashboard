@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import type * as ReactRouter from 'react-router';
 import { BehaviorSubject } from 'rxjs';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
@@ -48,7 +49,7 @@ vi.mock('@/services/ros/registry/RosServiceRegistry', () => ({
 }));
 
 vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>();
+  const actual = await importOriginal<typeof ReactRouter>();
   return {
     ...actual,
     useNavigate: vi.fn(() => mockNavigate),

@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
+import type { Ros } from 'roslib';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { useControlPublisher } from './useControlPublisher';
@@ -38,7 +39,7 @@ const mockCreateTopicPublisher = vi.mocked(createTopicPublisher);
 const ROBOT_ID = 'robot-test';
 
 /** A minimal fake ROSLIB.Ros instance — only needs to be truthy. */
-const fakeRos = {} as import('roslib').Ros;
+const fakeRos = {} as Ros;
 
 function setConnected() {
   mockUseRosConnection.mockReturnValue({

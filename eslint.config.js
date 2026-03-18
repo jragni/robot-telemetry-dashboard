@@ -111,4 +111,12 @@ export default defineConfig([
       'jsx-a11y/no-static-element-interactions': 'warn',
     },
   },
+  // E2E files use Playwright's own TS runner which does not enable
+  // strictNullChecks — prefer-nullish-coalescing cannot function without it.
+  {
+    files: ['e2e/**/*.ts'],
+    rules: {
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    },
+  },
 ]);

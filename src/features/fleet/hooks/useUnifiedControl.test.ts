@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
+import type { Ros } from 'roslib';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { useUnifiedControl } from './useUnifiedControl';
@@ -33,7 +34,7 @@ const mockCreateTopicPublisher = vi.mocked(createTopicPublisher);
 // Helpers
 // ---------------------------------------------------------------------------
 
-const fakeRos = {} as import('roslib').Ros;
+const fakeRos = {} as Ros;
 
 function setConnected(robotId: string) {
   mockUseRosConnection.mockImplementation((id) => {

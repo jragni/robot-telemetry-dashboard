@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import type * as ReactRouter from 'react-router';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { RobotCard } from './RobotCard';
@@ -25,7 +26,7 @@ vi.mock('@/hooks/useFleetConnectionManager', () => ({
 const mockNavigate = vi.fn();
 
 vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>();
+  const actual = await importOriginal<typeof ReactRouter>();
   return {
     ...actual,
     useNavigate: vi.fn(() => mockNavigate),

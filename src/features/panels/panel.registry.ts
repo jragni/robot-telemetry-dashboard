@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 
 import { PanelPlaceholder } from './components/PanelPlaceholder';
+import type { PanelPlaceholderProps } from './components/PanelPlaceholder.types';
 import type { PanelMeta, PanelTypeId } from './panel.types';
 
 import { ControlWidget } from '@/features/control/components/ControlWidget';
@@ -32,7 +33,8 @@ export const PANEL_REGISTRY: Record<PanelTypeId, PanelMeta> = {
     description: 'Live camera stream from the robot.',
     defaultSize: { w: 6, h: 8, minW: 3, minH: 4 },
     icon: Monitor,
-    component: (props) => PanelPlaceholder({ ...props, typeId: 'video-feed' }),
+    component: (props: PanelPlaceholderProps) =>
+      PanelPlaceholder({ ...props, typeId: 'video-feed' }),
   },
 
   'lidar-view': {
@@ -104,7 +106,7 @@ export const PANEL_REGISTRY: Record<PanelTypeId, PanelMeta> = {
     description: 'Live rosbridge WebSocket connection health.',
     defaultSize: { w: 4, h: 4, minW: 2, minH: 2 },
     icon: Wifi,
-    component: (props) =>
+    component: (props: PanelPlaceholderProps) =>
       PanelPlaceholder({ ...props, typeId: 'connection-status' }),
   },
 };

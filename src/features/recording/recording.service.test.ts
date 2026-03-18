@@ -1,4 +1,5 @@
 import { IDBFactory, IDBKeyRange } from 'fake-indexeddb';
+import type { Ros } from 'roslib';
 import { Subject } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -32,7 +33,7 @@ vi.mock('@/services/ros/subscriber/TopicSubscriber', () => ({
 // ---------------------------------------------------------------------------
 
 /** A minimal fake ROSLIB.Ros instance — only the reference identity matters. */
-const fakeRos = {} as import('roslib').Ros;
+const fakeRos = {} as Ros;
 
 const TOPICS: TopicConfig[] = [
   { name: '/imu/data', messageType: 'sensor_msgs/Imu' },
