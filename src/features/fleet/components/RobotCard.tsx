@@ -58,7 +58,16 @@ export function RobotCard({
   return (
     <div
       data-testid={`robot-card-${robot.id}`}
+      role="button"
+      tabIndex={0}
+      aria-label={`Select robot ${robot.name}`}
       onClick={handleCardClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
       className={cn(
         'flex flex-col gap-3 rounded-sm border bg-card p-4 transition-colors cursor-default',
         'border-l-2',

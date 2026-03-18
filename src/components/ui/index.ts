@@ -1,4 +1,5 @@
-export { Button, buttonVariants } from './button';
+export { Button } from './button';
+export { buttonVariants } from './button.variants';
 export {
   Card,
   CardHeader,
@@ -41,5 +42,6 @@ export {
 export { Input } from './input';
 export { Label } from './label';
 export { Separator } from './separator';
-export { Badge, badgeVariants } from './badge';
+export { Badge } from './badge';
+export { badgeVariants } from './badge.variants';
 export { Slider } from './slider';

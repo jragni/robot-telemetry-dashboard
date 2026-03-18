@@ -77,9 +77,10 @@ export function useTopicList(robotId: string | undefined): UseTopicListResult {
 
   // Cleanup subscriptions on unmount
   useEffect(() => {
+    const subscriptions = activeSubscriptions.current;
     return () => {
-      activeSubscriptions.current.forEach((s) => s.unsubscribe());
-      activeSubscriptions.current.clear();
+      subscriptions.forEach((s) => s.unsubscribe());
+      subscriptions.clear();
     };
   }, []);
 
