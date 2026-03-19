@@ -7,22 +7,22 @@ See: `.planning/ROADMAP.md` (created 2026-03-19)
 
 **Core value:** Deliver a professional-grade robot telemetry dashboard with non-negotiable architecture (RxJS + Zustand + roslib), scalable code structure (no barrels, strict types, domain stores), production-quality UI (design intelligence driven), and full TDD test coverage.
 
-**Current focus:** Phase 1 — Foundation & Scaffold
+**Current focus:** Phase 2 — Design System (UI/UX Pro Max)
 
 ## Current Position
 
-- **Phase:** 1 of 12
+- **Phase:** 2 of 12
 - **Plan:** Not yet planned
-- **Status:** Roadmap created
+- **Status:** Phase 1 complete, ready for Phase 2
 - **Last activity:** 2026-03-19
 
-Progress: `░░░░░░░░░░░░░░░░░░░░` 0%
+Progress: `██░░░░░░░░░░░░░░░░░░` 8%
 
 ## Phase Summary
 
 | #   | Phase                 | Status      |
 | --- | --------------------- | ----------- |
-| 1   | Foundation & Scaffold | Not started |
+| 1   | Foundation & Scaffold | Complete    |
 | 2   | Design System         | Not started |
 | 3   | App Shell & Routing   | Not started |
 | 4   | ROS Connection        | Not started |
@@ -44,9 +44,11 @@ None.
 | Date       | Decision                              | Context                |
 | ---------- | ------------------------------------- | ---------------------- |
 | 2026-03-19 | 12-phase roadmap with spec-driven TDD | v3 clean-slate rebuild |
+| 2026-03-19 | Phase 1 complete                      | Foundation & scaffold  |
 
 ## Notes
 
 - v2 post-mortem integrated: ISS-008 prevention in Phase 6, onLayoutChange guard, roslib CommonJS config, dynamic stores (no fixed array)
 - Integration Phase 12 explicitly verifies views render REAL components (prevents v2 overnight-build gap)
 - 21st.dev Magic MCP + UI/UX Pro Max used starting Phase 2 for all design/component decisions
+- Conditional `this.ROSLIB` define in vite.config.ts (skipped during vitest to avoid window undefined error)

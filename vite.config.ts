@@ -1,8 +1,11 @@
+/// <reference types="vitest/config" />
 import path from 'path';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
+
+const isTest = process.env.VITEST === 'true';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,11 +17,13 @@ export default defineConfig({
   },
   // Base path for GitHub Pages deployment
   base: '/robot-telemetry-dashboard/',
-  define: {
-    // Fix roslib's usage of 'this' in CommonJS modules
-    // roslib uses 'var ROSLIB = this.ROSLIB || {}' which fails in ES modules where 'this' is undefined
-    'this.ROSLIB': 'window.ROSLIB',
-  },
+  define: isTest
+    ? {}
+    : {
+        // Fix roslib's usage of 'this' in CommonJS modules
+        // roslib uses 'var ROSLIB = this.ROSLIB || {}' which fails in ES modules where 'this' is undefined
+        'this.ROSLIB': 'window.ROSLIB',
+      },
   build: {
     commonjsOptions: {
       transformMixedEsModules: true,
@@ -26,5 +31,11 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['roslib'],
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/utils/setup.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
   },
 });

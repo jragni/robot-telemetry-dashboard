@@ -10,7 +10,7 @@ import prettierConfig from 'eslint-config-prettier';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-  globalIgnores(['dist', 'node_modules', 'build', 'coverage']),
+  globalIgnores(['dist', 'node_modules', 'build', 'coverage', 'e2e']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -54,7 +54,7 @@ export default defineConfig([
       '@typescript-eslint/prefer-nullish-coalescing': 'warn',
       '@typescript-eslint/prefer-optional-chain': 'warn',
       '@typescript-eslint/consistent-type-imports': [
-        'warn',
+        'error',
         { prefer: 'type-imports' },
       ],
 
