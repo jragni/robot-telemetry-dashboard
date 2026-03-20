@@ -7,16 +7,16 @@ See: `.planning/ROADMAP.md` (created 2026-03-19)
 
 **Core value:** Deliver a professional-grade robot telemetry dashboard with non-negotiable architecture (RxJS + Zustand + roslib), scalable code structure (no barrels, strict types, domain stores), production-quality UI (design intelligence driven), and full TDD test coverage.
 
-**Current focus:** Phase 4 — ROS Connection
+**Current focus:** Phase 5 — Telemetry Widgets
 
 ## Current Position
 
-- **Phase:** 4 of 12
+- **Phase:** 5 of 12
 - **Plan:** Not yet planned
-- **Status:** Phase 3 complete, ready for Phase 4
+- **Status:** Phase 4 complete, ready for Phase 5
 - **Last activity:** 2026-03-20
 
-Progress: `█████░░░░░░░░░░░░░░░` 25%
+Progress: `███████░░░░░░░░░░░░░` 33%
 
 ## Phase Summary
 
@@ -25,7 +25,7 @@ Progress: `█████░░░░░░░░░░░░░░░` 25%
 | 1   | Foundation & Scaffold | Complete    |
 | 2   | Design System         | Complete    |
 | 3   | App Shell & Routing   | Complete    |
-| 4   | ROS Connection        | Not started |
+| 4   | ROS Connection        | Complete    |
 | 5   | Telemetry Widgets     | Not started |
 | 6   | Panel System          | Not started |
 | 7   | Robot Control         | Not started |
@@ -47,6 +47,7 @@ None.
 | 2026-03-19 | Phase 1 complete                      | Foundation & scaffold  |
 | 2026-03-20 | Phase 2 complete                      | Design system          |
 | 2026-03-20 | Phase 3 complete                      | App shell & routing    |
+| 2026-03-20 | Phase 4 complete                      | ROS connection (TDD)   |
 
 ## Notes
 
@@ -54,3 +55,5 @@ None.
 - Integration Phase 12 explicitly verifies views render REAL components (prevents v2 overnight-build gap)
 - 21st.dev Magic MCP + UI/UX Pro Max used starting Phase 2 for all design/component decisions
 - Conditional `this.ROSLIB` define in vite.config.ts (skipped during vitest to avoid window undefined error)
+- Phase 4 RED+GREEN combined into single commit (lint-staged requires imports to resolve)
+- rosFactory injection pattern enables clean unit testing without module mocking

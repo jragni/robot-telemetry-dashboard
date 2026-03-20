@@ -9,7 +9,7 @@ A 12-phase, spec-driven TDD rebuild of the Robot Telemetry Dashboard. Foundation
 - [x] **Phase 1** — Foundation & Scaffold
 - [ ] **Phase 2** — Design System (UI/UX Pro Max)
 - [ ] **Phase 3** — App Shell & Routing
-- [ ] **Phase 4** — Feature: ROS Connection
+- [x] **Phase 4** — Feature: ROS Connection
 - [ ] **Phase 5** — Feature: Telemetry Widgets
 - [ ] **Phase 6** — Feature: Panel System
 - [ ] **Phase 7** — Feature: Robot Control
@@ -507,7 +507,7 @@ A 12-phase, spec-driven TDD rebuild of the Robot Telemetry Dashboard. Foundation
 | 1     | Foundation & Scaffold | Complete    | Done | Done  | Done  | Done  |
 | 2     | Design System         | Complete    | Done | Done  | Done  | Done  |
 | 3     | App Shell & Routing   | Complete    | Done | Done  | Done  | Done  |
-| 4     | ROS Connection        | Not started | —    | —     | —     | —     |
+| 4     | ROS Connection        | Complete    | Done | Done  | Done  | Done  |
 | 5     | Telemetry Widgets     | Not started | —    | —     | —     | —     |
 | 6     | Panel System          | Not started | —    | —     | —     | —     |
 | 7     | Robot Control         | Not started | —    | —     | —     | —     |
