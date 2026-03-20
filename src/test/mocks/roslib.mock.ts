@@ -7,8 +7,26 @@ type EventCallback = (...args: unknown[]) => void;
 
 export class MockRos {
   private listeners = new Map<string, EventCallback[]>();
+  private _topicRegistry = new Map<string, MockTopic>();
   public isConnected = false;
   public url: string | null = null;
+
+  /**
+   * Register a MockTopic by name so hooks can retrieve it by calling getRosTopic().
+   * Used internally by MockTopic constructor.
+   */
+  _registerTopic(topic: MockTopic): void {
+    this._topicRegistry.set(topic.name, topic);
+  }
+
+  _unregisterTopic(name: string): void {
+    this._topicRegistry.delete(name);
+  }
+
+  /** Get the MockTopic registered for a given topic name. */
+  getRosTopic(name: string): MockTopic | undefined {
+    return this._topicRegistry.get(name);
+  }
 
   connect(): void {
     this.isConnected = true;
@@ -73,6 +91,8 @@ export class MockTopic {
     this.name = options.name;
     this.messageType = options.messageType;
     this.ros = options.ros;
+    // Register with ros so hooks can retrieve this instance
+    this.ros._registerTopic(this);
   }
 
   subscribe(callback: EventCallback): void {
@@ -81,6 +101,7 @@ export class MockTopic {
 
   unsubscribe(): void {
     this.subscribeCallback = null;
+    this.ros._unregisterTopic(this.name);
   }
 
   publish(_message: unknown): void {
@@ -97,9 +118,11 @@ export class MockTopic {
 
   /**
    * Test helper: simulate receiving a message on this topic.
+   * Also emits on the ros instance so hooks using ros.on(name, cb) receive the message.
    */
   simulateMessage(message: unknown): void {
     this.subscribeCallback?.(message);
+    this.ros.emit(this.name, message);
   }
 }
 

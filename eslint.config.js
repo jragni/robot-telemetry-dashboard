@@ -104,6 +104,14 @@ export default defineConfig([
     },
   },
 
+  // Test files — relax rules that conflict with vitest patterns
+  {
+    files: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/unbound-method': 'off',
+    },
+  },
+
   // shadcn/ui generated files — allow hook + component co-exports
   {
     files: ['src/components/ui/**/*.tsx'],

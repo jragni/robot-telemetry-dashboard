@@ -1,3 +1,5 @@
+import ROSLIB from 'roslib';
+
 import { RosTransport } from '../transport/RosTransport';
 
 import type { MockRos } from '@/test/mocks/roslib.mock';
@@ -14,13 +16,13 @@ export class RosServiceRegistry {
     this.rosFactory = options.rosFactory;
   }
 
-  get(robotId: string, url: string): RosTransport {
+  get(robotId: string, url?: string): RosTransport {
     const existing = this.transports.get(robotId);
     if (existing) return existing;
 
     const transport = new RosTransport({
       robotId,
-      url,
+      url: url ?? '',
       rosFactory: this.rosFactory,
     });
 
@@ -43,3 +45,7 @@ export class RosServiceRegistry {
     this.transports.clear();
   }
 }
+
+export const rosServiceRegistry = new RosServiceRegistry({
+  rosFactory: () => new ROSLIB.Ros({}) as unknown as MockRos,
+});
