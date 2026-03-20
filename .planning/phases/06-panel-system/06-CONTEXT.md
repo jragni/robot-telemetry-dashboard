@@ -2,11 +2,64 @@
 
 **Gathered:** 2026-03-20
 **Status:** Ready for research + planning
+**Updated:** 2026-03-20 (refined after C2/GCS research — 3-mode system)
 
 <vision>
 ## How This Should Work
 
-A Foxglove Studio-style rearrangeable panel workspace — every panel can be dragged, resized, and tabbed. But it starts with a great default layout (cockpit: video + LiDAR HUD + controls + telemetry row) so most users never need to customize.
+The dashboard has **3 distinct modes**, each with its own layout paradigm — inspired by QGroundControl's video/map swap pattern. Users switch between modes depending on their task. Each mode is a different "workspace" with its own optimal layout.
+
+### Mode 1: DASHBOARD (Map Sovereign — Anduril Lattice inspired)
+
+The overview/fleet mode. Map is dominant center showing robot positions. Video feeds as small PIP tiles. Fleet status cards. Connection status. This is what you see when managing multiple robots or planning.
+
+```
+┌──────────────────────────────────┐
+│ [Bot1:●] [Bot2:●] [Bot3:○]       │
+├───────┬──────────────────┬───────┤
+│ Vid 1 │   MAP (SLAM)     │ Vid 2 │
+│ (PIP) │   [robot dots]   │ (PIP) │
+│       │   [paths]        │       │
+├───────┤                  ├───────┤
+│ Fleet │                  │ Alerts│
+│ Status│                  │       │
+└───────┴──────────────────┴───────┘
+```
+
+### Mode 2: PILOT (Video Sovereign — GCS cockpit inspired)
+
+Active teleoperation mode. Video feed is dominant. LiDAR renders as a HUD minimap overlay (gaming style, bottom-left corner). Controls below video. Instrument gauges overlaid on video edges.
+
+```
+┌────────────────────────────────┐
+│ VIDEO FEED                     │
+│  ┌───────┐     heading: 045°   │
+│  │ LiDAR │     vel: 0.5 m/s    │
+│  │ (HUD) │     batt: 85%       │
+│  └───────┘                     │
+├────────────────────────────────┤
+│ [←][↑][→][↓]  vel sliders [STOP]│
+└────────────────────────────────┘
+```
+
+### Mode 3: ENGINEER (Foxglove-style panel grid)
+
+Data analysis and debugging mode. Full Foxglove-style rearrangeable workspace. Every panel can be dragged, resized, tabbed. User builds their own layout from available widgets.
+
+```
+┌────────┬────────┬───────────┐
+│ Video  │ LiDAR  │ [IMU|Plot] │
+│        │        │  tab group │
+├────────┤        ├───────────┤
+│ Topics │        │ Raw Data   │
+│        │        │            │
+├────────┴────────┴───────────┤
+│ Time Series Plot             │
+└──────────────────────────────┘
+  Everything resizable/rearrangeable
+```
+
+**Mode switching:** A mode selector in the header (3 buttons or tabs). Each mode saves its own layout independently. Switching modes is instant (no reload).
 
 **Desktop experience:**
 
