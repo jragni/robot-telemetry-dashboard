@@ -1,12 +1,14 @@
 export function MapView() {
   return (
-    <div className="p-6">
+    <div className="flex h-full flex-col p-6">
       <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-foreground">
         SLAM Map
       </h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        OccupancyGrid visualization coming in Phase 11
-      </p>
+      <div className="mt-4 flex flex-1 items-center justify-center rounded border border-slate-700 bg-slate-800">
+        <p className="text-sm text-slate-400">
+          Connect a robot publishing OccupancyGrid to visualize the SLAM map.
+        </p>
+      </div>
     </div>
   );
 }

@@ -28,6 +28,7 @@ Progress: `██████████░░░░░░░░░░` 50%
 | 4   | ROS Connection        | Complete    |
 | 5   | Telemetry Widgets     | Complete    |
 | 6   | Panel System          | Complete    |
+| 6.1 | Wire Views to Modes   | Complete    |
 | 7   | Robot Control         | Not started |
 | 8   | WebRTC Video          | Not started |
 | 9   | FPOV Pilot Mode       | Not started |
@@ -50,6 +51,7 @@ None.
 | 2026-03-20 | Phase 4 complete                      | ROS connection (TDD)                             |
 | 2026-03-20 | Phase 5 complete                      | Telemetry widgets (TDD, 216 tests)               |
 | 2026-03-20 | Phase 6 complete                      | Panel system (3 modes, 132 new tests, 348 total) |
+| 2026-03-20 | Phase 6.1 complete                    | Wire views to modes — closes ISS-001             |
 
 ## Notes
 

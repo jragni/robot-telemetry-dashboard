@@ -11,8 +11,11 @@
 - **Root cause:** TDD tests tested mode components in isolation but no E2E test verified that the VIEW (via router) renders the REAL component.
 - **Prevention:** Added integration-verification-rule to memory. All future phases must include view-level E2E tests.
 - **Discovered:** 2026-03-20 during visual inspection
-- **Status:** Open — Phase 6.1 inserted to fix
+- **Status:** Closed — fixed in Phase 6.1 (2026-03-20)
 
 ## Closed
 
-(none)
+### ISS-001: Views render placeholders instead of built mode components
+
+- **Closed:** 2026-03-20
+- **Fix:** Phase 6.1 — DashboardView wired to ModeSwitcher + mode components, FleetView/MapView replaced with real content
