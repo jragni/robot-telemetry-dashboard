@@ -11,7 +11,8 @@ A 12-phase, spec-driven TDD rebuild of the Robot Telemetry Dashboard. Foundation
 - [ ] **Phase 3** — App Shell & Routing
 - [x] **Phase 4** — Feature: ROS Connection
 - [ ] **Phase 5** — Feature: Telemetry Widgets
-- [ ] **Phase 6** — Feature: Panel System
+- [x] **Phase 6** — Feature: Panel System
+- [ ] **Phase 6.1** — Wire views to mode components (INSERTED — integration gap fix)
 - [ ] **Phase 7** — Feature: Robot Control
 - [ ] **Phase 8** — Feature: WebRTC Video
 - [ ] **Phase 9** — Feature: FPOV Pilot Mode
