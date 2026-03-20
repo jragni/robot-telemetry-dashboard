@@ -37,5 +37,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/utils/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
+    alias: {
+      // In tests, redirect react-grid-layout/legacy to the main package so
+      // vi.mock('react-grid-layout') intercepts both import paths.
+      'react-grid-layout/legacy': 'react-grid-layout',
+    },
   },
 });

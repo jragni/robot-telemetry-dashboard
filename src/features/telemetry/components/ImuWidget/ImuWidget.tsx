@@ -4,11 +4,9 @@ import { useImuData } from '../../hooks/useImuData';
 import { useRosConnection } from '../../hooks/useRosConnection';
 import { NoConnectionOverlay } from '../NoConnectionOverlay/NoConnectionOverlay';
 
-import type { ImuWidgetProps } from './ImuWidget.types';
+import type { ImuWidgetProps, ViewMode } from './ImuWidget.types';
 
 import { Show } from '@/shared/components/Show';
-
-type ViewMode = 'digital' | 'plot';
 
 function formatDeg(val: number | null | undefined): string {
   if (val === null || val === undefined) return '—';

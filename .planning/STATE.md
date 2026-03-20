@@ -7,16 +7,16 @@ See: `.planning/ROADMAP.md` (created 2026-03-19)
 
 **Core value:** Deliver a professional-grade robot telemetry dashboard with non-negotiable architecture (RxJS + Zustand + roslib), scalable code structure (no barrels, strict types, domain stores), production-quality UI (design intelligence driven), and full TDD test coverage.
 
-**Current focus:** Phase 6 — Panel System
+**Current focus:** Phase 7 — Robot Control
 
 ## Current Position
 
-- **Phase:** 6 of 12
+- **Phase:** 7 of 12
 - **Plan:** Not yet planned
-- **Status:** Phase 5 complete, ready for Phase 6
+- **Status:** Phase 6 complete, ready for Phase 7
 - **Last activity:** 2026-03-20
 
-Progress: `████████░░░░░░░░░░░░` 42%
+Progress: `██████████░░░░░░░░░░` 50%
 
 ## Phase Summary
 
@@ -27,7 +27,7 @@ Progress: `████████░░░░░░░░░░░░` 42%
 | 3   | App Shell & Routing   | Complete    |
 | 4   | ROS Connection        | Complete    |
 | 5   | Telemetry Widgets     | Complete    |
-| 6   | Panel System          | Not started |
+| 6   | Panel System          | Complete    |
 | 7   | Robot Control         | Not started |
 | 8   | WebRTC Video          | Not started |
 | 9   | FPOV Pilot Mode       | Not started |
@@ -41,14 +41,15 @@ None.
 
 ## Decisions Log
 
-| Date       | Decision                              | Context                            |
-| ---------- | ------------------------------------- | ---------------------------------- |
-| 2026-03-19 | 12-phase roadmap with spec-driven TDD | v3 clean-slate rebuild             |
-| 2026-03-19 | Phase 1 complete                      | Foundation & scaffold              |
-| 2026-03-20 | Phase 2 complete                      | Design system                      |
-| 2026-03-20 | Phase 3 complete                      | App shell & routing                |
-| 2026-03-20 | Phase 4 complete                      | ROS connection (TDD)               |
-| 2026-03-20 | Phase 5 complete                      | Telemetry widgets (TDD, 216 tests) |
+| Date       | Decision                              | Context                                          |
+| ---------- | ------------------------------------- | ------------------------------------------------ |
+| 2026-03-19 | 12-phase roadmap with spec-driven TDD | v3 clean-slate rebuild                           |
+| 2026-03-19 | Phase 1 complete                      | Foundation & scaffold                            |
+| 2026-03-20 | Phase 2 complete                      | Design system                                    |
+| 2026-03-20 | Phase 3 complete                      | App shell & routing                              |
+| 2026-03-20 | Phase 4 complete                      | ROS connection (TDD)                             |
+| 2026-03-20 | Phase 5 complete                      | Telemetry widgets (TDD, 216 tests)               |
+| 2026-03-20 | Phase 6 complete                      | Panel system (3 modes, 132 new tests, 348 total) |
 
 ## Notes
 
