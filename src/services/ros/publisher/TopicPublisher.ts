@@ -3,23 +3,21 @@ import type {
   TopicPublisherOptions,
 } from './TopicPublisher.types';
 
-import type { MockRos, MockTopic } from '@/test/mocks/roslib.mock';
-
-interface TopicFactoryOptions {
-  ros: MockRos;
-  name: string;
-  messageType: string;
-}
+import type {
+  IRos,
+  ITopic,
+  ITopicFactory,
+} from '@/services/ros/transport/ros.types';
 
 export interface TopicPublisherConstructorOptions {
-  ros: MockRos;
-  topicFactory: (options: TopicFactoryOptions) => MockTopic;
+  ros: IRos;
+  topicFactory: ITopicFactory;
 }
 
 export class TopicPublisher {
-  private readonly ros: MockRos;
-  private readonly topicFactory: (options: TopicFactoryOptions) => MockTopic;
-  private readonly activeTopics = new Map<string, MockTopic>();
+  private readonly ros: IRos;
+  private readonly topicFactory: ITopicFactory;
+  private readonly activeTopics = new Map<string, ITopic>();
 
   constructor(options: TopicPublisherConstructorOptions) {
     this.ros = options.ros;
@@ -49,7 +47,7 @@ export class TopicPublisher {
     };
   }
 
-  getActiveTopic(topicName: string): MockTopic | undefined {
+  getActiveTopic(topicName: string): ITopic | undefined {
     return this.activeTopics.get(topicName);
   }
 }

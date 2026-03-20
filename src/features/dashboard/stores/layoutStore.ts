@@ -15,7 +15,7 @@ const VALID_PANEL_IDS = new Set([
   'video-pip-2',
   'fleet-status',
   'alerts',
-  'controls',
+  'robot-controls',
   'imu',
   'data-plot',
   'topic-list',

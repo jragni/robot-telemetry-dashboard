@@ -12,7 +12,7 @@ const DASHBOARD_DEFAULT: readonly LayoutItem[] = [
 
 const PILOT_DEFAULT: readonly LayoutItem[] = [
   { i: 'video', x: 0, y: 0, w: 12, h: 8 },
-  { i: 'controls', x: 0, y: 8, w: 12, h: 3 },
+  { i: 'robot-controls', x: 0, y: 8, w: 12, h: 3 },
   { i: 'imu', x: 0, y: 11, w: 3, h: 3 },
   { i: 'data-plot', x: 3, y: 11, w: 6, h: 3 },
   { i: 'topic-list', x: 9, y: 11, w: 3, h: 3 },

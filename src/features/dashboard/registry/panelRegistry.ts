@@ -6,9 +6,10 @@ import { TopicListWidgetPanel } from '../panels/TopicListWidgetPanel';
 import { AlertsWidgetPlaceholder } from '../placeholders/AlertsWidgetPlaceholder';
 import { FleetStatusWidgetPlaceholder } from '../placeholders/FleetStatusWidgetPlaceholder';
 import { MapWidgetPlaceholder } from '../placeholders/MapWidgetPlaceholder';
-import { RobotControlsWidgetPlaceholder } from '../placeholders/RobotControlsWidgetPlaceholder';
 import { VideoWidgetPlaceholder } from '../placeholders/VideoWidgetPlaceholder';
 import type { PanelRegistryEntry } from '../types/panel-system.types';
+
+import { ControlWidget } from '@/features/pilot/components/ControlWidget/ControlWidget';
 
 export const panelRegistry: PanelRegistryEntry[] = [
   {
@@ -53,7 +54,7 @@ export const panelRegistry: PanelRegistryEntry[] = [
     widgetId: 'robot-controls',
     label: 'Robot Controls',
     description: 'D-pad, velocity sliders, and emergency stop controls',
-    component: RobotControlsWidgetPlaceholder,
+    component: ControlWidget,
     availableInModes: ['pilot', 'engineer'],
     defaultSize: { w: 12, h: 3 },
     minSize: { w: 6, h: 2 },

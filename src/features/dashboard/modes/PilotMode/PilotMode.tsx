@@ -13,6 +13,7 @@ import { useLayoutStore } from '../../stores/layoutStore';
 
 import type { PilotModeProps } from './PilotMode.types';
 
+import { ControlWidget } from '@/features/pilot/components/ControlWidget/ControlWidget';
 import { Show } from '@/shared/components/Show';
 
 import 'react-grid-layout/css/styles.css';
@@ -21,7 +22,7 @@ import 'react-resizable/css/styles.css';
 const ResponsiveGrid = WidthProvider(ReactGridLayout);
 
 // Fixed panels in Pilot mode — not closable
-const FIXED_PANELS = new Set(['video', 'controls']);
+const FIXED_PANELS = new Set(['video', 'robot-controls']);
 // Sovereign panel
 const SOVEREIGN_PANELS = new Set(['video']);
 // Bottom row eligible panels (resizable/reorderable)
@@ -78,58 +79,9 @@ function PilotMobileLayout({ robotId: _robotId }: { robotId: string }) {
         </div>
       </div>
 
-      {/* Virtual D-pad */}
-      <div
-        data-testid="pilot-dpad"
-        className="flex shrink-0 flex-col items-center gap-1 py-3"
-      >
-        <button
-          type="button"
-          aria-label="Forward"
-          data-testid="dpad-btn-forward"
-          data-min-size="48"
-          className="flex h-12 w-12 items-center justify-center rounded bg-slate-700 text-slate-200"
-        >
-          ↑
-        </button>
-        <div className="flex gap-1">
-          <button
-            type="button"
-            aria-label="Left"
-            data-testid="dpad-btn-left"
-            data-min-size="48"
-            className="flex h-12 w-12 items-center justify-center rounded bg-slate-700 text-slate-200"
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            aria-label="Stop"
-            data-testid="dpad-btn-stop"
-            data-min-size="48"
-            className="flex h-12 w-12 items-center justify-center rounded bg-red-700 text-white font-bold"
-          >
-            ■
-          </button>
-          <button
-            type="button"
-            aria-label="Right"
-            data-testid="dpad-btn-right"
-            data-min-size="48"
-            className="flex h-12 w-12 items-center justify-center rounded bg-slate-700 text-slate-200"
-          >
-            →
-          </button>
-        </div>
-        <button
-          type="button"
-          aria-label="Back"
-          data-testid="dpad-btn-back"
-          data-min-size="48"
-          className="flex h-12 w-12 items-center justify-center rounded bg-slate-700 text-slate-200"
-        >
-          ↓
-        </button>
+      {/* Controls — real ControlWidget replaces inert D-pad (BUG-004) */}
+      <div data-testid="pilot-dpad" className="shrink-0">
+        <ControlWidget robotId={_robotId} panelId="robot-controls" />
       </div>
 
       {/* Swipeable telemetry cards */}
@@ -213,7 +165,7 @@ export function PilotMode({ robotId = '', isMobile = false }: PilotModeProps) {
   }
 
   return (
-    <div className="relative flex flex-col">
+    <div data-testid="pilot-mode" className="relative flex flex-col">
       {/* Grid */}
       <ResponsiveGrid
         layout={panels}

@@ -74,7 +74,7 @@ describe('panelRegistry', () => {
   it('DEFAULT_LAYOUTS.pilot contains expected panel ids', () => {
     const ids = DEFAULT_LAYOUTS.pilot.map((l) => l.i);
     expect(ids).toContain('video');
-    expect(ids).toContain('controls');
+    expect(ids).toContain('robot-controls');
     expect(ids).toContain('imu');
     expect(ids).toContain('data-plot');
     expect(ids).toContain('topic-list');

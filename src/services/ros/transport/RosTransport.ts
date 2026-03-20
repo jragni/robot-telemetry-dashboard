@@ -1,13 +1,14 @@
 import { BehaviorSubject } from 'rxjs';
 
+import type { IRos } from './ros.types';
+
 import { ROS_CONFIG } from '@/config/ros';
 import type { ConnectionState } from '@/shared/types/connection.types';
-import type { MockRos } from '@/test/mocks/roslib.mock';
 
 export interface RosTransportOptions {
   robotId: string;
   url: string;
-  rosFactory: () => MockRos;
+  rosFactory: () => IRos;
   maxReconnectAttempts?: number;
   baseReconnectIntervalMs?: number;
   backoffMultiplier?: number;
@@ -20,12 +21,12 @@ export class RosTransport {
   );
 
   readonly url: string;
-  private readonly rosFactory: () => MockRos;
+  private readonly rosFactory: () => IRos;
   private readonly maxReconnectAttempts: number;
   private readonly baseReconnectIntervalMs: number;
   private readonly backoffMultiplier: number;
 
-  private ros: MockRos;
+  private ros: IRos;
   private reconnectAttempts = 0;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private destroyed = false;
@@ -81,7 +82,7 @@ export class RosTransport {
     this.connectionState$.next('disconnected');
   }
 
-  getRos(): MockRos {
+  getRos(): IRos {
     return this.ros;
   }
 
