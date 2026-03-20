@@ -1,3 +1,7 @@
+import { RouterProvider } from 'react-router';
+
+import { router } from './router';
+
 export function App() {
-  return <div>Robot Telemetry Dashboard v3</div>;
+  return <RouterProvider router={router} />;
 }

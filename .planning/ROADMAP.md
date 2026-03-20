@@ -505,8 +505,8 @@ A 12-phase, spec-driven TDD rebuild of the Robot Telemetry Dashboard. Foundation
 | Phase | Name                  | Status      | Plan | Tests | Build | Sweep |
 | ----- | --------------------- | ----------- | ---- | ----- | ----- | ----- |
 | 1     | Foundation & Scaffold | Complete    | Done | Done  | Done  | Done  |
-| 2     | Design System         | Not started | —    | —     | —     | —     |
-| 3     | App Shell & Routing   | Not started | —    | —     | —     | —     |
+| 2     | Design System         | Complete    | Done | Done  | Done  | Done  |
+| 3     | App Shell & Routing   | Complete    | Done | Done  | Done  | Done  |
 | 4     | ROS Connection        | Not started | —    | —     | —     | —     |
 | 5     | Telemetry Widgets     | Not started | —    | —     | —     | —     |
 | 6     | Panel System          | Not started | —    | —     | —     | —     |

@@ -1,10 +1,31 @@
 import { render, screen } from '@testing-library/react';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 
-import { App } from './App.tsx';
+import { DashboardShell } from '@/shared/components/DashboardShell';
+
+vi.mock('@/shared/hooks/use-mobile', () => ({
+  useMobile: () => false,
+}));
 
 describe('App', () => {
   it('renders without crashing', () => {
-    render(<App />);
-    expect(screen.getByText(/robot telemetry/i)).toBeInTheDocument();
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/',
+          element: <DashboardShell />,
+          children: [
+            {
+              path: 'dashboard',
+              element: <div>Dashboard</div>,
+            },
+          ],
+        },
+      ],
+      { initialEntries: ['/dashboard'] }
+    );
+
+    render(<RouterProvider router={router} />);
+    expect(screen.getByText(/robot telemetry dashboard/i)).toBeInTheDocument();
   });
 });
