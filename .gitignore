@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Screenshots (Playwright MCP output)
+*.png
+*.jpg
+*.jpeg

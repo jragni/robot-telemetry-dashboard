@@ -103,4 +103,12 @@ export default defineConfig([
       'jsx-a11y/no-static-element-interactions': 'warn',
     },
   },
+
+  // shadcn/ui generated files — allow hook + component co-exports
+  {
+    files: ['src/components/ui/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ]);
