@@ -7,23 +7,23 @@ See: `.planning/ROADMAP.md` (created 2026-03-19)
 
 **Core value:** Deliver a professional-grade robot telemetry dashboard with non-negotiable architecture (RxJS + Zustand + roslib), scalable code structure (no barrels, strict types, domain stores), production-quality UI (design intelligence driven), and full TDD test coverage.
 
-**Current focus:** Phase 2 — Design System (UI/UX Pro Max)
+**Current focus:** Phase 3 — App Shell & Routing
 
 ## Current Position
 
-- **Phase:** 2 of 12
+- **Phase:** 3 of 12
 - **Plan:** Not yet planned
-- **Status:** Phase 1 complete, ready for Phase 2
-- **Last activity:** 2026-03-19
+- **Status:** Phase 2 complete, ready for Phase 3
+- **Last activity:** 2026-03-20
 
-Progress: `██░░░░░░░░░░░░░░░░░░` 8%
+Progress: `████░░░░░░░░░░░░░░░░` 17%
 
 ## Phase Summary
 
 | #   | Phase                 | Status      |
 | --- | --------------------- | ----------- |
 | 1   | Foundation & Scaffold | Complete    |
-| 2   | Design System         | Not started |
+| 2   | Design System         | Complete    |
 | 3   | App Shell & Routing   | Not started |
 | 4   | ROS Connection        | Not started |
 | 5   | Telemetry Widgets     | Not started |
@@ -45,6 +45,7 @@ None.
 | ---------- | ------------------------------------- | ---------------------- |
 | 2026-03-19 | 12-phase roadmap with spec-driven TDD | v3 clean-slate rebuild |
 | 2026-03-19 | Phase 1 complete                      | Foundation & scaffold  |
+| 2026-03-20 | Phase 2 complete                      | Design system          |
 
 ## Notes
 

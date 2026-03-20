@@ -2,12 +2,34 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   DESIGN SYSTEM v3 — Robot Telemetry Dashboard
+   ============================================================
+   Aesthetic: Defense-contractor / industrial monitoring
+   Informed by UI/UX Pro Max:
+     - Space Tech / Aerospace: HUD + Dark Mode
+     - Financial Dashboard: Dark bg + trust blue
+     - IoT Dashboard: Dark + status indicator colors
+   ============================================================ */
+
 @theme inline {
+  /* Typography */
   --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    'Geist Mono Variable', ui-monospace, 'Cascadia Code', 'Source Code Pro',
+    monospace;
+
+  /* Spacing scale (4px base) */
+  --spacing-panel: 0.75rem;
+  --spacing-section: 1.5rem;
+  --spacing-layout: 2rem;
+
+  /* shadcn color mappings */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,6 +61,18 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+
+  /* Semantic status colors */
+  --color-status-connected: var(--status-connected);
+  --color-status-connecting: var(--status-connecting);
+  --color-status-disconnected: var(--status-disconnected);
+  --color-status-error: var(--status-error);
+
+  /* Telemetry accent (trust blue from financial dash) */
+  --color-telemetry: var(--telemetry);
+  --color-telemetry-foreground: var(--telemetry-foreground);
+
+  /* Border radius */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -48,8 +82,11 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ============================================================
+   LIGHT MODE — Fallback (not primary; dashboard is dark-first)
+   ============================================================ */
 :root {
-  --background: oklch(1 0 0);
+  --background: oklch(0.985 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -67,15 +104,29 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  --radius: 0.5rem;
+
+  /* Status indicators */
+  --status-connected: oklch(0.627 0.194 149.214);
+  --status-connecting: oklch(0.795 0.184 86.047);
+  --status-disconnected: oklch(0.556 0 0);
+  --status-error: oklch(0.577 0.245 27.325);
+
+  /* Telemetry accent — trust blue */
+  --telemetry: oklch(0.488 0.243 264.376);
+  --telemetry-foreground: oklch(0.985 0 0);
+
+  /* Chart palette — cool-to-hot gradient for data visualization */
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.627 0.194 149.214);
+  --chart-3: oklch(0.795 0.184 86.047);
+  --chart-4: oklch(0.705 0.213 47.604);
+  --chart-5: oklch(0.577 0.245 27.325);
+
+  /* Sidebar */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
@@ -83,38 +134,57 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* ============================================================
+   DARK MODE — Primary aesthetic
+   Deep space black (#020617 equivalent) + trust blue + status colors
+   ============================================================ */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: oklch(0.13 0.028 265);
+  --foreground: oklch(0.965 0.005 265);
+  --card: oklch(0.18 0.032 265);
+  --card-foreground: oklch(0.965 0.005 265);
+  --popover: oklch(0.18 0.032 265);
+  --popover-foreground: oklch(0.965 0.005 265);
+  --primary: oklch(0.588 0.218 264.376);
+  --primary-foreground: oklch(0.13 0.028 265);
+  --secondary: oklch(0.24 0.032 265);
+  --secondary-foreground: oklch(0.965 0.005 265);
+  --muted: oklch(0.24 0.032 265);
+  --muted-foreground: oklch(0.65 0.02 265);
+  --accent: oklch(0.24 0.032 265);
+  --accent-foreground: oklch(0.965 0.005 265);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --border: oklch(0.32 0.035 265);
+  --input: oklch(0.28 0.032 265);
+  --ring: oklch(0.488 0.243 264.376);
+  --radius: 0.5rem;
+
+  /* Status indicators — high-contrast for dark bg */
+  --status-connected: oklch(0.723 0.219 149.579);
+  --status-connecting: oklch(0.852 0.199 91.936);
+  --status-disconnected: oklch(0.556 0.015 265);
+  --status-error: oklch(0.704 0.191 22.216);
+
+  /* Telemetry accent */
+  --telemetry: oklch(0.588 0.218 264.376);
+  --telemetry-foreground: oklch(0.985 0 0);
+
+  /* Chart palette — distinct hues for overlapping data series */
+  --chart-1: oklch(0.588 0.218 264.376);
+  --chart-2: oklch(0.723 0.219 149.579);
+  --chart-3: oklch(0.852 0.199 91.936);
+  --chart-4: oklch(0.769 0.188 55.934);
+  --chart-5: oklch(0.704 0.191 22.216);
+
+  /* Sidebar */
+  --sidebar: oklch(0.16 0.03 265);
+  --sidebar-foreground: oklch(0.965 0.005 265);
+  --sidebar-primary: oklch(0.588 0.218 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-accent: oklch(0.24 0.032 265);
+  --sidebar-accent-foreground: oklch(0.965 0.005 265);
+  --sidebar-border: oklch(0.32 0.035 265);
+  --sidebar-ring: oklch(0.488 0.243 264.376);
 }
 
 @layer base {
@@ -125,6 +195,6 @@
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-sans;
+    @apply font-sans antialiased;
   }
 }
