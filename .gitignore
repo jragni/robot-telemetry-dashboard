@@ -31,3 +31,9 @@ test-results/
 *.png
 *.jpg
 *.jpeg
+
+# MCP config (contains API keys)
+.mcp.json
+
+# Claude skills (local only)
+.claude/skills/
