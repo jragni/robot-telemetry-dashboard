@@ -58,23 +58,30 @@ export function PanelFrame({
   }
 
   return (
-    <div className="relative flex h-full flex-col overflow-hidden rounded border border-slate-700 bg-slate-900">
+    <div
+      className={[
+        'relative flex h-full flex-col overflow-hidden rounded border border-border bg-card',
+        isSovereign ? 'border-l-2 border-l-primary' : '',
+      ]
+        .join(' ')
+        .trim()}
+    >
       {/* Header */}
       <div
         data-testid="panel-header"
-        className="flex shrink-0 items-center gap-1 border-b border-slate-700 bg-slate-800 px-2 py-1"
+        className="flex shrink-0 items-center gap-1 border-b border-border bg-muted px-2 py-1"
         onContextMenu={handleContextMenu}
       >
         <Show when={showDragHandle}>
           <span
             data-testid="drag-handle"
-            className="cursor-grab text-slate-500"
+            className="cursor-grab text-muted-foreground"
           >
             <GripVertical size={14} />
           </span>
         </Show>
 
-        <span className="flex-1 truncate text-xs font-medium text-slate-300">
+        <span className="flex-1 truncate text-xs font-medium text-card-foreground">
           {title}
         </span>
 
@@ -83,7 +90,7 @@ export function PanelFrame({
             type="button"
             aria-label="Close panel"
             onClick={() => onClose?.(panelId)}
-            className="rounded p-0.5 text-slate-500 hover:bg-slate-700 hover:text-slate-200"
+            className="rounded p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
           >
             <X size={12} />
           </button>
@@ -98,13 +105,13 @@ export function PanelFrame({
         <div
           ref={menuRef}
           role="menu"
-          className="absolute left-0 top-8 z-50 min-w-[160px] rounded border border-slate-600 bg-slate-800 py-1 shadow-lg"
+          className="absolute left-0 top-8 z-50 min-w-[160px] rounded border border-border bg-muted py-1 shadow-lg"
         >
           <button
             role="menuitem"
             type="button"
             onClick={handleReset}
-            className="w-full px-3 py-1.5 text-left text-xs text-slate-300 hover:bg-slate-700"
+            className="w-full px-3 py-1.5 text-left text-xs text-card-foreground hover:bg-secondary"
           >
             Reset to Default
           </button>
@@ -114,7 +121,7 @@ export function PanelFrame({
               role="menuitem"
               type="button"
               onClick={handleRemove}
-              className="w-full px-3 py-1.5 text-left text-xs text-slate-300 hover:bg-slate-700"
+              className="w-full px-3 py-1.5 text-left text-xs text-card-foreground hover:bg-secondary"
             >
               Remove Panel
             </button>
@@ -126,7 +133,7 @@ export function PanelFrame({
             aria-disabled={isSovereign ? 'true' : undefined}
             onClick={handleTabWith}
             disabled={isSovereign}
-            className="w-full px-3 py-1.5 text-left text-xs text-slate-300 hover:bg-slate-700 disabled:opacity-40"
+            className="w-full px-3 py-1.5 text-left text-xs text-card-foreground hover:bg-secondary disabled:opacity-40"
           >
             Tab with…
           </button>

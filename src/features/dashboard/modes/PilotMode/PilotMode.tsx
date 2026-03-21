@@ -63,19 +63,19 @@ function PilotMobileLayout({ robotId: _robotId }: { robotId: string }) {
       {/* Instrument strip */}
       <div
         data-testid="pilot-instrument-strip"
-        className="flex shrink-0 items-center justify-around border-b border-slate-700 bg-slate-900 py-2 text-xs"
+        className="flex shrink-0 items-center justify-around border-b border-border bg-card py-2 text-xs"
       >
         <div>
-          <span className="text-slate-400">Heading</span>{' '}
-          <span className="font-mono text-blue-300">—</span>
+          <span className="text-muted-foreground">Heading</span>{' '}
+          <span className="font-mono text-primary">—</span>
         </div>
         <div>
-          <span className="text-slate-400">Vel</span>{' '}
-          <span className="font-mono text-blue-300">—</span>
+          <span className="text-muted-foreground">Vel</span>{' '}
+          <span className="font-mono text-primary">—</span>
         </div>
         <div>
-          <span className="text-slate-400">Batt</span>{' '}
-          <span className="font-mono text-blue-300">—</span>
+          <span className="text-muted-foreground">Batt</span>{' '}
+          <span className="font-mono text-primary">—</span>
         </div>
       </div>
 
@@ -90,10 +90,10 @@ function PilotMobileLayout({ robotId: _robotId }: { robotId: string }) {
         className="flex-1 overflow-x-auto"
       >
         <div className="flex h-full gap-2 px-2">
-          <div className="h-full w-64 shrink-0 rounded border border-slate-700 bg-slate-900 p-2 text-xs text-slate-400">
+          <div className="h-full w-64 shrink-0 rounded border border-border bg-card p-2 text-xs text-muted-foreground">
             IMU
           </div>
-          <div className="h-full w-64 shrink-0 rounded border border-slate-700 bg-slate-900 p-2 text-xs text-slate-400">
+          <div className="h-full w-64 shrink-0 rounded border border-border bg-card p-2 text-xs text-muted-foreground">
             Data Plot
           </div>
         </div>
@@ -170,7 +170,7 @@ export function PilotMode({ robotId = '', isMobile = false }: PilotModeProps) {
       <ResponsiveGrid
         layout={panels}
         cols={12}
-        rowHeight={80}
+        rowHeight={60}
         draggableHandle="[data-testid='drag-handle']"
         onLayoutChange={handleLayoutChange}
         margin={[4, 4]}
@@ -200,7 +200,7 @@ export function PilotMode({ robotId = '', isMobile = false }: PilotModeProps) {
                 {WidgetComponent ? (
                   <WidgetComponent panelId={item.i} robotId={robotId} />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-xs text-slate-500">
+                  <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
                     {item.i}
                   </div>
                 )}
@@ -211,12 +211,12 @@ export function PilotMode({ robotId = '', isMobile = false }: PilotModeProps) {
       </ResponsiveGrid>
 
       {/* Add panel button for bottom row */}
-      <div className="flex justify-end border-t border-slate-700 px-3 py-1">
+      <div className="flex justify-end border-t border-border px-3 py-1">
         <button
           type="button"
           aria-label="Add panel"
           onClick={() => setPickerOpen(true)}
-          className="flex items-center gap-1 rounded border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:bg-slate-700"
+          className="flex items-center gap-1 rounded border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-secondary"
         >
           <Plus size={12} />
           Add Panel

@@ -29,10 +29,10 @@ export function ModeSwitcher({ isMobile = false }: ModeSwitcherProps) {
               aria-pressed={isActive}
               onClick={() => switchMode(mode)}
               className={[
-                'rounded px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors',
+                'rounded px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors',
                 isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:bg-slate-700 hover:text-slate-200',
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
               ].join(' ')}
             >
               {label}

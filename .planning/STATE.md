@@ -13,8 +13,8 @@ See: `.planning/ROADMAP.md` (created 2026-03-19)
 
 - **Phase:** 8 of 12
 - **Plan:** Not yet planned
-- **Status:** Phase 7 complete, ready for Phase 8
-- **Last activity:** 2026-03-20
+- **Status:** Phase 7.1 complete, ready for Phase 8
+- **Last activity:** 2026-03-21
 
 Progress: `████████████░░░░░░░░` 58%
 
@@ -30,6 +30,7 @@ Progress: `████████████░░░░░░░░` 58%
 | 6   | Panel System          | Complete    |
 | 6.1 | Wire Views to Modes   | Complete    |
 | 7   | Robot Control         | Complete    |
+| 7.1 | Visual Fixes          | Complete    |
 | 8   | WebRTC Video          | Not started |
 | 9   | FPOV Pilot Mode       | Not started |
 | 10  | Multi-Robot Fleet     | Not started |
@@ -42,17 +43,18 @@ None.
 
 ## Decisions Log
 
-| Date       | Decision                              | Context                                                |
-| ---------- | ------------------------------------- | ------------------------------------------------------ |
-| 2026-03-19 | 12-phase roadmap with spec-driven TDD | v3 clean-slate rebuild                                 |
-| 2026-03-19 | Phase 1 complete                      | Foundation & scaffold                                  |
-| 2026-03-20 | Phase 2 complete                      | Design system                                          |
-| 2026-03-20 | Phase 3 complete                      | App shell & routing                                    |
-| 2026-03-20 | Phase 4 complete                      | ROS connection (TDD)                                   |
-| 2026-03-20 | Phase 5 complete                      | Telemetry widgets (TDD, 216 tests)                     |
-| 2026-03-20 | Phase 6 complete                      | Panel system (3 modes, 132 new tests, 348 total)       |
-| 2026-03-20 | Phase 6.1 complete                    | Wire views to modes — closes ISS-001                   |
-| 2026-03-20 | Phase 7 complete                      | Robot control (TDD, safety-critical E-Stop, 427 tests) |
+| Date       | Decision                              | Context                                                                               |
+| ---------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| 2026-03-19 | 12-phase roadmap with spec-driven TDD | v3 clean-slate rebuild                                                                |
+| 2026-03-19 | Phase 1 complete                      | Foundation & scaffold                                                                 |
+| 2026-03-20 | Phase 2 complete                      | Design system                                                                         |
+| 2026-03-20 | Phase 3 complete                      | App shell & routing                                                                   |
+| 2026-03-20 | Phase 4 complete                      | ROS connection (TDD)                                                                  |
+| 2026-03-20 | Phase 5 complete                      | Telemetry widgets (TDD, 216 tests)                                                    |
+| 2026-03-20 | Phase 6 complete                      | Panel system (3 modes, 132 new tests, 348 total)                                      |
+| 2026-03-20 | Phase 6.1 complete                    | Wire views to modes — closes ISS-001                                                  |
+| 2026-03-20 | Phase 7 complete                      | Robot control (TDD, safety-critical E-Stop, 427 tests)                                |
+| 2026-03-21 | Phase 7.1 complete                    | Visual fixes — dark theme, sovereign accents, tactical mode switcher, token migration |
 
 ## Notes
 
