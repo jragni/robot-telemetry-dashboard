@@ -13,7 +13,9 @@ A 12-phase, spec-driven TDD rebuild of the Robot Telemetry Dashboard. Foundation
 - [ ] **Phase 5** — Feature: Telemetry Widgets
 - [x] **Phase 6** — Feature: Panel System
 - [ ] **Phase 6.1** — Wire views to mode components (INSERTED — integration gap fix)
-- [ ] **Phase 7** — Feature: Robot Control
+- [x] **Phase 7** — Feature: Robot Control
+- [ ] **Phase 7.1** — Visual fixes: dark theme + defense aesthetic (INSERTED)
+- [ ] **Phase 7.2** — Mobile UX polish: swipeable cards, hide Engineer, touch controls (INSERTED)
 - [ ] **Phase 8** — Feature: WebRTC Video
 - [ ] **Phase 9** — Feature: FPOV Pilot Mode
 - [ ] **Phase 10** — Feature: Multi-Robot Fleet
