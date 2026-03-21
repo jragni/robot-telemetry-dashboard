@@ -75,16 +75,34 @@ test.describe('Robot Control — Pilot Mode', () => {
 
 test.describe('Robot Control — Mobile viewport', () => {
   test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 812 });
+    // Navigate to dashboard at desktop width first so the mode switcher is visible,
+    // click Pilot mode, then shrink to mobile. Fix 5 hides the mode switcher on
+    // mobile, so we must switch mode before narrowing the viewport.
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${BASE}/dashboard`);
-    // Switch to Pilot mode — mobile layout renders PilotMobileLayout at this viewport
     await page.getByRole('button', { name: /pilot/i }).click();
+    await page.setViewportSize({ width: 375, height: 812 });
   });
 
   test('controls are visible on mobile and not clipped', async ({ page }) => {
-    // On mobile the PilotMobileLayout renders — controls should be accessible
+    // Controls are in carousel card 1 — navigate there via the dot indicator
+    const dot1 = page.getByTestId('pilot-mobile-dot-1');
+    await expect(dot1).toBeVisible();
+    await dot1.click();
+
     const eStop = page.getByRole('button', { name: /e-stop/i });
     await expect(eStop).toBeVisible();
+
+    // Wait for carousel scroll animation to settle
+    await page.waitForFunction(
+      () => {
+        const btn = document.querySelector('[data-testid="e-stop-button"]');
+        if (!btn) return false;
+        const rect = btn.getBoundingClientRect();
+        return rect.x >= 0 && rect.x + rect.width <= 376;
+      },
+      { timeout: 3000 }
+    );
 
     const box = await eStop.boundingBox();
     expect(box).not.toBeNull();

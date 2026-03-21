@@ -13,6 +13,12 @@ import { useLayoutStore } from '../../stores/layoutStore';
 
 import type { PilotModeProps } from './PilotMode.types';
 
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from '@/components/ui/carousel';
 import { ControlWidget } from '@/features/pilot/components/ControlWidget/ControlWidget';
 import { Show } from '@/shared/components/Show';
 
@@ -46,10 +52,61 @@ function isBottomRow(panelId: string): boolean {
   return BOTTOM_ROW_PANELS.has(panelId);
 }
 
-function PilotMobileLayout({ robotId: _robotId }: { robotId: string }) {
+const MOBILE_CARDS = [
+  { id: 'video-instruments', label: 'Video + Instruments' },
+  { id: 'controls', label: 'Controls' },
+  { id: 'imu', label: 'IMU' },
+  { id: 'data-plot', label: 'Data Plot' },
+] as const;
+
+function CarouselDots({
+  api,
+  count,
+}: {
+  api: CarouselApi | undefined;
+  count: number;
+}) {
+  const [selected, setSelected] = useState(0);
+
+  // Subscribe to embla select events
+  useState(() => {
+    if (!api) return;
+    const onSelect = () => setSelected(api.selectedScrollSnap());
+    api.on('select', onSelect);
+    onSelect();
+  });
+
   return (
-    <div className="flex flex-col overflow-hidden">
-      {/* Video */}
+    <div
+      data-testid="pilot-mobile-carousel-dots"
+      className="flex shrink-0 items-center justify-center gap-2 py-2"
+    >
+      {Array.from({ length: count }, (_, i) => (
+        <button
+          key={i}
+          type="button"
+          aria-label={`Go to slide ${String(i + 1)}`}
+          data-testid={`pilot-mobile-dot-${String(i)}`}
+          onClick={() => api?.scrollTo(i)}
+          className={[
+            'h-2 w-2 rounded-full transition-colors',
+            i === selected
+              ? 'bg-primary'
+              : 'bg-muted-foreground/40 hover:bg-muted-foreground/70',
+          ].join(' ')}
+        />
+      ))}
+    </div>
+  );
+}
+
+function PilotMobileLayout({ robotId }: { robotId: string }) {
+  const [api, setApi] = useState<CarouselApi>();
+
+  return (
+    // Fix 4: flex-col with flex-1 fills all available height between header and bottom bar
+    <div className="flex h-full flex-col overflow-hidden">
+      {/* Video strip — shrink-0 */}
       <div
         data-testid="pilot-mobile-video"
         className="relative shrink-0 bg-black"
@@ -60,7 +117,7 @@ function PilotMobileLayout({ robotId: _robotId }: { robotId: string }) {
         </div>
       </div>
 
-      {/* Instrument strip */}
+      {/* Instrument strip — shrink-0 */}
       <div
         data-testid="pilot-instrument-strip"
         className="flex shrink-0 items-center justify-around border-b border-border bg-card py-2 text-xs"
@@ -79,25 +136,63 @@ function PilotMobileLayout({ robotId: _robotId }: { robotId: string }) {
         </div>
       </div>
 
-      {/* Controls — real ControlWidget replaces inert D-pad (BUG-004) */}
-      <div data-testid="pilot-dpad" className="shrink-0">
-        <ControlWidget robotId={_robotId} panelId="robot-controls" />
-      </div>
-
-      {/* Swipeable telemetry cards */}
-      <div
-        data-testid="pilot-swipeable-cards"
-        className="flex-1 overflow-x-auto"
+      {/* Fix 1: Swipeable carousel — flex-1 min-h-0 fills available height */}
+      <Carousel
+        data-testid="pilot-mobile-carousel"
+        opts={{ align: 'start', loop: false }}
+        setApi={setApi}
+        className="flex flex-1 min-h-0 flex-col"
       >
-        <div className="flex h-full gap-2 px-2">
-          <div className="h-full w-64 shrink-0 rounded border border-border bg-card p-2 text-xs text-muted-foreground">
-            IMU
-          </div>
-          <div className="h-full w-64 shrink-0 rounded border border-border bg-card p-2 text-xs text-muted-foreground">
-            Data Plot
-          </div>
-        </div>
-      </div>
+        <CarouselContent className="flex-1 min-h-0 h-full">
+          {/* Card 0: Video + Instruments (placeholder — video already above, this holds instrument details) */}
+          <CarouselItem
+            data-testid="pilot-mobile-card-0"
+            className="h-full basis-full pl-0"
+          >
+            <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+              {MOBILE_CARDS[0].label}
+            </div>
+          </CarouselItem>
+
+          {/* Card 1: Controls */}
+          <CarouselItem
+            data-testid="pilot-mobile-card-1"
+            className="h-full basis-full pl-0"
+          >
+            {/* pilot-dpad testid kept for existing test compatibility */}
+            <div data-testid="pilot-dpad" className="h-full">
+              <ControlWidget
+                robotId={robotId}
+                panelId="robot-controls"
+                isMobile={true}
+              />
+            </div>
+          </CarouselItem>
+
+          {/* Card 2: IMU */}
+          <CarouselItem
+            data-testid="pilot-mobile-card-2"
+            className="h-full basis-full pl-0"
+          >
+            <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+              {MOBILE_CARDS[2].label}
+            </div>
+          </CarouselItem>
+
+          {/* Card 3: Data Plot */}
+          <CarouselItem
+            data-testid="pilot-mobile-card-3"
+            className="h-full basis-full pl-0"
+          >
+            <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+              {MOBILE_CARDS[3].label}
+            </div>
+          </CarouselItem>
+        </CarouselContent>
+
+        {/* Dot indicators */}
+        <CarouselDots api={api} count={MOBILE_CARDS.length} />
+      </Carousel>
     </div>
   );
 }

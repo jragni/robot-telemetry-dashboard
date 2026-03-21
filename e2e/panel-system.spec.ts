@@ -176,19 +176,30 @@ test.describe('Panel System — Pilot Mode', () => {
   });
 
   test('mobile (375px): renders virtual D-pad', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 812 });
+    // Fix 5 hides the mode switcher on mobile — switch to pilot at desktop first
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${BASE}/dashboard`);
     await page.getByRole('button', { name: /pilot/i }).click();
+    await page.setViewportSize({ width: 375, height: 812 });
+
+    // pilot-dpad is inside carousel card 1 — navigate there
+    const dot1 = page.getByTestId('pilot-mobile-dot-1');
+    await expect(dot1).toBeVisible();
+    await dot1.click();
 
     await expect(page.getByTestId('pilot-dpad')).toBeVisible();
   });
 
-  test('mobile: swipeable telemetry cards are visible', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 812 });
+  test('mobile: carousel replaces old swipeable cards', async ({ page }) => {
+    // Fix 5 hides the mode switcher on mobile — switch to pilot at desktop first
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${BASE}/dashboard`);
     await page.getByRole('button', { name: /pilot/i }).click();
+    await page.setViewportSize({ width: 375, height: 812 });
 
-    await expect(page.getByTestId('pilot-swipeable-cards')).toBeVisible();
+    // Fix 1: carousel replaces old overflow div
+    await expect(page.getByTestId('pilot-mobile-carousel')).toBeVisible();
+    await expect(page.getByTestId('pilot-swipeable-cards')).not.toBeAttached();
   });
 });
 

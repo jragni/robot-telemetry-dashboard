@@ -228,9 +228,36 @@ describe('PilotMode', () => {
     expect(screen.getByRole('button', { name: /right/i })).toBeInTheDocument();
   });
 
-  it('mobile: renders swipeable telemetry cards container', () => {
+  // ── Fix 1: Swipeable carousel (replaces old overflow div) ────────────────
+
+  it('mobile: renders swipeable carousel (not old overflow div)', () => {
     render(<PilotMode robotId="robot-1" isMobile={true} />);
-    expect(screen.getByTestId('pilot-swipeable-cards')).toBeInTheDocument();
+    expect(screen.getByTestId('pilot-mobile-carousel')).toBeInTheDocument();
+    // Old div should NOT be present once carousel is implemented
+    expect(
+      screen.queryByTestId('pilot-swipeable-cards')
+    ).not.toBeInTheDocument();
+  });
+
+  it('mobile: carousel dot indicators render', () => {
+    render(<PilotMode robotId="robot-1" isMobile={true} />);
+    expect(
+      screen.getByTestId('pilot-mobile-carousel-dots')
+    ).toBeInTheDocument();
+  });
+
+  it('mobile: carousel has at least 2 card items', () => {
+    render(<PilotMode robotId="robot-1" isMobile={true} />);
+    // Cards are indexed 0..n
+    expect(screen.getByTestId('pilot-mobile-card-0')).toBeInTheDocument();
+    expect(screen.getByTestId('pilot-mobile-card-1')).toBeInTheDocument();
+  });
+
+  it('mobile: dot count matches card count', () => {
+    render(<PilotMode robotId="robot-1" isMobile={true} />);
+    const dots = screen.getAllByTestId(/^pilot-mobile-dot-\d+$/);
+    const cards = screen.getAllByTestId(/^pilot-mobile-card-\d+$/);
+    expect(dots.length).toBe(cards.length);
   });
 
   it('mobile: drag handles are not visible', () => {

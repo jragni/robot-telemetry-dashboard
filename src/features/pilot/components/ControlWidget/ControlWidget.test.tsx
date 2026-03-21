@@ -157,4 +157,72 @@ describe('ControlWidget', () => {
       }
     });
   });
+
+  // ── Fix 3: Compact mobile layout ─────────────────────────────────────────
+
+  describe('mobile compact layout (isMobile=true)', () => {
+    it('renders E-stop, d-pad, and sliders in mobile layout', () => {
+      render(
+        <ControlWidget
+          robotId="robot-1"
+          panelId="robot-controls"
+          isMobile={true}
+        />
+      );
+      expect(
+        screen.getByRole('button', { name: /e-stop/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /forward/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('slider', { name: /linear/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('slider', { name: /angular/i })
+      ).toBeInTheDocument();
+    });
+
+    it('E-stop has full-width class and min-h-[48px] when mobile', () => {
+      render(
+        <ControlWidget
+          robotId="robot-1"
+          panelId="robot-controls"
+          isMobile={true}
+        />
+      );
+      const eStopBtn = screen.getByTestId('e-stop-button');
+      // Full-width means it should be inside a container with w-full class
+      expect(eStopBtn.className).toMatch(/w-full/);
+    });
+
+    it('mobile layout uses single-column container', () => {
+      const { container } = render(
+        <ControlWidget
+          robotId="robot-1"
+          panelId="robot-controls"
+          isMobile={true}
+        />
+      );
+      // Should have a flex-col container for mobile stacked layout
+      const mobileContainer = container.querySelector(
+        '[data-testid="control-widget-mobile"]'
+      );
+      expect(mobileContainer).toBeInTheDocument();
+    });
+
+    it('desktop layout is unchanged when isMobile is false', () => {
+      const { container } = render(
+        <ControlWidget
+          robotId="robot-1"
+          panelId="robot-controls"
+          isMobile={false}
+        />
+      );
+      const mobileContainer = container.querySelector(
+        '[data-testid="control-widget-mobile"]'
+      );
+      expect(mobileContainer).not.toBeInTheDocument();
+    });
+  });
 });

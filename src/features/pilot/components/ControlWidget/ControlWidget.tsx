@@ -16,7 +16,10 @@ import { rosServiceRegistry } from '@/services/ros/registry/RosServiceRegistry';
 import { Show } from '@/shared/components/Show';
 import { useRosStore } from '@/shared/stores/ros/ros.store';
 
-export function ControlWidget({ robotId = '' }: ControlWidgetProps) {
+export function ControlWidget({
+  robotId = '',
+  isMobile = false,
+}: ControlWidgetProps) {
   const connectionState = useRosStore(
     (state) => state.connectionStates[robotId]?.state ?? 'disconnected'
   );
@@ -98,6 +101,58 @@ export function ControlWidget({ robotId = '' }: ControlWidgetProps) {
     }
   }
 
+  if (isMobile) {
+    return (
+      <div
+        data-testid="control-widget-mobile"
+        className="relative flex h-full flex-col overflow-hidden rounded bg-slate-900 text-slate-200"
+      >
+        <div className="flex flex-col gap-3 p-3">
+          {/* E-Stop — full width at top (ISO 13850 + WCAG touch target) */}
+          <button
+            data-testid="e-stop-button"
+            type="button"
+            onClick={handleEStopActivate}
+            className="w-full min-h-[48px] rounded bg-destructive px-4 text-sm font-bold text-destructive-foreground"
+          >
+            E-STOP
+          </button>
+
+          {/* Disabled overlay for dpad + sliders */}
+          <div className="relative flex flex-col items-center gap-3">
+            <Show when={isDisabled}>
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded bg-slate-900/80">
+                <p className="text-sm text-slate-400">
+                  Connect a robot to enable controls
+                </p>
+              </div>
+            </Show>
+
+            {/* Topic selector */}
+            <TopicSelector
+              controlStore={controlStore}
+              availableTopics={availableTopics}
+            />
+
+            {/* D-pad — centered */}
+            <ControlPad controlStore={controlStore} disabled={isDisabled} />
+
+            {/* Velocity sliders — full width, stacked */}
+            <div className="w-full">
+              <VelocitySliders controlStore={controlStore} />
+            </div>
+          </div>
+        </div>
+
+        <Show when={connectionState !== 'connected' && !noRobot}>
+          <div className="border-t border-slate-700 bg-slate-950 px-3 py-1 text-center text-xs text-amber-400">
+            Robot {connectionState} — controls may not respond
+          </div>
+        </Show>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex h-full flex-col overflow-hidden rounded bg-slate-900 text-slate-200">
       <div className="flex h-full items-center gap-4 px-4 py-2">
@@ -138,7 +193,7 @@ export function ControlWidget({ robotId = '' }: ControlWidgetProps) {
       </div>
 
       <Show when={connectionState !== 'connected' && !noRobot}>
-        <div className="border-t border-slate-700 bg-slate-950 px-3 py-1 text-center text-xs text-amber-400">
+        <div className="border-t border-slate-700 bg-slate-950 px-3 py-1 text-center text-amber-400">
           Robot {connectionState} — controls may not respond
         </div>
       </Show>

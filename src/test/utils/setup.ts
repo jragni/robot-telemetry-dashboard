@@ -78,6 +78,37 @@ if (typeof globalThis.ResizeObserver === 'undefined') {
   }
 })();
 
+// embla-carousel calls window.matchMedia internally during initialisation.
+// jsdom does not implement matchMedia, so provide a no-op stub.
+if (typeof window.matchMedia === 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => undefined,
+      removeListener: () => undefined,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      dispatchEvent: () => false,
+    }),
+  });
+}
+
+// embla-carousel uses IntersectionObserver for slide-in-view tracking.
+// jsdom does not implement it, so provide a no-op stub.
+if (typeof globalThis.IntersectionObserver === 'undefined') {
+  globalThis.IntersectionObserver = class IntersectionObserver {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    observe() {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    unobserve() {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    disconnect() {}
+  } as unknown as typeof IntersectionObserver;
+}
+
 // @testing-library/dom's waitFor checks `typeof jest !== 'undefined'` to detect
 // fake timers. Vitest with `globals: true` exposes `vi` but not `jest`.
 // Assign it so waitFor can use jest.advanceTimersByTime() in fake timer mode.
