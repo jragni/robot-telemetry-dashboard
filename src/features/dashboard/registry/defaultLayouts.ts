@@ -26,8 +26,19 @@ const ENGINEER_DEFAULT: readonly LayoutItem[] = [
   { i: 'data-plot', x: 4, y: 6, w: 8, h: 4 },
 ];
 
+// Default layout used for new robot workspaces (keyed by robotId)
+const ROBOT_DEFAULT: readonly LayoutItem[] = [
+  { i: 'video', x: 0, y: 0, w: 4, h: 6 },
+  { i: 'lidar', x: 4, y: 0, w: 4, h: 6 },
+  { i: 'tab-group-1', x: 8, y: 0, w: 4, h: 6 },
+  { i: 'topic-list', x: 0, y: 6, w: 4, h: 4 },
+  { i: 'data-plot', x: 4, y: 6, w: 8, h: 4 },
+];
+
 export const DEFAULT_LAYOUTS: ModeLayouts = {
   dashboard: DASHBOARD_DEFAULT,
   pilot: PILOT_DEFAULT,
   engineer: ENGINEER_DEFAULT,
 };
+
+export const DEFAULT_ROBOT_LAYOUT: readonly LayoutItem[] = ROBOT_DEFAULT;

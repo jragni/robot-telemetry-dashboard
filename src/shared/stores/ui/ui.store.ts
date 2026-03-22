@@ -3,13 +3,9 @@ import { create } from 'zustand';
 import type { UIStore } from './ui.types';
 
 export const useUIStore = create<UIStore>((set) => ({
-  sidebarOpen: true,
+  immersiveMode: false,
 
-  setSidebarOpen: (open: boolean) => {
-    set({ sidebarOpen: open });
-  },
-
-  toggleSidebar: () => {
-    set((state) => ({ sidebarOpen: !state.sidebarOpen }));
+  setImmersiveMode: (value: boolean) => {
+    set({ immersiveMode: value });
   },
 }));

@@ -1,29 +1,21 @@
-import { createBrowserRouter, Navigate } from 'react-router';
+import { createBrowserRouter } from 'react-router';
 
-import { DashboardView } from '@/features/dashboard/DashboardView';
-import { FleetView } from '@/features/fleet/FleetView';
-import { MapView } from '@/features/map/MapView';
-import { PilotPickerView } from '@/features/pilot/PilotPickerView';
-import { PilotView } from '@/features/pilot/PilotView';
-import { DashboardShell } from '@/shared/components/DashboardShell';
+import { FleetOverview } from '@/features/fleet/FleetOverview';
+import { SharedMapView } from '@/features/map/SharedMapView';
+import { RobotWorkspace } from '@/features/robot/RobotWorkspace';
+import { AppShell } from '@/shared/components/AppShell';
 import { NotFoundView } from '@/shared/components/NotFoundView';
 
 export const router = createBrowserRouter(
   [
     {
       path: '/',
-      element: <DashboardShell />,
+      element: <AppShell />,
       children: [
-        { index: true, element: <Navigate to="/dashboard" replace /> },
-        { path: 'dashboard', element: <DashboardView /> },
-        { path: 'fleet', element: <FleetView /> },
-        { path: 'map', element: <MapView /> },
-        { path: 'pilot', element: <PilotPickerView /> },
+        { index: true, element: <FleetOverview /> },
+        { path: 'robot/:robotId', element: <RobotWorkspace /> },
+        { path: 'map', element: <SharedMapView /> },
       ],
-    },
-    {
-      path: '/pilot/:robotId',
-      element: <PilotView />,
     },
     {
       path: '*',

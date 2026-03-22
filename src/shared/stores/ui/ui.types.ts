@@ -1,10 +1,9 @@
 export interface UIState {
-  sidebarOpen: boolean;
+  immersiveMode: boolean;
 }
 
 export interface UIActions {
-  setSidebarOpen: (open: boolean) => void;
-  toggleSidebar: () => void;
+  setImmersiveMode: (value: boolean) => void;
 }
 
 export type UIStore = UIState & UIActions;

@@ -1,3 +1,5 @@
+// DashboardShell is superseded by AppShell in Phase 8 IA redesign.
+// These tests are kept as a tombstone until DashboardShell.tsx is deleted.
 import { render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 
@@ -5,6 +7,24 @@ import { DashboardShell } from './DashboardShell';
 
 vi.mock('@/shared/hooks/use-mobile', () => ({
   useMobile: () => false,
+}));
+
+// DashboardShell now uses AppShell internally — mock resizable panels
+vi.mock('@/components/ui/resizable', () => ({
+  ResizablePanelGroup: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  ResizablePanel: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  ResizableHandle: () => <div />,
+}));
+
+vi.mock('@/shared/stores/ros/ros.store', () => ({
+  useRosStore: vi.fn(
+    (selector: (s: { connectionStates: Record<string, unknown> }) => unknown) =>
+      selector({ connectionStates: {} })
+  ),
 }));
 
 function renderShell(initialPath = '/dashboard') {
@@ -41,10 +61,5 @@ describe('DashboardShell', () => {
   it('renders the sidebar', () => {
     renderShell();
     expect(screen.getByLabelText('Sidebar')).toBeInTheDocument();
-  });
-
-  it('renders the sidebar toggle', () => {
-    renderShell();
-    expect(screen.getByLabelText('Close sidebar')).toBeInTheDocument();
   });
 });

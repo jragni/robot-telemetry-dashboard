@@ -2,28 +2,18 @@ import { useUIStore } from './ui.store';
 
 describe('useUIStore', () => {
   beforeEach(() => {
-    useUIStore.setState({ sidebarOpen: true });
+    useUIStore.setState({ immersiveMode: false });
   });
 
-  it('starts with sidebar open', () => {
-    expect(useUIStore.getState().sidebarOpen).toBe(true);
+  it('starts with immersiveMode false', () => {
+    expect(useUIStore.getState().immersiveMode).toBe(false);
   });
 
-  it('setSidebarOpen sets sidebar state', () => {
-    useUIStore.getState().setSidebarOpen(false);
-    expect(useUIStore.getState().sidebarOpen).toBe(false);
+  it('setImmersiveMode sets immersive mode', () => {
+    useUIStore.getState().setImmersiveMode(true);
+    expect(useUIStore.getState().immersiveMode).toBe(true);
 
-    useUIStore.getState().setSidebarOpen(true);
-    expect(useUIStore.getState().sidebarOpen).toBe(true);
-  });
-
-  it('toggleSidebar toggles sidebar state', () => {
-    expect(useUIStore.getState().sidebarOpen).toBe(true);
-
-    useUIStore.getState().toggleSidebar();
-    expect(useUIStore.getState().sidebarOpen).toBe(false);
-
-    useUIStore.getState().toggleSidebar();
-    expect(useUIStore.getState().sidebarOpen).toBe(true);
+    useUIStore.getState().setImmersiveMode(false);
+    expect(useUIStore.getState().immersiveMode).toBe(false);
   });
 });
