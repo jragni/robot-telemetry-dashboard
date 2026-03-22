@@ -7,16 +7,16 @@ See: `.planning/ROADMAP.md` (created 2026-03-19)
 
 **Core value:** Deliver a professional-grade robot telemetry dashboard with non-negotiable architecture (RxJS + Zustand + roslib), scalable code structure (no barrels, strict types, domain stores), production-quality UI (design intelligence driven), and full TDD test coverage.
 
-**Current focus:** Phase 8 — WebRTC Video
+**Current focus:** Phase 8 complete — ready for Phase 9
 
 ## Current Position
 
 - **Phase:** 8 of 12
-- **Plan:** Not yet planned
-- **Status:** Phase 7.2 complete, ready for Phase 8
-- **Last activity:** 2026-03-21
+- **Plan:** Complete
+- **Status:** Phase 8 (IA Redesign) complete
+- **Last activity:** 2026-03-22
 
-Progress: `████████████░░░░░░░░` 58%
+Progress: `█████████████░░░░░░░` 62%
 
 ## Phase Summary
 
@@ -32,7 +32,7 @@ Progress: `████████████░░░░░░░░` 58%
 | 7   | Robot Control         | Complete    |
 | 7.1 | Visual Fixes          | Complete    |
 | 7.2 | Mobile UX Polish      | Complete    |
-| 8   | WebRTC Video          | Not started |
+| 8   | IA Redesign           | Complete    |
 | 9   | FPOV Pilot Mode       | Not started |
 | 10  | Multi-Robot Fleet     | Not started |
 | 11  | SLAM Map              | Not started |
@@ -57,6 +57,7 @@ None.
 | 2026-03-20 | Phase 7 complete                      | Robot control (TDD, safety-critical E-Stop, 427 tests)                                         |
 | 2026-03-21 | Phase 7.1 complete                    | Visual fixes — dark theme, sovereign accents, tactical mode switcher, token migration          |
 | 2026-03-21 | Phase 7.2 complete                    | Mobile UX polish — swipeable carousel, compact controls, engineer hidden, mode switcher hidden |
+| 2026-03-22 | Phase 8 complete                      | IA redesign — sidebar-driven Fleet→Robot→Detail, removed header nav/mode switcher/bottom tabs  |
 
 ## Notes
 
