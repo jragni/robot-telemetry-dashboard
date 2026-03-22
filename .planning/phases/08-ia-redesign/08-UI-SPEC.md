@@ -75,19 +75,18 @@ Declared values (multiples of 4):
 | Body          | 14px | 400    | 1.5         | Geist Variable |
 | Label / Small | 12px | 400    | 1.4         | Geist Variable |
 | Eyebrow       | 10px | 600    | 1.2         | Geist Variable |
-| Heading       | 18px | 700    | 1.2         | Geist Variable |
+| Heading       | 18px | 600    | 1.2         | Geist Variable |
 | Data value    | 12px | 400    | 1.4         | Geist Mono     |
-| Panel title   | 12px | 500    | 1.3         | Geist Variable |
-| App title     | 14px | 700    | 1.2         | Geist Mono     |
+| Panel title   | 12px | 400    | 1.3         | Geist Variable |
+| App title     | 14px | 600    | 1.2         | Geist Mono     |
 
 **Rules:**
 
-- Eyebrow labels (section category text above lists) use `text-[10px] font-semibold
-uppercase tracking-wider text-muted-foreground` — already established in Sidebar
-- Mono font (`font-mono`) applies to: robot IDs, data values, telemetry readings,
-  app title, connection URIs
+- Only 2 font weights used: 400 (regular) and 600 (semibold)
+- Eyebrow labels use `text-[10px] font-semibold uppercase tracking-wider text-muted-foreground`
+- Mono font (`font-mono`) applies to: robot IDs, data values, telemetry readings, app title, connection URIs
 - All robot IDs truncate with `truncate` — names can be long
-- Heading font weight is 700 (`font-bold`), not 600
+- Heading font weight is 600 (`font-semibold`), not 700
 
 ---
 
@@ -411,7 +410,7 @@ text-slate-300` and the mobile fallback shows a "requires desktop viewport" mess
 **Toolbar right side:**
 
 - Reset layout button: `variant="ghost" size="sm"` with `RotateCcw` icon (14px) +
-  label "Reset"
+  label "Reset Layout"
 - Add panel button: `variant="outline" size="sm"` with `Plus` icon (12px) + label
   "Add Panel"
 - Both buttons use design system variants, NOT `border-slate-600 text-slate-300
@@ -530,7 +529,7 @@ Components that exist and are visually correct (no changes needed):
 | Map placeholder body          | "Shared fleet map coming in Phase 11. Robot positions and occupancy grids will appear here."                   |
 | Robot card action affordance  | "Open workspace →"                                                                                             |
 | Workspace breadcrumb          | "{robotId} / Workspace"                                                                                        |
-| Toolbar reset button          | "Reset"                                                                                                        |
+| Toolbar reset button          | "Reset Layout"                                                                                                 |
 | Toolbar add panel button      | "Add Panel"                                                                                                    |
 | Mobile fallback               | "Robot workspace requires desktop viewport"                                                                    |
 | Sidebar fleet section eyebrow | "FLEET"                                                                                                        |
