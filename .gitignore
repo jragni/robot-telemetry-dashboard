@@ -40,5 +40,20 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# claude
 .claude
-CLAUDE.md
+
+# MCP config (may contain API keys)
+.mcp.json
+
+# Playwright
+.playwright-mcp/
+test-results/
+
+# Build output
+/dist
+
+# Audit screenshots (not in .planning/)
+audit-*.png
+rethink-*.png
+screenshots/
