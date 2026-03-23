@@ -14,5 +14,15 @@
     "always_confirm_destructive": true,
     "always_confirm_external_services": true
   },
-  "granularity": "fine"
+  "granularity": "fine",
+  "parallelization": true,
+  "commit_docs": true,
+  "model_profile": "quality",
+  "workflow": {
+    "research": true,
+    "plan_check": true,
+    "verifier": true,
+    "nyquist_validation": true,
+    "auto_advance": true
+  }
 }
