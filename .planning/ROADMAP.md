@@ -39,11 +39,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `npm test -- --run` executes at least one Vitest test that passes
   4. `npx playwright test` executes at least one Playwright test that captures a screenshot
   5. roslib 2.0.1 imports without CJS/ESM errors, Recharts renders a chart (react-is override working), react-grid-layout renders a grid -- all verified by smoke tests
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Clean slate + Vite 7 project + deps + ESLint + Prettier + shadcn
+- [ ] 01-02-PLAN.md — Test infrastructure + roslib smoke + visual gate + quality gate
 
 ### Phase 2: Design System
 **Type**: `visual`
@@ -56,7 +56,7 @@ Plans:
   2. System color scheme preference is detected on first visit (no toggle interaction needed)
   3. The `data-theme` attribute on `<html>` changes when theme toggles, and all OKLCH token values update accordingly
   4. A sample component (e.g., DataCard) renders with the defense-contractor aesthetic: dark charcoal backgrounds, electric blue accents, grid panel borders, no gradients, no rounded corners beyond `rounded-sm`
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 02-01: TBD
@@ -73,7 +73,7 @@ Plans:
   2. Sidebar collapses/expands and the main content area resizes accordingly without layout thrashing
   3. Header area displays contextual information (app name, current view breadcrumb)
   4. The shell renders correctly in both light and dark themes using Phase 2 design tokens
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 03-01: TBD
@@ -91,7 +91,7 @@ Plans:
   3. Navigating to `/pilot/:id` renders a Pilot View placeholder inside the shell
   4. Navigating to `/map` renders a Map View placeholder inside the shell
   5. Playwright tests verify all four routes are reachable via deep link (direct URL entry, not just click navigation)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 04-01: TBD
@@ -107,7 +107,7 @@ Plans:
   2. A connection status indicator shows real-time state (connected/disconnected/reconnecting) with latency measurement
   3. When the WebSocket connection drops, the app automatically reconnects with exponential backoff and re-subscribes all previously active topics without user intervention
   4. Connection state is tracked per-robot in Zustand, and multiple simultaneous connections are supported
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 05-01: TBD
@@ -124,7 +124,7 @@ Plans:
   2. Multiple robots (2-5) appear simultaneously with independent status indicators
   3. Clicking a robot card navigates to that robot's workspace (`/robot/:id`)
   4. An empty state is displayed when no robots are connected (not a blank screen)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 06-01: TBD
@@ -142,7 +142,7 @@ Plans:
   3. LiDAR scan renders as a 2D radar-style polar plot on Canvas from LaserScan topic data
   4. Raw topic values display as formatted key/value pairs for any subscribed topic
   5. Available ROS topics are auto-discovered via rosbridge introspection and presented for subscription
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 07-01: TBD
@@ -160,7 +160,7 @@ Plans:
   2. The panel grid uses `window.innerHeight`-anchored rowHeight on desktop (ISS-008 fix) and static rowHeight on smaller breakpoints
   3. Panel-level error boundaries prevent a single widget crash from taking down the entire workspace
   4. The workspace renders correctly in both light and dark themes
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 08-01: TBD
@@ -177,7 +177,7 @@ Plans:
   2. Pressing E-Stop immediately publishes a zero-velocity command and visually indicates active stop state
   3. D-pad and velocity sliders publish geometry_msgs/Twist to /cmd_vel at a rate-limited 10Hz
   4. Velocity values are clamped to safe ranges and displayed numerically to the operator
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 09-01: TBD
@@ -194,7 +194,7 @@ Plans:
   2. Pilot view at `/pilot/:id` displays camera as the primary viewport with translucent HUD control overlay (D-pad, velocity, E-Stop)
   3. Frame drops are handled gracefully (no frozen frames, no memory accumulation from decode queue)
   4. An immersive fullscreen toggle hides the sidebar and header for maximum viewport
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 10-01: TBD
@@ -211,7 +211,7 @@ Plans:
   2. Grid data is fetched on-demand (subscribe, receive, unsubscribe) -- not a continuous subscription
   3. A re-center button resets the viewport to the robot's current position
   4. Large grids (1000x1000+) render without blocking the main thread (Web Worker processing)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 11-01: TBD
@@ -229,7 +229,7 @@ Plans:
   3. WebSocket reconnection, theme persistence, router deep links, canvas cleanup, and E-Stop reachability all pass the "Looks Done But Isn't" checklist
   4. Visual screenshot scoring passes 7+ on AI Slop, Defense Aesthetic, and Polish dimensions in both light and dark themes
   5. Light theme is intentionally designed (not just an inverted dark theme) with readable contrast ratios
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 12-01: TBD
