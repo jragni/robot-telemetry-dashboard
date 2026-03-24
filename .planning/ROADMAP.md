@@ -43,7 +43,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Clean slate + Vite 7 project + deps + ESLint + Prettier + shadcn
-- [ ] 01-02-PLAN.md — Test infrastructure + roslib smoke + visual gate + quality gate
+- [x] 01-02-PLAN.md — Test infrastructure + roslib smoke + visual gate + quality gate
 
 ### Phase 2: Design System
 **Type**: `visual`
