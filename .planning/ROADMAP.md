@@ -257,3 +257,14 @@ Note: Phases 6 and 7 can execute in parallel (both depend on Phase 5). Phases 9 
 | 10. Pilot View | 0/2 | Not started | - |
 | 11. Map View | 0/2 | Not started | - |
 | 12. Integration | 0/3 | Not started | - |
+
+## Backlog
+
+### Phase 999.1: Product Landing Page (BACKLOG)
+
+**Goal:** Startup-style landing page — describes the problem (robot telemetry monitoring is fragmented), other solutions, what this product is, who it's for (robotics engineers, defense contractors), why it's needed, and how it solves the problem. Think product landing page, not docs. Good candidate for applying the design system to a real page.
+**Requirements:** TBD
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (promote with /gsd:review-backlog when ready)
