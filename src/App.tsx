@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AppShell } from './components/AppShell';
+import { AppShell } from './shared/components/AppShell';
 
 function FleetPlaceholder() {
   return (
