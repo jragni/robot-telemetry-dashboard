@@ -58,6 +58,15 @@ src/
 - Stores in domain folders (ADR-002)
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
+- **If a child needs a comment to describe what it is, extract it into a named subcomponent.** Self-describing component names replace comments.
+- **If a component accumulates too many subcomponents, it gets its own folder:**
+  ```
+  src/components/RobotCard/
+    RobotCard.tsx
+    RobotCard.types.ts
+    RobotStatusBadge.tsx
+    ConnectionInfo.tsx
+  ```
 
 ### Styling Rules
 
