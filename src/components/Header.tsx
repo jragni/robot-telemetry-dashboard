@@ -41,7 +41,6 @@ export function Header({
       <span className="font-sans text-sm font-semibold text-text-primary tracking-wide whitespace-nowrap">
         <span className="hidden md:inline">Robot Telemetry Dashboard</span>
         <span className="md:hidden">RTD</span>
-        <span className="text-accent ml-1">●</span>
       </span>
 
       <span className="font-mono text-xs text-text-muted whitespace-nowrap overflow-hidden text-ellipsis hidden md:inline">
