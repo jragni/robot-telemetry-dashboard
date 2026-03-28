@@ -24,6 +24,50 @@
   --radius-md: 4px;
 }
 
+/* Register color tokens with Tailwind so utilities like
+   bg-surface-primary, text-accent, border-border are generated.
+   Values come from :root / [data-theme] below — @theme inline
+   tells Tailwind to resolve var() references at build time. */
+@theme inline {
+  /* Surfaces */
+  --color-surface-base: var(--color-surface-base);
+  --color-surface-primary: var(--color-surface-primary);
+  --color-surface-secondary: var(--color-surface-secondary);
+  --color-surface-tertiary: var(--color-surface-tertiary);
+
+  /* Accent */
+  --color-accent: var(--color-accent);
+  --color-accent-glow: var(--color-accent-glow);
+  --color-accent-subtle: var(--color-accent-subtle);
+
+  /* Status */
+  --color-status-nominal: var(--color-status-nominal);
+  --color-status-nominal-bg: var(--color-status-nominal-bg);
+  --color-status-caution: var(--color-status-caution);
+  --color-status-caution-bg: var(--color-status-caution-bg);
+  --color-status-critical: var(--color-status-critical);
+  --color-status-critical-bg: var(--color-status-critical-bg);
+  --color-status-offline: var(--color-status-offline);
+  --color-status-offline-bg: var(--color-status-offline-bg);
+
+  /* Text */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+
+  /* Borders */
+  --color-border: var(--color-border);
+  --color-border-hover: var(--color-border-hover);
+
+  /* Effects */
+  --color-surface-glow: var(--color-surface-glow);
+  --color-hud-overlay: var(--color-hud-overlay);
+
+  /* IMU */
+  --color-imu-sky: var(--color-imu-sky);
+  --color-imu-ground: var(--color-imu-ground);
+}
+
 /* =================================================================
    Dark theme (default)
    ================================================================= */

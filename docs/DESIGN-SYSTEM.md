@@ -9,7 +9,31 @@
 **Aesthetic:** Industrial precision — engineered, not designed. Submarine control room meets modern C2 platform.
 **Palette:** OKLCH hue 260 (deep blue-shifted surfaces), accent hue 230 (bright blue)
 **Fonts:** Exo (UI) + Roboto Mono (telemetry data)
+**Icons:** Lucide React (`lucide-react`) — shadcn default, tree-shakeable SVG icons
 **Mood:** Authority, precision, live operations
+
+## Tailwind v4 Token Architecture
+
+Colors support dark/light theming via CSS variables + `@theme inline`:
+
+```css
+/* 1. @theme inline registers token NAMES with Tailwind → generates utilities */
+@theme inline {
+  --color-surface-base: var(--color-surface-base);
+}
+
+/* 2. :root and [data-theme] set the actual VALUES */
+:root {
+  --color-surface-base: oklch(0.09 0.02 260);
+} /* dark */
+[data-theme='light'] {
+  --color-surface-base: oklch(0.95 0.005 260);
+} /* light */
+```
+
+This gives us `bg-surface-base` as a Tailwind utility that automatically switches with the theme.
+
+**Never put colors directly in `@theme`** — they won't respond to theme changes. Always use the `@theme inline` → `:root` pattern.
 
 ## Color Tokens
 

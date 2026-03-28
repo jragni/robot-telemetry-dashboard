@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
+import { X } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
@@ -71,9 +72,9 @@ export function AppShell() {
           type="button"
           onClick={closeDrawer}
           aria-label="Close navigation"
-          className="absolute top-2 right-2 w-[26px] h-[26px] flex items-center justify-center bg-surface-tertiary border border-border rounded-sm cursor-pointer text-text-muted text-xs transition-all duration-200 hover:border-border-hover hover:text-text-primary"
+          className="absolute top-2 right-2 w-[26px] h-[26px] flex items-center justify-center bg-surface-tertiary border border-border rounded-sm cursor-pointer text-text-muted transition-all duration-200 hover:border-border-hover hover:text-text-primary"
         >
-          ✕
+          <X size={14} />
         </button>
         <Sidebar collapsed={false} onToggleCollapse={closeDrawer} />
       </div>
