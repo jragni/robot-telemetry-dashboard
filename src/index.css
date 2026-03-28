@@ -1,2 +1,130 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+
+/* =================================================================
+   Design System — Midnight Operations
+
+   Palette D: Deep blue-shifted surfaces (hue 260) with bright
+   accent clarity. Exo for UI, Roboto Mono for telemetry data.
+
+   All tokens defined via @theme so Tailwind v4 generates
+   utility classes automatically (bg-surface-base, text-accent, etc.)
+   ================================================================= */
+
+@theme {
+  /* -- Fonts ---------------------------------------------------- */
+  --font-sans: 'Exo', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', ui-monospace, monospace;
+
+  /* -- Spacing (base unit: 4px) --------------------------------- */
+  --spacing: 4px;
+
+  /* -- Border radius -------------------------------------------- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+}
+
+/* =================================================================
+   Dark theme (default)
+   ================================================================= */
+
+:root,
+[data-theme='dark'] {
+  /* Surfaces — 4-tier depth hierarchy, hue 260 */
+  --color-surface-base: oklch(0.09 0.02 260);
+  --color-surface-primary: oklch(0.12 0.02 260);
+  --color-surface-secondary: oklch(0.16 0.02 260);
+  --color-surface-tertiary: oklch(0.2 0.02 260);
+
+  /* Accent — blue primary */
+  --color-accent: oklch(0.7 0.2 230);
+  --color-accent-glow: oklch(0.7 0.2 230 / 0.3);
+  --color-accent-subtle: oklch(0.7 0.2 230 / 0.08);
+
+  /* Status — triple-redundant (always paired with icon + label) */
+  --color-status-nominal: oklch(0.7 0.19 155);
+  --color-status-nominal-bg: oklch(0.7 0.19 155 / 0.1);
+  --color-status-caution: oklch(0.75 0.18 65);
+  --color-status-caution-bg: oklch(0.75 0.18 65 / 0.1);
+  --color-status-critical: oklch(0.6 0.24 25);
+  --color-status-critical-bg: oklch(0.6 0.24 25 / 0.1);
+  --color-status-offline: oklch(0.45 0.02 260);
+  --color-status-offline-bg: oklch(0.45 0.02 260 / 0.1);
+
+  /* Text */
+  --color-text-primary: oklch(0.93 0.01 260);
+  --color-text-secondary: oklch(0.65 0.02 260);
+  --color-text-muted: oklch(0.45 0.02 260);
+
+  /* Borders */
+  --color-border: oklch(0.25 0.02 260);
+  --color-border-hover: oklch(0.7 0.2 230);
+
+  /* Effects */
+  --color-surface-glow: oklch(0.7 0.2 230 / 0.04);
+  --color-hud-overlay: oklch(0.09 0.02 260 / 0.75);
+
+  /* IMU widget */
+  --color-imu-sky: oklch(0.5 0.14 230);
+  --color-imu-ground: oklch(0.35 0.1 65);
+}
+
+/* =================================================================
+   Light theme — muted professional (cool grays, not stark white)
+   ================================================================= */
+
+[data-theme='light'] {
+  /* Surfaces — warm gray, not pure white */
+  --color-surface-base: oklch(0.95 0.005 260);
+  --color-surface-primary: oklch(0.92 0.008 260);
+  --color-surface-secondary: oklch(0.88 0.01 260);
+  --color-surface-tertiary: oklch(0.84 0.01 260);
+
+  /* Accent — deeper blue for contrast on light */
+  --color-accent: oklch(0.5 0.22 230);
+  --color-accent-glow: oklch(0.5 0.22 230 / 0.2);
+  --color-accent-subtle: oklch(0.5 0.22 230 / 0.06);
+
+  /* Status */
+  --color-status-nominal: oklch(0.48 0.17 155);
+  --color-status-nominal-bg: oklch(0.48 0.17 155 / 0.1);
+  --color-status-caution: oklch(0.55 0.17 65);
+  --color-status-caution-bg: oklch(0.55 0.17 65 / 0.1);
+  --color-status-critical: oklch(0.5 0.22 25);
+  --color-status-critical-bg: oklch(0.5 0.22 25 / 0.1);
+  --color-status-offline: oklch(0.55 0.02 260);
+  --color-status-offline-bg: oklch(0.55 0.02 260 / 0.1);
+
+  /* Text */
+  --color-text-primary: oklch(0.18 0.02 260);
+  --color-text-secondary: oklch(0.4 0.02 260);
+  --color-text-muted: oklch(0.58 0.02 260);
+
+  /* Borders */
+  --color-border: oklch(0.82 0.01 260);
+  --color-border-hover: oklch(0.5 0.22 230);
+
+  /* Effects */
+  --color-surface-glow: oklch(0.5 0.22 230 / 0.04);
+  --color-hud-overlay: oklch(0.18 0.02 260 / 0.7);
+
+  /* IMU widget */
+  --color-imu-sky: oklch(0.65 0.12 230);
+  --color-imu-ground: oklch(0.5 0.1 65);
+}
+
+/* =================================================================
+   Base styles
+   ================================================================= */
+
+html {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  background-color: var(--color-surface-base);
+  color: var(--color-text-primary);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
