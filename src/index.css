@@ -128,3 +128,61 @@ body {
   margin: 0;
   min-height: 100vh;
 }
+
+/* =================================================================
+   Shell layout — CSS Grid
+   ================================================================= */
+
+.shell-grid {
+  display: grid;
+  grid-template-columns: var(--sidebar-width, 200px) 1fr;
+  grid-template-rows: 40px 1fr 28px;
+  grid-template-areas:
+    'sidebar header'
+    'sidebar content'
+    'sidebar statusbar';
+  height: 100dvh;
+  overflow: hidden;
+  transition: grid-template-columns 250ms ease;
+}
+
+.shell-grid--collapsed {
+  --sidebar-width: 48px;
+}
+
+.shell-sidebar {
+  grid-area: sidebar;
+}
+
+.shell-header {
+  grid-area: header;
+}
+
+.shell-content {
+  grid-area: content;
+  overflow-y: auto;
+  min-width: 0;
+  background-color: var(--color-surface-base);
+  padding: 12px;
+}
+
+.shell-statusbar {
+  grid-area: statusbar;
+}
+
+/* Mobile: sidebar hidden, single column */
+@media (max-width: 767px) {
+  .shell-grid,
+  .shell-grid--collapsed {
+    grid-template-columns: 1fr;
+    grid-template-rows: 40px 1fr 28px;
+    grid-template-areas:
+      'header'
+      'content'
+      'statusbar';
+  }
+
+  .shell-sidebar {
+    display: none;
+  }
+}
