@@ -6,10 +6,11 @@ GSD framework handles orchestration. All gates enabled. Checkpoint after every f
 
 ### Execution Rules
 
+- **Build features as verticals, not horizontal slices.** Each feature built end-to-end (types → store → hook → component → tests → visual verification → checkpoint) before starting the next. Never build all stores, then all hooks, then all components.
+- **Research tools FIRST.** Query context7, ui-ux-pro-max, /frontend-design BEFORE proposing any solution. Do not propose from own knowledge then validate — tools first, then recommendations. Apply the research findings when writing code.
 - **Visual work executes inline** (`--interactive`). Never delegate visual components to parallel subagents — they cannot invoke `/frontend-design` or `ui-ux-pro-max`.
-- **Logic work** (transport, stores, hooks) can use subagent executors.
 - **Discuss everything first.** Before code: what it looks like, how it works, edge cases.
-- **Verify visually.** Must view rendered output (dev server or screenshot) before claiming visual work is done. Code that compiles is not code that looks right.
+- **Verify visually.** Must view rendered output (Playwright MCP or dev server) before claiming visual work is done. Code that compiles is not code that looks right.
 - **/clear between major features.** Fresh context.
 
 ### UI Tool Chain (MANDATORY for visual/integration work)
