@@ -44,7 +44,7 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 | Design System      | ✅ Complete | 2026-03-28 |
 | App Shell          | ✅ Complete | 2026-03-28 |
 | Folder Structure   | ✅ Complete | 2026-03-28 |
-| Landing Page       | Not started | —          |
+| Landing Page       | ✅ Complete | 2026-03-29 |
 | Fleet + Robot Mgmt | Not started | —          |
 | Robot Workspace    | Not started | —          |
 | Controls           | Not started | —          |

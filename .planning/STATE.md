@@ -8,7 +8,7 @@ See: .planning/PROJECT.md
 
 ## Current Position
 
-**Next feature:** Landing Page
+**Next feature:** Fleet + Robot Management
 **Status:** Ready to start
 **Branch:** EPIC/v4-rebuild
 
