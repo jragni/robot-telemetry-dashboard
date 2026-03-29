@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useConnectionStore } from '../../shared/stores/connection/useConnectionStore';
-import { RobotCard } from './RobotCard';
+import { RobotCard } from './RobotCard/RobotCard';
 import { FleetEmptyState } from './FleetEmptyState';
 import { AddRobotModal } from './AddRobotModal';
 

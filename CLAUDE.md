@@ -20,105 +20,6 @@ GSD for state tracking (STATE.md, ROADMAP.md). Freeform pair programming for exe
 3. **`/gsd:ui-review`** — 6-pillar visual audit. Must score 7+ on AI Slop, Defense Aesthetic, Polish.
 4. **Playwright MCP** — Screenshots at 1280x800 + 375x812
 
-### Quality Gate
-
-```bash
-npm run lint && npx tsc --noEmit && npm run build
-```
-
-All must pass with ZERO errors and ZERO warnings. Add `npm test -- --run` and `npm run validate:tokens` once test infrastructure grows.
-
-## Folder Structure
-
-Organized by **feature domain**, not by file type.
-
-```
-src/
-├── features/                     # Feature domains — each owns its components, hooks, tests
-│   ├── fleet/                    # Fleet overview, robot cards, add/remove
-│   │   ├── FleetOverview.tsx
-│   │   ├── FleetOverview.types.ts
-│   │   ├── FleetOverview.test.tsx
-│   │   ├── fleet.helpers.ts      # Feature-scoped utility functions
-│   │   ├── RobotCard/            # Complex component → own folder (3+ subcomponents)
-│   │   │   ├── RobotCard.tsx
-│   │   │   ├── RobotCard.types.ts
-│   │   │   ├── RobotCard.helpers.ts
-│   │   │   ├── RobotCard.test.tsx
-│   │   │   ├── RobotStatusBadge.tsx
-│   │   │   └── ConnectionInfo.tsx
-│   │   ├── AddRobotModal.tsx
-│   │   └── AddRobotModal.types.ts
-│   ├── workspace/                # Robot telemetry workspace
-│   ├── controls/                 # E-Stop, velocity, D-pad
-│   ├── telemetry/                # IMU, charts, LiDAR, raw values
-│   ├── demo/                     # Demo mode with mock robots
-│   └── landing/                  # Landing page
-├── shared/                       # Cross-feature infrastructure
-│   ├── components/               # Shared UI (AppShell, Sidebar, Header, StatusBar)
-│   │   ├── AppShell.tsx
-│   │   ├── Sidebar.tsx
-│   │   ├── Header.tsx
-│   │   └── StatusBar.tsx
-│   ├── hooks/                    # Shared hooks (useTheme, etc.)
-│   ├── stores/                   # Zustand stores by domain
-│   │   └── connection/           # Connection store
-│   └── types/                    # Shared types (ROS messages, etc.)
-├── test-utils/                   # Mock data generators, test helpers
-├── utils/                        # Pure utility functions (shared across features)
-├── index.css                     # Design system tokens (@theme + :root)
-├── main.tsx                      # React entry point
-└── App.tsx                       # Router + top-level layout
-```
-
-### Folder Rules
-
-- **Features own their code.** Components, hooks, helpers, tests, and types used by only one feature live inside that feature's folder.
-- **Shared only if used by 2+ features.** Don't prematurely move things to `shared/`. Start local, promote when needed.
-- **3+ subcomponents → own folder.** When a component has 3 or more child components, it gets its own directory.
-- **No barrel files (ADR-001).** Import directly from source: `import { RobotCard } from '../fleet/RobotCard/RobotCard'`
-
-### File Naming
-
-| Type       | Convention                                   | Example                                        |
-| ---------- | -------------------------------------------- | ---------------------------------------------- |
-| Components | PascalCase `.tsx`                            | `RobotCard.tsx`                                |
-| Types      | PascalCase `.types.ts`                       | `RobotCard.types.ts`                           |
-| Helpers    | camelCase or feature-scoped `.helpers.ts`    | `RobotCard.helpers.ts`, `fleet.helpers.ts`     |
-| Hooks      | camelCase `use*.ts`                          | `useTheme.ts`                                  |
-| Tests      | matches source `.test.tsx` / `.test.ts`      | `RobotCard.test.tsx`                           |
-| Stores     | camelCase `use*Store.ts`                     | `useConnectionStore.ts`                        |
-| Constants  | PascalCase or feature-scoped `.constants.ts` | `RobotCard.constants.ts`, `fleet.constants.ts` |
-| Utilities  | camelCase `.ts`                              | `quaternion.ts`                                |
-
-### Helpers Convention
-
-Helpers contain scoped utility/transform functions — not components, not hooks.
-
-- **Component-scoped:** `RobotCard/RobotCard.helpers.ts` — only used by that component
-- **Feature-scoped:** `fleet/fleet.helpers.ts` — used across multiple components in the feature
-- **Shared:** `utils/` — used across features
-
-If a helper is only used locally, keep it local. Promote to feature-scoped or shared when a second consumer appears.
-
-### Constants Convention
-
-Constants (config objects, static data arrays, lookup maps) live in `.constants.ts` files — never inline in component files.
-
-- **Component-scoped:** `RobotCard/RobotCard.constants.ts` — only used by that component
-- **Feature-scoped:** `fleet/fleet.constants.ts` — used across the feature
-- **Shared:** `utils/constants.ts` or `shared/constants.ts` — used across features
-
-Same promotion rule as helpers: start local, promote when a second consumer appears.
-
-### shadcn-First Rule
-
-Use shadcn/ui components before building custom ones. Check if shadcn has a component that fits before writing from scratch. Custom components only when shadcn doesn't cover the use case.
-
-**Installed:** Button, Card, Input, Badge, Dialog
-**Available to add:** Sidebar, Tabs, Select, Tooltip, Popover, Sheet, etc. (`npx shadcn@latest add <name>`)
-**Location:** `src/components/ui/` — these are shadcn's files, imported directly
-
 ### Pre-Write Checklist
 
 Before writing ANY component file, verify:
@@ -133,73 +34,24 @@ Before writing ANY component file, verify:
 - [ ] Canonical Tailwind classes, not arbitrary `[value]` — use `p-3` not `p-[12px]`
 - [ ] Interactive elements have cursor-pointer, transition, focus-visible
 
-## Code Conventions
+## Reference Docs
 
-### File Rules
+| Topic            | Document                                             | What it covers                                                                                         |
+| ---------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Styling & Tokens | [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md)       | Colors, typography, spacing, panel contract, animations, buttons, empty states, responsive breakpoints |
+| Folder Structure | [docs/FOLDER-STRUCTURE.md](docs/FOLDER-STRUCTURE.md) | Feature domains, file naming, scoping rules, shadcn-first, constants/helpers conventions               |
+| Testing          | [docs/TESTING.md](docs/TESTING.md)                   | Co-location, unit tests, integration tests, E2E, quality gate                                          |
+
+These docs are the source of truth. CLAUDE.md does not duplicate their content.
+
+## Code Conventions
 
 - One component per `.tsx` file
 - Types in `{ComponentName}.types.ts` (same directory)
 - No barrel files (ADR-001) — import directly from source
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
-- **If a child needs a comment to describe what it is, extract it into a named subcomponent.** Self-describing component names replace comments.
-- **If a component has 3+ subcomponents, it gets its own folder.**
-
-### Testing Rules
-
-- **Co-located tests.** `Component.test.tsx` lives next to `Component.tsx`.
-- **If 3+ test files** exist for one component/feature, create a `__tests__/` subfolder.
-- **Unit tests cover all edge cases.** Not just happy path — test error states, empty states, boundary values, loading states.
-- **E2E tests** via Playwright for route-level integration (does the page render real components, not placeholders?).
-- **No mocking the store in integration tests** — use the real store with test data.
-
-### Styling Rules
-
-- **All colors via Tailwind utilities** — `bg-surface-primary`, `text-accent`, `border-border`. For values not in @theme, use `var(--color-*)` from index.css.
-- **Never hardcode** hex, rgb, or oklch values in components
-- **All fonts** via `font-sans` (Exo) or `font-mono` (Roboto Mono) utilities
-- **Font sizes strictly 12/14/20/36px** — no exceptions. Map: `text-xs`=12, `text-sm`=14, `text-xl`=20, `text-4xl`=36
-- **Two font weights only:** 400 (`font-normal`) and 600 (`font-semibold`)
-- **Surface glow** on every panel: `shadow-[inset_0_1px_0_0_var(--color-surface-glow)]`
-- **Use canonical Tailwind classes, not arbitrary values.** Since `--spacing: 4px`, use `p-3` (12px) not `p-[12px]`, `w-65` (260px) not `w-[260px]`, `tracking-widest` not `tracking-[0.12em]`. Only use arbitrary `[value]` when no canonical class exists.
-- **Border radius** max 2px (`rounded-sm`) — no large radii
-- **Interactive elements:** `cursor-pointer`, `transition-all duration-200`, `focus-visible:outline-2 focus-visible:outline-accent`
-- **prefers-reduced-motion** respected — use `motion-safe:` prefix for animations
-
-### Component Pattern
-
-```tsx
-// src/features/fleet/RobotCard/RobotCard.tsx
-import type { RobotCardProps } from './RobotCard.types';
-import { RobotStatusBadge } from './RobotStatusBadge';
-import { ConnectionInfo } from './ConnectionInfo';
-
-export function RobotCard({ robot }: RobotCardProps) {
-  return (
-    <div className="bg-surface-primary border border-border rounded-sm shadow-[inset_0_1px_0_0_var(--color-surface-glow)] p-4">
-      <RobotStatusBadge status={robot.status} />
-      <ConnectionInfo url={robot.url} latency={robot.latency} />
-    </div>
-  );
-}
-```
-
-### Status Indicators
-
-- **Triple-redundant always:** color + icon + text label (MIL-STD-1472H)
-- **Terminology:** Nominal / Caution / Critical / Offline (never Active / Warning / Error / Disconnected)
-- **Never color-only** — accessible to colorblind users
-
-## Visual Rules — Midnight Operations
-
-- **Dark mode default.** Standalone pages (landing) must force dark theme.
-- **Muted professional light mode.** Cool grays (oklch 0.95-0.84), not stark white.
-- **Surface glow** on all panels — subtle inset box-shadow in accent color at 0.04 opacity
-- **Registration tick marks** on panel corners — accent-colored border fragments for precision feel
-- **Data value glow** — telemetry numbers get subtle text-shadow in accent color (dark mode only)
-- **Breathing animation** on nominal status dots — conveys "system alive"
-- **Empty states must be designed** — helpful message + icon + action button, not blank screens
-- **Mock/demo data when no rosbridge** — widgets render mock telemetry so app looks alive
+- **Status indicators:** Triple-redundant (color + icon + text label per MIL-STD-1472H). Terminology: Nominal / Caution / Critical / Offline.
 
 ## Connection Behavior
 
@@ -222,10 +74,8 @@ export function RobotCard({ robot }: RobotCardProps) {
 
 ## Enforcement (warnings → hard blocks)
 
-Validation scripts catch violations. Currently warnings, will be promoted to pre-commit blocks once stable.
-
 - `npm run validate:tokens` — checks for hardcoded oklch/hex/rgb in `.tsx` files
-- `npm run validate:structure` — checks folder conventions, naming, missing `.types.ts` files
+- `scripts/validate-structure.sh` — checks inline constants, hardcoded colors
 - ESLint — naming conventions, import patterns, no banned patterns
 
 ## Gotchas

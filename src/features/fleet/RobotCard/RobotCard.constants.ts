@@ -1,5 +1,5 @@
 import { CheckCircle, AlertTriangle, XCircle, MinusCircle } from 'lucide-react';
-import type { ConnectionStatus } from '../../shared/stores/connection/useConnectionStore.types';
+import type { ConnectionStatus } from '../../../shared/stores/connection/useConnectionStore.types';
 import type { LucideIcon } from 'lucide-react';
 
 export interface StatusConfig {

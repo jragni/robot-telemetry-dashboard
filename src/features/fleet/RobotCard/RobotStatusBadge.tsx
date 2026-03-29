@@ -1,4 +1,4 @@
-import type { ConnectionStatus } from '../../shared/stores/connection/useConnectionStore.types';
+import type { ConnectionStatus } from '../../../shared/stores/connection/useConnectionStore.types';
 import { STATUS_CONFIG } from './RobotCard.constants';
 
 interface RobotStatusBadgeProps {
