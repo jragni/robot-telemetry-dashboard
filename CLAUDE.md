@@ -111,10 +111,19 @@ Constants (config objects, static data arrays, lookup maps) live in `.constants.
 
 Same promotion rule as helpers: start local, promote when a second consumer appears.
 
+### shadcn-First Rule
+
+Use shadcn/ui components before building custom ones. Check if shadcn has a component that fits before writing from scratch. Custom components only when shadcn doesn't cover the use case.
+
+**Installed:** Button, Card, Input, Badge, Dialog
+**Available to add:** Sidebar, Tabs, Select, Tooltip, Popover, Sheet, etc. (`npx shadcn@latest add <name>`)
+**Location:** `src/components/ui/` — these are shadcn's files, imported directly
+
 ### Pre-Write Checklist
 
 Before writing ANY component file, verify:
 
+- [ ] Can shadcn handle this? Check shadcn components first
 - [ ] No constants/config objects inline — extract to `.constants.ts`
 - [ ] No JSX comments describing children — extract to named subcomponents
 - [ ] 3+ subcomponents → own folder
