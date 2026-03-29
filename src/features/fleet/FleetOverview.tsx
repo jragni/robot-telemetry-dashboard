@@ -1,8 +1,11 @@
-import { useConnectionStore } from '../../shared/stores/connection/useConnectionStore';
-import { RobotCard } from './RobotCard/RobotCard';
-import { FleetEmptyState } from './FleetEmptyState';
-import { AddRobotModal } from './AddRobotModal';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { RobotCard } from './components/RobotCard/RobotCard';
+import { FleetEmptyState } from './components/FleetEmptyState';
+import { AddRobotModal } from './components/AddRobotModal';
 
+/**
+ *
+ */
 export function FleetOverview() {
   const robots = useConnectionStore((s) => s.robots);
   const removeRobot = useConnectionStore((s) => s.removeRobot);

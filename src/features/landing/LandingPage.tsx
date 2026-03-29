@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
-import { LandingHeader } from './LandingHeader';
-import { LandingHero } from './LandingHero';
-import { LandingFeatures } from './LandingFeatures';
-import { LandingProblemSolution } from './LandingProblemSolution';
-import { LandingCTA } from './LandingCTA';
-import { LandingFooter } from './LandingFooter';
+import { LandingHeader } from './components/LandingHeader';
+import { LandingHero } from './components/LandingHero';
+import { LandingFeatures } from './components/LandingFeatures';
+import { LandingProblemSolution } from './components/LandingProblemSolution';
+import { LandingCTA } from './components/LandingCTA';
+import { LandingFooter } from './components/LandingFooter';
 
+/**
+ *
+ */
 export function LandingPage() {
   // Force dark theme — standalone page outside AppShell
   useEffect(() => {

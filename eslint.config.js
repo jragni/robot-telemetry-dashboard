@@ -3,6 +3,8 @@ import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import boundaries from 'eslint-plugin-boundaries';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import jsdoc from 'eslint-plugin-jsdoc';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default tseslint.config(
@@ -39,7 +41,27 @@ export default tseslint.config(
       ],
     },
   },
-  // Three-tier architecture enforcement: Shared → Features → App
+  // Accessibility enforcement — catches <div onClick>, missing aria-labels, heading order
+  jsxA11y.flatConfigs.recommended,
+  // JSDoc enforcement — require docstrings on exported functions/components
+  {
+    plugins: { jsdoc },
+    rules: {
+      'jsdoc/require-jsdoc': [
+        'warn',
+        {
+          publicOnly: true,
+          require: {
+            FunctionDeclaration: true,
+            FunctionExpression: true,
+            ArrowFunctionExpression: true,
+          },
+          contexts: ['ExportNamedDeclaration > FunctionDeclaration'],
+        },
+      ],
+    },
+  },
+  // Three-tier architecture enforcement: Shared (src/*) → Features → App
   // See docs/FOLDER-STRUCTURE.md for the dependency diagram
   {
     plugins: {
@@ -48,8 +70,24 @@ export default tseslint.config(
     settings: {
       'boundaries/elements': [
         {
-          type: 'shared',
-          pattern: ['src/shared/*', 'src/shared/**/*'],
+          type: 'components',
+          pattern: ['src/components/*'],
+          mode: 'full',
+        },
+        { type: 'ui', pattern: ['src/components/ui/*'], mode: 'full' },
+        {
+          type: 'hooks',
+          pattern: ['src/hooks/*'],
+          mode: 'full',
+        },
+        {
+          type: 'stores',
+          pattern: ['src/stores/*', 'src/stores/**/*'],
+          mode: 'full',
+        },
+        {
+          type: 'lib',
+          pattern: ['src/lib/*'],
           mode: 'full',
         },
         {
@@ -57,11 +95,15 @@ export default tseslint.config(
           pattern: ['src/features/*', 'src/features/**/*'],
           mode: 'full',
         },
-        { type: 'ui', pattern: ['src/components/ui/*'], mode: 'full' },
         { type: 'app', pattern: ['src/App.tsx', 'src/main.tsx'], mode: 'full' },
         {
           type: 'utils',
           pattern: ['src/utils/*', 'src/test-utils/*'],
+          mode: 'full',
+        },
+        {
+          type: 'types',
+          pattern: ['src/types/*'],
           mode: 'full',
         },
       ],
@@ -73,14 +115,56 @@ export default tseslint.config(
         {
           default: 'disallow',
           rules: [
-            // Shared can only import from shared, ui, and utils
-            { from: ['shared'], allow: ['shared', 'ui', 'utils'] },
-            // Features can import from shared, ui, utils, and own feature
-            { from: ['feature'], allow: ['shared', 'ui', 'utils', 'feature'] },
-            // UI (shadcn) can import from shared and utils
-            { from: ['ui'], allow: ['shared', 'utils', 'ui'] },
+            // Shared layers can import from each other and utils
+            {
+              from: ['components'],
+              allow: [
+                'components',
+                'hooks',
+                'stores',
+                'lib',
+                'ui',
+                'utils',
+                'types',
+              ],
+            },
+            {
+              from: ['hooks'],
+              allow: ['hooks', 'stores', 'lib', 'utils', 'types'],
+            },
+            { from: ['stores'], allow: ['stores', 'lib', 'utils', 'types'] },
+            { from: ['lib'], allow: ['lib', 'utils'] },
+            { from: ['types'], allow: ['types'] },
+            // UI (shadcn) can import from lib and utils only
+            { from: ['ui'], allow: ['lib', 'utils', 'ui'] },
+            // Features can import from all shared layers and own feature
+            {
+              from: ['feature'],
+              allow: [
+                'components',
+                'hooks',
+                'stores',
+                'lib',
+                'ui',
+                'utils',
+                'types',
+                'feature',
+              ],
+            },
             // App can import from everything
-            { from: ['app'], allow: ['shared', 'feature', 'ui', 'utils'] },
+            {
+              from: ['app'],
+              allow: [
+                'components',
+                'hooks',
+                'stores',
+                'lib',
+                'feature',
+                'ui',
+                'utils',
+                'types',
+              ],
+            },
             // Utils can only import from utils
             { from: ['utils'], allow: ['utils'] },
           ],

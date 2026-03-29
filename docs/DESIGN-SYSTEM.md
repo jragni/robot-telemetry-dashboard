@@ -103,6 +103,7 @@ Each status has a `*-bg` variant at 0.10 alpha for badge backgrounds.
 **Rules:**
 
 - Only 2 weights: 400 and 600. No 300, 500, 700.
+- Weight 600 (`font-semibold`) is for headings (`text-xl`) and card/panel titles only. Body text (`text-sm`, `text-xs`) uses weight 400. Entity names in cards (robot name, panel title) use `text-xl font-semibold` as local headings.
 - Telemetry values (IMU, velocities, coordinates, topic names) always use `font-mono`.
 - Never hardcode font-family strings.
 
@@ -196,11 +197,14 @@ Every empty state must include:
 
 ## Responsive Breakpoints
 
-| Name    | Width      | Layout                                                  |
-| ------- | ---------- | ------------------------------------------------------- |
-| Desktop | >= 1024px  | Sidebar + 4-col fleet + 2×3 workspace                   |
-| Tablet  | 768-1023px | Sidebar + 2-col fleet + 2-col workspace                 |
-| Mobile  | <= 767px   | Bottom tab bar + scroll-snap fleet + carousel workspace |
+Two modes only — no separate tablet layout.
+
+| Mode    | Width     | Layout                                                     |
+| ------- | --------- | ---------------------------------------------------------- |
+| Desktop | >= 1024px | Sidebar + 4-col fleet + 3×2 workspace grid                 |
+| Mobile  | < 1024px  | Simplified UI for tablet + phone (shared layout, deferred) |
+
+A sidebar toggle allows the user to force desktop or mobile view regardless of screen size.
 
 ## Light Theme Notes
 

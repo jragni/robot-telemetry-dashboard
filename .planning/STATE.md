@@ -9,7 +9,7 @@ See: .planning/PROJECT.md
 ## Current Position
 
 **Next feature:** Robot Workspace
-**Status:** Ready to start
+**Status:** Design complete, ready to build
 **Branch:** EPIC/v4-rebuild
 
 ## Completed Work
@@ -53,4 +53,18 @@ See: .planning/PROJECT.md
 ## Session Continuity
 
 Last session: 2026-03-29
-Stopped at: Code quality cleanup complete, ready for Robot Workspace feature
+Stopped at: Workspace design complete — 3×2 layout (C), folder restructure done, dev view with layout comparison live
+
+### Workspace Design Decisions
+
+| Decision      | Choice                                                                            |
+| ------------- | --------------------------------------------------------------------------------- |
+| Layout        | 3×2 functional grid (Camera, LiDAR, Status / IMU, Controls, Telemetry)            |
+| Panel headers | With controls (collapse, fullscreen, topic selector)                              |
+| Tick marks    | None                                                                              |
+| Empty states  | Unified message per panel when disconnected                                       |
+| System Status | Full diagnostics (identity + vitals + computation graph counts)                   |
+| IMU Attitude  | Attitude indicator + Compass heading (side by side), user-selectable via dropdown |
+| Raw Topics    | Removed — absorbed into System Status inline expand (deferred)                    |
+| Telemetry     | Time-series chart for trends over time                                            |
+| Controls      | E-Stop + velocity, placeholder in grid                                            |

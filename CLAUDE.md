@@ -52,6 +52,11 @@ These docs are the source of truth. CLAUDE.md does not duplicate their content.
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
 - **Status indicators:** Triple-redundant (color + icon + text label per MIL-STD-1472H). Terminology: Nominal / Caution / Critical / Offline.
+- **Feature folder structure:** Each feature has `components/` for UI, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types.ts`. Page-level components (e.g., `FleetOverview`, `RobotWorkspace`) live at the feature root. Mock/demo components and dev views live in `mocks/` — never mix mock components with production components.
+- **Docstrings:** All exported components and functions must have JSDoc docstrings describing purpose, props/params, and return value. Follow TypeScript/TSDoc conventions.
+- **Semantic HTML:** Use proper semantic elements (`<section>`, `<nav>`, `<article>`, `<aside>`, `<header>`, `<footer>`, `<main>`, `<figure>`) instead of generic `<div>`. Interactive elements must be `<button>` or `<a>`, never `<div onClick>`. Navigation links use `<Link>` or `<a>`, not `<button>`. All interactive elements need `aria-label` when the visible text doesn't describe the action.
+- **Typography enforcement:** Every text element must have an explicit font family (`font-sans` or `font-mono`). Labels = `font-sans`, telemetry data = `font-mono`. Only 12/14/20/36px sizes (text-xs/text-sm/text-xl/text-4xl). Only weights 400/600. Canvas text must use design system font sizes (12/14/20/36px).
+- **Import aliases:** Use `@/` for any import outside the current feature directory. Relative imports (`./`, `../`) only for siblings within the same feature folder. Never use `../../` or deeper — use `@/` instead.
 
 ## Connection Behavior
 

@@ -17,17 +17,21 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 
 - [ ] **Landing Page** — Vast-esque hero with live mock dashboard widgets, product copy, CTAs (/fleet, /demo), feature cards. Standalone page outside AppShell, forces dark theme.
 - [ ] **Fleet + Robot Management** — Robot cards grid, Add Robot modal with URL transform, store-driven sidebar, empty state with CTA, no auto-connect on startup.
-- [ ] **Robot Workspace** — CSS Grid 2×3 panel layout, telemetry widgets (IMU, charts, LiDAR, camera, raw values), dark panels with surface glow, context-aware empty states.
-- [ ] **Controls** — E-Stop (always reachable), velocity D-pad + sliders, control panel in workspace, command publishing.
+- [ ] **Robot Workspace** — 3×2 functional grid at /robot/:id. Top row: Camera, LiDAR, System Status. Bottom row: IMU Attitude (attitude indicator + compass), Controls, Telemetry Chart. Panel headers with controls (collapse, fullscreen, topic selector). No tick marks. Unified empty state when disconnected. System Status shows identity + vitals + computation graph (nodes/topics/services/actions via roslib).
+- [ ] **Controls** — E-Stop (always reachable), velocity D-pad + sliders, lives inside workspace grid, command publishing.
 - [ ] **Demo Mode** — /demo route with 3-4 mock robots streaming at 10Hz, DEMO MODE badge in header, same components as production, clean mount/unmount lifecycle.
 
 ### Deferred (can add later)
 
+- System Status inline expand (click nodes/topics/services/actions counts to see lists)
 - Pilot View (/pilot/:id with camera HUD overlay)
 - Map View (/map with occupancy grid via Web Worker)
 - Settings page
-- Topic discovery panel
-- Mobile responsive carousel for workspace
+- Auth + RBAC (JWT, robot-scoped permissions, separate read/write hooks)
+- Responsive: two modes only — Desktop (>=1024px, full dashboard grid) and Mobile (<1024px, simplified UI for tablet + phone). Sidebar toggle to force desktop/mobile view override. Separate mobile and desktop component variants (e.g., `WorkspaceGrid` vs `WorkspaceGridMobile`) to avoid responsive bloat in a single component — shared logic via hooks, divergent UI via separate renders.
+- Fleet grouping: mission groups or custom tags to organize robots (e.g., "Warehouse A", "Patrol Team 2"), filterable fleet view, group health rollup
+- Customizable panels: add/remove panels from workspace, choose which widgets to display per robot
+- Rearrangeable panels: drag-and-drop reordering of workspace panels, persist layout per robot
 
 ## Process
 

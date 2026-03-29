@@ -7,18 +7,18 @@ Organized by **feature domain**, not by file type. Enforced by `eslint-plugin-bo
 ```
 ┌─────────────────────────────┐
 │           APP               │  src/App.tsx, src/main.tsx
-│   (router — glue layer)     │  Can import: features, shared, ui, utils
+│   (router — glue layer)     │  Can import: everything
 └─────────┬───────────────────┘
           │ imports from
 ┌─────────▼───────────────────┐
 │        FEATURES             │  src/features/{domain}/
-│  (fleet, workspace, demo)   │  Can import: shared, ui, utils, OWN feature
+│  (fleet, workspace, demo)   │  Can import: shared layers, OWN feature
 │  Cannot import OTHER features│
 └─────────┬───────────────────┘
           │ imports from
 ┌─────────▼───────────────────┐
-│    SHARED / UI / UTILS      │  src/shared/, src/components/ui/, src/utils/
-│  (stores, hooks, shadcn)    │  Can import: shared, ui, utils only
+│     SHARED (src/*)          │  src/components/, src/hooks/, src/stores/,
+│  Direct children of src/    │  src/lib/, src/types/, src/utils/
 │  Cannot import features or app│
 └─────────────────────────────┘
 ```
@@ -29,40 +29,70 @@ Organized by **feature domain**, not by file type. Enforced by `eslint-plugin-bo
 
 ```
 src/
+├── components/                   # Shared components (AppShell, Header, Sidebar, etc.)
+│   ├── AppShell.tsx
+│   ├── Header.tsx
+│   ├── Header.types.ts
+│   ├── Sidebar.tsx
+│   ├── Sidebar.types.ts
+│   ├── Sidebar.constants.ts
+│   ├── StatusBar.tsx
+│   └── ui/                       # shadcn/ui components — NEVER hand-edit
+│       ├── badge.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── dialog.tsx
+│       ├── input.tsx
+│       └── select.tsx
+├── hooks/                        # Shared hooks
+│   └── useTheme.ts
+├── stores/                       # Shared Zustand stores
+│   └── connection/
+│       ├── useConnectionStore.ts
+│       ├── useConnectionStore.types.ts
+│       └── useConnectionStore.helpers.ts
+├── lib/                          # Shared utilities (cn, etc.)
+│   └── utils.ts
+├── types/                        # Shared types (ROS messages, etc.)
+├── utils/                        # Pure utility functions
 ├── features/                     # Feature domains — each owns everything it needs
 │   ├── fleet/                    # Fleet overview, robot cards, add/remove
-│   │   ├── FleetOverview.tsx
-│   │   ├── FleetOverview.types.ts
-│   │   ├── FleetOverview.test.tsx
-│   │   ├── fleet.constants.ts    # Feature-scoped constants
-│   │   ├── fleet.helpers.ts      # Feature-scoped utility functions
-│   │   ├── useFleetFilter.ts     # Feature-scoped hook
-│   │   ├── RobotCard/            # Complex component → own folder (3+ subcomponents)
-│   │   │   ├── RobotCard.tsx
-│   │   │   ├── RobotCard.types.ts
-│   │   │   ├── RobotCard.constants.ts
-│   │   │   ├── RobotCard.test.tsx
-│   │   │   ├── RobotStatusBadge.tsx
-│   │   │   └── RobotDeleteButton.tsx
-│   │   ├── AddRobotModal.tsx
-│   │   └── AddRobotModal.types.ts
+│   │   ├── FleetOverview.tsx     # Page component (lives at feature root)
+│   │   ├── helpers.ts            # Feature-scoped helpers (NOT fleet.helpers.ts)
+│   │   └── components/           # UI components for this feature
+│   │       ├── FleetEmptyState.tsx
+│   │       ├── AddRobotModal.tsx
+│   │       ├── AddRobotModal.types.ts
+│   │       ├── FleetDevView.tsx
+│   │       └── RobotCard/        # Complex component → own folder (3+ subcomponents)
+│   │           ├── RobotCard.tsx
+│   │           ├── RobotCard.types.ts
+│   │           ├── RobotCard.constants.ts
+│   │           ├── RobotStatusBadge.tsx
+│   │           └── RobotDeleteButton.tsx
 │   ├── workspace/                # Robot telemetry workspace
-│   │   ├── RobotWorkspace.tsx
-│   │   ├── useWorkspaceLayout.ts # Feature-scoped store/hook
-│   │   └── ...
-│   ├── controls/                 # E-Stop, velocity, D-pad
-│   ├── telemetry/                # IMU, charts, LiDAR, raw values
+│   │   ├── RobotWorkspace.tsx    # Page component
+│   │   ├── constants.ts          # Feature-scoped constants (NOT workspace.constants.ts)
+│   │   ├── mocks/                # Mock data components for dev/demo
+│   │   │   ├── MockCamera.tsx
+│   │   │   ├── MockImu.tsx
+│   │   │   └── ...
+│   │   └── components/           # UI components for this feature
+│   │       ├── WorkspacePanel.tsx
+│   │       ├── WorkspaceGrid.tsx
+│   │       ├── WorkspaceGrid.types.ts
+│   │       └── WorkspaceDevView.tsx
+│   ├── landing/                  # Landing page
+│   │   ├── LandingPage.tsx       # Page component
+│   │   ├── LandingPage.types.ts
+│   │   ├── constants.ts          # Feature-scoped constants (NOT landing.constants.ts)
+│   │   └── components/           # Subcomponents
+│   │       ├── LandingHero.tsx
+│   │       ├── LandingHeader.tsx
+│   │       └── ...
 │   ├── demo/                     # Demo mode with mock robots
-│   └── landing/                  # Landing page
-├── shared/                       # Cross-feature infrastructure (used by 2+ features)
-│   ├── components/               # Shared UI (AppShell, Sidebar, Header, StatusBar)
-│   ├── hooks/                    # Shared hooks (useTheme, etc.)
-│   ├── stores/                   # Zustand stores used across features
-│   │   └── connection/           # Connection store (used by fleet + sidebar)
-│   └── types/                    # Shared types (ROS messages, etc.)
-├── components/ui/                # shadcn/ui components (generated, not hand-written)
+│   └── controls/                 # E-Stop, velocity, D-pad (deferred)
 ├── test-utils/                   # Mock data generators, test helpers
-├── utils/                        # Pure utility functions (shared across features)
 ├── index.css                     # Design system tokens (@theme + :root)
 ├── main.tsx                      # React entry point
 └── App.tsx                       # Router + top-level layout
@@ -73,8 +103,8 @@ src/
 ### Feature Ownership
 
 - **Features own their code.** Components, hooks, helpers, stores, constants, tests, and types used by only one feature live inside that feature's folder.
-- **Shared only if used by 2+ features.** Don't prematurely move things to `shared/`. Start local, promote when needed.
-- **Feature-scoped stores:** If a store is only used by one feature (e.g., `useWorkspaceLayout`), it lives in that feature folder — not in `shared/stores/`.
+- **Shared only if used by 2+ features.** Don't prematurely move things to shared directories. Start local, promote when needed.
+- **Feature-scoped stores:** If a store is only used by one feature (e.g., `useWorkspaceLayout`), it lives in that feature folder — not in `src/stores/`.
 
 ### Component Complexity
 
@@ -89,29 +119,51 @@ Import directly from source: `import { RobotCard } from '../fleet/RobotCard/Robo
 
 Use shadcn/ui components before building custom ones. Check if shadcn has a component that fits before writing from scratch. Custom components only when shadcn doesn't cover the use case.
 
-**Installed:** Button, Card, Input, Badge, Dialog
-**Available to add:** Sidebar, Tabs, Select, Tooltip, Popover, Sheet, etc. (`npx shadcn@latest add <name>`)
-**Location:** `src/components/ui/` — these are shadcn's files, imported via `@/components/ui/`
+**Installed:** Button, Card, Input, Badge, Dialog, Select
+**Available to add:** Sidebar, Tabs, Tooltip, Popover, Sheet, etc. (`npx shadcn@latest add <name>`)
+**Location:** `src/components/ui/` — these are shadcn's files, **never hand-edit them**
+
+### shadcn Import Fix
+
+shadcn CLI may write files to a literal `./@/` directory instead of `src/`. After running `npx shadcn@latest add <name>`:
+
+1. Check if the file landed in `./@/components/ui/` instead of `src/components/ui/`
+2. If so, move it: `mv ./@/components/ui/<name>.tsx src/components/ui/`
+3. Fix the utils import from `@/lib/utils` to `../../lib/utils`
+4. Clean up: `rm -rf ./@`
 
 ## File Naming
 
-| Type       | Convention                                   | Example                                        |
-| ---------- | -------------------------------------------- | ---------------------------------------------- |
-| Components | PascalCase `.tsx`                            | `RobotCard.tsx`                                |
-| Types      | PascalCase `.types.ts`                       | `RobotCard.types.ts`                           |
-| Helpers    | camelCase or feature-scoped `.helpers.ts`    | `RobotCard.helpers.ts`, `fleet.helpers.ts`     |
-| Hooks      | camelCase `use*.ts`                          | `useTheme.ts`, `useFleetFilter.ts`             |
-| Tests      | matches source `.test.tsx` / `.test.ts`      | `RobotCard.test.tsx`                           |
-| Stores     | camelCase `use*Store.ts`                     | `useConnectionStore.ts`                        |
-| Constants  | PascalCase or feature-scoped `.constants.ts` | `RobotCard.constants.ts`, `fleet.constants.ts` |
-| Utilities  | camelCase `.ts`                              | `quaternion.ts`                                |
+| Type       | Convention                                                    | Example                                  |
+| ---------- | ------------------------------------------------------------- | ---------------------------------------- |
+| Components | PascalCase `.tsx`                                             | `RobotCard.tsx`                          |
+| Types      | PascalCase `.types.ts`                                        | `RobotCard.types.ts`                     |
+| Helpers    | `helpers.ts` at feature root, or `{Component}.helpers.ts`     | `helpers.ts`, `RobotCard.helpers.ts`     |
+| Hooks      | camelCase `use*.ts`                                           | `useTheme.ts`, `useFleetFilter.ts`       |
+| Tests      | matches source `.test.tsx` / `.test.ts`                       | `RobotCard.test.tsx`                     |
+| Stores     | camelCase `use*Store.ts`                                      | `useConnectionStore.ts`                  |
+| Constants  | `constants.ts` at feature root, or `{Component}.constants.ts` | `constants.ts`, `RobotCard.constants.ts` |
+| Utilities  | camelCase `.ts`                                               | `quaternion.ts`                          |
 
 ## Scoping Rules
 
 Helpers, constants, hooks, stores, and types all follow the same scoping pattern:
 
 - **Component-scoped:** `RobotCard/RobotCard.helpers.ts` — only used by that component
-- **Feature-scoped:** `fleet/fleet.helpers.ts` — used across the feature
-- **Shared:** `shared/` or `utils/` — used across 2+ features
+- **Feature-scoped:** `fleet/helpers.ts` or `fleet/constants.ts` — used across the feature (no feature-name prefix)
+- **Shared:** `src/hooks/`, `src/stores/`, `src/lib/`, etc. — used across 2+ features
 
 Start local, promote when a second consumer appears. Never prematurely share.
+
+## Dev Routes
+
+Dev routes live under `/dev/*` and serve two purposes:
+
+| Route             | Purpose                                                                                                                           | Example                                                                |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `/dev/components` | **Individual component demos** — isolated components shown outside their page context. Buttons, cards, modals, empty states, etc. | Fleet cards in all states, AddRobotModal standalone                    |
+| `/dev/{feature}`  | **Full section mock** — shows how the feature actually looks assembled, with selectors to toggle variants.                        | `/dev/workspace` shows the 2×3 grid with live IMU, system status, etc. |
+
+**Rule:** Components are demoed individually at `/dev/components`. The assembled view of how a section looks lives at `/dev/{feature}` (e.g., `/dev/workspace`, `/dev/fleet`).
+
+Each dev view should include links to related dev pages for easy navigation.
