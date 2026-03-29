@@ -1,4 +1,4 @@
-import { Map, Play, Settings } from 'lucide-react';
+import { LayoutGrid, Map, Settings } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { ConnectionStatus } from '../stores/connection/useConnectionStore.types';
 
@@ -10,8 +10,8 @@ export interface NavItemData {
 }
 
 export const SYSTEM_ITEMS: readonly NavItemData[] = [
+  { Icon: LayoutGrid, label: 'Fleet', path: '/fleet' },
   { Icon: Map, label: 'Map', path: '/map' },
-  { Icon: Play, label: 'Try Demo', path: '/demo' },
   { Icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
