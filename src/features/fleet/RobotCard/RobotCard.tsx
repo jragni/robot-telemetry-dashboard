@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import type { RobotCardProps } from './RobotCard.types';
 import { RobotStatusBadge } from './RobotStatusBadge';
 import { RobotDeleteButton } from './RobotDeleteButton';
-import { ROBOT_COLOR_BORDER } from './RobotCard.constants';
+import { ROBOT_COLOR_BORDER, ROBOT_COLOR_TEXT } from './RobotCard.constants';
 
 export function RobotCard({ robot, onRemove }: RobotCardProps) {
   const navigate = useNavigate();
   const borderColor = ROBOT_COLOR_BORDER[robot.color];
+  const iconColor = ROBOT_COLOR_TEXT[robot.color];
 
   return (
     <div
@@ -16,7 +17,7 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Bot size={16} className="text-text-secondary" />
+          <Bot size={16} className={iconColor} />
           <span className="font-sans text-sm font-semibold text-text-primary">
             {robot.name}
           </span>

@@ -3,7 +3,11 @@ import { Bot, Plus, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { SidebarProps } from './Sidebar.types';
 import { useConnectionStore } from '../stores/connection/useConnectionStore';
-import { SYSTEM_ITEMS, ROBOT_COLOR_DOT } from './Sidebar.constants';
+import {
+  SYSTEM_ITEMS,
+  ROBOT_COLOR_DOT,
+  ROBOT_COLOR_TEXT,
+} from './Sidebar.constants';
 import type { NavItemData } from './Sidebar.constants';
 
 function NavItem({
@@ -32,7 +36,7 @@ function NavItem({
     >
       <item.Icon
         size={16}
-        className={`shrink-0 ${active ? 'opacity-100' : 'opacity-70'}`}
+        className={`shrink-0 ${item.robotColor ? ROBOT_COLOR_TEXT[item.robotColor] : active ? 'opacity-100' : 'opacity-70'}`}
       />
       {item.robotColor != null && !collapsed && (
         <span
@@ -110,6 +114,9 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         variant="outline"
         size="sm"
         title={collapsed ? 'Add Robot' : undefined}
+        onClick={() => {
+          void navigate('/fleet');
+        }}
         className={`flex items-center gap-2 font-mono text-xs font-semibold text-accent border-accent uppercase tracking-wide hover:bg-accent-subtle ${
           collapsed ? 'justify-center p-2 mx-1 my-1.5' : 'px-2.5 py-2 mx-2 my-2'
         }`}

@@ -44,3 +44,12 @@ export const ROBOT_COLOR_BG: Record<RobotColor, string> = {
   red: 'bg-robot-red',
   purple: 'bg-robot-purple',
 };
+
+export const ROBOT_COLOR_TEXT: Record<RobotColor, string> = {
+  blue: 'text-robot-blue',
+  cyan: 'text-robot-cyan',
+  green: 'text-robot-green',
+  amber: 'text-robot-amber',
+  red: 'text-robot-red',
+  purple: 'text-robot-purple',
+};
