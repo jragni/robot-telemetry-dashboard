@@ -14,9 +14,9 @@ export function FleetDevView() {
     addRobot('Ghost-04', 'wss://192.168.1.104:9090');
 
     const store = useConnectionStore.getState();
-    store.updateRobot('atlas-01', { status: 'nominal', latencyMs: 12 });
-    store.updateRobot('hermes-02', { status: 'caution', latencyMs: 180 });
-    store.updateRobot('ghost-04', { status: 'offline' });
+    store.updateRobot('atlas-01', { status: 'connected', latencyMs: 12 });
+    store.updateRobot('hermes-02', { status: 'connected', latencyMs: 180 });
+    store.updateRobot('ghost-04', { status: 'disconnected' });
   }
 
   function clearAll() {

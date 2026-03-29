@@ -1,12 +1,16 @@
 import { LayoutGrid, Map, Settings } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import type { ConnectionStatus } from '../stores/connection/useConnectionStore.types';
+import type {
+  ConnectionStatus,
+  RobotColor,
+} from '../stores/connection/useConnectionStore.types';
 
 export interface NavItemData {
   readonly Icon: LucideIcon;
   readonly label: string;
   readonly path: string;
   readonly status?: ConnectionStatus;
+  readonly robotColor?: RobotColor;
 }
 
 export const SYSTEM_ITEMS: readonly NavItemData[] = [
@@ -15,9 +19,11 @@ export const SYSTEM_ITEMS: readonly NavItemData[] = [
   { Icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
-export const STATUS_BG: Record<string, string> = {
-  nominal: 'bg-status-nominal',
-  caution: 'bg-status-caution',
-  critical: 'bg-status-critical',
-  offline: 'bg-status-offline',
+export const ROBOT_COLOR_DOT: Record<RobotColor, string> = {
+  blue: 'bg-robot-blue',
+  cyan: 'bg-robot-cyan',
+  green: 'bg-robot-green',
+  amber: 'bg-robot-amber',
+  red: 'bg-robot-red',
+  purple: 'bg-robot-purple',
 };

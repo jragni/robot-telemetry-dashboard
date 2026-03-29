@@ -67,6 +67,14 @@
   --color-shadow: var(--color-shadow);
   --color-shadow-heavy: var(--color-shadow-heavy);
 
+  /* Robot identity colors */
+  --color-robot-blue: var(--color-robot-blue);
+  --color-robot-cyan: var(--color-robot-cyan);
+  --color-robot-green: var(--color-robot-green);
+  --color-robot-amber: var(--color-robot-amber);
+  --color-robot-red: var(--color-robot-red);
+  --color-robot-purple: var(--color-robot-purple);
+
   /* IMU */
   --color-imu-sky: var(--color-imu-sky);
   --color-imu-ground: var(--color-imu-ground);
@@ -116,6 +124,14 @@
   --color-shadow: oklch(0 0 0 / 0.4);
   --color-shadow-heavy: oklch(0 0 0 / 0.5);
 
+  /* Robot identity colors */
+  --color-robot-blue: oklch(0.65 0.18 230);
+  --color-robot-cyan: oklch(0.7 0.15 200);
+  --color-robot-green: oklch(0.65 0.17 155);
+  --color-robot-amber: oklch(0.7 0.16 65);
+  --color-robot-red: oklch(0.58 0.2 25);
+  --color-robot-purple: oklch(0.6 0.18 300);
+
   /* IMU widget */
   --color-imu-sky: oklch(0.5 0.14 230);
   --color-imu-ground: oklch(0.35 0.1 65);
@@ -163,6 +179,14 @@
   /* Shadows */
   --color-shadow: oklch(0 0 0 / 0.3);
   --color-shadow-heavy: oklch(0 0 0 / 0.4);
+
+  /* Robot identity colors (slightly darker for light bg contrast) */
+  --color-robot-blue: oklch(0.5 0.18 230);
+  --color-robot-cyan: oklch(0.55 0.15 200);
+  --color-robot-green: oklch(0.5 0.17 155);
+  --color-robot-amber: oklch(0.55 0.16 65);
+  --color-robot-red: oklch(0.48 0.2 25);
+  --color-robot-purple: oklch(0.48 0.18 300);
 
   /* IMU widget */
   --color-imu-sky: oklch(0.65 0.12 230);

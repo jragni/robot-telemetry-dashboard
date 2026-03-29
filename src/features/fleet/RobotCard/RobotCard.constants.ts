@@ -1,5 +1,8 @@
-import { CheckCircle, AlertTriangle, XCircle, MinusCircle } from 'lucide-react';
-import type { ConnectionStatus } from '../../../shared/stores/connection/useConnectionStore.types';
+import { CheckCircle, MinusCircle } from 'lucide-react';
+import type {
+  ConnectionStatus,
+  RobotColor,
+} from '../../../shared/stores/connection/useConnectionStore.types';
 import type { LucideIcon } from 'lucide-react';
 
 export interface StatusConfig {
@@ -10,28 +13,34 @@ export interface StatusConfig {
 }
 
 export const STATUS_CONFIG: Record<ConnectionStatus, StatusConfig> = {
-  nominal: {
-    label: 'Nominal',
+  connected: {
+    label: 'Connected',
     color: 'text-status-nominal',
     bg: 'bg-status-nominal-bg',
     Icon: CheckCircle,
   },
-  caution: {
-    label: 'Caution',
-    color: 'text-status-caution',
-    bg: 'bg-status-caution-bg',
-    Icon: AlertTriangle,
-  },
-  critical: {
-    label: 'Critical',
-    color: 'text-status-critical',
-    bg: 'bg-status-critical-bg',
-    Icon: XCircle,
-  },
-  offline: {
-    label: 'Offline',
+  disconnected: {
+    label: 'Disconnected',
     color: 'text-status-offline',
     bg: 'bg-status-offline-bg',
     Icon: MinusCircle,
   },
+};
+
+export const ROBOT_COLOR_BORDER: Record<RobotColor, string> = {
+  blue: 'border-l-robot-blue',
+  cyan: 'border-l-robot-cyan',
+  green: 'border-l-robot-green',
+  amber: 'border-l-robot-amber',
+  red: 'border-l-robot-red',
+  purple: 'border-l-robot-purple',
+};
+
+export const ROBOT_COLOR_BG: Record<RobotColor, string> = {
+  blue: 'bg-robot-blue',
+  cyan: 'bg-robot-cyan',
+  green: 'bg-robot-green',
+  amber: 'bg-robot-amber',
+  red: 'bg-robot-red',
+  purple: 'bg-robot-purple',
 };

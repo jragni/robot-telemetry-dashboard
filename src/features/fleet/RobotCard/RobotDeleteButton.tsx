@@ -1,4 +1,5 @@
-import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { Trash2, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface RobotDeleteButtonProps {
@@ -10,18 +11,47 @@ export function RobotDeleteButton({
   robotName,
   onRemove,
 }: RobotDeleteButtonProps) {
+  const [confirming, setConfirming] = useState(false);
+
+  if (confirming) {
+    return (
+      <div className="flex items-center gap-1">
+        <span className="font-mono text-xs text-text-muted mr-1">Remove?</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onRemove}
+          aria-label={`Confirm remove ${robotName}`}
+          className="w-7 h-7 text-status-nominal hover:bg-status-nominal-bg"
+        >
+          <Check size={14} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            setConfirming(false);
+          }}
+          aria-label="Cancel remove"
+          className="w-7 h-7 text-text-muted hover:text-text-primary"
+        >
+          <X size={14} />
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={(e) => {
-        e.stopPropagation();
-        onRemove();
+      onClick={() => {
+        setConfirming(true);
       }}
       aria-label={`Remove ${robotName}`}
-      className="absolute top-2 right-2 w-6 h-6 text-text-muted opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-status-critical hover:border-status-critical focus-visible:opacity-100"
+      className="w-7 h-7 text-text-muted hover:text-status-critical"
     >
-      <Trash2 size={12} />
+      <Trash2 size={14} />
     </Button>
   );
 }

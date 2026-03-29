@@ -3,7 +3,7 @@ import { Bot, Plus, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { SidebarProps } from './Sidebar.types';
 import { useConnectionStore } from '../stores/connection/useConnectionStore';
-import { SYSTEM_ITEMS, STATUS_BG } from './Sidebar.constants';
+import { SYSTEM_ITEMS, ROBOT_COLOR_DOT } from './Sidebar.constants';
 import type { NavItemData } from './Sidebar.constants';
 
 function NavItem({
@@ -34,9 +34,9 @@ function NavItem({
         size={16}
         className={`shrink-0 ${active ? 'opacity-100' : 'opacity-70'}`}
       />
-      {item.status != null && !collapsed && (
+      {item.robotColor != null && !collapsed && (
         <span
-          className={`w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_BG[item.status] ?? 'bg-status-offline'} ${item.status === 'nominal' ? 'animate-pulse' : ''}`}
+          className={`w-1.5 h-1.5 rounded-full shrink-0 ${ROBOT_COLOR_DOT[item.robotColor]}`}
         />
       )}
       {!collapsed && (
@@ -56,6 +56,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
     label: r.name,
     path: `/robot/${r.id}`,
     status: r.status,
+    robotColor: r.color,
   }));
 
   return (

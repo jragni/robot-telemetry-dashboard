@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ConnectionStore } from './useConnectionStore.types';
+import { assignRobotColor } from './useConnectionStore.helpers';
 
 export const useConnectionStore = create<ConnectionStore>()(
   persist(
@@ -16,9 +17,10 @@ export const useConnectionStore = create<ConnectionStore>()(
               id,
               name,
               url,
-              status: 'offline',
+              status: 'disconnected',
               latencyMs: null,
               lastError: null,
+              color: assignRobotColor(name),
             },
           },
         }));
@@ -58,6 +60,7 @@ export const useConnectionStore = create<ConnectionStore>()(
               status: 'offline' as const,
               latencyMs: null,
               lastError: null,
+              color: robot.color,
             },
           ]),
         ),

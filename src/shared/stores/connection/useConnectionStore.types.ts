@@ -1,4 +1,6 @@
-export type ConnectionStatus = 'nominal' | 'caution' | 'critical' | 'offline';
+export type ConnectionStatus = 'connected' | 'disconnected';
+
+export type RobotColor = 'blue' | 'cyan' | 'green' | 'amber' | 'red' | 'purple';
 
 export interface RobotConnection {
   readonly id: string;
@@ -7,6 +9,7 @@ export interface RobotConnection {
   readonly status: ConnectionStatus;
   readonly latencyMs: number | null;
   readonly lastError: string | null;
+  readonly color: RobotColor;
 }
 
 export interface ConnectionState {

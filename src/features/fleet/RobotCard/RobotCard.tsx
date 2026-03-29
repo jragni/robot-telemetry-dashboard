@@ -1,31 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { Bot } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { RobotCardProps } from './RobotCard.types';
 import { RobotStatusBadge } from './RobotStatusBadge';
 import { RobotDeleteButton } from './RobotDeleteButton';
+import { ROBOT_COLOR_BORDER } from './RobotCard.constants';
 
 export function RobotCard({ robot, onRemove }: RobotCardProps) {
   const navigate = useNavigate();
+  const borderColor = ROBOT_COLOR_BORDER[robot.color];
 
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={() => {
-        void navigate(`/robot/${robot.id}`);
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') void navigate(`/robot/${robot.id}`);
-      }}
-      className="group bg-surface-primary border border-border rounded-sm shadow-[inset_0_1px_0_0_var(--color-surface-glow)] p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200 hover:border-border-hover hover:shadow-[inset_0_1px_0_0_var(--color-surface-glow),0_0_20px_var(--color-accent-glow)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 relative"
+      className={`bg-surface-primary border border-border border-l-3 ${borderColor} rounded-sm shadow-[inset_0_1px_0_0_var(--color-surface-glow)] p-4 flex flex-col gap-3`}
     >
-      <RobotDeleteButton
-        robotName={robot.name}
-        onRemove={() => {
-          onRemove(robot.id);
-        }}
-      />
-
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Bot size={16} className="text-text-secondary" />
@@ -51,6 +39,25 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
             {robot.url}
           </span>
         </div>
+      </div>
+
+      <div className="flex items-center justify-between mt-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            void navigate(`/robot/${robot.id}`);
+          }}
+          className="text-xs uppercase tracking-widest text-accent border-accent hover:bg-accent-subtle"
+        >
+          View
+        </Button>
+        <RobotDeleteButton
+          robotName={robot.name}
+          onRemove={() => {
+            onRemove(robot.id);
+          }}
+        />
       </div>
     </div>
   );
