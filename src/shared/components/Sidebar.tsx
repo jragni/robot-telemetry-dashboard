@@ -10,15 +10,15 @@ import {
 } from 'lucide-react';
 import type { SidebarProps } from './Sidebar.types';
 import type { LucideIcon } from 'lucide-react';
+import { useConnectionStore } from '../stores/connection/useConnectionStore';
+import type { ConnectionStatus } from '../stores/connection/useConnectionStore.types';
 
 interface NavItemData {
   readonly Icon: LucideIcon;
   readonly label: string;
   readonly path: string;
-  readonly status?: 'nominal' | 'caution' | 'critical' | 'offline';
+  readonly status?: ConnectionStatus;
 }
-
-const FLEET_ITEMS: NavItemData[] = [];
 
 const SYSTEM_ITEMS: NavItemData[] = [
   { Icon: Map, label: 'Map', path: '/map' },
@@ -77,10 +77,12 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // TODO: Read from connection store once it exists
-  const robots: NavItemData[] = FLEET_ITEMS.map((item) => ({
-    ...item,
+  const storeRobots = useConnectionStore((s) => s.robots);
+  const robots: NavItemData[] = Object.values(storeRobots).map((r) => ({
     Icon: Bot,
+    label: r.name,
+    path: `/robot/${r.id}`,
+    status: r.status,
   }));
 
   return (
