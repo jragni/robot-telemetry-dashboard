@@ -8,7 +8,7 @@ See: .planning/PROJECT.md
 
 ## Current Position
 
-**Next feature:** Fleet + Robot Management
+**Next feature:** Robot Workspace
 **Status:** Ready to start
 **Branch:** EPIC/v4-rebuild
 
