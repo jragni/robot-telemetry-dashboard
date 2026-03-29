@@ -80,15 +80,16 @@ src/
 
 ### File Naming
 
-| Type       | Convention                                | Example                                    |
-| ---------- | ----------------------------------------- | ------------------------------------------ |
-| Components | PascalCase `.tsx`                         | `RobotCard.tsx`                            |
-| Types      | PascalCase `.types.ts`                    | `RobotCard.types.ts`                       |
-| Helpers    | camelCase or feature-scoped `.helpers.ts` | `RobotCard.helpers.ts`, `fleet.helpers.ts` |
-| Hooks      | camelCase `use*.ts`                       | `useTheme.ts`                              |
-| Tests      | matches source `.test.tsx` / `.test.ts`   | `RobotCard.test.tsx`                       |
-| Stores     | camelCase `use*Store.ts`                  | `useConnectionStore.ts`                    |
-| Utilities  | camelCase `.ts`                           | `quaternion.ts`                            |
+| Type       | Convention                                   | Example                                        |
+| ---------- | -------------------------------------------- | ---------------------------------------------- |
+| Components | PascalCase `.tsx`                            | `RobotCard.tsx`                                |
+| Types      | PascalCase `.types.ts`                       | `RobotCard.types.ts`                           |
+| Helpers    | camelCase or feature-scoped `.helpers.ts`    | `RobotCard.helpers.ts`, `fleet.helpers.ts`     |
+| Hooks      | camelCase `use*.ts`                          | `useTheme.ts`                                  |
+| Tests      | matches source `.test.tsx` / `.test.ts`      | `RobotCard.test.tsx`                           |
+| Stores     | camelCase `use*Store.ts`                     | `useConnectionStore.ts`                        |
+| Constants  | PascalCase or feature-scoped `.constants.ts` | `RobotCard.constants.ts`, `fleet.constants.ts` |
+| Utilities  | camelCase `.ts`                              | `quaternion.ts`                                |
 
 ### Helpers Convention
 
@@ -99,6 +100,28 @@ Helpers contain scoped utility/transform functions — not components, not hooks
 - **Shared:** `utils/` — used across features
 
 If a helper is only used locally, keep it local. Promote to feature-scoped or shared when a second consumer appears.
+
+### Constants Convention
+
+Constants (config objects, static data arrays, lookup maps) live in `.constants.ts` files — never inline in component files.
+
+- **Component-scoped:** `RobotCard/RobotCard.constants.ts` — only used by that component
+- **Feature-scoped:** `fleet/fleet.constants.ts` — used across the feature
+- **Shared:** `utils/constants.ts` or `shared/constants.ts` — used across features
+
+Same promotion rule as helpers: start local, promote when a second consumer appears.
+
+### Pre-Write Checklist
+
+Before writing ANY component file, verify:
+
+- [ ] No constants/config objects inline — extract to `.constants.ts`
+- [ ] No JSX comments describing children — extract to named subcomponents
+- [ ] 3+ subcomponents → own folder
+- [ ] Types in `.types.ts`, not inline
+- [ ] All colors via Tailwind utilities, not var() or hardcoded
+- [ ] Font sizes strictly 12/14/20/36px
+- [ ] Interactive elements have cursor-pointer, transition, focus-visible
 
 ## Code Conventions
 

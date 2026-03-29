@@ -1,37 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  Bot,
-  Map,
-  Play,
-  Settings,
-  Plus,
-  PanelLeftClose,
-  PanelLeftOpen,
-} from 'lucide-react';
+import { Bot, Plus, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import type { SidebarProps } from './Sidebar.types';
-import type { LucideIcon } from 'lucide-react';
 import { useConnectionStore } from '../stores/connection/useConnectionStore';
-import type { ConnectionStatus } from '../stores/connection/useConnectionStore.types';
-
-interface NavItemData {
-  readonly Icon: LucideIcon;
-  readonly label: string;
-  readonly path: string;
-  readonly status?: ConnectionStatus;
-}
-
-const SYSTEM_ITEMS: NavItemData[] = [
-  { Icon: Map, label: 'Map', path: '/map' },
-  { Icon: Play, label: 'Try Demo', path: '/demo' },
-  { Icon: Settings, label: 'Settings', path: '/settings' },
-];
-
-const STATUS_BG: Record<string, string> = {
-  nominal: 'bg-status-nominal',
-  caution: 'bg-status-caution',
-  critical: 'bg-status-critical',
-  offline: 'bg-status-offline',
-};
+import { SYSTEM_ITEMS, STATUS_BG } from './Sidebar.constants';
+import type { NavItemData } from './Sidebar.constants';
 
 function NavItem({
   item,
@@ -90,9 +62,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
       aria-label="Main navigation"
       className="bg-surface-primary border-r border-border flex flex-col overflow-hidden shadow-[inset_-1px_0_0_0_var(--color-surface-glow)] h-full"
     >
-      {/* Scrollable nav content */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden">
-        {/* Fleet section */}
         {!collapsed && (
           <div className="font-sans text-xs font-semibold text-text-muted uppercase tracking-widest px-3 pt-3.5 pb-1.5">
             Fleet
@@ -116,7 +86,6 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
           </div>
         ) : null}
 
-        {/* System section */}
         {!collapsed && (
           <div className="font-sans text-xs font-semibold text-text-muted uppercase tracking-widest px-3 pt-3.5 pb-1.5">
             System
@@ -135,7 +104,6 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         ))}
       </div>
 
-      {/* Add Robot button */}
       <button
         type="button"
         title={collapsed ? 'Add Robot' : undefined}
@@ -149,7 +117,6 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         {!collapsed && <span>Add Robot</span>}
       </button>
 
-      {/* Collapse toggle */}
       <button
         type="button"
         onClick={onToggleCollapse}

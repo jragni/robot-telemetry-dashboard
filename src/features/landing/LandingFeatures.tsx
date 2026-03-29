@@ -1,5 +1,5 @@
 import { Joystick, LayoutGrid, Activity, Network } from 'lucide-react';
-import { FEATURES } from './landing.helpers';
+import { FEATURES } from './landing.constants';
 import type { LucideIcon } from 'lucide-react';
 
 const ICONS: Record<string, LucideIcon> = {
