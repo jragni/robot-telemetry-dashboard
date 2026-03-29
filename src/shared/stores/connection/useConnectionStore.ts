@@ -57,7 +57,7 @@ export const useConnectionStore = create<ConnectionStore>()(
               id: robot.id,
               name: robot.name,
               url: robot.url,
-              status: 'offline' as const,
+              status: 'disconnected' as const,
               latencyMs: null,
               lastError: null,
               color: robot.color,
@@ -65,6 +65,34 @@ export const useConnectionStore = create<ConnectionStore>()(
           ]),
         ),
       }),
+      merge: (persisted, current) => {
+        const persistedState = persisted as Record<string, unknown> | undefined;
+        if (!persistedState?.robots) return current;
+        const robots = persistedState.robots as Record<
+          string,
+          Record<string, unknown>
+        >;
+        const migratedRobots = Object.fromEntries(
+          Object.entries(robots).map(([key, robot]) => [
+            key,
+            {
+              id: (robot.id as string) || key,
+              name: (robot.name as string) || key,
+              url: (robot.url as string) || '',
+              status:
+                robot.status === 'connected'
+                  ? ('connected' as const)
+                  : ('disconnected' as const),
+              latencyMs: null,
+              lastError: null,
+              color: (robot.color as string | undefined)
+                ? (robot.color as 'blue')
+                : assignRobotColor((robot.name as string) || key),
+            },
+          ]),
+        );
+        return { ...current, robots: migratedRobots };
+      },
     },
   ),
 );
