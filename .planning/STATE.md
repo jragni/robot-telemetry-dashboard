@@ -14,12 +14,15 @@ See: .planning/PROJECT.md
 
 ## Completed Work
 
-| Feature       | Key Commits          | What was built                                                                      |
-| ------------- | -------------------- | ----------------------------------------------------------------------------------- |
-| Scaffolding   | `aa6602e`            | Vite 7, React 19, TypeScript 5.9, ESLint, Prettier, shadcn, roslib smoke test       |
-| Design System | `1225783`, `7214a9e` | Midnight Operations OKLCH tokens, @theme inline, dark/light themes, Lucide React    |
-| App Shell     | `dc82a8e`            | Collapsible sidebar, header with RTD brand, statusbar, mobile drawer, useTheme hook |
-| Conventions   | `b99243f`, `51d4d40` | CLAUDE.md rules, DESIGN-SYSTEM.md, feature-domain folder structure                  |
+| Feature            | Key Commits          | What was built                                                                                                                                                                       |
+| ------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Scaffolding        | `aa6602e`            | Vite 7, React 19, TypeScript 5.9, ESLint, Prettier, shadcn, roslib smoke test                                                                                                        |
+| Design System      | `1225783`, `7214a9e` | Midnight Operations OKLCH tokens, @theme inline, dark/light themes, Lucide React                                                                                                     |
+| App Shell          | `dc82a8e`            | Collapsible sidebar, header with RTD brand, statusbar, mobile drawer, useTheme hook                                                                                                  |
+| Conventions        | `b99243f`, `51d4d40` | CLAUDE.md rules, DESIGN-SYSTEM.md, feature-domain folder structure                                                                                                                   |
+| Landing Page       | `371bcbd`            | CX2-inspired hero, features (Pilot Mode, Fleet, Telemetry, Multi-Robot), Problem/Solution, CTA, footer with © jragni 2026, GSAP installed                                            |
+| Fleet + Robot Mgmt | `baa673f`            | Connection store (Zustand + persist), RobotCard folder (3 subcomponents), AddRobotModal with URL transform, FleetEmptyState, store-driven sidebar, /dev/components viewer            |
+| Code Quality       | `316d750`–`279ae43`  | eslint-plugin-boundaries (three-tier enforcement), shadcn Button/Input/Badge/Card, canonical Tailwind classes, WCAG AA contrast fix, constants extraction, validate-structure script |
 
 ## Decisions (this rebuild)
 
@@ -31,6 +34,10 @@ See: .planning/PROJECT.md
 - Theme: Dark-first (ignores system preference, defaults to dark)
 - App name: "Robot Telemetry Dashboard" / RTD on mobile
 - No decorative elements without purpose
+- shadcn-first for components (Button, Input, Badge, Card, Dialog installed)
+- Three-tier architecture: Shared → Features → App (enforced by eslint-plugin-boundaries)
+- Constants in .constants.ts files, never inline in components
+- CLAUDE.md references docs (DESIGN-SYSTEM.md, FOLDER-STRUCTURE.md, TESTING.md) instead of duplicating rules
 
 ## Process Rules
 
@@ -41,8 +48,9 @@ See: .planning/PROJECT.md
 - Vertical feature development (types → store → hook → component → tests → verify)
 - Checkpoint after every component
 - Verify visually (Playwright MCP) before presenting to user
+- Pre-write checklist in CLAUDE.md before every component
 
 ## Session Continuity
 
-Last session: 2026-03-28
-Stopped at: Foundation complete, ready for Landing Page feature
+Last session: 2026-03-29
+Stopped at: Code quality cleanup complete, ready for Robot Workspace feature
