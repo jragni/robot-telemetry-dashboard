@@ -5,6 +5,7 @@ import type { RobotCardProps } from './RobotCard.types';
 import { RobotStatusBadge } from './RobotStatusBadge';
 import { RobotDeleteButton } from './RobotDeleteButton';
 import { ROBOT_COLOR_BORDER, ROBOT_COLOR_TEXT } from './RobotCard.constants';
+import { formatLastSeen } from '../fleet.helpers';
 
 export function RobotCard({ robot, onRemove }: RobotCardProps) {
   const navigate = useNavigate();
@@ -29,9 +30,9 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
 
       <div className="flex flex-col gap-1.5">
         <div className="flex justify-between items-baseline">
-          <span className="font-sans text-xs text-text-muted">Latency</span>
+          <span className="font-sans text-xs text-text-muted">Last seen</span>
           <span className="font-mono text-xs text-accent">
-            {robot.latencyMs != null ? `${String(robot.latencyMs)}ms` : '—'}
+            {formatLastSeen(robot.lastSeen)}
           </span>
         </div>
         <div className="flex justify-between items-baseline">

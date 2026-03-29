@@ -26,3 +26,12 @@ export function normalizeRosbridgeUrl(input: string): string {
   // Bare IP or hostname — prefer wss://
   return `wss://${trimmed}`;
 }
+
+export function formatLastSeen(timestamp: number | null): string {
+  if (timestamp == null) return '—';
+  const delta = Date.now() - timestamp;
+  if (delta < 5000) return 'just now';
+  if (delta < 60000) return `${String(Math.floor(delta / 1000))}s ago`;
+  if (delta < 3600000) return `${String(Math.floor(delta / 60000))}m ago`;
+  return new Date(timestamp).toLocaleTimeString();
+}

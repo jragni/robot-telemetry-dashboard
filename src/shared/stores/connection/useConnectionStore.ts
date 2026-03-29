@@ -18,7 +18,7 @@ export const useConnectionStore = create<ConnectionStore>()(
               name,
               url,
               status: 'disconnected',
-              latencyMs: null,
+              lastSeen: null,
               lastError: null,
               color: assignRobotColor(name),
             },
@@ -58,7 +58,7 @@ export const useConnectionStore = create<ConnectionStore>()(
               name: robot.name,
               url: robot.url,
               status: 'disconnected' as const,
-              latencyMs: null,
+              lastSeen: null,
               lastError: null,
               color: robot.color,
             },
@@ -83,7 +83,7 @@ export const useConnectionStore = create<ConnectionStore>()(
                 robot.status === 'connected'
                   ? ('connected' as const)
                   : ('disconnected' as const),
-              latencyMs: null,
+              lastSeen: null,
               lastError: null,
               color: (robot.color as string | undefined)
                 ? (robot.color as 'blue')

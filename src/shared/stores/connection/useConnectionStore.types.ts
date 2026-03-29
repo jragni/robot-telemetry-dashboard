@@ -7,7 +7,7 @@ export interface RobotConnection {
   readonly name: string;
   readonly url: string;
   readonly status: ConnectionStatus;
-  readonly latencyMs: number | null;
+  readonly lastSeen: number | null;
   readonly lastError: string | null;
   readonly color: RobotColor;
 }
