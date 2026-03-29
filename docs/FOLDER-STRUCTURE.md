@@ -1,6 +1,29 @@
 # Folder Structure
 
-Organized by **feature domain**, not by file type.
+Organized by **feature domain**, not by file type. Enforced by `eslint-plugin-boundaries`.
+
+## Three-Tier Architecture
+
+```
+┌─────────────────────────────┐
+│           APP               │  src/App.tsx, src/main.tsx
+│   (router — glue layer)     │  Can import: features, shared, ui, utils
+└─────────┬───────────────────┘
+          │ imports from
+┌─────────▼───────────────────┐
+│        FEATURES             │  src/features/{domain}/
+│  (fleet, workspace, demo)   │  Can import: shared, ui, utils, OWN feature
+│  Cannot import OTHER features│
+└─────────┬───────────────────┘
+          │ imports from
+┌─────────▼───────────────────┐
+│    SHARED / UI / UTILS      │  src/shared/, src/components/ui/, src/utils/
+│  (stores, hooks, shadcn)    │  Can import: shared, ui, utils only
+│  Cannot import features or app│
+└─────────────────────────────┘
+```
+
+**Data flows one direction only.** A feature cannot import from another feature. Shared code cannot import from features. This is enforced by ESLint at lint time — violations are errors, not warnings.
 
 ## Layout
 
