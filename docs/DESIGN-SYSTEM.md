@@ -71,7 +71,7 @@ Each status has a `*-bg` variant at 0.10 alpha for badge backgrounds.
 | ------------------------ | ---------------------- | ---------------------- | ----------------------------- |
 | `--color-text-primary`   | `oklch(0.93 0.01 260)` | `oklch(0.18 0.02 260)` | Main content, headings        |
 | `--color-text-secondary` | `oklch(0.65 0.02 260)` | `oklch(0.40 0.02 260)` | Labels, panel titles          |
-| `--color-text-muted`     | `oklch(0.45 0.02 260)` | `oklch(0.58 0.02 260)` | Hints, placeholders, disabled |
+| `--color-text-muted`     | `oklch(0.57 0.02 260)` | `oklch(0.50 0.02 260)` | Hints, placeholders, disabled |
 
 ### Borders & Effects
 
