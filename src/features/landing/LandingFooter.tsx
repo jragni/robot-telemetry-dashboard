@@ -7,13 +7,17 @@ export function LandingFooter() {
       <div className="flex items-center gap-6 flex-col md:flex-row">
         <div className="flex gap-4">
           <a
-            href="#"
+            href="https://www.github.com/jragni/robot-telemetry-dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-mono text-xs text-text-muted uppercase tracking-widest no-underline transition-colors duration-200 hover:text-accent"
           >
             GitHub
           </a>
           <a
-            href="#"
+            href="https://www.github.com/jragni/robot-telemetry-dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-mono text-xs text-text-muted uppercase tracking-widest no-underline transition-colors duration-200 hover:text-accent"
           >
             Documentation

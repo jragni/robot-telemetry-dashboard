@@ -18,7 +18,9 @@ export function LandingHeader() {
           Demo
         </a>
         <a
-          href="#"
+          href="https://www.github.com/jragni/robot-telemetry-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
           className="font-mono text-xs text-text-muted uppercase tracking-widest no-underline transition-colors duration-200 hover:text-accent"
         >
           GitHub
