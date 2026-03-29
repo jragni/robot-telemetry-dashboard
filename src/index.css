@@ -63,6 +63,10 @@
   --color-surface-glow: var(--color-surface-glow);
   --color-hud-overlay: var(--color-hud-overlay);
 
+  /* Shadows */
+  --color-shadow: var(--color-shadow);
+  --color-shadow-heavy: var(--color-shadow-heavy);
+
   /* IMU */
   --color-imu-sky: var(--color-imu-sky);
   --color-imu-ground: var(--color-imu-ground);
@@ -108,6 +112,10 @@
   --color-surface-glow: oklch(0.7 0.2 230 / 0.04);
   --color-hud-overlay: oklch(0.09 0.02 260 / 0.75);
 
+  /* Shadows */
+  --color-shadow: oklch(0 0 0 / 0.4);
+  --color-shadow-heavy: oklch(0 0 0 / 0.5);
+
   /* IMU widget */
   --color-imu-sky: oklch(0.5 0.14 230);
   --color-imu-ground: oklch(0.35 0.1 65);
@@ -151,6 +159,10 @@
   /* Effects */
   --color-surface-glow: oklch(0.5 0.22 230 / 0.04);
   --color-hud-overlay: oklch(0.18 0.02 260 / 0.7);
+
+  /* Shadows */
+  --color-shadow: oklch(0 0 0 / 0.3);
+  --color-shadow-heavy: oklch(0 0 0 / 0.4);
 
   /* IMU widget */
   --color-imu-sky: oklch(0.65 0.12 230);

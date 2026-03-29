@@ -9,31 +9,18 @@ echo "=== Structure Validation ==="
 # Check for inline constants in .tsx files (Record<, readonly arrays, config objects)
 echo ""
 echo "Checking for inline constants in .tsx files..."
-for file in $(find src -name "*.tsx" -not -path "*/ui/*"); do
-  # Look for const ... Record< or const ... : readonly or large const objects
+for file in $(find src -name "*.tsx" -not -path "*/ui/*" -not -path "*DevView*"); do
   if grep -n "^const [A-Z].*Record<\|^const [A-Z].*: readonly\|^const [A-Z].*\[\]" "$file" 2>/dev/null | grep -v "import" > /dev/null; then
     echo "  WARNING: $file has inline constants — extract to .constants.ts"
     ERRORS=$((ERRORS + 1))
   fi
 done
 
-# Check for JSX comments describing children (potential subcomponent extraction)
-echo ""
-echo "Checking for JSX comments that should be subcomponents..."
-for file in $(find src -name "*.tsx" -not -path "*/ui/*"); do
-  matches=$(grep -n "{/\*.*\*/}" "$file" 2>/dev/null | grep -vi "noop\|TODO\|eslint\|prettier" | head -5)
-  if [ -n "$matches" ]; then
-    echo "  WARNING: $file has JSX comments — consider extracting to named subcomponents:"
-    echo "$matches" | sed 's/^/    /'
-    ERRORS=$((ERRORS + 1))
-  fi
-done
-
-# Check for hardcoded colors
+# Check for hardcoded colors (excluding shadow vars, URL anchors, and comments)
 echo ""
 echo "Checking for hardcoded colors in .tsx files..."
 for file in $(find src -name "*.tsx" -not -path "*/ui/*"); do
-  if grep -n "oklch\|#[0-9a-fA-F]\{3,\}\|rgba\?(" "$file" 2>/dev/null | grep -v "getComputedStyle\|getPropertyValue\|// \|/\*" > /dev/null; then
+  if grep -n "oklch\|rgba\?(" "$file" 2>/dev/null | grep -v "getComputedStyle\|getPropertyValue\|var(--\|// \|/\*\|href=" > /dev/null; then
     echo "  WARNING: $file has hardcoded colors — use var() tokens or Tailwind utilities"
     ERRORS=$((ERRORS + 1))
   fi

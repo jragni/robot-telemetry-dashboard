@@ -65,7 +65,9 @@ export function AppShell() {
           drawerOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{
-          boxShadow: drawerOpen ? '4px 0 24px oklch(0 0 0 / 0.5)' : 'none',
+          boxShadow: drawerOpen
+            ? '4px 0 24px var(--color-shadow-heavy)'
+            : 'none',
         }}
       >
         <button

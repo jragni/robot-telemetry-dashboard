@@ -1,4 +1,13 @@
+import { Joystick, LayoutGrid, Activity, Network } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import type { FeatureItem } from './LandingPage.types';
+
+export const FEATURE_ICONS: Record<string, LucideIcon> = {
+  '01': Joystick,
+  '02': LayoutGrid,
+  '03': Activity,
+  '04': Network,
+};
 
 export const FEATURES: readonly FeatureItem[] = [
   {

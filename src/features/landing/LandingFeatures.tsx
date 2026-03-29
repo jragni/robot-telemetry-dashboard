@@ -1,13 +1,5 @@
-import { Joystick, LayoutGrid, Activity, Network } from 'lucide-react';
-import { FEATURES } from './landing.constants';
-import type { LucideIcon } from 'lucide-react';
-
-const ICONS: Record<string, LucideIcon> = {
-  '01': Joystick,
-  '02': LayoutGrid,
-  '03': Activity,
-  '04': Network,
-};
+import { Activity } from 'lucide-react';
+import { FEATURES, FEATURE_ICONS } from './landing.constants';
 
 export function LandingFeatures() {
   return (
@@ -22,7 +14,7 @@ export function LandingFeatures() {
       </div>
 
       {FEATURES.map((feature) => {
-        const Icon = ICONS[feature.number] ?? Activity;
+        const Icon = FEATURE_ICONS[feature.number] ?? Activity;
         return (
           <div
             key={feature.number}

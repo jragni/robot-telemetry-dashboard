@@ -20,7 +20,7 @@ export function LandingCTA() {
         onClick={() => {
           void navigate('/demo');
         }}
-        className="font-sans text-sm font-semibold uppercase tracking-wide px-8 py-3 bg-accent text-surface-base border-none rounded-sm cursor-pointer transition-all duration-200 hover:shadow-[0_0_24px_var(--color-accent-glow),0_8px_16px_oklch(0_0_0/0.4)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        className="font-sans text-sm font-semibold uppercase tracking-wide px-8 py-3 bg-accent text-surface-base border-none rounded-sm cursor-pointer transition-all duration-200 hover:shadow-[0_0_24px_var(--color-accent-glow),0_8px_16px_var(--color-shadow)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
       >
         Try Demo
       </button>
