@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Bot, Plus, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Bot, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { SidebarProps } from './Sidebar.types';
 import { useConnectionStore } from '../stores/connection/useConnectionStore';
@@ -109,21 +109,6 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
           />
         ))}
       </div>
-
-      <Button
-        variant="outline"
-        size="sm"
-        title={collapsed ? 'Add Robot' : undefined}
-        onClick={() => {
-          void navigate('/fleet');
-        }}
-        className={`flex items-center gap-2 font-mono text-xs font-semibold text-accent border-accent uppercase tracking-wide hover:bg-accent-subtle ${
-          collapsed ? 'justify-center p-2 mx-1 my-1.5' : 'px-2.5 py-2 mx-2 my-2'
-        }`}
-      >
-        <Plus size={16} className="shrink-0" />
-        {!collapsed && <span>Add Robot</span>}
-      </Button>
 
       <Button
         variant="ghost"
