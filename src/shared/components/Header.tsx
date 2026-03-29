@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { HeaderProps } from './Header.types';
 
 function getBreadcrumb(pathname: string): string {
@@ -25,19 +26,18 @@ export function Header({
 
   return (
     <header className="bg-surface-primary border-b border-border flex items-center px-3 gap-2.5 h-full shadow-[inset_0_-1px_0_0_var(--color-surface-glow)] relative z-10">
-      {/* Hamburger — mobile only */}
       {showHamburger && (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onToggleDrawer}
           aria-label="Open navigation"
-          className="flex items-center justify-center w-[30px] h-[30px] bg-transparent border border-border rounded-sm cursor-pointer text-text-secondary transition-all duration-200 hover:border-border-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 md:hidden"
+          className="w-[30px] h-[30px] text-text-secondary border border-border hover:border-border-hover hover:text-text-primary md:hidden"
         >
           <Menu size={16} />
-        </button>
+        </Button>
       )}
 
-      {/* Brand — full name on desktop, RTD on mobile */}
       <span className="font-sans text-sm font-semibold text-text-primary tracking-wide whitespace-nowrap">
         <span className="hidden md:inline">Robot Telemetry Dashboard</span>
         <span className="md:hidden">RTD</span>
@@ -48,14 +48,15 @@ export function Header({
       </span>
 
       <div className="ml-auto flex items-center shrink-0">
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onToggleTheme}
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-          className="flex items-center justify-center w-7 h-7 text-text-muted bg-surface-tertiary border border-border rounded-sm cursor-pointer transition-all duration-200 hover:border-border-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+          className="w-7 h-7 text-text-muted bg-surface-tertiary border border-border hover:border-border-hover hover:text-text-primary"
         >
           {theme === 'dark' ? <Moon size={14} /> : <Sun size={14} />}
-        </button>
+        </Button>
       </div>
     </header>
   );

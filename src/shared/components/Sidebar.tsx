@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bot, Plus, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { SidebarProps } from './Sidebar.types';
 import { useConnectionStore } from '../stores/connection/useConnectionStore';
 import { SYSTEM_ITEMS, STATUS_BG } from './Sidebar.constants';
@@ -104,10 +105,11 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         ))}
       </div>
 
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        size="sm"
         title={collapsed ? 'Add Robot' : undefined}
-        className={`flex items-center gap-2 font-mono text-xs font-semibold text-accent bg-transparent border border-accent rounded-sm cursor-pointer whitespace-nowrap overflow-hidden uppercase tracking-wide transition-colors duration-200 hover:bg-accent-subtle focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+        className={`flex items-center gap-2 font-mono text-xs font-semibold text-accent border-accent uppercase tracking-wide hover:bg-accent-subtle ${
           collapsed
             ? 'justify-center p-2 mx-1 my-1.5'
             : 'px-2.5 py-[7px] mx-2 my-2'
@@ -115,17 +117,17 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
       >
         <Plus size={16} className="shrink-0" />
         {!collapsed && <span>Add Robot</span>}
-      </button>
+      </Button>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={onToggleCollapse}
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        className="w-full h-8 flex items-center justify-center gap-1.5 bg-surface-secondary border-t border-border text-text-muted cursor-pointer font-mono text-xs transition-all duration-200 shrink-0 hover:text-accent hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px]"
+        className="w-full h-8 rounded-none border-t border-border text-text-muted font-mono text-xs hover:text-accent hover:bg-surface-tertiary shrink-0"
       >
         {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
         {!collapsed && <span>Collapse</span>}
-      </button>
+      </Button>
     </aside>
   );
 }

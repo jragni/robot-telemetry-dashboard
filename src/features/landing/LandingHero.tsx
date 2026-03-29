@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 export function LandingHero() {
   const navigate = useNavigate();
@@ -26,24 +27,23 @@ export function LandingHero() {
           </p>
 
           <div className="flex gap-3 mt-2 flex-col sm:flex-row">
-            <button
-              type="button"
+            <Button
               onClick={() => {
                 void navigate('/fleet');
               }}
-              className="font-sans text-sm font-semibold uppercase tracking-wide px-8 py-3 bg-accent text-surface-base border-none rounded-sm cursor-pointer transition-all duration-200 hover:shadow-[0_0_24px_var(--color-accent-glow),0_8px_16px_var(--color-shadow)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              className="uppercase tracking-wide px-8 py-3 hover:shadow-[0_0_24px_var(--color-accent-glow),0_8px_16px_var(--color-shadow)] hover:-translate-y-0.5"
             >
               Launch Dashboard
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => {
                 void navigate('/demo');
               }}
-              className="font-sans text-sm font-semibold uppercase tracking-wide px-8 py-3 bg-transparent text-accent border border-accent rounded-sm cursor-pointer transition-all duration-200 hover:bg-accent-subtle hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              className="uppercase tracking-wide px-8 py-3 text-accent border-accent hover:bg-accent-subtle hover:-translate-y-0.5"
             >
               Try Demo
-            </button>
+            </Button>
           </div>
         </div>
 

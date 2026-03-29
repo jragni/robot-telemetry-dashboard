@@ -1,13 +1,9 @@
+import { Button } from '@/components/ui/button';
 import { useConnectionStore } from '../../shared/stores/connection/useConnectionStore';
 import { RobotCard } from './RobotCard';
 import { FleetEmptyState } from './FleetEmptyState';
 import { AddRobotModal } from './AddRobotModal';
 
-/**
- * Dev-only component viewer for fleet components.
- * Shows each component in isolation with mock data.
- * Route: /dev/components
- */
 export function FleetDevView() {
   const removeRobot = useConnectionStore((s) => s.removeRobot);
   const addRobot = useConnectionStore((s) => s.addRobot);
@@ -17,7 +13,6 @@ export function FleetDevView() {
     addRobot('Hermes-02', 'wss://192.168.1.102:9090');
     addRobot('Ghost-04', 'wss://192.168.1.104:9090');
 
-    // Set varied statuses via updateRobot
     const store = useConnectionStore.getState();
     store.updateRobot('atlas-01', { status: 'nominal', latencyMs: 12 });
     store.updateRobot('hermes-02', { status: 'caution', latencyMs: 180 });
@@ -40,24 +35,25 @@ export function FleetDevView() {
           Component Viewer — Fleet
         </h2>
         <div className="flex gap-2 mb-4">
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={seedMockData}
-            className="font-mono text-xs text-accent border border-accent rounded-sm px-3 py-1 cursor-pointer hover:bg-accent-subtle transition-colors duration-200"
+            className="text-accent border-accent"
           >
             Seed Mock Data
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={clearAll}
-            className="font-mono text-xs text-status-critical border border-status-critical rounded-sm px-3 py-1 cursor-pointer hover:bg-status-critical-bg transition-colors duration-200"
+            className="text-status-critical border-status-critical"
           >
             Clear All
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Empty State */}
       <div>
         <h3 className="font-mono text-xs text-text-muted uppercase tracking-widest mb-3">
           Empty State
@@ -71,7 +67,6 @@ export function FleetDevView() {
         </div>
       </div>
 
-      {/* Robot Cards */}
       <div>
         <h3 className="font-mono text-xs text-text-muted uppercase tracking-widest mb-3">
           Robot Cards ({String(robots.length)})
@@ -84,12 +79,11 @@ export function FleetDevView() {
           </div>
         ) : (
           <p className="font-mono text-xs text-text-muted">
-            No robots — click "Seed Mock Data" above
+            No robots — click &quot;Seed Mock Data&quot; above
           </p>
         )}
       </div>
 
-      {/* Add Robot Modal */}
       <div>
         <h3 className="font-mono text-xs text-text-muted uppercase tracking-widest mb-3">
           Add Robot Modal

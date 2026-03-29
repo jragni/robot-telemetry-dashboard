@@ -1,4 +1,5 @@
 import { Radio } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface FleetEmptyStateProps {
   readonly onAddRobot: () => void;
@@ -15,13 +16,13 @@ export function FleetEmptyState({ onAddRobot }: FleetEmptyStateProps) {
         Add your first robot to begin monitoring. Connect to any ROS2 robot
         running rosbridge.
       </p>
-      <button
-        type="button"
+      <Button
+        variant="outline"
         onClick={onAddRobot}
-        className="font-sans text-sm font-semibold uppercase tracking-wide px-8 py-3 bg-transparent text-accent border border-accent rounded-sm cursor-pointer transition-all duration-200 hover:bg-accent-subtle hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        className="uppercase tracking-wide text-accent border-accent hover:bg-accent-subtle"
       >
         Add Robot
-      </button>
+      </Button>
     </div>
   );
 }

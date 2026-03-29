@@ -7,6 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useConnectionStore } from '../../shared/stores/connection/useConnectionStore';
 import { normalizeRosbridgeUrl } from './fleet.helpers';
 
@@ -45,13 +47,14 @@ export function AddRobotModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button
-          type="button"
-          className="flex items-center gap-2 font-mono text-xs font-semibold text-accent bg-transparent border border-accent rounded-sm cursor-pointer whitespace-nowrap uppercase tracking-wide px-2.5 py-[7px] mx-2 my-2 transition-colors duration-200 hover:bg-accent-subtle focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 font-mono text-xs font-semibold text-accent border-accent uppercase tracking-wide hover:bg-accent-subtle"
         >
           <Plus size={16} className="shrink-0" />
-          <span>Add Robot</span>
-        </button>
+          Add Robot
+        </Button>
       </DialogTrigger>
       <DialogContent className="bg-surface-primary border border-border rounded-sm shadow-[inset_0_1px_0_0_var(--color-surface-glow)] max-w-md">
         <DialogHeader>
@@ -67,7 +70,7 @@ export function AddRobotModal() {
             >
               Robot Name
             </label>
-            <input
+            <Input
               id="robot-name"
               type="text"
               value={name}
@@ -76,7 +79,7 @@ export function AddRobotModal() {
                 setError('');
               }}
               placeholder="e.g., Atlas-01"
-              className="font-sans text-sm text-text-primary bg-surface-tertiary border border-border rounded-sm px-3 py-2 placeholder:text-text-muted focus:outline-2 focus:outline-accent focus:outline-offset-0 transition-colors duration-200"
+              className="font-sans text-sm text-text-primary bg-surface-tertiary border-border placeholder:text-text-muted"
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -86,7 +89,7 @@ export function AddRobotModal() {
             >
               Rosbridge URL
             </label>
-            <input
+            <Input
               id="robot-url"
               type="text"
               value={url}
@@ -95,18 +98,15 @@ export function AddRobotModal() {
                 setError('');
               }}
               placeholder="e.g., 192.168.1.100:9090"
-              className="font-mono text-sm text-text-primary bg-surface-tertiary border border-border rounded-sm px-3 py-2 placeholder:text-text-muted focus:outline-2 focus:outline-accent focus:outline-offset-0 transition-colors duration-200"
+              className="font-mono text-sm text-text-primary bg-surface-tertiary border-border placeholder:text-text-muted"
             />
           </div>
           {error && (
             <p className="font-mono text-xs text-status-critical">{error}</p>
           )}
-          <button
-            type="submit"
-            className="font-sans text-sm font-semibold uppercase tracking-wide px-6 py-2.5 bg-accent text-surface-base border-none rounded-sm cursor-pointer transition-all duration-200 hover:shadow-[0_0_20px_var(--color-accent-glow)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 mt-2"
-          >
+          <Button type="submit" className="mt-2 uppercase tracking-wide">
             Add Robot
-          </button>
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
