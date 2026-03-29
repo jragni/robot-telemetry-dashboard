@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppShell } from './shared/components/AppShell';
+import { LandingPage } from './features/landing/LandingPage';
 
 function FleetPlaceholder() {
   return (
@@ -21,8 +22,11 @@ export function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Landing page — standalone, outside AppShell, forces dark theme */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* App routes — inside AppShell with sidebar/header/statusbar */}
         <Route element={<AppShell />}>
-          <Route path="/" element={<FleetPlaceholder />} />
           <Route path="/fleet" element={<FleetPlaceholder />} />
           <Route path="/robot/:id" element={<WorkspacePlaceholder />} />
           <Route path="/demo" element={<FleetPlaceholder />} />

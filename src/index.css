@@ -230,3 +230,120 @@ body {
     display: none;
   }
 }
+
+/* =================================================================
+   Landing page
+   ================================================================= */
+
+/* Atmospheric scanlines */
+.landing-scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    var(--color-border) 3px,
+    var(--color-border) 4px
+  );
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Scan beam animation */
+@keyframes landing-scan-beam {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+.landing-scan-beam::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--color-accent-subtle),
+    transparent
+  );
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 1;
+  animation: landing-scan-beam 10s linear infinite;
+}
+
+/* Section divider */
+.landing-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-border),
+    var(--color-accent-subtle),
+    var(--color-border),
+    transparent
+  );
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Feature stagger layout */
+.landing-feature:nth-child(odd) .landing-feature-content {
+  order: 1;
+}
+.landing-feature:nth-child(odd) .landing-feature-visual {
+  order: 2;
+}
+.landing-feature:nth-child(even) .landing-feature-content {
+  order: 2;
+}
+.landing-feature:nth-child(even) .landing-feature-visual {
+  order: 1;
+}
+
+/* Problem/Solution vertical divider */
+.landing-ps-grid::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  bottom: 15%;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--color-border),
+    var(--color-accent-subtle),
+    var(--color-border),
+    transparent
+  );
+}
+
+/* Mobile: landing */
+@media (max-width: 767px) {
+  .landing-feature .landing-feature-content {
+    order: 1 !important;
+  }
+  .landing-feature .landing-feature-visual {
+    order: 2 !important;
+  }
+  .landing-ps-grid::after {
+    display: none;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .landing-scan-beam::after {
+    animation: none;
+    display: none;
+  }
+}
