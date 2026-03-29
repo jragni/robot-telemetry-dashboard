@@ -130,6 +130,7 @@ Before writing ANY component file, verify:
 - [ ] Types in `.types.ts`, not inline
 - [ ] All colors via Tailwind utilities, not var() or hardcoded
 - [ ] Font sizes strictly 12/14/20/36px
+- [ ] Canonical Tailwind classes, not arbitrary `[value]` — use `p-3` not `p-[12px]`
 - [ ] Interactive elements have cursor-pointer, transition, focus-visible
 
 ## Code Conventions
@@ -160,6 +161,7 @@ Before writing ANY component file, verify:
 - **Font sizes strictly 12/14/20/36px** — no exceptions. Map: `text-xs`=12, `text-sm`=14, `text-xl`=20, `text-4xl`=36
 - **Two font weights only:** 400 (`font-normal`) and 600 (`font-semibold`)
 - **Surface glow** on every panel: `shadow-[inset_0_1px_0_0_var(--color-surface-glow)]`
+- **Use canonical Tailwind classes, not arbitrary values.** Since `--spacing: 4px`, use `p-3` (12px) not `p-[12px]`, `w-65` (260px) not `w-[260px]`, `tracking-widest` not `tracking-[0.12em]`. Only use arbitrary `[value]` when no canonical class exists.
 - **Border radius** max 2px (`rounded-sm`) — no large radii
 - **Interactive elements:** `cursor-pointer`, `transition-all duration-200`, `focus-visible:outline-2 focus-visible:outline-accent`
 - **prefers-reduced-motion** respected — use `motion-safe:` prefix for animations

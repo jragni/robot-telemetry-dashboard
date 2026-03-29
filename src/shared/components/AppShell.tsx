@@ -62,7 +62,7 @@ export function AppShell() {
 
       {/* Mobile drawer */}
       <div
-        className={`fixed top-10 bottom-0 left-0 w-[260px] z-50 bg-surface-primary border-r border-border transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden ${
+        className={`fixed top-10 bottom-0 left-0 w-65 z-50 bg-surface-primary border-r border-border transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden ${
           drawerOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{
@@ -76,7 +76,7 @@ export function AppShell() {
           size="icon"
           onClick={closeDrawer}
           aria-label="Close navigation"
-          className="absolute top-2 right-2 w-[26px] h-[26px] text-text-muted bg-surface-tertiary border border-border hover:border-border-hover hover:text-text-primary"
+          className="absolute top-2 right-2 w-7 h-7 text-text-muted bg-surface-tertiary border border-border hover:border-border-hover hover:text-text-primary"
         >
           <X size={14} />
         </Button>

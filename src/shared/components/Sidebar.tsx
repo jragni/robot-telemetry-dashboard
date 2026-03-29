@@ -23,7 +23,7 @@ function NavItem({
       onClick={onClick}
       title={collapsed ? item.label : undefined}
       className={`flex items-center gap-2 w-full text-left font-sans text-sm cursor-pointer whitespace-nowrap overflow-hidden border-none transition-all duration-150 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
-        collapsed ? 'justify-center py-2 px-0' : 'py-[7px] px-3'
+        collapsed ? 'justify-center py-2 px-0' : 'py-2 px-3'
       } ${
         active
           ? 'text-accent bg-accent-subtle'
@@ -110,9 +110,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         size="sm"
         title={collapsed ? 'Add Robot' : undefined}
         className={`flex items-center gap-2 font-mono text-xs font-semibold text-accent border-accent uppercase tracking-wide hover:bg-accent-subtle ${
-          collapsed
-            ? 'justify-center p-2 mx-1 my-1.5'
-            : 'px-2.5 py-[7px] mx-2 my-2'
+          collapsed ? 'justify-center p-2 mx-1 my-1.5' : 'px-2.5 py-2 mx-2 my-2'
         }`}
       >
         <Plus size={16} className="shrink-0" />

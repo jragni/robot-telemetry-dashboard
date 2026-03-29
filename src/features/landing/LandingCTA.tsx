@@ -12,7 +12,7 @@ export function LandingCTA() {
       <h2 className="font-sans text-xl font-semibold text-text-primary uppercase tracking-wide">
         See It in Action
       </h2>
-      <p className="font-sans text-sm text-text-muted max-w-[400px]">
+      <p className="font-sans text-sm text-text-muted max-w-100">
         No rosbridge required. The demo loads mock robots with streaming
         telemetry data so you can experience the full interface.
       </p>

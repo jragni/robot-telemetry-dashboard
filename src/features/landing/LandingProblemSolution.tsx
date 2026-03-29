@@ -1,9 +1,9 @@
 export function LandingProblemSolution() {
   return (
     <section className="bg-surface-primary border-t border-b border-border py-24 px-8">
-      <div className="landing-ps-grid max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-24 items-center relative">
+      <div className="landing-ps-grid max-w-300 mx-auto grid grid-cols-1 md:grid-cols-2 gap-24 items-center relative">
         <div>
-          <span className="font-mono text-xs font-semibold text-accent uppercase tracking-[0.12em] block mb-4">
+          <span className="font-mono text-xs font-semibold text-accent uppercase tracking-widest block mb-4">
             The Problem
           </span>
           <h3 className="font-sans text-xl font-semibold text-text-primary uppercase tracking-wide mb-4">
@@ -17,7 +17,7 @@ export function LandingProblemSolution() {
           </p>
         </div>
         <div>
-          <span className="font-mono text-xs font-semibold text-accent uppercase tracking-[0.12em] block mb-4">
+          <span className="font-mono text-xs font-semibold text-accent uppercase tracking-widest block mb-4">
             The Solution
           </span>
           <h3 className="font-sans text-xl font-semibold text-text-primary uppercase tracking-wide mb-4">

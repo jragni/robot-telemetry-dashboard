@@ -47,7 +47,7 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
         </div>
         <div className="flex justify-between items-baseline">
           <span className="font-sans text-xs text-text-muted">URL</span>
-          <span className="font-mono text-xs text-text-secondary truncate max-w-[180px]">
+          <span className="font-mono text-xs text-text-secondary truncate max-w-45">
             {robot.url}
           </span>
         </div>

@@ -3,9 +3,9 @@ import { FEATURES, FEATURE_ICONS } from './landing.constants';
 
 export function LandingFeatures() {
   return (
-    <section id="features" className="py-24 px-8 max-w-[1200px] mx-auto">
+    <section id="features" className="py-24 px-8 max-w-300 mx-auto">
       <div className="mb-16">
-        <span className="font-mono text-xs font-semibold text-accent uppercase tracking-[0.12em] block mb-3">
+        <span className="font-mono text-xs font-semibold text-accent uppercase tracking-widest block mb-3">
           Capabilities
         </span>
         <h2 className="font-sans text-xl font-semibold text-text-primary uppercase tracking-wide">
@@ -27,7 +27,7 @@ export function LandingFeatures() {
               <h3 className="font-sans text-xl font-semibold text-text-primary uppercase tracking-wide mb-3">
                 {feature.name}
               </h3>
-              <p className="font-sans text-sm text-text-secondary leading-relaxed max-w-[380px]">
+              <p className="font-sans text-sm text-text-secondary leading-relaxed max-w-95">
                 {feature.description}
               </p>
             </div>

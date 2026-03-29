@@ -110,6 +110,8 @@ Each status has a `*-bg` variant at 0.10 alpha for badge backgrounds.
 
 Base unit: `--spacing: 4px` (Tailwind v4 multiplier).
 
+**Rule:** Always use canonical Tailwind classes, not arbitrary `[value]` syntax. Since the base unit is 4px, any multiple of 4 has a canonical class: `p-3` = 12px, `w-65` = 260px, `max-w-100` = 400px. Only use arbitrary values when no canonical class exists (e.g., `max-w-[1200px]` if 300 isn't clean).
+
 | Tailwind       | Value | Usage                              |
 | -------------- | ----- | ---------------------------------- |
 | `p-1`, `gap-1` | 4px   | Icon gaps, tight spacing           |

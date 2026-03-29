@@ -32,7 +32,7 @@ export function Header({
           size="icon"
           onClick={onToggleDrawer}
           aria-label="Open navigation"
-          className="w-[30px] h-[30px] text-text-secondary border border-border hover:border-border-hover hover:text-text-primary md:hidden"
+          className="w-8 h-8 text-text-secondary border border-border hover:border-border-hover hover:text-text-primary md:hidden"
         >
           <Menu size={16} />
         </Button>

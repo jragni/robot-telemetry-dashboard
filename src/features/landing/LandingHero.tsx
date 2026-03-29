@@ -6,13 +6,13 @@ export function LandingHero() {
 
   return (
     <section className="landing-scanlines landing-scan-beam min-h-dvh flex items-center relative overflow-hidden pt-12 px-8">
-      <div className="w-full max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-12 items-center relative z-2">
+      <div className="w-full max-w-300 mx-auto grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-12 items-center relative z-2">
         <div className="flex flex-col gap-6">
-          <span className="font-mono text-xs font-semibold text-accent uppercase tracking-[0.12em]">
+          <span className="font-mono text-xs font-semibold text-accent uppercase tracking-widest">
             Fleet Telemetry Platform
           </span>
 
-          <h1 className="font-sans text-4xl font-semibold leading-none tracking-[0.08em] uppercase text-text-primary">
+          <h1 className="font-sans text-4xl font-semibold leading-none tracking-wider uppercase text-text-primary">
             Connect.
             <br />
             Monitor.
@@ -20,7 +20,7 @@ export function LandingHero() {
             Command.
           </h1>
 
-          <p className="font-sans text-sm text-text-secondary leading-relaxed max-w-[400px]">
+          <p className="font-sans text-sm text-text-secondary leading-relaxed max-w-100">
             Fleet-wide robot telemetry in a single workspace. Connect to any
             ROS2 robot via rosbridge, stream live sensor data, and operate
             directly from the browser.

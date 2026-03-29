@@ -12,7 +12,7 @@ export function FleetEmptyState({ onAddRobot }: FleetEmptyStateProps) {
       <h2 className="font-sans text-xl font-semibold text-text-primary">
         No Robots Configured
       </h2>
-      <p className="font-mono text-xs text-text-muted max-w-[340px] text-center leading-relaxed">
+      <p className="font-mono text-xs text-text-muted max-w-85 text-center leading-relaxed">
         Add your first robot to begin monitoring. Connect to any ROS2 robot
         running rosbridge.
       </p>
