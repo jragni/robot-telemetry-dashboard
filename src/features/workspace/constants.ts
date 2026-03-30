@@ -25,3 +25,6 @@ export const WORKSPACE_PANELS = [
   icon: React.ComponentType<{ className?: string }>;
   topicName?: string;
 }[];
+
+export const DPAD_BTN =
+  'w-8 h-8 bg-surface-tertiary border border-border rounded-sm font-mono text-xs flex items-center justify-center cursor-pointer hover:border-border-hover transition-colors';

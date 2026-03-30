@@ -8,7 +8,7 @@ import { Sidebar } from './Sidebar';
 import { StatusBar } from './StatusBar';
 
 /**
- *
+ * Top-level shell layout with sidebar, header, statusbar, content area, and mobile drawer.
  */
 export function AppShell() {
   const { theme, toggle } = useTheme();

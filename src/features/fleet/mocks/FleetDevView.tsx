@@ -39,6 +39,9 @@ const IMU_VIZ_OPTIONS = [
   { value: '3d', label: '3D Wireframe' },
 ] as const;
 
+/**
+ * Dropdown selector for IMU visualization variant.
+ */
 function ImuVizSelect({
   value,
   onChange,
@@ -67,7 +70,7 @@ function ImuVizSelect({
 }
 
 /**
- *
+ * Dev component viewer showing all UI primitives, workspace panels, and fleet components.
  */
 export function FleetDevView() {
   const [imuViz, setImuViz] = useState('attitude-compass');

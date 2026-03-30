@@ -10,7 +10,7 @@ const ROBOT_COLORS: readonly RobotColor[] = [
 ];
 
 /**
- *
+ * Deterministically assign a color to a robot based on its name hash.
  */
 export function assignRobotColor(name: string): RobotColor {
   let hash = 0;

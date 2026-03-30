@@ -59,33 +59,41 @@ src/
 │   ├── fleet/                    # Fleet overview, robot cards, add/remove
 │   │   ├── FleetOverview.tsx     # Page component (lives at feature root)
 │   │   ├── helpers.ts            # Feature-scoped helpers (NOT fleet.helpers.ts)
-│   │   └── components/           # UI components for this feature
-│   │       ├── FleetEmptyState.tsx
-│   │       ├── AddRobotModal.tsx
-│   │       ├── AddRobotModal.types.ts
-│   │       ├── FleetDevView.tsx
-│   │       └── RobotCard/        # Complex component → own folder (3+ subcomponents)
-│   │           ├── RobotCard.tsx
-│   │           ├── RobotCard.types.ts
-│   │           ├── RobotCard.constants.ts
-│   │           ├── RobotStatusBadge.tsx
-│   │           └── RobotDeleteButton.tsx
+│   │   ├── constants.ts          # Feature-scoped constants
+│   │   ├── types/                # All feature types — never inline or co-located
+│   │   │   ├── RobotCard.types.ts
+│   │   │   ├── AddRobotModal.types.ts
+│   │   │   ├── RobotDeleteButton.types.ts
+│   │   │   └── RobotStatusBadge.types.ts
+│   │   ├── components/           # UI components (no .types.ts here)
+│   │   │   ├── FleetEmptyState.tsx
+│   │   │   ├── AddRobotModal.tsx
+│   │   │   └── RobotCard/
+│   │   │       ├── RobotCard.tsx
+│   │   │       ├── RobotCard.constants.ts
+│   │   │       ├── RobotStatusBadge.tsx
+│   │   │       └── RobotDeleteButton.tsx
+│   │   └── mocks/                # Dev views and mock components
+│   │       └── FleetDevView.tsx
 │   ├── workspace/                # Robot telemetry workspace
 │   │   ├── RobotWorkspace.tsx    # Page component
-│   │   ├── constants.ts          # Feature-scoped constants (NOT workspace.constants.ts)
-│   │   ├── mocks/                # Mock data components for dev/demo
-│   │   │   ├── MockCamera.tsx
-│   │   │   ├── MockImu.tsx
-│   │   │   └── ...
-│   │   └── components/           # UI components for this feature
-│   │       ├── WorkspacePanel.tsx
-│   │       ├── WorkspaceGrid.tsx
-│   │       ├── WorkspaceGrid.types.ts
-│   │       └── WorkspaceDevView.tsx
+│   │   ├── constants.ts          # Feature-scoped constants
+│   │   ├── types/                # All feature types
+│   │   │   ├── WorkspacePanel.types.ts
+│   │   │   └── WorkspaceGrid.types.ts
+│   │   ├── components/           # UI components (no .types.ts here)
+│   │   │   ├── WorkspacePanel.tsx
+│   │   │   └── WorkspaceGrid.tsx
+│   │   └── mocks/                # Dev views and mock components
+│   │       ├── MockCamera.tsx
+│   │       ├── MockImu.tsx
+│   │       ├── WorkspaceDevView.tsx
+│   │       └── ...
 │   ├── landing/                  # Landing page
 │   │   ├── LandingPage.tsx       # Page component
-│   │   ├── LandingPage.types.ts
-│   │   ├── constants.ts          # Feature-scoped constants (NOT landing.constants.ts)
+│   │   ├── constants.ts          # Feature-scoped constants
+│   │   ├── types/                # All feature types
+│   │   │   └── LandingPage.types.ts
 │   │   └── components/           # Subcomponents
 │   │       ├── LandingHero.tsx
 │   │       ├── LandingHeader.tsx
@@ -137,7 +145,7 @@ shadcn CLI may write files to a literal `./@/` directory instead of `src/`. Afte
 | Type       | Convention                                                    | Example                                  |
 | ---------- | ------------------------------------------------------------- | ---------------------------------------- |
 | Components | PascalCase `.tsx`                                             | `RobotCard.tsx`                          |
-| Types      | PascalCase `.types.ts`                                        | `RobotCard.types.ts`                     |
+| Types      | PascalCase `.types.ts` in feature `types/` folder             | `types/RobotCard.types.ts`               |
 | Helpers    | `helpers.ts` at feature root, or `{Component}.helpers.ts`     | `helpers.ts`, `RobotCard.helpers.ts`     |
 | Hooks      | camelCase `use*.ts`                                           | `useTheme.ts`, `useFleetFilter.ts`       |
 | Tests      | matches source `.test.tsx` / `.test.ts`                       | `RobotCard.test.tsx`                     |

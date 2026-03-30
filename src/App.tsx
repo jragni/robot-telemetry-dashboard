@@ -6,6 +6,9 @@ import { FleetDevView } from './features/fleet/mocks/FleetDevView';
 import { WorkspaceDevView } from './features/workspace/mocks/WorkspaceDevView';
 import { RobotWorkspace } from './features/workspace/RobotWorkspace';
 
+/**
+ * Placeholder for features not yet implemented.
+ */
 function ComingSoon({ label }: { label: string }) {
   return (
     <div className="flex items-center justify-center h-full font-mono text-xs text-text-muted">
@@ -15,7 +18,7 @@ function ComingSoon({ label }: { label: string }) {
 }
 
 /**
- *
+ * Root component with React Router, landing page route, and AppShell-wrapped feature routes.
  */
 export function App() {
   return (

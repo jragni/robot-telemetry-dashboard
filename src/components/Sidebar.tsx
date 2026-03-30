@@ -8,8 +8,11 @@ import {
   ROBOT_COLOR_DOT,
   ROBOT_COLOR_TEXT,
 } from './Sidebar.constants';
-import type { NavItemData } from './Sidebar.constants';
+import type { NavItemData } from './Sidebar.types';
 
+/**
+ * Renders a single navigation item with icon, label, and active state.
+ */
 function NavItem({
   item,
   active,
@@ -51,7 +54,7 @@ function NavItem({
 }
 
 /**
- *
+ * Left sidebar with fleet robot list and system navigation. Supports collapsed mode.
  */
 export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   const location = useLocation();

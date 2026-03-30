@@ -3,6 +3,9 @@ import { Menu, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { HeaderProps } from './Header.types';
 
+/**
+ * Derives breadcrumb text from the current route pathname.
+ */
 function getBreadcrumb(pathname: string): string {
   if (pathname === '/' || pathname === '/fleet') return 'Fleet';
   if (pathname.startsWith('/robot/')) {
@@ -18,7 +21,7 @@ function getBreadcrumb(pathname: string): string {
 }
 
 /**
- *
+ * Navigation header with breadcrumb, theme toggle, and mobile hamburger.
  */
 export function Header({
   onToggleDrawer,

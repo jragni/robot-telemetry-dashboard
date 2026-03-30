@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Trash2, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { RobotDeleteButtonProps } from './RobotDeleteButton.types';
+import type { RobotDeleteButtonProps } from '../../types/RobotDeleteButton.types';
 
 /**
  * Delete button with inline confirmation. Shows trash icon, then "Remove?" with confirm/cancel.

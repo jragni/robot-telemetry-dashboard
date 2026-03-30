@@ -1,11 +1,11 @@
 import { useState, useCallback } from 'react';
 import { WorkspacePanel } from './WorkspacePanel';
-import type { PanelConfig } from './WorkspaceGrid.types';
+import type { PanelConfig } from '../types/WorkspaceGrid.types';
 
-export type { PanelConfig } from './WorkspaceGrid.types';
+export type { PanelConfig } from '../types/WorkspaceGrid.types';
 
 /**
- *
+ * Grid layout manager for workspace panels with minimize-to-dock functionality.
  */
 export function WorkspaceGrid({ panels }: { panels: PanelConfig[] }) {
   const [minimized, setMinimized] = useState(new Set<string>());

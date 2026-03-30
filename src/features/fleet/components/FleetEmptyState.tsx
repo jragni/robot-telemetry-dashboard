@@ -6,7 +6,7 @@ interface FleetEmptyStateProps {
 }
 
 /**
- *
+ * Empty state displayed when no robots are configured, with Add Robot CTA.
  */
 export function FleetEmptyState({ onAddRobot }: FleetEmptyStateProps) {
   return (

@@ -72,7 +72,7 @@ function buildPanels(
 }
 
 /**
- *
+ * Workspace page for a single robot, rendering 6 panels with connected or disconnected content.
  */
 export function RobotWorkspace() {
   const { id } = useParams<{ id: string }>();

@@ -1,10 +1,8 @@
 import { OctagonX } from 'lucide-react';
-
-const DPAD_BTN =
-  'w-8 h-8 bg-surface-tertiary border border-border rounded-sm font-mono text-xs flex items-center justify-center cursor-pointer hover:border-border-hover transition-colors';
+import { DPAD_BTN } from '../constants';
 
 /**
- *
+ * Mock robot controls with E-STOP button, directional D-pad, and velocity readouts.
  */
 export function MockControls() {
   return (

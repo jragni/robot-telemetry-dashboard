@@ -1,6 +1,6 @@
 import { Joystick, LayoutGrid, Activity, Network } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import type { FeatureItem } from './LandingPage.types';
+import type { FeatureItem } from './types/LandingPage.types';
 
 export const FEATURE_ICONS: Record<string, LucideIcon> = {
   '01': Joystick,

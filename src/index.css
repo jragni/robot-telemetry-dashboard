@@ -316,6 +316,16 @@ body {
   animation: landing-scan-beam 10s linear infinite;
 }
 
+/* Hero perspective viewport */
+.landing-hero-perspective {
+  perspective: 1200px;
+}
+
+.landing-hero-viewport {
+  aspect-ratio: 16 / 10;
+  transform: rotateY(-6deg) rotateX(2deg);
+}
+
 /* Section divider */
 .landing-divider {
   height: 1px;

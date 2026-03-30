@@ -1,7 +1,7 @@
 import { formatLastSeen } from '@/utils/formatLastSeen';
 
 /**
- *
+ * Mock system status panel showing connection state, vitals, and ROS computation graph counts.
  */
 export function MockSystemStatus({
   name,

@@ -1,7 +1,7 @@
 import { Camera } from 'lucide-react';
 
 /**
- *
+ * Mock camera feed placeholder with scanline effect and resolution info.
  */
 export function MockCamera() {
   return (

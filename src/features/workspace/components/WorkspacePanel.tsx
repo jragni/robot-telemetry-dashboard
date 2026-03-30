@@ -1,7 +1,8 @@
 import { ChevronDown, Maximize2, Minus } from 'lucide-react';
+import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
 
 /**
- *
+ * Reusable panel container with header controls (minimize, fullscreen, topic selector), content area, and optional footer.
  */
 export function WorkspacePanel({
   label,
@@ -11,15 +12,7 @@ export function WorkspacePanel({
   footerActions,
   onMinimize,
   children,
-}: {
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  topicName?: string;
-  headerActions?: React.ReactNode;
-  footerActions?: React.ReactNode;
-  onMinimize?: () => void;
-  children: React.ReactNode;
-}) {
+}: WorkspacePanelProps) {
   return (
     <div className="relative bg-surface-primary border border-border rounded-sm shadow-[inset_0_1px_0_0_var(--color-surface-glow)] flex flex-col h-full">
       <div className="flex items-center gap-2 px-3 h-9 shrink-0 border-b border-border">

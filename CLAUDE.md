@@ -47,7 +47,7 @@ These docs are the source of truth. CLAUDE.md does not duplicate their content.
 ## Code Conventions
 
 - One component per `.tsx` file
-- Types in `{ComponentName}.types.ts` (same directory)
+- Types in feature `types/` folder as `{ComponentName}.types.ts` — never inline in `.tsx` files, never co-located next to components. Shared types (cross-feature) go in `src/types/`.
 - No barrel files (ADR-001) — import directly from source
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`

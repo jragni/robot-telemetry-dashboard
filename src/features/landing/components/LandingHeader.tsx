@@ -1,5 +1,5 @@
 /**
- *
+ * Fixed header with branding and anchor navigation for the landing page.
  */
 export function LandingHeader() {
   return (
@@ -7,15 +7,17 @@ export function LandingHeader() {
       <span className="font-sans text-sm font-semibold text-text-primary tracking-widest uppercase">
         Robot Telemetry Dashboard
       </span>
-      <nav className="ml-auto flex gap-6">
+      <nav aria-label="Landing page navigation" className="ml-auto flex gap-6">
         <a
           href="#features"
+          aria-label="Jump to Capabilities section"
           className="font-mono text-xs text-text-muted uppercase tracking-widest no-underline transition-colors duration-200 hover:text-accent"
         >
           Capabilities
         </a>
         <a
           href="#demo"
+          aria-label="Jump to Demo section"
           className="font-mono text-xs text-text-muted uppercase tracking-widest no-underline transition-colors duration-200 hover:text-accent"
         >
           Demo
@@ -24,6 +26,7 @@ export function LandingHeader() {
           href="https://www.github.com/jragni/robot-telemetry-dashboard"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Open GitHub repository in new tab"
           className="font-mono text-xs text-text-muted uppercase tracking-widest no-underline transition-colors duration-200 hover:text-accent"
         >
           GitHub

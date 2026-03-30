@@ -107,6 +107,30 @@ Each status has a `*-bg` variant at 0.10 alpha for badge backgrounds.
 - Telemetry values (IMU, velocities, coordinates, topic names) always use `font-mono`.
 - Never hardcode font-family strings.
 
+### Semantic Typography (shadcn-aligned)
+
+All text must use proper HTML semantic elements with consistent Tailwind classes. Based on [shadcn Typography](https://ui.shadcn.com/docs/components/base/typography), adapted to our 4-size scale.
+
+| Element       | Classes                                              | Usage                          |
+| ------------- | ---------------------------------------------------- | ------------------------------ |
+| `<h1>`        | `font-sans text-4xl font-semibold text-text-primary` | Landing hero headline only     |
+| `<h2>`        | `font-sans text-xl font-semibold text-text-primary`  | Page/section headings          |
+| `<h3>`        | `font-sans text-xl font-semibold text-text-primary`  | Card titles, panel titles      |
+| `<p>`         | `font-sans text-sm text-text-primary`                | Body text, descriptions        |
+| `<p>` (muted) | `font-sans text-xs text-text-muted`                  | Captions, helper text          |
+| `<code>`      | `font-mono text-xs text-accent`                      | Topic names, telemetry values  |
+| `<small>`     | `font-sans text-xs text-text-muted`                  | Timestamps, metadata           |
+| `<dt>`        | `font-sans text-xs text-text-muted`                  | Data labels in key-value pairs |
+| `<dd>`        | `font-mono text-xs text-text-primary`                | Data values in key-value pairs |
+
+**Rules:**
+
+- Block text (descriptions, body copy) → `<p>`, never `<div>` or `<span>`
+- Titles/headings → `<h1>`-`<h6>` with proper nesting (no skipping levels)
+- Inline emphasis → `<span>`, `<strong>`, `<em>` (only within a `<p>` or heading)
+- Key-value data → `<dl>/<dt>/<dd>`
+- Lists → `<ul>/<li>` or `<ol>/<li>`, never `<div>` repeated
+
 ## Spacing
 
 Base unit: `--spacing: 4px` (Tailwind v4 multiplier).

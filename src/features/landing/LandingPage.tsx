@@ -7,7 +7,7 @@ import { LandingCTA } from './components/LandingCTA';
 import { LandingFooter } from './components/LandingFooter';
 
 /**
- *
+ * Standalone landing page. Forces dark theme, renders hero, features, problem/solution, CTA, and footer.
  */
 export function LandingPage() {
   // Force dark theme — standalone page outside AppShell
@@ -16,7 +16,7 @@ export function LandingPage() {
   }, []);
 
   return (
-    <div className="bg-surface-base text-text-primary min-h-dvh">
+    <main className="bg-surface-base text-text-primary min-h-dvh">
       <LandingHeader />
       <LandingHero />
       <div className="landing-divider" />
@@ -25,6 +25,6 @@ export function LandingPage() {
       <LandingProblemSolution />
       <LandingCTA />
       <LandingFooter />
-    </div>
+    </main>
   );
 }

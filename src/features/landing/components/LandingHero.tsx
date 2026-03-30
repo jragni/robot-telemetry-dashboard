@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 /**
- *
+ * Hero section with headline, value proposition, and dual CTA buttons.
  */
 export function LandingHero() {
   const navigate = useNavigate();
@@ -51,15 +51,11 @@ export function LandingHero() {
         </div>
 
         {/* TODO: Replace with real dashboard screenshot once workspace feature is built */}
-        <div className="hidden md:block" style={{ perspective: '1200px' }}>
-          <div
-            className="w-full bg-surface-primary border border-border rounded-sm shadow-[0_0_40px_var(--color-accent-subtle),0_20px_60px_var(--color-shadow-heavy)] flex items-center justify-center font-mono text-xs text-text-muted"
-            style={{
-              aspectRatio: '16/10',
-              transform: 'rotateY(-6deg) rotateX(2deg)',
-            }}
-          >
-            Dashboard screenshot — pending
+        <div className="hidden md:block landing-hero-perspective">
+          <div className="w-full bg-surface-primary border border-border rounded-sm shadow-[0_0_40px_var(--color-accent-subtle),0_20px_60px_var(--color-shadow-heavy)] flex items-center justify-center font-mono text-xs text-text-muted aspect-video landing-hero-viewport">
+            <p className="font-mono text-xs text-text-muted">
+              Dashboard screenshot — pending
+            </p>
           </div>
         </div>
       </div>

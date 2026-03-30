@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatLastSeen } from '@/utils/formatLastSeen';
-import type { RobotCardProps } from './RobotCard.types';
+import type { RobotCardProps } from '../../types/RobotCard.types';
 import { RobotStatusBadge } from './RobotStatusBadge';
 import { RobotDeleteButton } from './RobotDeleteButton';
 import { ROBOT_COLOR_BORDER, ROBOT_COLOR_TEXT } from './RobotCard.constants';

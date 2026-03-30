@@ -1,4 +1,4 @@
-import type { RobotStatusBadgeProps } from './RobotStatusBadge.types';
+import type { RobotStatusBadgeProps } from '../../types/RobotStatusBadge.types';
 import { STATUS_CONFIG } from './RobotCard.constants';
 
 /**

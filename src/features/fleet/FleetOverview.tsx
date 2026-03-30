@@ -4,7 +4,7 @@ import { FleetEmptyState } from './components/FleetEmptyState';
 import { AddRobotModal } from './components/AddRobotModal';
 
 /**
- *
+ * Fleet page showing robot cards grid or empty state with Add Robot modal.
  */
 export function FleetOverview() {
   const robots = useConnectionStore((s) => s.robots);

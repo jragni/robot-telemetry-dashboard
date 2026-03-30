@@ -32,6 +32,7 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 - Fleet grouping: mission groups or custom tags to organize robots (e.g., "Warehouse A", "Patrol Team 2"), filterable fleet view, group health rollup
 - Customizable panels: add/remove panels from workspace, choose which widgets to display per robot
 - Rearrangeable panels: drag-and-drop reordering of workspace panels, persist layout per robot
+- 404/catch-all route: handle invalid or non-existing routes with a proper not-found page
 
 ## Process
 

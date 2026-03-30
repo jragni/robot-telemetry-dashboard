@@ -1,5 +1,5 @@
 /**
- *
+ * Format a timestamp to relative time string. Returns dash for null.
  */
 export function formatLastSeen(timestamp: number | null): string {
   if (timestamp == null) return '—';
