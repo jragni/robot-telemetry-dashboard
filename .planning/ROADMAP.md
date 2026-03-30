@@ -24,7 +24,6 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 ### Deferred (can add later)
 
 - System Status inline expand (click nodes/topics/services/actions counts to see lists)
-- Pilot View (/pilot/:id with camera HUD overlay)
 - Map View (/map with occupancy grid via Web Worker)
 - Settings page
 - Auth + RBAC (JWT, robot-scoped permissions, separate read/write hooks)
@@ -33,6 +32,9 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 - Customizable panels: add/remove panels from workspace, choose which widgets to display per robot
 - Rearrangeable panels: drag-and-drop reordering of workspace panels, persist layout per robot
 - 404/catch-all route: handle invalid or non-existing routes with a proper not-found page
+- Pilot Mode (/pilot/:id with camera HUD overlay, first-person robot control, LiDAR minimap, velocity controls)
+- Refactor Sidebar to use shadcn Sidebar component (SidebarGroup, SidebarMenu, SidebarMenuItem, collapsible icon variant)
+- Refactor Header breadcrumb to use shadcn Breadcrumb component (clickable path segments, proper nav/ol semantics)
 
 ## Process
 

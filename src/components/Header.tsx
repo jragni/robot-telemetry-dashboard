@@ -12,6 +12,11 @@ function getBreadcrumb(pathname: string): string {
     const id = pathname.split('/')[2] ?? '';
     return `Fleet / ${id}`;
   }
+  if (pathname.startsWith('/pilot/')) {
+    const id = pathname.split('/')[2] ?? '';
+    return `Pilot / ${id}`;
+  }
+  if (pathname === '/pilot') return 'Pilot';
   if (pathname === '/demo') return 'Demo';
   if (pathname === '/map') return 'Map';
   if (pathname === '/settings') return 'Settings';
