@@ -1,7 +1,6 @@
-import type { ReactElement, ComponentType } from 'react';
+import type { ReactElement } from 'react';
 
-export interface ConditionalRenderProps<P = Record<string, unknown>> {
-  readonly Component: ComponentType<P> | ReactElement;
+export interface ConditionalRenderProps {
+  readonly Component: ReactElement;
   readonly shouldRender: boolean;
-  readonly propsToPassDown?: P;
 }
