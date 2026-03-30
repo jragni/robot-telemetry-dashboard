@@ -71,6 +71,7 @@ Stopped at: All work committed (1f831cd). 9 tasks planned for next session.
 7. Ternary extraction rule — multi-line branches become named components
 8. Final audit of src/components/ (non-ui)
 9. Button + Badge a11y contrast audit — WCAG compliance in light/dark for all variants in /dev/components
+10. Header brand link — "Robot Telemetry Dashboard" text links to /fleet in AppShell, links to / on landing page
 
 ### Workspace Design Decisions
 
