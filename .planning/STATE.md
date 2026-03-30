@@ -58,7 +58,19 @@ See: .planning/PROJECT.md
 ## Session Continuity
 
 Last session: 2026-03-30
-Stopped at: AppShell refactored, RobotCard refactored, ConditionalRender deployed, docstrings fixed, conventions enforced. Large uncommitted batch.
+Stopped at: All work committed (1f831cd). 9 tasks planned for next session.
+
+### Next Session Tasks
+
+1. Finalize file structure (RobotCard types — consolidate or keep granular?)
+2. JSDoc format — add @description tag + component name to all docstrings
+3. Fleet card — move trash icon to top-right corner (needs /frontend-design)
+4. Landing page — add roadmap/what's next, docs, rosbridge instructions (needs /frontend-design)
+5. Tour guide — add to deferred roadmap
+6. In-depth panel design for /robot/:id — design all 6 panels (needs /frontend-design)
+7. Ternary extraction rule — multi-line branches become named components
+8. Final audit of src/components/ (non-ui)
+9. Button + Badge a11y contrast audit — WCAG compliance in light/dark for all variants in /dev/components
 
 ### Workspace Design Decisions
 
