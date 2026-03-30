@@ -54,6 +54,13 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 - Refactor Sidebar to use shadcn Sidebar component
 - Refactor Header breadcrumb to use shadcn Breadcrumb component
 - Register ui-ux-pro-max as callable skill
+- First-time user tour guide / onboarding walkthrough (fleet → workspace → controls)
+- Button + Badge a11y contrast audit (WCAG compliance, light/dark, all variants)
+- Ternary extraction rule enforcement (multi-line branches become named components)
+- Header brand link (links to /fleet in AppShell, / on landing page)
+- Landing page: roadmap/what's next section, docs links, rosbridge setup instructions
+- Fleet card: move trash icon to top-right corner of card
+- JSDoc: add @description tag + component/function name to all docstrings
 
 ## Process
 
