@@ -3,7 +3,25 @@ import { ConditionalRender } from '@/components/ConditionalRender';
 import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
 
 /**
- * Renders a reusable panel container with header controls, content area, and optional footer.
+ * @description TopicSelector — Renders the topic name button with dropdown chevron for
+ *  panel topic selection.
+ * @param topicName - The ROS topic name to display.
+ */
+function TopicSelector({ topicName }: { topicName: string }) {
+  return (
+    <button
+      aria-label="Topic options"
+      className="ml-1 flex items-center gap-1 font-mono text-xs text-text-muted hover:text-accent transition-colors cursor-pointer truncate"
+    >
+      {topicName}
+      <ChevronDown className="size-3 shrink-0" />
+    </button>
+  );
+}
+
+/**
+ * @description WorkspacePanel — Renders a reusable panel container with header controls,
+ *  content area, and optional footer.
  */
 export function WorkspacePanel({
   label,
@@ -22,13 +40,7 @@ export function WorkspacePanel({
           {label}
         </span>
         {topicName ? (
-          <button
-            aria-label="Topic options"
-            className="ml-1 flex items-center gap-1 font-mono text-xs text-text-muted hover:text-accent transition-colors cursor-pointer truncate"
-          >
-            {topicName}
-            <ChevronDown className="size-3 shrink-0" />
-          </button>
+          <TopicSelector topicName={topicName} />
         ) : (
           <span className="ml-1" />
         )}

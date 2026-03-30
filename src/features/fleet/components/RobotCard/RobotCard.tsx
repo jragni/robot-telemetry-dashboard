@@ -14,7 +14,8 @@ import { RobotCardGraph } from './RobotCardGraph';
 import { RobotCardActions } from './RobotCardActions';
 
 /**
- * Displays a single robot's connection info, system diagnostics, and navigation actions.
+ * @description RobotCard — Displays a single robot's connection info, system diagnostics,
+ *  and navigation actions.
  * @param robot - Robot connection data to display.
  * @param onRemove - Callback invoked with robot ID on removal confirmation.
  */

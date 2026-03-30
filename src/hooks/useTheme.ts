@@ -10,7 +10,8 @@ function getInitialTheme(): Theme {
 }
 
 /**
- * Manages dark/light theme state with localStorage persistence and system preference sync.
+ * @description useTheme — Manages dark/light theme state with localStorage persistence and
+ *  system preference sync.
  * @returns The current theme, a setter function, and a toggle function.
  */
 export function useTheme() {

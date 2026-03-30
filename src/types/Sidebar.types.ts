@@ -16,3 +16,10 @@ export interface NavItemData {
   readonly status?: ConnectionStatus;
   readonly robotColor?: RobotColor;
 }
+
+export interface NavItemProps {
+  readonly item: NavItemData;
+  readonly active: boolean;
+  readonly collapsed: boolean;
+  readonly onClick: () => void;
+}

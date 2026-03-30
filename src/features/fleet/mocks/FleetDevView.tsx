@@ -40,7 +40,7 @@ const IMU_VIZ_OPTIONS = [
 ] as const;
 
 /**
- * Renders a dropdown selector for IMU visualization variant.
+ * @description ImuVizSelect — Renders a dropdown selector for IMU visualization variant.
  * @param value - The currently selected visualization variant.
  * @param onChange - Callback invoked with the new variant value on selection.
  */
@@ -72,7 +72,8 @@ function ImuVizSelect({
 }
 
 /**
- * Renders the dev component viewer showing all UI primitives, workspace panels, and fleet components.
+ * @description FleetDevView — Renders the dev component viewer showing all UI primitives,
+ *  workspace panels, and fleet components.
  */
 export function FleetDevView() {
   const [imuViz, setImuViz] = useState('attitude-compass');

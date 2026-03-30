@@ -1,5 +1,6 @@
 /**
- * Renders the fixed header with branding and anchor navigation for the landing page.
+ * @description LandingHeader — Renders the fixed header with branding and anchor navigation
+ *  for the landing page.
  */
 export function LandingHeader() {
   return (

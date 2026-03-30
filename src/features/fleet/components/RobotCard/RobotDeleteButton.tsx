@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import type { RobotDeleteButtonProps } from '../../types/RobotDeleteButton.types';
 
 /**
- * Renders a delete button with inline confirmation.
- * Shows trash icon, then "Remove?" with confirm/cancel.
+ * @description RobotDeleteButton — Renders a delete button with inline confirmation.
+ *  Shows trash icon, then "Remove?" with confirm/cancel.
  * @param robotName - Robot name used for aria-labels.
  * @param onRemove - Callback invoked when the user confirms removal.
  */

@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 /**
- * Renders the hero section with headline, value proposition, and dual CTA buttons.
+ * @description LandingHero — Renders the hero section with headline, value proposition,
+ *  and dual CTA buttons.
  */
 export function LandingHero() {
   const navigate = useNavigate();

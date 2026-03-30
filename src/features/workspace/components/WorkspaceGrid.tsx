@@ -6,7 +6,59 @@ import type { PanelConfig } from '../types/WorkspaceGrid.types';
 export type { PanelConfig } from '../types/WorkspaceGrid.types';
 
 /**
- * Manages the workspace grid layout for panels with minimize-to-dock functionality.
+ * @description PanelGrid — Renders the visible panels in a responsive grid layout.
+ * @param panels - Array of visible panel configurations.
+ * @param gridCols - CSS grid-template-columns value.
+ * @param onMinimize - Callback to minimize a panel by id.
+ */
+function PanelGrid({
+  panels,
+  gridCols,
+  onMinimize,
+}: {
+  panels: PanelConfig[];
+  gridCols: string;
+  onMinimize: (id: string) => void;
+}) {
+  return (
+    <div
+      className="flex-1 grid gap-3 min-h-0"
+      style={{ gridTemplateColumns: gridCols }}
+    >
+      {panels.map((panel) => (
+        <WorkspacePanel
+          key={panel.id}
+          label={panel.label}
+          icon={panel.icon}
+          topicName={panel.topicName}
+          footerActions={panel.footerActions}
+          onMinimize={() => {
+            onMinimize(panel.id);
+          }}
+        >
+          {panel.content}
+        </WorkspacePanel>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * @description AllMinimizedMessage — Displays a message when all workspace panels are minimized.
+ */
+function AllMinimizedMessage() {
+  return (
+    <div className="flex-1 flex items-center justify-center">
+      <span className="font-mono text-xs text-text-muted">
+        All panels minimized — click a tab below to restore
+      </span>
+    </div>
+  );
+}
+
+/**
+ * @description WorkspaceGrid — Manages the workspace grid layout for panels with
+ *  minimize-to-dock functionality.
  * @param panels - Array of panel configurations to render in the grid.
  */
 export function WorkspaceGrid({ panels }: { panels: PanelConfig[] }) {
@@ -33,31 +85,13 @@ export function WorkspaceGrid({ panels }: { panels: PanelConfig[] }) {
   return (
     <div className="flex flex-col h-full gap-3 p-4">
       {visiblePanels.length > 0 ? (
-        <div
-          className="flex-1 grid gap-3 min-h-0"
-          style={{ gridTemplateColumns: gridCols }}
-        >
-          {visiblePanels.map((panel) => (
-            <WorkspacePanel
-              key={panel.id}
-              label={panel.label}
-              icon={panel.icon}
-              topicName={panel.topicName}
-              footerActions={panel.footerActions}
-              onMinimize={() => {
-                minimize(panel.id);
-              }}
-            >
-              {panel.content}
-            </WorkspacePanel>
-          ))}
-        </div>
+        <PanelGrid
+          panels={visiblePanels}
+          gridCols={gridCols}
+          onMinimize={minimize}
+        />
       ) : (
-        <div className="flex-1 flex items-center justify-center">
-          <span className="font-mono text-xs text-text-muted">
-            All panels minimized — click a tab below to restore
-          </span>
-        </div>
+        <AllMinimizedMessage />
       )}
 
       <ConditionalRender

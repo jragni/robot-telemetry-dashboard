@@ -3,7 +3,8 @@ import type { RobotCardIdentityProps } from '../../types/RobotCardIdentity.types
 import { RobotStatusBadge } from './RobotStatusBadge';
 
 /**
- * Renders the robot name with colored icon and connection status badge.
+ * @description RobotCardIdentity — Renders the robot name with colored icon and
+ *  connection status badge.
  * @param name - Robot display name.
  * @param status - Current connection status.
  * @param iconColor - Tailwind text color class for the robot icon.

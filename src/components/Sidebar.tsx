@@ -9,26 +9,16 @@ import {
   ROBOT_COLOR_DOT,
   ROBOT_COLOR_TEXT,
 } from './Sidebar.constants';
-import type { NavItemData } from '@/types/Sidebar.types';
+import type { NavItemData, NavItemProps } from '@/types/Sidebar.types';
 
 /**
- * Renders a single navigation item with icon, label, and active state.
+ * @description NavItem — Renders a single navigation item with icon, label, and active state.
  * @param item - Navigation item data (icon, label, path).
  * @param active - Whether the item is currently active.
  * @param collapsed - Whether the sidebar is in collapsed mode.
  * @param onClick - Callback invoked when the item is clicked.
  */
-function NavItem({
-  item,
-  active,
-  collapsed,
-  onClick,
-}: {
-  item: NavItemData;
-  active: boolean;
-  collapsed: boolean;
-  onClick: () => void;
-}) {
+function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
   return (
     <button
       type="button"
@@ -65,7 +55,7 @@ function NavItem({
 }
 
 /**
- * Renders the left sidebar with fleet robot list and system navigation.
+ * @description Sidebar — Renders the left sidebar with fleet robot list and system navigation.
  * @param collapsed - Whether the sidebar is in collapsed mode.
  * @param onToggleCollapse - Callback invoked to toggle sidebar collapse state.
  */
@@ -96,23 +86,32 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
             </div>
           }
         />
-        {robots.length > 0 ? (
-          robots.map((item) => (
-            <NavItem
-              key={item.path}
-              item={item}
-              active={location.pathname === item.path}
-              collapsed={collapsed}
-              onClick={() => {
-                void navigate(item.path);
-              }}
-            />
-          ))
-        ) : !collapsed ? (
-          <div className="px-3 py-2 font-mono text-xs text-text-muted">
-            No robots
-          </div>
-        ) : null}
+        <ConditionalRender
+          shouldRender={robots.length > 0}
+          Component={
+            <>
+              {robots.map((item) => (
+                <NavItem
+                  key={item.path}
+                  item={item}
+                  active={location.pathname === item.path}
+                  collapsed={collapsed}
+                  onClick={() => {
+                    void navigate(item.path);
+                  }}
+                />
+              ))}
+            </>
+          }
+        />
+        <ConditionalRender
+          shouldRender={robots.length === 0 && !collapsed}
+          Component={
+            <div className="px-3 py-2 font-mono text-xs text-text-muted">
+              No robots
+            </div>
+          }
+        />
 
         <ConditionalRender
           shouldRender={!collapsed}

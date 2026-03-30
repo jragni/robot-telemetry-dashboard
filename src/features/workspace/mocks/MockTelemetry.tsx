@@ -1,7 +1,8 @@
 import { useRef, useEffect, useCallback } from 'react';
 
 /**
- * Renders a canvas-based mock telemetry chart with dual-line time-series data.
+ * @description MockTelemetry — Renders a canvas-based mock telemetry chart with dual-line
+ *  time-series data.
  */
 export function MockTelemetry() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

@@ -65,7 +65,8 @@ function panelContent(
 }
 
 /**
- * Builds the panel config array with content and optional footer actions.
+ * @description buildPanels — Builds the panel config array with content and optional
+ *  footer actions.
  * @param name - Robot display name.
  * @param url - Rosbridge URL.
  * @param lastSeen - Last message timestamp.
@@ -90,7 +91,7 @@ function buildPanels(
 }
 
 /**
- * Renders an IMU variant selector dropdown.
+ * @description ImuVizSelect — Renders an IMU variant selector dropdown.
  * @param value - Currently selected variant.
  * @param onChange - Callback when selection changes.
  */
@@ -127,8 +128,8 @@ function ImuVizSelect({
 }
 
 /**
- * Renders the workspace page for a single robot with 6 configurable panels.
- * IMU panel includes a visualization variant selector.
+ * @description RobotWorkspace — Renders the workspace page for a single robot with
+ *  6 configurable panels. IMU panel includes a visualization variant selector.
  */
 export function RobotWorkspace() {
   const { id } = useParams<{ id: string }>();

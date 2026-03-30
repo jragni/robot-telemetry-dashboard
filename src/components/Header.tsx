@@ -5,7 +5,7 @@ import { ConditionalRender } from '@/components/ConditionalRender';
 import type { HeaderProps } from '@/types/Header.types';
 
 /**
- * Derives breadcrumb text from the current route pathname.
+ * @description getBreadcrumb — Derives breadcrumb text from the current route pathname.
  * @param pathname - The current route pathname.
  * @returns The breadcrumb string for display.
  */
@@ -29,7 +29,8 @@ function getBreadcrumb(pathname: string): string {
 }
 
 /**
- * Renders the navigation header with breadcrumb, theme toggle, and mobile hamburger.
+ * @description Header — Renders the navigation header with breadcrumb, theme toggle, and
+ *  mobile hamburger.
  * @param onToggleDrawer - Callback invoked when the mobile hamburger is clicked.
  * @param showHamburger - Whether to show the mobile hamburger button.
  * @param theme - The current theme ('dark' or 'light').

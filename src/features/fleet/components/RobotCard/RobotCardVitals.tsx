@@ -1,7 +1,7 @@
 import { RobotCardDataRow } from './RobotCardDataRow';
 
 /**
- * Renders uptime and battery vitals when the robot is connected.
+ * @description RobotCardVitals — Renders uptime and battery vitals when the robot is connected.
  */
 export function RobotCardVitals() {
   return (

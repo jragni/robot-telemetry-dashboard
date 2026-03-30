@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import type { ComingSoonProps } from '@/types/ComingSoon.types';
 
 /**
- * Renders a placeholder for features under development.
- * Directs users to available features.
+ * @description ComingSoon — Renders a placeholder for features under development.
+ *  Directs users to available features.
  * @param label - The feature name displayed in the heading.
  */
-export function ComingSoon({ label }: { readonly label: string }) {
+export function ComingSoon({ label }: ComingSoonProps) {
   return (
     <section className="flex flex-col items-center justify-center h-full gap-6 px-8">
       <Wrench size={36} className="text-accent opacity-30" />

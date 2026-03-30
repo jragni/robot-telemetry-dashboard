@@ -14,7 +14,7 @@ import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { normalizeRosbridgeUrl } from '../helpers';
 
 /**
- * Renders the add robot dialog with name and rosbridge URL inputs.
+ * @description AddRobotModal — Renders the add robot dialog with name and rosbridge URL inputs.
  */
 export function AddRobotModal() {
   const [open, setOpen] = useState(false);

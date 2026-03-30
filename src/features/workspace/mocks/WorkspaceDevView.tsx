@@ -18,7 +18,8 @@ import { AnimatedMockImu } from './MockImu';
 import { MockSystemStatus } from './MockSystemStatus';
 
 /**
- * Renders the dev preview of the complete workspace layout with all six mock panels.
+ * @description WorkspaceDevView — Renders the dev preview of the complete workspace layout
+ *  with all six mock panels.
  */
 export function WorkspaceDevView() {
   const [mockNow] = useState(() => Date.now());
