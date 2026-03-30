@@ -1,13 +1,18 @@
-/**
- * @description LandingHeader — Renders the fixed header with branding and anchor navigation
+import { Link } from 'react-router-dom';
+
+/** LandingHeader
+ * @description Renders the fixed header with branding and anchor navigation
  *  for the landing page.
  */
 export function LandingHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface-primary border-b border-border shadow-[inset_0_-1px_0_0_var(--color-surface-glow)] h-12 flex items-center px-8">
-      <span className="font-sans text-sm font-semibold text-text-primary tracking-widest uppercase">
+      <Link
+        to="/"
+        className="font-sans text-sm font-semibold text-text-primary tracking-widest uppercase no-underline transition-colors duration-200 hover:text-accent"
+      >
         Robot Telemetry Dashboard
-      </span>
+      </Link>
       <nav aria-label="Landing page navigation" className="ml-auto flex gap-6">
         <a
           href="#features"

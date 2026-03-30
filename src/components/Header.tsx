@@ -1,11 +1,11 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import type { HeaderProps } from '@/types/Header.types';
 
-/**
- * @description getBreadcrumb — Derives breadcrumb text from the current route pathname.
+/** getBreadcrumb
+ * @description Derives breadcrumb text from the current route pathname.
  * @param pathname - The current route pathname.
  * @returns The breadcrumb string for display.
  */
@@ -28,8 +28,8 @@ function getBreadcrumb(pathname: string): string {
   return '';
 }
 
-/**
- * @description Header — Renders the navigation header with breadcrumb, theme toggle, and
+/** Header
+ * @description Renders the navigation header with breadcrumb, theme toggle, and
  *  mobile hamburger.
  * @param onToggleDrawer - Callback invoked when the mobile hamburger is clicked.
  * @param showHamburger - Whether to show the mobile hamburger button.
@@ -62,10 +62,13 @@ export function Header({
         }
       />
 
-      <span className="font-sans text-sm font-semibold text-text-primary tracking-wide whitespace-nowrap">
+      <Link
+        to="/fleet"
+        className="font-sans text-sm font-semibold text-text-primary tracking-wide whitespace-nowrap no-underline transition-colors duration-200 hover:text-accent"
+      >
         <span className="hidden md:inline">Robot Telemetry Dashboard</span>
         <span className="md:hidden">RTD</span>
-      </span>
+      </Link>
 
       <span className="font-mono text-xs text-text-muted whitespace-nowrap overflow-hidden text-ellipsis hidden md:inline">
         {breadcrumb}
