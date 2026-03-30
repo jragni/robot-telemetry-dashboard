@@ -1,7 +1,7 @@
 import type { RobotCardDataRowProps } from '../../types/RobotCardDataRow.types';
 
-/**
- * @description RobotCardDataRow — Renders a single key-value row in a definition list.
+/** RobotCardDataRow
+ * @description Renders a single key-value row in a definition list.
  * @param label - The data label displayed on the left.
  * @param value - The data value displayed on the right.
  * @param valueClassName - Optional override for value text color.

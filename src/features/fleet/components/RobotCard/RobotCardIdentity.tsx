@@ -2,8 +2,8 @@ import { Bot } from 'lucide-react';
 import type { RobotCardIdentityProps } from '../../types/RobotCardIdentity.types';
 import { RobotStatusBadge } from './RobotStatusBadge';
 
-/**
- * @description RobotCardIdentity — Renders the robot name with colored icon and
+/** RobotCardIdentity
+ * @description Renders the robot name with colored icon and
  *  connection status badge.
  * @param name - Robot display name.
  * @param status - Current connection status.

@@ -1,8 +1,8 @@
 import type { RobotCardGraphProps } from '../../types/RobotCardGraph.types';
 import { RobotCardDataRow } from './RobotCardDataRow';
 
-/**
- * @description RobotCardGraph — Renders ROS computation graph counts: nodes, topics,
+/** RobotCardGraph
+ * @description Renders ROS computation graph counts: nodes, topics,
  *  services, and actions.
  * @param isConnected - Whether the robot is currently connected.
  */

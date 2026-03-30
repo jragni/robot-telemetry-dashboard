@@ -11,8 +11,8 @@ import {
 } from './Sidebar.constants';
 import type { NavItemData, NavItemProps } from '@/types/Sidebar.types';
 
-/**
- * @description NavItem — Renders a single navigation item with icon, label, and active state.
+/** NavItem
+ * @description Renders a single navigation item with icon, label, and active state.
  * @param item - Navigation item data (icon, label, path).
  * @param active - Whether the item is currently active.
  * @param collapsed - Whether the sidebar is in collapsed mode.
@@ -54,8 +54,8 @@ function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
   );
 }
 
-/**
- * @description Sidebar — Renders the left sidebar with fleet robot list and system navigation.
+/** Sidebar
+ * @description Renders the left sidebar with fleet robot list and system navigation.
  * @param collapsed - Whether the sidebar is in collapsed mode.
  * @param onToggleCollapse - Callback invoked to toggle sidebar collapse state.
  */

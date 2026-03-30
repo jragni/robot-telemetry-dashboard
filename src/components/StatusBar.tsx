@@ -1,5 +1,5 @@
-/**
- * @description StatusBar — Renders the footer status bar showing connection count and
+/** StatusBar
+ * @description Renders the footer status bar showing connection count and
  *  topic statistics.
  */
 export function StatusBar() {

@@ -1,8 +1,8 @@
 import { OctagonX } from 'lucide-react';
 import { DPAD_BTN } from '../constants';
 
-/**
- * @description MockControls — Renders mock robot controls with E-STOP button, directional
+/** MockControls
+ * @description Renders mock robot controls with E-STOP button, directional
  *  D-pad, and velocity readouts.
  */
 export function MockControls() {

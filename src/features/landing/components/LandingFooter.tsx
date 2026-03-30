@@ -1,5 +1,5 @@
-/**
- * @description LandingFooter — Renders the page footer with branding, navigation links,
+/** LandingFooter
+ * @description Renders the page footer with branding, navigation links,
  *  and copyright.
  */
 export function LandingFooter() {

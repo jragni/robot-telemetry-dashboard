@@ -1,5 +1,5 @@
-/**
- * @description normalizeRosbridgeUrl — Normalizes a user-entered URL to a WebSocket URL.
+/** normalizeRosbridgeUrl
+ * @description Normalizes a user-entered URL to a WebSocket URL.
  *  Prefers wss:// (expects nginx reverse proxy), converts http/https schemes,
  *  and prepends wss:// to bare IP/hostname values.
  * @param input - The raw URL string entered by the user.

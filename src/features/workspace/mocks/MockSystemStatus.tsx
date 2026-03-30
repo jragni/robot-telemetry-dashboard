@@ -1,8 +1,8 @@
 import { formatLastSeen } from '@/utils/formatLastSeen';
 import { ConditionalRender } from '@/components/ConditionalRender';
 
-/**
- * @description MockSystemStatus — Renders mock system status showing connection state, vitals,
+/** MockSystemStatus
+ * @description Renders mock system status showing connection state, vitals,
  *  and ROS computation graph counts.
  * @param name - Robot display name.
  * @param url - Rosbridge WebSocket URL.

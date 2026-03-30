@@ -2,8 +2,8 @@ import { ChevronDown, Maximize2, Minus } from 'lucide-react';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
 
-/**
- * @description TopicSelector — Renders the topic name button with dropdown chevron for
+/** TopicSelector
+ * @description Renders the topic name button with dropdown chevron for
  *  panel topic selection.
  * @param topicName - The ROS topic name to display.
  */
@@ -19,8 +19,8 @@ function TopicSelector({ topicName }: { topicName: string }) {
   );
 }
 
-/**
- * @description WorkspacePanel — Renders a reusable panel container with header controls,
+/** WorkspacePanel
+ * @description Renders a reusable panel container with header controls,
  *  content area, and optional footer.
  */
 export function WorkspacePanel({

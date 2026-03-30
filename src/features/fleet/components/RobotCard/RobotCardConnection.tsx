@@ -2,8 +2,8 @@ import { formatLastSeen } from '@/utils/formatLastSeen';
 import type { RobotCardConnectionProps } from '../../types/RobotCardConnection.types';
 import { RobotCardDataRow } from './RobotCardDataRow';
 
-/**
- * @description RobotCardConnection — Renders connection info rows: rosbridge URL and
+/** RobotCardConnection
+ * @description Renders connection info rows: rosbridge URL and
  *  last seen timestamp.
  * @param url - Rosbridge WebSocket URL.
  * @param lastSeen - Timestamp of last rosbridge message, or null.

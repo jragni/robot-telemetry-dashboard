@@ -3,8 +3,8 @@ import { Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { ComingSoonProps } from '@/types/ComingSoon.types';
 
-/**
- * @description ComingSoon — Renders a placeholder for features under development.
+/** ComingSoon
+ * @description Renders a placeholder for features under development.
  *  Directs users to available features.
  * @param label - The feature name displayed in the heading.
  */

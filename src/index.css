@@ -67,6 +67,25 @@
   --color-shadow: var(--color-shadow);
   --color-shadow-heavy: var(--color-shadow-heavy);
 
+  /* shadcn compatibility — maps shadcn tokens to design system */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
   /* Robot identity colors */
   --color-robot-blue: var(--color-robot-blue);
   --color-robot-cyan: var(--color-robot-cyan);
@@ -132,6 +151,25 @@
   --color-robot-red: oklch(0.58 0.2 25);
   --color-robot-purple: oklch(0.6 0.18 300);
 
+  /* shadcn compatibility — aliased to design system values */
+  --background: oklch(0.09 0.02 260);
+  --foreground: oklch(0.93 0.01 260);
+  --primary: oklch(0.7 0.2 230);
+  --primary-foreground: oklch(0.09 0.02 260);
+  --secondary: oklch(0.16 0.02 260);
+  --secondary-foreground: oklch(0.65 0.02 260);
+  --muted: oklch(0.2 0.02 260);
+  --muted-foreground: oklch(0.57 0.02 260);
+  --accent-foreground: oklch(0.93 0.01 260);
+  --destructive: oklch(0.6 0.24 25);
+  --destructive-foreground: oklch(0.93 0.01 260);
+  --card: oklch(0.12 0.02 260);
+  --card-foreground: oklch(0.93 0.01 260);
+  --popover: oklch(0.12 0.02 260);
+  --popover-foreground: oklch(0.93 0.01 260);
+  --input: oklch(0.25 0.02 260);
+  --ring: oklch(0.7 0.2 230);
+
   /* IMU widget */
   --color-imu-sky: oklch(0.5 0.14 230);
   --color-imu-ground: oklch(0.35 0.1 65);
@@ -187,6 +225,25 @@
   --color-robot-amber: oklch(0.55 0.16 65);
   --color-robot-red: oklch(0.48 0.2 25);
   --color-robot-purple: oklch(0.48 0.18 300);
+
+  /* shadcn compatibility — aliased to design system values */
+  --background: oklch(0.95 0.005 260);
+  --foreground: oklch(0.18 0.02 260);
+  --primary: oklch(0.5 0.22 230);
+  --primary-foreground: oklch(0.95 0.005 260);
+  --secondary: oklch(0.88 0.01 260);
+  --secondary-foreground: oklch(0.4 0.02 260);
+  --muted: oklch(0.84 0.01 260);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent-foreground: oklch(0.18 0.02 260);
+  --destructive: oklch(0.5 0.22 25);
+  --destructive-foreground: oklch(0.95 0.005 260);
+  --card: oklch(0.92 0.008 260);
+  --card-foreground: oklch(0.18 0.02 260);
+  --popover: oklch(0.92 0.008 260);
+  --popover-foreground: oklch(0.18 0.02 260);
+  --input: oklch(0.82 0.01 260);
+  --ring: oklch(0.5 0.22 230);
 
   /* IMU widget */
   --color-imu-sky: oklch(0.65 0.12 230);

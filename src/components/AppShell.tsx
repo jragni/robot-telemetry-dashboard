@@ -8,8 +8,8 @@ import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { StatusBar } from './StatusBar';
 
-/**
- * @description AppShell — Renders the top-level shell layout with sidebar, header,
+/** AppShell
+ * @description Renders the top-level shell layout with sidebar, header,
  *  statusbar, content area, and mobile drawer.
  */
 export function AppShell() {

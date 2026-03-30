@@ -1,7 +1,7 @@
 import { Camera } from 'lucide-react';
 
-/**
- * @description MockCamera — Renders a mock camera feed placeholder with scanline effect
+/** MockCamera
+ * @description Renders a mock camera feed placeholder with scanline effect
  *  and resolution info.
  */
 export function MockCamera() {

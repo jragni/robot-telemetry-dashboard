@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback } from 'react';
 
-/**
- * @description MockLidar — Renders a canvas-based mock LiDAR visualization with range rings
+/** MockLidar
+ * @description Renders a canvas-based mock LiDAR visualization with range rings
  *  and simulated scan points.
  */
 export function MockLidar() {

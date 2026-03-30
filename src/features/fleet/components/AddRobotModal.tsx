@@ -13,8 +13,8 @@ import { Input } from '@/components/ui/input';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { normalizeRosbridgeUrl } from '../helpers';
 
-/**
- * @description AddRobotModal — Renders the add robot dialog with name and rosbridge URL inputs.
+/** AddRobotModal
+ * @description Renders the add robot dialog with name and rosbridge URL inputs.
  */
 export function AddRobotModal() {
   const [open, setOpen] = useState(false);

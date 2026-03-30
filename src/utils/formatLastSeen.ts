@@ -1,5 +1,5 @@
-/**
- * @description formatLastSeen — Formats a timestamp into a relative time string
+/** formatLastSeen
+ * @description Formats a timestamp into a relative time string
  *  (e.g., "just now", "5s ago").
  * @param timestamp - The epoch timestamp in milliseconds, or null.
  * @returns The relative time string, or a dash for null input.

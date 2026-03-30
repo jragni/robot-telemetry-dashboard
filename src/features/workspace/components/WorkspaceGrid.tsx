@@ -5,8 +5,8 @@ import type { PanelConfig } from '../types/WorkspaceGrid.types';
 
 export type { PanelConfig } from '../types/WorkspaceGrid.types';
 
-/**
- * @description PanelGrid — Renders the visible panels in a responsive grid layout.
+/** PanelGrid
+ * @description Renders the visible panels in a responsive grid layout.
  * @param panels - Array of visible panel configurations.
  * @param gridCols - CSS grid-template-columns value.
  * @param onMinimize - Callback to minimize a panel by id.
@@ -43,8 +43,8 @@ function PanelGrid({
   );
 }
 
-/**
- * @description AllMinimizedMessage — Displays a message when all workspace panels are minimized.
+/** AllMinimizedMessage
+ * @description Displays a message when all workspace panels are minimized.
  */
 function AllMinimizedMessage() {
   return (
@@ -56,8 +56,8 @@ function AllMinimizedMessage() {
   );
 }
 
-/**
- * @description WorkspaceGrid — Manages the workspace grid layout for panels with
+/** WorkspaceGrid
+ * @description Manages the workspace grid layout for panels with
  *  minimize-to-dock functionality.
  * @param panels - Array of panel configurations to render in the grid.
  */

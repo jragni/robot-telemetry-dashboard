@@ -9,8 +9,8 @@ const ROBOT_COLORS: readonly RobotColor[] = [
   'purple',
 ];
 
-/**
- * @description assignRobotColor — Assigns a color to a robot deterministically based on
+/** assignRobotColor
+ * @description Assigns a color to a robot deterministically based on
  *  its name hash.
  * @param name - The robot name to hash.
  * @returns The assigned robot color.

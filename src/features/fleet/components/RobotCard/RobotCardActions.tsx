@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import type { RobotCardActionsProps } from '../../types/RobotCardActions.types';
 import { RobotDeleteButton } from './RobotDeleteButton';
 
-/**
- * @description RobotCardActions — Renders the card action row with View, Pilot, and
+/** RobotCardActions
+ * @description Renders the card action row with View, Pilot, and
  *  delete buttons.
  * @param robotId - Robot identifier for navigation links.
  * @param robotName - Robot name for delete button aria-label.

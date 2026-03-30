@@ -5,8 +5,8 @@ interface FleetEmptyStateProps {
   readonly onAddRobot: () => void;
 }
 
-/**
- * @description FleetEmptyState — Renders the empty state displayed when no robots are
+/** FleetEmptyState
+ * @description Renders the empty state displayed when no robots are
  *  configured, with Add Robot CTA.
  * @param onAddRobot - Callback invoked when the Add Robot button is clicked.
  */

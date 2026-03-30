@@ -1,5 +1,5 @@
-/**
- * @description LandingProblemSolution — Renders the two-column problem/solution narrative
+/** LandingProblemSolution
+ * @description Renders the two-column problem/solution narrative
  *  comparing fragmented tools vs unified platform.
  */
 export function LandingProblemSolution() {

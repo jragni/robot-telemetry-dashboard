@@ -4,8 +4,8 @@ import { FleetEmptyState } from './components/FleetEmptyState';
 import { AddRobotModal } from './components/AddRobotModal';
 import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
 
-/**
- * @description FleetEmptyView — Renders the centered empty state when no robots are connected.
+/** FleetEmptyView
+ * @description Renders the centered empty state when no robots are connected.
  */
 function FleetEmptyView() {
   return (
@@ -19,8 +19,8 @@ function FleetEmptyView() {
   );
 }
 
-/**
- * @description FleetRobotGrid — Renders the robot cards in a responsive grid layout.
+/** FleetRobotGrid
+ * @description Renders the robot cards in a responsive grid layout.
  * @param robots - Array of robot connections to display.
  * @param onRemove - Callback to remove a robot by id.
  */
@@ -40,8 +40,8 @@ function FleetRobotGrid({
   );
 }
 
-/**
- * @description FleetOverview — Renders the fleet page showing robot cards grid or empty state
+/** FleetOverview
+ * @description Renders the fleet page showing robot cards grid or empty state
  *  with Add Robot modal.
  */
 export function FleetOverview() {

@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
-/**
- * @description LandingCTA — Renders the call-to-action section with demo button and
+/** LandingCTA
+ * @description Renders the call-to-action section with demo button and
  *  descriptive text.
  */
 export function LandingCTA() {

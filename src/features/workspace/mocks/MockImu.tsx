@@ -227,8 +227,8 @@ function CompassHeading({ yaw }: { yaw: number }) {
 }
 
 /* ── Animated hook ────────────────────────────────────────────── */
-/**
- * @description useAnimatedIMU — Provides smoothly animated IMU values for preview purposes.
+/** useAnimatedIMU
+ * @description Provides smoothly animated IMU values for preview purposes.
  * @returns An object with roll, pitch, and yaw values that update over time.
  */
 export function useAnimatedIMU() {
@@ -253,8 +253,8 @@ export function useAnimatedIMU() {
 }
 
 /* ── Animated wrapper ──────────────────────────────────────────── */
-/**
- * @description AnimatedMockImu — Renders an animated IMU display using useAnimatedIMU
+/** AnimatedMockImu
+ * @description Renders an animated IMU display using useAnimatedIMU
  *  for live preview.
  */
 export function AnimatedMockImu() {
@@ -263,8 +263,8 @@ export function AnimatedMockImu() {
 }
 
 /* ── IMU Content (attitude + compass default) ─────────────────── */
-/**
- * @description MockImu — Renders the IMU display with attitude indicator, compass heading,
+/** MockImu
+ * @description Renders the IMU display with attitude indicator, compass heading,
  *  and numeric readouts.
  * @param roll - Roll angle in degrees.
  * @param pitch - Pitch angle in degrees.

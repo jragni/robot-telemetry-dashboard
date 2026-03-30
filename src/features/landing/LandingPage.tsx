@@ -6,8 +6,8 @@ import { LandingProblemSolution } from './components/LandingProblemSolution';
 import { LandingCTA } from './components/LandingCTA';
 import { LandingFooter } from './components/LandingFooter';
 
-/**
- * @description LandingPage — Renders the standalone landing page with hero, features,
+/** LandingPage
+ * @description Renders the standalone landing page with hero, features,
  *  problem/solution, CTA, and footer sections. Forces dark theme on mount.
  */
 export function LandingPage() {

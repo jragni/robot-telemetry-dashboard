@@ -2,8 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-/**
- * @description NotFound — Renders the 404 page displayed when a route does not exist.
+/** NotFound
+ * @description Renders the 404 page displayed when a route does not exist.
  *  Shows the invalid path and provides recovery navigation.
  */
 export function NotFound() {

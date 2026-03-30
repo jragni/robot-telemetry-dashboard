@@ -14,19 +14,20 @@ See: .planning/PROJECT.md
 
 ## Completed Work
 
-| Feature             | Key Commits          | What was built                                                                                                                        |
-| ------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Scaffolding         | `aa6602e`            | Vite 7, React 19, TypeScript 5.9, ESLint, Prettier, shadcn, roslib smoke test                                                         |
-| Design System       | `1225783`, `7214a9e` | Midnight Operations OKLCH tokens, @theme inline, dark/light themes, Lucide React                                                      |
-| App Shell           | `dc82a8e`            | Collapsible sidebar, header with breadcrumb, statusbar, mobile drawer, dark-first theme                                               |
-| Conventions         | `b99243f`, `51d4d40` | CLAUDE.md rules, DESIGN-SYSTEM.md, FOLDER-STRUCTURE.md, TESTING.md                                                                    |
-| Landing Page        | `371bcbd`            | CX2-inspired hero, features, problem/solution, CTA, footer                                                                            |
-| Fleet + Robot Mgmt  | `baa673f`, `5e7b056` | Connection store, RobotCard (shadcn Card + 6 subcomponents), AddRobotModal, FleetEmptyState, Pilot button, system diagnostics on card |
-| Robot Workspace     | `4539f9a`            | 3×2 grid, WorkspacePanel with dock, 6 mock panels, IMU variant selector, dev views                                                    |
-| Code Quality        | `316d750`–`d007c8b`  | eslint-plugin-boundaries, jsx-a11y, jsdoc, shadcn adoption, WCAG AA, validate-structure.sh                                            |
-| Folder Restructure  | `4539f9a`, `d007c8b` | Eliminated src/shared/, features use components/types/mocks/, @/ import aliases                                                       |
-| Convention Enforce  | `04e1c39`+           | Google JSDoc style, semantic HTML, ConditionalRender, types/ folders, design process hook                                             |
-| Component Refactors | (uncommitted)        | RobotCard → shadcn Card + subcomponents, AppShell a11y fix, NotFound/ComingSoon extracted                                             |
+| Feature             | Key Commits          | What was built                                                                                                                         |
+| ------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Scaffolding         | `aa6602e`            | Vite 7, React 19, TypeScript 5.9, ESLint, Prettier, shadcn, roslib smoke test                                                          |
+| Design System       | `1225783`, `7214a9e` | Midnight Operations OKLCH tokens, @theme inline, dark/light themes, Lucide React                                                       |
+| App Shell           | `dc82a8e`            | Collapsible sidebar, header with breadcrumb, statusbar, mobile drawer, dark-first theme                                                |
+| Conventions         | `b99243f`, `51d4d40` | CLAUDE.md rules, DESIGN-SYSTEM.md, FOLDER-STRUCTURE.md, TESTING.md                                                                     |
+| Landing Page        | `371bcbd`            | CX2-inspired hero, features, problem/solution, CTA, footer                                                                             |
+| Fleet + Robot Mgmt  | `baa673f`, `5e7b056` | Connection store, RobotCard (shadcn Card + 6 subcomponents), AddRobotModal, FleetEmptyState, Pilot button, system diagnostics on card  |
+| Robot Workspace     | `4539f9a`            | 3×2 grid, WorkspacePanel with dock, 6 mock panels, IMU variant selector, dev views                                                     |
+| Code Quality        | `316d750`–`d007c8b`  | eslint-plugin-boundaries, jsx-a11y, jsdoc, shadcn adoption, WCAG AA, validate-structure.sh                                             |
+| Folder Restructure  | `4539f9a`, `d007c8b` | Eliminated src/shared/, features use components/types/mocks/, @/ import aliases                                                        |
+| Convention Enforce  | `04e1c39`+           | Google JSDoc style, semantic HTML, ConditionalRender, types/ folders, design process hook                                              |
+| Component Refactors | (uncommitted)        | RobotCard → shadcn Card + subcomponents, AppShell a11y fix, NotFound/ComingSoon extracted                                              |
+| Polish Sweep        | (uncommitted)        | JSDoc `/** Name` format (42 files), ternary extraction (4 files), inline types extracted, stale TODO removed, CLAUDE.md docstring rule |
 
 ## Decisions (this rebuild)
 
@@ -58,18 +59,18 @@ See: .planning/PROJECT.md
 ## Session Continuity
 
 Last session: 2026-03-30
-Stopped at: All work committed (1f831cd). 9 tasks planned for next session.
+Current: Polish sweep — completing queued cleanup tasks.
 
 ### Next Session Tasks
 
 1. Finalize file structure (RobotCard types — consolidate or keep granular?)
-2. JSDoc format — add @description tag + component name to all docstrings
+2. ~~JSDoc format — add @description tag + component name to all docstrings~~ ✅
 3. Fleet card — move trash icon to top-right corner (needs /frontend-design)
 4. Landing page — add roadmap/what's next, docs, rosbridge instructions (needs /frontend-design)
-5. Tour guide — add to deferred roadmap
+5. ~~Tour guide — add to deferred roadmap~~ ✅ (already in ROADMAP.md)
 6. In-depth panel design for /robot/:id — design all 6 panels (needs /frontend-design)
-7. Ternary extraction rule — multi-line branches become named components
-8. Final audit of src/components/ (non-ui)
+7. ~~Ternary extraction rule — multi-line branches become named components~~ ✅
+8. ~~Final audit of src/components/ (non-ui)~~ ✅
 9. Button + Badge a11y contrast audit — WCAG compliance in light/dark for all variants in /dev/components
 10. Header brand link — "Robot Telemetry Dashboard" text links to /fleet in AppShell, links to / on landing page
 

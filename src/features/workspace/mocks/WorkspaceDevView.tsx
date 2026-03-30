@@ -17,8 +17,8 @@ import { MockTelemetry } from './MockTelemetry';
 import { AnimatedMockImu } from './MockImu';
 import { MockSystemStatus } from './MockSystemStatus';
 
-/**
- * @description WorkspaceDevView — Renders the dev preview of the complete workspace layout
+/** WorkspaceDevView
+ * @description Renders the dev preview of the complete workspace layout
  *  with all six mock panels.
  */
 export function WorkspaceDevView() {

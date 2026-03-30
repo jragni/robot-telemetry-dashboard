@@ -1,8 +1,8 @@
 import type { RobotStatusBadgeProps } from '../../types/RobotStatusBadge.types';
 import { STATUS_CONFIG } from './RobotCard.constants';
 
-/**
- * @description RobotStatusBadge — Renders a triple-redundant status indicator
+/** RobotStatusBadge
+ * @description Renders a triple-redundant status indicator
  *  (color dot + icon + text label).
  * @param status - The connection status to display.
  */

@@ -39,8 +39,8 @@ const IMU_VIZ_OPTIONS = [
   { value: '3d', label: '3D Wireframe' },
 ] as const;
 
-/**
- * @description ImuVizSelect — Renders a dropdown selector for IMU visualization variant.
+/** ImuVizSelect
+ * @description Renders a dropdown selector for IMU visualization variant.
  * @param value - The currently selected visualization variant.
  * @param onChange - Callback invoked with the new variant value on selection.
  */
@@ -71,8 +71,8 @@ function ImuVizSelect({
   );
 }
 
-/**
- * @description FleetDevView — Renders the dev component viewer showing all UI primitives,
+/** FleetDevView
+ * @description Renders the dev component viewer showing all UI primitives,
  *  workspace panels, and fleet components.
  */
 export function FleetDevView() {
