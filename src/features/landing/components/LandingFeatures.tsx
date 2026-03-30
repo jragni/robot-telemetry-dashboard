@@ -2,7 +2,7 @@ import { Activity } from 'lucide-react';
 import { FEATURES, FEATURE_ICONS } from '../constants';
 
 /**
- * Features showcase section displaying four core platform capabilities with icons.
+ * Renders the features showcase section displaying four core platform capabilities with icons.
  */
 export function LandingFeatures() {
   return (

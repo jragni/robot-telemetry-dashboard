@@ -26,5 +26,15 @@ export const WORKSPACE_PANELS = [
   topicName?: string;
 }[];
 
+export type ImuVariant = 'attitude-compass' | 'numbers' | 'attitude' | '3d';
+
+export const IMU_VIZ_OPTIONS: readonly { value: ImuVariant; label: string }[] =
+  [
+    { value: 'attitude-compass', label: 'Attitude + Compass' },
+    { value: 'numbers', label: 'Numbers Only' },
+    { value: 'attitude', label: 'Attitude Indicator' },
+    { value: '3d', label: '3D Wireframe' },
+  ];
+
 export const DPAD_BTN =
   'w-8 h-8 bg-surface-tertiary border border-border rounded-sm font-mono text-xs flex items-center justify-center cursor-pointer hover:border-border-hover transition-colors';

@@ -1,5 +1,5 @@
 /**
- * Two-column problem/solution narrative comparing fragmented tools vs unified platform.
+ * Renders the two-column problem/solution narrative comparing fragmented tools vs unified platform.
  */
 export function LandingProblemSolution() {
   return (

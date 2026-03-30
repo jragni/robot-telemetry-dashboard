@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import type { RobotDeleteButtonProps } from '../../types/RobotDeleteButton.types';
 
 /**
- * Delete button with inline confirmation. Shows trash icon, then "Remove?" with confirm/cancel.
- * @param props.robotName - Robot name used for aria-labels.
- * @param props.onRemove - Callback invoked when the user confirms removal.
+ * Renders a delete button with inline confirmation.
+ * Shows trash icon, then "Remove?" with confirm/cancel.
+ * @param robotName - Robot name used for aria-labels.
+ * @param onRemove - Callback invoked when the user confirms removal.
  */
 export function RobotDeleteButton({
   robotName,

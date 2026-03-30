@@ -10,7 +10,8 @@ function getInitialTheme(): Theme {
 }
 
 /**
- * Hook for managing dark/light theme with localStorage persistence.
+ * Manages dark/light theme state with localStorage persistence and system preference sync.
+ * @returns The current theme, a setter function, and a toggle function.
  */
 export function useTheme() {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme);

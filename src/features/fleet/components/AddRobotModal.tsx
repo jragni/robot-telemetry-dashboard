@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { ConditionalRender } from '@/components/ConditionalRender';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,7 @@ import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { normalizeRosbridgeUrl } from '../helpers';
 
 /**
- * Dialog for adding a new robot with name and rosbridge URL inputs.
+ * Renders the add robot dialog with name and rosbridge URL inputs.
  */
 export function AddRobotModal() {
   const [open, setOpen] = useState(false);
@@ -104,9 +105,12 @@ export function AddRobotModal() {
               className="font-mono text-sm text-text-primary bg-surface-tertiary border-border placeholder:text-text-muted"
             />
           </div>
-          {error && (
-            <p className="font-mono text-xs text-status-critical">{error}</p>
-          )}
+          <ConditionalRender
+            shouldRender={!!error}
+            Component={
+              <p className="font-mono text-xs text-status-critical">{error}</p>
+            }
+          />
           <Button type="submit" className="mt-2 uppercase tracking-wide">
             Add Robot
           </Button>

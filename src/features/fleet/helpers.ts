@@ -1,11 +1,9 @@
 /**
- * Normalize a user-entered URL to a WebSocket URL.
- * Attempts wss:// first (expects nginx reverse proxy).
- * Falls back patterns:
- *   bare IP/hostname → prepend wss://
- *   http:// → ws://
- *   https:// → wss://
- *   ws:// / wss:// → as-is
+ * Normalizes a user-entered URL to a WebSocket URL.
+ * Prefers wss:// (expects nginx reverse proxy), converts http/https schemes,
+ * and prepends wss:// to bare IP/hostname values.
+ * @param input - The raw URL string entered by the user.
+ * @returns The normalized WebSocket URL, or an empty string if input is blank.
  */
 export function normalizeRosbridgeUrl(input: string): string {
   const trimmed = input.trim();

@@ -1,10 +1,13 @@
 import { useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { HeaderProps } from './Header.types';
+import { ConditionalRender } from '@/components/ConditionalRender';
+import type { HeaderProps } from '@/types/Header.types';
 
 /**
  * Derives breadcrumb text from the current route pathname.
+ * @param pathname - The current route pathname.
+ * @returns The breadcrumb string for display.
  */
 function getBreadcrumb(pathname: string): string {
   if (pathname === '/' || pathname === '/fleet') return 'Fleet';
@@ -26,7 +29,11 @@ function getBreadcrumb(pathname: string): string {
 }
 
 /**
- * Navigation header with breadcrumb, theme toggle, and mobile hamburger.
+ * Renders the navigation header with breadcrumb, theme toggle, and mobile hamburger.
+ * @param onToggleDrawer - Callback invoked when the mobile hamburger is clicked.
+ * @param showHamburger - Whether to show the mobile hamburger button.
+ * @param theme - The current theme ('dark' or 'light').
+ * @param onToggleTheme - Callback invoked to toggle the theme.
  */
 export function Header({
   onToggleDrawer,
@@ -39,17 +46,20 @@ export function Header({
 
   return (
     <header className="bg-surface-primary border-b border-border flex items-center px-3 gap-2.5 h-full shadow-[inset_0_-1px_0_0_var(--color-surface-glow)] relative z-10">
-      {showHamburger && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggleDrawer}
-          aria-label="Open navigation"
-          className="w-8 h-8 text-text-secondary border border-border hover:border-border-hover hover:text-text-primary md:hidden"
-        >
-          <Menu size={16} />
-        </Button>
-      )}
+      <ConditionalRender
+        shouldRender={showHamburger}
+        Component={
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleDrawer}
+            aria-label="Open navigation"
+            className="w-8 h-8 text-text-secondary border border-border hover:border-border-hover hover:text-text-primary md:hidden"
+          >
+            <Menu size={16} />
+          </Button>
+        }
+      />
 
       <span className="font-sans text-sm font-semibold text-text-primary tracking-wide whitespace-nowrap">
         <span className="hidden md:inline">Robot Telemetry Dashboard</span>

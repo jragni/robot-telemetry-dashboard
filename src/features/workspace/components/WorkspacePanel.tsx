@@ -1,8 +1,9 @@
 import { ChevronDown, Maximize2, Minus } from 'lucide-react';
+import { ConditionalRender } from '@/components/ConditionalRender';
 import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
 
 /**
- * Reusable panel container with header controls (minimize, fullscreen, topic selector), content area, and optional footer.
+ * Renders a reusable panel container with header controls, content area, and optional footer.
  */
 export function WorkspacePanel({
   label,
@@ -33,15 +34,18 @@ export function WorkspacePanel({
         )}
         <div className="ml-auto flex items-center gap-1 shrink-0">
           {headerActions}
-          {onMinimize && (
-            <button
-              onClick={onMinimize}
-              className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer"
-              aria-label="Minimize panel"
-            >
-              <Minus className="size-3" />
-            </button>
-          )}
+          <ConditionalRender
+            shouldRender={!!onMinimize}
+            Component={
+              <button
+                onClick={onMinimize}
+                className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer"
+                aria-label="Minimize panel"
+              >
+                <Minus className="size-3" />
+              </button>
+            }
+          />
           <button
             className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer"
             aria-label="Fullscreen"
@@ -54,11 +58,14 @@ export function WorkspacePanel({
         <div className="flex-1 flex items-center justify-center p-4">
           {children}
         </div>
-        {footerActions && (
-          <div className="flex justify-end items-center px-3 h-9 shrink-0 border-t border-border">
-            {footerActions}
-          </div>
-        )}
+        <ConditionalRender
+          shouldRender={!!footerActions}
+          Component={
+            <div className="flex justify-end items-center px-3 h-9 shrink-0 border-t border-border">
+              {footerActions}
+            </div>
+          }
+        />
       </div>
     </div>
   );

@@ -3,14 +3,14 @@ import { STATUS_CONFIG } from './RobotCard.constants';
 
 /**
  * Renders a triple-redundant status indicator (color dot + icon + text label).
- * @param props.status - The connection status to display.
+ * @param status - The connection status to display.
  */
 export function RobotStatusBadge({ status }: RobotStatusBadgeProps) {
   const config = STATUS_CONFIG[status];
 
   return (
     <span
-      className={`flex items-center gap-1.5 font-mono text-xs ${config.color}`}
+      className={`flex items-center gap-2 font-mono text-xs ${config.color}`}
     >
       <config.Icon size={12} />
       <span className="font-sans">{config.label}</span>

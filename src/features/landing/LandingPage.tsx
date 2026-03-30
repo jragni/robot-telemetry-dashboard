@@ -7,7 +7,8 @@ import { LandingCTA } from './components/LandingCTA';
 import { LandingFooter } from './components/LandingFooter';
 
 /**
- * Standalone landing page. Forces dark theme, renders hero, features, problem/solution, CTA, and footer.
+ * Renders the standalone landing page with hero, features, problem/solution, CTA, and footer sections.
+ * Forces dark theme on mount.
  */
 export function LandingPage() {
   // Force dark theme — standalone page outside AppShell

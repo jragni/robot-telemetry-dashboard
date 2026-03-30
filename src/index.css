@@ -267,6 +267,11 @@ body {
   }
 }
 
+/* Shell drawer shadow */
+.shell-drawer--open {
+  box-shadow: 4px 0 24px var(--color-shadow-heavy);
+}
+
 /* =================================================================
    Landing page
    ================================================================= */

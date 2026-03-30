@@ -9,7 +9,7 @@ import { WorkspaceDevView } from './features/workspace/mocks/WorkspaceDevView';
 import { RobotWorkspace } from './features/workspace/RobotWorkspace';
 
 /**
- * Root component with React Router, landing page route, and AppShell-wrapped feature routes.
+ * Renders the root application with React Router, landing page route, and AppShell-wrapped feature routes.
  */
 export function App() {
   return (

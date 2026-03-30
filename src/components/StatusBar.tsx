@@ -1,5 +1,5 @@
 /**
- * Footer status bar showing connection count and topic statistics.
+ * Renders the footer status bar showing connection count and topic statistics.
  */
 export function StatusBar() {
   // TODO: Read from connection store once it exists

@@ -13,28 +13,47 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 - [x] **App Shell** — Collapsible sidebar (200px ↔ 48px), header, statusbar, mobile drawer, dark-first theme toggle
 - [x] **Folder Structure** — Feature-domain organization, CLAUDE.md conventions, DESIGN-SYSTEM.md reference
 
-### Features (in order)
+### Features
 
-- [ ] **Landing Page** — Vast-esque hero with live mock dashboard widgets, product copy, CTAs (/fleet, /demo), feature cards. Standalone page outside AppShell, forces dark theme.
-- [ ] **Fleet + Robot Management** — Robot cards grid, Add Robot modal with URL transform, store-driven sidebar, empty state with CTA, no auto-connect on startup.
-- [ ] **Robot Workspace** — 3×2 functional grid at /robot/:id. Top row: Camera, LiDAR, System Status. Bottom row: IMU Attitude (attitude indicator + compass), Controls, Telemetry Chart. Panel headers with controls (collapse, fullscreen, topic selector). No tick marks. Unified empty state when disconnected. System Status shows identity + vitals + computation graph (nodes/topics/services/actions via roslib).
-- [ ] **Controls** — E-Stop (always reachable), velocity D-pad + sliders, lives inside workspace grid, command publishing.
+- [x] **Landing Page** — CX2-inspired hero, features section, problem/solution, CTA, footer. Standalone page outside AppShell, forces dark theme.
+- [x] **Fleet + Robot Management** — Robot cards with shadcn Card, subcomponents (Identity, Connection, Vitals, Graph, Actions, DataRow), Add Robot modal, store-driven sidebar, empty state, robot color system, Pilot button, system diagnostics on card.
+- [ ] **Robot Workspace** — 3×2 functional grid at /robot/:id. Mock panels (Camera, LiDAR, System Status, IMU, Controls, Telemetry). WorkspacePanel with minimize-to-dock. IMU variant selector. Dev view at /dev/workspace. **Needs: real roslib wiring, actual data flowing into panels.**
+- [ ] **Controls** — E-Stop (always reachable), velocity D-pad + sliders, lives inside workspace grid, command publishing. **Mock exists in workspace grid, real implementation pending.**
 - [ ] **Demo Mode** — /demo route with 3-4 mock robots streaming at 10Hz, DEMO MODE badge in header, same components as production, clean mount/unmount lifecycle.
+
+### Cross-Cutting (ongoing)
+
+- [x] **Code Quality Pass 1** — shadcn component adoption, WCAG AA contrast, canonical Tailwind classes, three-tier boundary enforcement
+- [x] **Folder Restructure** — Eliminated src/shared/, features use components/types/mocks/ subfolders, @/ import aliases enforced
+- [x] **Convention Enforcement** — eslint-plugin-jsx-a11y, eslint-plugin-jsdoc, validate-structure.sh, semantic HTML, typography mapping, Google JSDoc style
+- [x] **Component Refactors** — ConditionalRender utility, RobotCard → shadcn Card + 6 subcomponents, AppShell backdrop a11y fix, NotFound/ComingSoon extracted
+
+### Routes Added
+
+- `/fleet` — Fleet overview
+- `/robot/:id` — Robot workspace (functional)
+- `/pilot/:id` — Pilot mode (ComingSoon placeholder)
+- `/demo` — Demo mode (routes to FleetOverview, pending real implementation)
+- `/map` — Map view (ComingSoon placeholder)
+- `/settings` — Settings (ComingSoon placeholder)
+- `/dev/components` — Component reference viewer
+- `/dev/workspace` — Workspace mock preview
+- `*` — 404 NotFound page
 
 ### Deferred (can add later)
 
 - System Status inline expand (click nodes/topics/services/actions counts to see lists)
+- Pilot Mode (/pilot/:id with camera HUD overlay, first-person robot control, LiDAR minimap, velocity controls)
 - Map View (/map with occupancy grid via Web Worker)
 - Settings page
 - Auth + RBAC (JWT, robot-scoped permissions, separate read/write hooks)
-- Responsive: two modes only — Desktop (>=1024px, full dashboard grid) and Mobile (<1024px, simplified UI for tablet + phone). Sidebar toggle to force desktop/mobile view override. Separate mobile and desktop component variants (e.g., `WorkspaceGrid` vs `WorkspaceGridMobile`) to avoid responsive bloat in a single component — shared logic via hooks, divergent UI via separate renders.
-- Fleet grouping: mission groups or custom tags to organize robots (e.g., "Warehouse A", "Patrol Team 2"), filterable fleet view, group health rollup
-- Customizable panels: add/remove panels from workspace, choose which widgets to display per robot
-- Rearrangeable panels: drag-and-drop reordering of workspace panels, persist layout per robot
-- 404/catch-all route: handle invalid or non-existing routes with a proper not-found page
-- Pilot Mode (/pilot/:id with camera HUD overlay, first-person robot control, LiDAR minimap, velocity controls)
-- Refactor Sidebar to use shadcn Sidebar component (SidebarGroup, SidebarMenu, SidebarMenuItem, collapsible icon variant)
-- Refactor Header breadcrumb to use shadcn Breadcrumb component (clickable path segments, proper nav/ol semantics)
+- Responsive: two modes only — Desktop (>=1024px) and Mobile (<1024px). Separate component variants to avoid responsive bloat.
+- Fleet grouping: mission groups or custom tags, filterable fleet view, group health rollup
+- Customizable panels: add/remove panels from workspace per robot
+- Rearrangeable panels: drag-and-drop reordering, persist layout per robot
+- Refactor Sidebar to use shadcn Sidebar component
+- Refactor Header breadcrumb to use shadcn Breadcrumb component
+- Register ui-ux-pro-max as callable skill
 
 ## Process
 
@@ -42,17 +61,22 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 - **Tracking:** This ROADMAP + STATE.md updated after each feature.
 - **Vertical features:** Each feature built end-to-end (types → store → hook → component → tests → verify) before starting the next.
 - **Visual verification:** Playwright MCP screenshot before every checkpoint. Code that compiles is not code that looks right.
+- **Design process:** MUST consult /frontend-design or ui-ux-pro-max BEFORE any visual component work. No exceptions.
 
 ## Progress
 
-| Feature            | Status      | Completed  |
-| ------------------ | ----------- | ---------- |
-| Scaffolding        | ✅ Complete | 2026-03-25 |
-| Design System      | ✅ Complete | 2026-03-28 |
-| App Shell          | ✅ Complete | 2026-03-28 |
-| Folder Structure   | ✅ Complete | 2026-03-28 |
-| Landing Page       | ✅ Complete | 2026-03-29 |
-| Fleet + Robot Mgmt | ✅ Complete | 2026-03-29 |
-| Robot Workspace    | Not started | —          |
-| Controls           | Not started | —          |
-| Demo Mode          | Not started | —          |
+| Feature             | Status         | Completed  |
+| ------------------- | -------------- | ---------- |
+| Scaffolding         | ✅ Complete    | 2026-03-25 |
+| Design System       | ✅ Complete    | 2026-03-28 |
+| App Shell           | ✅ Complete    | 2026-03-28 |
+| Folder Structure    | ✅ Complete    | 2026-03-28 |
+| Landing Page        | ✅ Complete    | 2026-03-29 |
+| Fleet + Robot Mgmt  | ✅ Complete    | 2026-03-29 |
+| Code Quality Pass 1 | ✅ Complete    | 2026-03-29 |
+| Folder Restructure  | ✅ Complete    | 2026-03-29 |
+| Convention Enforce  | ✅ Complete    | 2026-03-30 |
+| Component Refactors | ✅ Complete    | 2026-03-30 |
+| Robot Workspace     | 🔶 In Progress | —          |
+| Controls            | Not started    | —          |
+| Demo Mode           | Not started    | —          |

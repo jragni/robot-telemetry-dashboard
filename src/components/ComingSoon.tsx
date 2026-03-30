@@ -3,8 +3,9 @@ import { Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 /**
- * Placeholder for features under development.
+ * Renders a placeholder for features under development.
  * Directs users to available features.
+ * @param label - The feature name displayed in the heading.
  */
 export function ComingSoon({ label }: { readonly label: string }) {
   return (

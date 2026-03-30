@@ -1,5 +1,7 @@
 /**
- * Format a timestamp to relative time string. Returns dash for null.
+ * Formats a timestamp into a relative time string (e.g., "just now", "5s ago").
+ * @param timestamp - The epoch timestamp in milliseconds, or null.
+ * @returns The relative time string, or a dash for null input.
  */
 export function formatLastSeen(timestamp: number | null): string {
   if (timestamp == null) return '—';

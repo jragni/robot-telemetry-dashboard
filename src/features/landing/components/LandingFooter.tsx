@@ -1,5 +1,5 @@
 /**
- * Page footer with branding, navigation links, and copyright.
+ * Renders the page footer with branding, navigation links, and copyright.
  */
 export function LandingFooter() {
   return (

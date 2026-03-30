@@ -1,6 +1,6 @@
 import { Crosshair, LayoutGrid, Map, Settings } from 'lucide-react';
 import type { RobotColor } from '@/stores/connection/useConnectionStore.types';
-import type { NavItemData } from './Sidebar.types';
+import type { NavItemData } from '@/types/Sidebar.types';
 
 export const SYSTEM_ITEMS: readonly NavItemData[] = [
   { Icon: LayoutGrid, label: 'Fleet', path: '/fleet' },
