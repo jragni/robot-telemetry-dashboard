@@ -100,7 +100,7 @@ export function RobotWorkspace() {
               onRestoreAll={restoreAll}
               maximized={isMaximized('lidar')}
             >
-              <LidarPanel points={[]} rangeMax={5} connected={connected} />
+              <LidarPanel points={[]} rangeMax={10} connected={connected} />
             </WorkspacePanel>
           }
         />

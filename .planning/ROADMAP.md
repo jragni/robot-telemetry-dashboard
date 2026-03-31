@@ -17,8 +17,8 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 
 - [x] **Landing Page** — CX2-inspired hero, features section, problem/solution, CTA, footer. Standalone page outside AppShell, forces dark theme.
 - [x] **Fleet + Robot Management** — Robot cards with shadcn Card, subcomponents (Identity, Connection, Vitals, Graph, Actions, DataRow), Add Robot modal, store-driven sidebar, empty state, robot color system, Pilot button, system diagnostics on card.
-- [ ] **Robot Workspace** — 3×2 functional grid at /robot/:id. Mock panels (Camera, LiDAR, System Status, IMU, Controls, Telemetry). WorkspacePanel with minimize-to-dock. IMU variant selector. Dev view at /dev/workspace. **Needs: real roslib wiring, actual data flowing into panels.**
-- [ ] **Controls** — E-Stop (always reachable), velocity D-pad + sliders, lives inside workspace grid, command publishing. **Mock exists in workspace grid, real implementation pending.**
+- [x] **Robot Workspace** — 3×2 grid at /robot/:id with 6 production panels (Camera, LiDAR, System Status, IMU, Controls, Telemetry). Minimize/maximize with dock bar, dynamic grid reflow. Each panel handles own connected/disconnected state. Canvas 2D for LiDAR/IMU/Telemetry, theme-aware redraw. **Needs: real roslib wiring, WebRTC camera stream.**
+- [x] **Controls** — E-Stop, D-pad (press-and-hold continuous publishing at 10Hz), velocity sliders, disabled when disconnected, keyboard support (arrow keys + Escape). useControlPublisher hook in src/hooks/.
 - [ ] **Demo Mode** — /demo route with 3-4 mock robots streaming at 10Hz, DEMO MODE badge in header, same components as production, clean mount/unmount lifecycle.
 
 ### Cross-Cutting (ongoing)
@@ -70,19 +70,19 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 
 ## Progress
 
-| Feature              | Status      | Completed  |
-| -------------------- | ----------- | ---------- |
-| Scaffolding          | ✅ Complete | 2026-03-25 |
-| Design System        | ✅ Complete | 2026-03-28 |
-| App Shell            | ✅ Complete | 2026-03-28 |
-| Folder Structure     | ✅ Complete | 2026-03-28 |
-| Landing Page         | ✅ Complete | 2026-03-29 |
-| Fleet + Robot Mgmt   | ✅ Complete | 2026-03-29 |
-| Code Quality Pass 1  | ✅ Complete | 2026-03-29 |
-| Folder Restructure   | ✅ Complete | 2026-03-29 |
-| Convention Enforce   | ✅ Complete | 2026-03-30 |
-| Component Refactors  | ✅ Complete | 2026-03-30 |
-| Polish Sweep         | ✅ Complete | 2026-03-30 |
-| Workspace Data Layer | Not started | —          |
-| Controls             | Not started | —          |
-| Demo Mode            | Not started | —          |
+| Feature             | Status      | Completed  |
+| ------------------- | ----------- | ---------- |
+| Scaffolding         | ✅ Complete | 2026-03-25 |
+| Design System       | ✅ Complete | 2026-03-28 |
+| App Shell           | ✅ Complete | 2026-03-28 |
+| Folder Structure    | ✅ Complete | 2026-03-28 |
+| Landing Page        | ✅ Complete | 2026-03-29 |
+| Fleet + Robot Mgmt  | ✅ Complete | 2026-03-29 |
+| Code Quality Pass 1 | ✅ Complete | 2026-03-29 |
+| Folder Restructure  | ✅ Complete | 2026-03-29 |
+| Convention Enforce  | ✅ Complete | 2026-03-30 |
+| Component Refactors | ✅ Complete | 2026-03-30 |
+| Polish Sweep        | ✅ Complete | 2026-03-30 |
+| Workspace Panels    | ✅ Complete | 2026-03-31 |
+| Controls            | ✅ Complete | 2026-03-31 |
+| Demo Mode           | Not started | —          |

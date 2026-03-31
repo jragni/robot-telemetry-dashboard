@@ -75,7 +75,9 @@ export function WorkspacePanel({
           )}
         </div>
       </header>
-      <div className="flex-1 flex items-center justify-center p-4 min-h-0">{children}</div>
+      <div className="flex-1 flex items-center justify-center p-4 min-h-0 overflow-hidden">
+        {children}
+      </div>
     </article>
   );
 }

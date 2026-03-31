@@ -16,11 +16,11 @@ export function AttitudeCompassView({ roll, pitch, yaw }: AttitudeCompassViewPro
 
   return (
     <>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 shrink-0 max-w-full">
         <AttitudeIndicator roll={roll} pitch={pitch} />
         <CompassHeading yaw={yaw} />
       </div>
-      <dl className="flex gap-4 font-mono text-xs">
+      <dl className="flex gap-4 font-mono text-xs flex-wrap justify-center">
         <div className="flex items-center gap-2">
           <dt className="font-sans text-text-secondary">ROLL</dt>
           <dd className="text-text-primary font-semibold tabular-nums w-14 text-right">

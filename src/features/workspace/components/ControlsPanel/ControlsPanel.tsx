@@ -103,7 +103,7 @@ export function ControlsPanel({
   return (
     <div
       ref={panelRef}
-      className="flex flex-col items-center gap-4 w-full px-2 pt-1"
+      className="flex flex-col items-center gap-3 w-full px-2 pt-1 overflow-y-auto"
       tabIndex={0}
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"

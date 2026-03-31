@@ -4,6 +4,12 @@ Tracked improvements, refactors, and follow-ups. Not bugs — those go in git is
 
 ## Open
 
+### ISS-004: Workspace grid responsive breakpoints
+
+**Priority:** High
+**Context:** At 768px viewport width, the 3-column grid is too cramped — panel headers truncate, Controls/IMU content overflows, telemetry axis labels crush together. Need responsive breakpoints: fewer columns at narrower widths (e.g., 2 cols at md, 1 col below that). Currently `overflow-hidden` prevents spillover but panels are unusable at tablet/narrow widths.
+**Follow-up:** Discuss breakpoint strategy before implementing. Needs full visual pipeline.
+
 ### ISS-001: Add fallback prop to ConditionalRender
 
 **Priority:** Low
