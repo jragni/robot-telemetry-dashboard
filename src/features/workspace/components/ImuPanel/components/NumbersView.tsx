@@ -15,18 +15,20 @@ export function NumbersView({ roll, pitch, yaw }: NumbersViewProps) {
   return (
     <dl className="flex flex-col gap-4 w-full px-4">
       <div className="flex items-baseline justify-between">
-        <dt className="font-sans text-xs text-text-muted">ROLL</dt>
-        <dd className="font-mono text-xl tabular-nums text-accent">{formatDegrees(roll)}°</dd>
+        <dt className="font-sans text-xs text-text-secondary">ROLL</dt>
+        <dd className="font-mono text-xl tabular-nums text-text-primary">{formatDegrees(roll)}°</dd>
       </div>
       <div className="border-t border-border border-dashed" />
       <div className="flex items-baseline justify-between">
-        <dt className="font-sans text-xs text-text-muted">PITCH</dt>
-        <dd className="font-mono text-xl tabular-nums text-accent">{formatDegrees(pitch)}°</dd>
+        <dt className="font-sans text-xs text-text-secondary">PITCH</dt>
+        <dd className="font-mono text-xl tabular-nums text-text-primary">
+          {formatDegrees(pitch)}°
+        </dd>
       </div>
       <div className="border-t border-border border-dashed" />
       <div className="flex items-baseline justify-between">
-        <dt className="font-sans text-xs text-text-muted">HDG</dt>
-        <dd className="font-mono text-xl tabular-nums text-accent">
+        <dt className="font-sans text-xs text-text-secondary">HDG</dt>
+        <dd className="font-mono text-xl tabular-nums text-text-primary">
           {String(Math.round(heading))}°
         </dd>
       </div>

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import { normalizeHeading } from '@/utils/normalizeHeading';
 import { useThemeChange } from '@/hooks/useThemeChange';
 import { COMPASS_CARDINALS } from '@/features/workspace/constants';
@@ -20,8 +20,11 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
   });
   const colorsResolved = useRef(false);
 
+  const [themeVersion, setThemeVersion] = useState(0);
+
   useThemeChange(() => {
     colorsResolved.current = false;
+    setThemeVersion((v) => v + 1);
   });
 
   const resolveColors = useCallback(() => {
@@ -101,7 +104,8 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`${headingNormalized.toFixed(0)}°`, cx, cy);
-  }, [yaw, resolveColors]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
+  }, [yaw, resolveColors, themeVersion]);
 
   useEffect(() => {
     draw();

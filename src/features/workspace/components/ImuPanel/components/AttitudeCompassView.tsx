@@ -22,20 +22,20 @@ export function AttitudeCompassView({ roll, pitch, yaw }: AttitudeCompassViewPro
       </div>
       <dl className="flex gap-4 font-mono text-xs">
         <div className="flex items-center gap-2">
-          <dt className="font-sans text-text-muted">ROLL</dt>
-          <dd className="text-accent font-semibold tabular-nums w-14 text-right">
+          <dt className="font-sans text-text-secondary">ROLL</dt>
+          <dd className="text-text-primary font-semibold tabular-nums w-14 text-right">
             {formatDegrees(roll)}°
           </dd>
         </div>
         <div className="flex items-center gap-2">
-          <dt className="font-sans text-text-muted">PITCH</dt>
-          <dd className="text-accent font-semibold tabular-nums w-14 text-right">
+          <dt className="font-sans text-text-secondary">PITCH</dt>
+          <dd className="text-text-primary font-semibold tabular-nums w-14 text-right">
             {formatDegrees(pitch)}°
           </dd>
         </div>
         <div className="flex items-center gap-2">
-          <dt className="font-sans text-text-muted">HDG</dt>
-          <dd className="text-accent font-semibold tabular-nums w-14 text-right">
+          <dt className="font-sans text-text-secondary">HDG</dt>
+          <dd className="text-text-primary font-semibold tabular-nums w-14 text-right">
             {String(Math.round(heading))}°
           </dd>
         </div>

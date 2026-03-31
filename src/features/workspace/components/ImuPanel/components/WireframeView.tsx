@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import { formatDegrees } from '@/utils/formatDegrees';
 import { normalizeHeading } from '@/utils/normalizeHeading';
 import { useThemeChange } from '@/hooks/useThemeChange';
@@ -22,8 +22,11 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
   });
   const colorsResolved = useRef(false);
 
+  const [themeVersion, setThemeVersion] = useState(0);
+
   useThemeChange(() => {
     colorsResolved.current = false;
+    setThemeVersion((v) => v + 1);
   });
 
   const draw = useCallback(() => {
@@ -100,7 +103,8 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     ctx.arc(cx, cy, 2, 0, Math.PI * 2);
     ctx.fillStyle = c.muted;
     ctx.fill();
-  }, [roll, pitch, yaw]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
+  }, [roll, pitch, yaw, themeVersion]);
 
   useEffect(() => {
     draw();
@@ -119,16 +123,16 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
       />
       <dl className="flex gap-4 font-mono text-xs">
         <div className="flex items-center gap-2">
-          <dt className="font-sans text-text-muted">R</dt>
-          <dd className="text-accent tabular-nums">{formatDegrees(roll)}°</dd>
+          <dt className="font-sans text-text-secondary">R</dt>
+          <dd className="text-text-primary tabular-nums">{formatDegrees(roll)}°</dd>
         </div>
         <div className="flex items-center gap-2">
-          <dt className="font-sans text-text-muted">P</dt>
-          <dd className="text-accent tabular-nums">{formatDegrees(pitch)}°</dd>
+          <dt className="font-sans text-text-secondary">P</dt>
+          <dd className="text-text-primary tabular-nums">{formatDegrees(pitch)}°</dd>
         </div>
         <div className="flex items-center gap-2">
-          <dt className="font-sans text-text-muted">Y</dt>
-          <dd className="text-accent tabular-nums">{String(Math.round(heading))}°</dd>
+          <dt className="font-sans text-text-secondary">Y</dt>
+          <dd className="text-text-primary tabular-nums">{String(Math.round(heading))}°</dd>
         </div>
       </dl>
     </div>

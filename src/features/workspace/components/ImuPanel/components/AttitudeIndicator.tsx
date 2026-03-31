@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import { formatDegrees } from '@/utils/formatDegrees';
 import { withAlpha } from '@/utils/withAlpha';
 import { useThemeChange } from '@/hooks/useThemeChange';
@@ -24,8 +24,11 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
   });
   const colorsResolved = useRef(false);
 
+  const [themeVersion, setThemeVersion] = useState(0);
+
   useThemeChange(() => {
     colorsResolved.current = false;
+    setThemeVersion((v) => v + 1);
   });
 
   const resolveColors = useCallback(() => {
@@ -123,7 +126,8 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
     ctx.closePath();
     ctx.fillStyle = c.accent;
     ctx.fill();
-  }, [roll, pitch, resolveColors]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
+  }, [roll, pitch, resolveColors, themeVersion]);
 
   useEffect(() => {
     draw();

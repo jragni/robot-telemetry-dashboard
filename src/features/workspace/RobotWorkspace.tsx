@@ -10,6 +10,7 @@ import { WorkspacePanel } from '@/features/workspace/components/WorkspacePanel';
 import { SystemStatusPanel } from '@/features/workspace/components/SystemStatusPanel';
 import { ControlsPanel } from '@/features/workspace/components/ControlsPanel/ControlsPanel';
 import { ImuPanel } from '@/features/workspace/components/ImuPanel/ImuPanel';
+import { LidarPanel } from '@/features/workspace/components/LidarPanel';
 
 const PANELS = [
   { id: 'camera', label: 'Camera', icon: Camera },
@@ -109,7 +110,7 @@ export function RobotWorkspace() {
               onRestoreAll={restoreAll}
               maximized={isMaximized('lidar')}
             >
-              {null}
+              <LidarPanel points={[]} rangeMax={5} connected={connected} />
             </WorkspacePanel>
           }
         />

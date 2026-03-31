@@ -39,6 +39,36 @@ export const DPAD_BTN =
  */
 export const DPAD_BTN_ACTIVE = 'bg-accent-subtle text-accent border-accent';
 
+/** LIDAR_ZOOM_MIN
+ * @description Minimum zoom level for LiDAR panel.
+ */
+export const LIDAR_ZOOM_MIN = 0.5;
+
+/** LIDAR_ZOOM_MAX
+ * @description Maximum zoom level for LiDAR panel.
+ */
+export const LIDAR_ZOOM_MAX = 4;
+
+/** LIDAR_ZOOM_STEP
+ * @description Zoom increment per mouse wheel tick.
+ */
+export const LIDAR_ZOOM_STEP = 0.2;
+
+/** LIDAR_GRID_LINE_COUNT
+ * @description Number of grid divisions on each axis.
+ */
+export const LIDAR_GRID_LINE_COUNT = 8;
+
+/** LIDAR_POINT_RADIUS
+ * @description Radius in pixels for each LiDAR scan point.
+ */
+export const LIDAR_POINT_RADIUS = 2;
+
+/** LIDAR_ROBOT_SIZE
+ * @description Size in pixels for the robot triangle indicator.
+ */
+export const LIDAR_ROBOT_SIZE = 10;
+
 /** VELOCITY_LIMITS
  * @description Default velocity ranges for robot control. Matches ROS2 cmd_vel
  *  conventions from EPIC/refactor-for-quality-of-life.

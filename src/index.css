@@ -137,7 +137,7 @@
   --color-text-muted: oklch(0.57 0.02 260);
 
   /* Borders */
-  --color-border: oklch(0.25 0.02 260);
+  --color-border: oklch(0.3 0.02 260);
   --color-border-hover: oklch(0.7 0.2 230);
 
   /* Effects */
@@ -208,11 +208,11 @@
 
   /* Text */
   --color-text-primary: oklch(0.18 0.02 260);
-  --color-text-secondary: oklch(0.4 0.02 260);
-  --color-text-muted: oklch(0.5 0.02 260);
+  --color-text-secondary: oklch(0.38 0.02 260);
+  --color-text-muted: oklch(0.45 0.02 260);
 
   /* Borders */
-  --color-border: oklch(0.82 0.01 260);
+  --color-border: oklch(0.75 0.01 260);
   --color-border-hover: oklch(0.5 0.22 230);
 
   /* Effects */
@@ -371,12 +371,7 @@ body {
   left: 0;
   right: 0;
   height: 120px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    var(--color-accent-subtle),
-    transparent
-  );
+  background: linear-gradient(to bottom, transparent, var(--color-accent-subtle), transparent);
   opacity: 0.3;
   pointer-events: none;
   z-index: 1;
