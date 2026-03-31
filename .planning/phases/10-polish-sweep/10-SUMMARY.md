@@ -1,6 +1,7 @@
 # Phase 10: Polish Sweep
 
-**Status:** In Progress
+**Status:** Complete
+**Completed:** 2026-03-30
 **Started:** 2026-03-30
 **Branch:** EPIC/v4-rebuild
 **Key commits:** `a2442c4` (main batch), `8fe18d9` (header link), `356ddfb` (JSDoc agent)
@@ -28,12 +29,10 @@ Complete queued cleanup tasks from previous sessions. Code quality, convention e
 
 - [x] Fleet card actions redesign — two-row layout, AlertDialog delete, Connect/Disconnect toggle, 44px touch targets, ghost Pilot button
 
-### Remaining
+### Deferred to Issues / Next Phase
 
-- [ ] Finalize RobotCard types (consolidate or keep granular?)
-- [ ] Landing page — add roadmap/what's next, docs, rosbridge instructions (needs /frontend-design)
-- [ ] In-depth panel design for /robot/:id — design all 6 panels (needs /frontend-design)
-- [ ] Convention audit — folder structure, coding style, CLAUDE.md rules enforced across all features
+- Landing page additions → ISS-003
+- Panel design → Phase 11 (workspace data layer)
 
 ## Key decisions
 

@@ -21,6 +21,12 @@ Tracked improvements, refactors, and follow-ups. Not bugs — those go in git is
 - Consider: is a persistent statusbar even the right pattern? Could this info live in view headers instead?
   **Follow-up:** Discuss design before implementing — needs `/frontend-design` + `ui-ux-pro-max` pipeline.
 
+### ISS-003: Landing page — roadmap, docs, rosbridge instructions
+
+**Priority:** Low
+**Context:** Landing page needs additional content sections: a roadmap/what's next section, documentation links, and rosbridge setup instructions for new users. Currently the page has hero, features, problem/solution, CTA, and footer — but no onboarding guidance.
+**Follow-up:** Needs full visual pipeline (discuss → ui-ux-pro-max → approve → /frontend-design → verify).
+
 ## Closed
 
 (none)

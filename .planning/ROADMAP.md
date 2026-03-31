@@ -70,18 +70,19 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 
 ## Progress
 
-| Feature             | Status         | Completed  |
-| ------------------- | -------------- | ---------- |
-| Scaffolding         | ✅ Complete    | 2026-03-25 |
-| Design System       | ✅ Complete    | 2026-03-28 |
-| App Shell           | ✅ Complete    | 2026-03-28 |
-| Folder Structure    | ✅ Complete    | 2026-03-28 |
-| Landing Page        | ✅ Complete    | 2026-03-29 |
-| Fleet + Robot Mgmt  | ✅ Complete    | 2026-03-29 |
-| Code Quality Pass 1 | ✅ Complete    | 2026-03-29 |
-| Folder Restructure  | ✅ Complete    | 2026-03-29 |
-| Convention Enforce  | ✅ Complete    | 2026-03-30 |
-| Component Refactors | ✅ Complete    | 2026-03-30 |
-| Robot Workspace     | 🔶 In Progress | —          |
-| Controls            | Not started    | —          |
-| Demo Mode           | Not started    | —          |
+| Feature              | Status      | Completed  |
+| -------------------- | ----------- | ---------- |
+| Scaffolding          | ✅ Complete | 2026-03-25 |
+| Design System        | ✅ Complete | 2026-03-28 |
+| App Shell            | ✅ Complete | 2026-03-28 |
+| Folder Structure     | ✅ Complete | 2026-03-28 |
+| Landing Page         | ✅ Complete | 2026-03-29 |
+| Fleet + Robot Mgmt   | ✅ Complete | 2026-03-29 |
+| Code Quality Pass 1  | ✅ Complete | 2026-03-29 |
+| Folder Restructure   | ✅ Complete | 2026-03-29 |
+| Convention Enforce   | ✅ Complete | 2026-03-30 |
+| Component Refactors  | ✅ Complete | 2026-03-30 |
+| Polish Sweep         | ✅ Complete | 2026-03-30 |
+| Workspace Data Layer | Not started | —          |
+| Controls             | Not started | —          |
+| Demo Mode            | Not started | —          |

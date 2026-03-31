@@ -59,27 +59,21 @@ See: .planning/PROJECT.md
 ## Session Continuity
 
 Last session: 2026-03-30
-Current: Phase 10 polish sweep — fleet card actions in progress.
+Current: Phase 10 complete. Phase 11 (workspace data layer) next.
 
-### Completed This Session
+### Phase 10 Complete
 
-- ✅ JSDoc `/** ComponentName` format (42 files)
-- ✅ Ternary extraction (4 files)
-- ✅ Components audit (inline types extracted, stale TODO removed)
-- ✅ Button + Badge a11y (shadcn token mapping, hover/disabled improvements)
-- ✅ Header brand link (→ /fleet in app, → / on landing)
-- ✅ tsconfig.json fix for shadcn CLI path resolution
-- ✅ .planning cleanup (removed ISSUES.md, METRICS.md, config.json, stale v3 spec)
-- ✅ REQUIREMENTS.md traceability updated
-- ✅ Two-step visual gate rule added to CLAUDE.md
+Convention audit, fleet card redesign, folder restructuring, shadcn enforcement, process improvements. See `phases/10-polish-sweep/10-SUMMARY.md` for full details.
 
-- ✅ Fleet card actions redesign (two-row layout, AlertDialog delete, Connect/Disconnect, touch targets)
+### Next: Phase 11 — Workspace Data Layer + Panel Components
 
-### Remaining
+Replace mock scaffolding with production panel components backed by shared mock simulation:
 
-- [ ] Finalize RobotCard types (consolidate or keep granular?)
-- [ ] Landing page — add roadmap/what's next, docs, rosbridge instructions (needs /frontend-design)
-- [ ] In-depth panel design for /robot/:id — design all 6 panels (needs /frontend-design)
+1. Define panel data interfaces
+2. Build production panel components (Camera, LiDAR, IMU, Controls, Status, Telemetry)
+3. Build shared mock environment (walls, obstacles, robot position driven by controls)
+4. Wire mock → components
+5. Each card designed through visual pipeline (discuss → ui-ux-pro-max → approve → /frontend-design → verify)
 
 ### Workspace Design Decisions
 
