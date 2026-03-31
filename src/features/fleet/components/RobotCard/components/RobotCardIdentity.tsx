@@ -1,5 +1,5 @@
 import { Bot } from 'lucide-react';
-import type { RobotCardIdentityProps } from '@/features/fleet/types/RobotCardIdentity.types';
+import type { RobotCardIdentityProps } from '../types/RobotCardIdentity.types';
 import { RobotStatusBadge } from './RobotStatusBadge';
 
 /** RobotCardIdentity

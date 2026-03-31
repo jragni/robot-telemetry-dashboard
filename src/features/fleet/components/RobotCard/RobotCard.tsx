@@ -5,13 +5,13 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { ConditionalRender } from '@/components/ConditionalRender';
-import type { RobotCardProps } from '@/features/fleet/types/RobotCard.types';
-import { ROBOT_COLOR_BORDER, ROBOT_COLOR_TEXT } from './RobotCard.constants';
-import { RobotCardIdentity } from './RobotCardIdentity';
-import { RobotCardConnection } from './RobotCardConnection';
-import { RobotCardVitals } from './RobotCardVitals';
-import { RobotCardGraph } from './RobotCardGraph';
-import { RobotCardActions } from './RobotCardActions';
+import type { RobotCardProps } from './types/RobotCard.types';
+import { ROBOT_COLOR_BORDER, ROBOT_COLOR_TEXT } from './constants';
+import { RobotCardIdentity } from './components/RobotCardIdentity';
+import { RobotCardConnection } from './components/RobotCardConnection';
+import { RobotCardVitals } from './components/RobotCardVitals';
+import { RobotCardGraph } from './components/RobotCardGraph';
+import { RobotCardActions } from './components/RobotCardActions';
 
 /** RobotCard
  * @description Displays a single robot's connection info, system diagnostics,

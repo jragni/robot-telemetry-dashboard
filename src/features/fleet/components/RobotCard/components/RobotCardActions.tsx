@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Crosshair, Unplug, PlugZap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { RobotCardActionsProps } from '@/features/fleet/types/RobotCardActions.types';
+import type { RobotCardActionsProps } from '../types/RobotCardActions.types';
 import { RobotDeleteButton } from './RobotDeleteButton';
 
 /** RobotCardActions

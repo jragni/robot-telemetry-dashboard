@@ -1,5 +1,5 @@
-import type { RobotStatusBadgeProps } from '@/features/fleet/types/RobotStatusBadge.types';
-import { STATUS_CONFIG } from './RobotCard.constants';
+import type { RobotStatusBadgeProps } from '../types/RobotStatusBadge.types';
+import { STATUS_CONFIG } from '../constants';
 
 /** RobotStatusBadge
  * @description Renders a triple-redundant status indicator

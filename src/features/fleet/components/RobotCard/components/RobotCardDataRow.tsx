@@ -1,4 +1,4 @@
-import type { RobotCardDataRowProps } from '@/features/fleet/types/RobotCardDataRow.types';
+import type { RobotCardDataRowProps } from '../types/RobotCardDataRow.types';
 
 /** RobotCardDataRow
  * @description Renders a single key-value row in a definition list.
