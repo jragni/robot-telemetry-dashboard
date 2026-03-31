@@ -114,7 +114,7 @@ export function FleetDevView() {
           Component Viewer
         </h2>
         <nav className="flex gap-3 mb-4 font-mono text-xs">
-          <span className="text-accent border-b border-accent pb-1">
+          <span className="font-sans text-accent border-b border-accent pb-1">
             Components
           </span>
           <Link
@@ -194,19 +194,19 @@ export function FleetDevView() {
         <div className="flex flex-wrap gap-6 items-center font-mono text-xs">
           <div className="flex items-center gap-2">
             <span className="size-2 rounded-full bg-status-nominal animate-pulse" />
-            <span className="text-status-nominal">NOMINAL</span>
+            <span className="font-mono text-status-nominal">NOMINAL</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="size-2 rounded-full bg-status-caution" />
-            <span className="text-status-caution">CAUTION</span>
+            <span className="font-mono text-status-caution">CAUTION</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="size-2 rounded-full bg-status-critical" />
-            <span className="text-status-critical">CRITICAL</span>
+            <span className="font-mono text-status-critical">CRITICAL</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="size-2 rounded-full bg-status-offline" />
-            <span className="text-status-offline">OFFLINE</span>
+            <span className="font-mono text-status-offline">OFFLINE</span>
           </div>
         </div>
       </div>
