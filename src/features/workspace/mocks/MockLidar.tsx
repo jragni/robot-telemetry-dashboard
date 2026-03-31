@@ -20,12 +20,13 @@ export function MockLidar() {
 
     ctx.clearRect(0, 0, size, size);
 
+    const styles = getComputedStyle(canvas);
     const borderColor =
-      getComputedStyle(canvas).getPropertyValue('--color-border') ||
-      'rgba(255,255,255,0.15)';
+      styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
     const accentColor =
-      getComputedStyle(canvas).getPropertyValue('--color-accent') ||
-      'oklch(0.70 0.20 230)';
+      styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
+    const textPrimary =
+      styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
 
     // Range rings
     for (let r = maxR / 3; r <= maxR; r += maxR / 3) {
@@ -69,7 +70,7 @@ export function MockLidar() {
     ctx.lineTo(cx - 4, cy + 3);
     ctx.lineTo(cx + 4, cy + 3);
     ctx.closePath();
-    ctx.fillStyle = 'oklch(0.93 0.01 260)';
+    ctx.fillStyle = textPrimary;
     ctx.fill();
   }, []);
 

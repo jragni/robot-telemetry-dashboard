@@ -17,12 +17,14 @@ export function MockTelemetry() {
     const h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
+    const styles = getComputedStyle(canvas);
     const accentColor =
-      getComputedStyle(canvas).getPropertyValue('--color-accent') ||
-      'oklch(0.70 0.20 230)';
+      styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
     const borderColor =
-      getComputedStyle(canvas).getPropertyValue('--color-border') ||
-      'rgba(255,255,255,0.15)';
+      styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
+    const nominalColor =
+      styles.getPropertyValue('--color-status-nominal') ||
+      'oklch(0.70 0.19 155)';
 
     // Grid lines
     ctx.strokeStyle = borderColor;
@@ -54,7 +56,7 @@ export function MockTelemetry() {
 
     // Second line (angular.z)
     ctx.beginPath();
-    ctx.strokeStyle = 'oklch(0.70 0.19 155)';
+    ctx.strokeStyle = nominalColor;
     ctx.lineWidth = 1;
     for (let x = 0; x < w; x++) {
       const t = x / w;

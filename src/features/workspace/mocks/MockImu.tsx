@@ -1,5 +1,21 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 
+/**
+ * Appends an alpha channel to a resolved CSS color string.
+ * Handles oklch(...) by inserting `/ alpha` before the closing paren,
+ * and falls back to wrapping in `color-mix()` for other formats.
+ * @param color - The resolved CSS color value.
+ * @param alpha - Alpha value between 0 and 1.
+ * @returns A CSS color string with alpha applied.
+ */
+function withAlpha(color: string, alpha: number): string {
+  const trimmed = color.trim();
+  if (trimmed.startsWith('oklch(')) {
+    return trimmed.replace(')', ` / ${String(alpha)})`);
+  }
+  return `color-mix(in oklch, ${trimmed} ${String(Math.round(alpha * 100))}%, transparent)`;
+}
+
 /* ── Stable number display ────────────────────────────────────── */
 function StableValue({
   value,
@@ -50,11 +66,24 @@ function AttitudeIndicator({ roll, pitch }: { roll: number; pitch: number }) {
 
     ctx.clearRect(0, 0, size, size);
 
+    const styles = getComputedStyle(canvas);
+    const borderColor =
+      styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
+    const accentColor =
+      styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
+    const imuSky =
+      styles.getPropertyValue('--color-imu-sky') || 'oklch(0.5 0.14 230)';
+    const imuGround =
+      styles.getPropertyValue('--color-imu-ground') || 'oklch(0.35 0.1 65)';
+    const textPrimary =
+      styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
+    const textSecondary =
+      styles.getPropertyValue('--color-text-secondary') ||
+      'oklch(0.65 0.02 260)';
+
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.strokeStyle =
-      getComputedStyle(canvas).getPropertyValue('--color-border') ||
-      'rgba(255,255,255,0.15)';
+    ctx.strokeStyle = borderColor;
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -66,17 +95,13 @@ function AttitudeIndicator({ roll, pitch }: { roll: number; pitch: number }) {
 
     ctx.beginPath();
     ctx.arc(0, 0, r - 2, Math.PI, 0);
-    ctx.fillStyle = 'oklch(0.35 0.08 230 / 0.6)';
+    ctx.fillStyle = withAlpha(imuSky, 0.6);
     ctx.fill();
 
     ctx.beginPath();
     ctx.arc(0, 0, r - 2, 0, Math.PI);
-    ctx.fillStyle = 'oklch(0.20 0.04 260 / 0.8)';
+    ctx.fillStyle = withAlpha(imuGround, 0.8);
     ctx.fill();
-
-    const accentColor =
-      getComputedStyle(canvas).getPropertyValue('--color-accent') ||
-      'oklch(0.70 0.20 230)';
     ctx.beginPath();
     ctx.moveTo(-(r - 2), pitchOffset);
     ctx.lineTo(r - 2, pitchOffset);
@@ -91,7 +116,7 @@ function AttitudeIndicator({ roll, pitch }: { roll: number; pitch: number }) {
     ctx.lineTo(8, 0);
     ctx.moveTo(0, -3);
     ctx.lineTo(0, 3);
-    ctx.strokeStyle = 'oklch(0.93 0.01 260)';
+    ctx.strokeStyle = textPrimary;
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
@@ -101,7 +126,7 @@ function AttitudeIndicator({ roll, pitch }: { roll: number; pitch: number }) {
       ctx.beginPath();
       ctx.moveTo(-halfW, y);
       ctx.lineTo(halfW, y);
-      ctx.strokeStyle = 'oklch(0.65 0.02 260 / 0.5)';
+      ctx.strokeStyle = withAlpha(textSecondary, 0.5);
       ctx.lineWidth = 0.5;
       ctx.stroke();
     }
@@ -143,14 +168,15 @@ function CompassHeading({ yaw }: { yaw: number }) {
 
     ctx.clearRect(0, 0, size, size);
 
+    const styles = getComputedStyle(canvas);
     const accentColor =
-      getComputedStyle(canvas).getPropertyValue('--color-accent') ||
-      'oklch(0.70 0.20 230)';
+      styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
     const borderColor =
-      getComputedStyle(canvas).getPropertyValue('--color-border') ||
-      'rgba(255,255,255,0.15)';
-    const mutedColor = 'oklch(0.57 0.02 260)';
-    const primaryColor = 'oklch(0.93 0.01 260)';
+      styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
+    const mutedColor =
+      styles.getPropertyValue('--color-text-muted') || 'oklch(0.57 0.02 260)';
+    const primaryColor =
+      styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
 
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
