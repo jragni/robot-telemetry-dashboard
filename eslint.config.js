@@ -15,6 +15,7 @@ export default tseslint.config(
       '.planning/',
       'e2e/',
       'eslint.config.js',
+      'src/components/ui/',
     ],
   },
   eslint.configs.recommended,
