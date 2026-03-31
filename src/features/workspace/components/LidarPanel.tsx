@@ -32,6 +32,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
   const colorsRef = useRef({
     border: 'rgba(255,255,255,0.15)',
     textPrimary: 'oklch(0.93 0.01 260)',
+    textSecondary: 'oklch(0.65 0.02 260)',
     textMuted: 'oklch(0.57 0.02 260)',
     accent: 'oklch(0.70 0.20 230)',
     critical: 'oklch(0.60 0.24 25)',
@@ -69,6 +70,8 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     colorsRef.current = {
       border: styles.getPropertyValue('--color-border') || colorsRef.current.border,
       textPrimary: styles.getPropertyValue('--color-text-primary') || colorsRef.current.textPrimary,
+      textSecondary:
+        styles.getPropertyValue('--color-text-secondary') || colorsRef.current.textSecondary,
       textMuted: styles.getPropertyValue('--color-text-muted') || colorsRef.current.textMuted,
       accent: styles.getPropertyValue('--color-accent') || colorsRef.current.accent,
       critical: styles.getPropertyValue('--color-status-critical') || colorsRef.current.critical,

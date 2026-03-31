@@ -77,3 +77,59 @@ export const VELOCITY_LIMITS = {
   linear: { min: 0, max: 1.0, default: 0.15 },
   angular: { min: 0, max: 2.0, default: 0.39 },
 } as const;
+
+import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
+
+/** WORKSPACE_PANEL_META
+ * @description Panel metadata for dock bar restore buttons and minimize hook.
+ */
+
+export const WORKSPACE_PANEL_META = [
+  { id: 'camera', label: 'Camera', icon: Camera },
+  { id: 'lidar', label: 'LiDAR', icon: Radar },
+  { id: 'status', label: 'Status', icon: Shield },
+  { id: 'imu', label: 'IMU', icon: Compass },
+  { id: 'controls', label: 'Controls', icon: Gamepad2 },
+  { id: 'telemetry', label: 'Telemetry', icon: Activity },
+] as const;
+
+/** WORKSPACE_PANEL_IDS
+ * @description Array of all panel IDs for minimize/maximize hook.
+ */
+export const WORKSPACE_PANEL_IDS = WORKSPACE_PANEL_META.map((p) => p.id);
+
+/** GRID_COL_MAP
+ * @description Maps visible panel count to Tailwind grid-cols class.
+ *  Static class names to survive Tailwind purging.
+ */
+export const GRID_COL_MAP: Record<number, string> = {
+  0: 'grid-cols-1',
+  1: 'grid-cols-1',
+  2: 'grid-cols-2',
+  3: 'grid-cols-3',
+};
+
+/** TELEMETRY_GRID_LINES_H
+ * @description Number of horizontal grid lines in the telemetry chart.
+ */
+export const TELEMETRY_GRID_LINES_H = 4;
+
+/** TELEMETRY_GRID_LINES_V
+ * @description Number of vertical grid lines in the telemetry chart.
+ */
+export const TELEMETRY_GRID_LINES_V = 6;
+
+/** TELEMETRY_LINE_WIDTH
+ * @description Stroke width for telemetry series lines.
+ */
+export const TELEMETRY_LINE_WIDTH = 1.5;
+
+/** TELEMETRY_AXIS_PADDING
+ * @description Left padding in pixels for value axis labels.
+ */
+export const TELEMETRY_AXIS_PADDING = 40;
+
+/** TELEMETRY_BOTTOM_PADDING
+ * @description Bottom padding in pixels for time axis labels.
+ */
+export const TELEMETRY_BOTTOM_PADDING = 20;

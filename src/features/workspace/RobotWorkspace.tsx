@@ -4,31 +4,19 @@ import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
-import { VELOCITY_LIMITS } from '@/features/workspace/constants';
-import { useMinimizedPanels } from '@/features/workspace/hooks/useMinimizedPanels';
-import { WorkspacePanel } from '@/features/workspace/components/WorkspacePanel';
-import { SystemStatusPanel } from '@/features/workspace/components/SystemStatusPanel';
-import { ControlsPanel } from '@/features/workspace/components/ControlsPanel/ControlsPanel';
-import { ImuPanel } from '@/features/workspace/components/ImuPanel/ImuPanel';
-import { LidarPanel } from '@/features/workspace/components/LidarPanel';
-
-const PANELS = [
-  { id: 'camera', label: 'Camera', icon: Camera },
-  { id: 'lidar', label: 'LiDAR', icon: Radar },
-  { id: 'status', label: 'Status', icon: Shield },
-  { id: 'imu', label: 'IMU', icon: Compass },
-  { id: 'controls', label: 'Controls', icon: Gamepad2 },
-  { id: 'telemetry', label: 'Telemetry', icon: Activity },
-] as const;
-
-const PANEL_IDS = PANELS.map((p) => p.id);
-
-const GRID_COL_MAP: Record<number, string> = {
-  0: 'grid-cols-1',
-  1: 'grid-cols-1',
-  2: 'grid-cols-2',
-  3: 'grid-cols-3',
-};
+import { useMinimizedPanels } from './hooks/useMinimizedPanels';
+import { WorkspacePanel } from './components/WorkspacePanel';
+import { SystemStatusPanel } from './components/SystemStatusPanel';
+import { ControlsPanel } from './components/ControlsPanel/ControlsPanel';
+import { ImuPanel } from './components/ImuPanel/ImuPanel';
+import { LidarPanel } from './components/LidarPanel';
+import { TelemetryPanel } from './components/TelemetryPanel';
+import {
+  VELOCITY_LIMITS,
+  WORKSPACE_PANEL_META,
+  WORKSPACE_PANEL_IDS,
+  GRID_COL_MAP,
+} from './constants';
 
 /** RobotWorkspace
  * @description Renders the workspace page for a single robot with a 3x2 grid
@@ -48,7 +36,7 @@ export function RobotWorkspace() {
     restoreAll,
     minimizedIds,
     maximizedId,
-  } = useMinimizedPanels(PANEL_IDS);
+  } = useMinimizedPanels(WORKSPACE_PANEL_IDS);
 
   if (!robot) {
     return (
@@ -65,7 +53,7 @@ export function RobotWorkspace() {
   }
 
   const connected = robot.status === 'connected';
-  const visibleCount = PANEL_IDS.length - minimizedIds.size;
+  const visibleCount = WORKSPACE_PANEL_IDS.length - minimizedIds.size;
   const gridCols = maximizedId
     ? 'grid-cols-1'
     : (GRID_COL_MAP[Math.min(visibleCount, 3)] ?? 'grid-cols-3');
@@ -213,7 +201,7 @@ export function RobotWorkspace() {
               onRestoreAll={restoreAll}
               maximized={isMaximized('telemetry')}
             >
-              {null}
+              <TelemetryPanel series={[]} timeWindowMs={30000} connected={connected} />
             </WorkspacePanel>
           }
         />
@@ -223,7 +211,7 @@ export function RobotWorkspace() {
         shouldRender={minimizedIds.size > 0}
         Component={
           <nav aria-label="Minimized panels" className="flex items-center gap-1 shrink-0">
-            {PANELS.filter((p) => isMinimized(p.id)).map((panel) => (
+            {WORKSPACE_PANEL_META.filter((p) => isMinimized(p.id)).map((panel) => (
               <Button
                 key={panel.id}
                 variant="outline"
