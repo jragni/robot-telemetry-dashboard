@@ -3,6 +3,10 @@ import { persist } from 'zustand/middleware';
 import type { ConnectionStore } from './useConnectionStore.types';
 import { assignRobotColor } from './useConnectionStore.helpers';
 
+/**
+ * useConnectionStore
+ * @description Manages robot connection state with localStorage persistence and migration support.
+ */
 export const useConnectionStore = create<ConnectionStore>()(
   persist(
     (set) => ({
