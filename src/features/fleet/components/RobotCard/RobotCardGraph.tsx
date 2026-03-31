@@ -1,4 +1,4 @@
-import type { RobotCardGraphProps } from '../../types/RobotCardGraph.types';
+import type { RobotCardGraphProps } from '@/features/fleet/types/RobotCardGraph.types';
 import { RobotCardDataRow } from './RobotCardDataRow';
 
 /** RobotCardGraph

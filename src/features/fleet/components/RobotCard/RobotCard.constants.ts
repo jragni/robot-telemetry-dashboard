@@ -3,7 +3,7 @@ import type {
   ConnectionStatus,
   RobotColor,
 } from '@/stores/connection/useConnectionStore.types';
-import type { StatusConfig } from '../../types/RobotCard.types';
+import type { StatusConfig } from '@/features/fleet/types/RobotCard.types';
 
 export const STATUS_CONFIG: Record<ConnectionStatus, StatusConfig> = {
   connected: {

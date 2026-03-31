@@ -33,6 +33,7 @@ Complete queued cleanup tasks from previous sessions. Code quality, convention e
 - [ ] Finalize RobotCard types (consolidate or keep granular?)
 - [ ] Landing page — add roadmap/what's next, docs, rosbridge instructions (needs /frontend-design)
 - [ ] In-depth panel design for /robot/:id — design all 6 panels (needs /frontend-design)
+- [ ] Convention audit — folder structure, coding style, CLAUDE.md rules enforced across all features
 
 ## Key decisions
 

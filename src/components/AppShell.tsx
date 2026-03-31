@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import { useTheme } from '@/hooks/useTheme';
 import { Header } from './Header';
-import { Sidebar } from './Sidebar';
+import { Sidebar } from './Sidebar/Sidebar';
 import { StatusBar } from './StatusBar';
 
 /** AppShell

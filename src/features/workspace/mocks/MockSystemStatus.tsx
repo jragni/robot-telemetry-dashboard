@@ -1,5 +1,6 @@
 import { formatLastSeen } from '@/utils/formatLastSeen';
 import { ConditionalRender } from '@/components/ConditionalRender';
+import type { MockSystemStatusProps } from '@/features/workspace/types/MockSystemStatus.types';
 
 /** MockSystemStatus
  * @description Renders mock system status showing connection state, vitals,
@@ -14,12 +15,7 @@ export function MockSystemStatus({
   url,
   lastSeen,
   connected = true,
-}: {
-  name: string;
-  url: string;
-  lastSeen: number | null;
-  connected?: boolean;
-}) {
+}: MockSystemStatusProps) {
   return (
     <div className="flex flex-col gap-2 font-mono text-xs w-full px-2 self-start pt-1">
       <div className="flex items-center justify-between">

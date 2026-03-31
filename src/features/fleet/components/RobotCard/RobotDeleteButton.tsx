@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import type { RobotDeleteButtonProps } from '../../types/RobotDeleteButton.types';
+import type { RobotDeleteButtonProps } from '@/features/fleet/types/RobotDeleteButton.types';
 
 // TODO: When wiring real connections, add loading state to Remove button:
 // - Disable button + show spinner while deletion is in progress

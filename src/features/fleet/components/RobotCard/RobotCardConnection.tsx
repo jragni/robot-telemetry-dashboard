@@ -1,5 +1,5 @@
 import { formatLastSeen } from '@/utils/formatLastSeen';
-import type { RobotCardConnectionProps } from '../../types/RobotCardConnection.types';
+import type { RobotCardConnectionProps } from '@/features/fleet/types/RobotCardConnection.types';
 import { RobotCardDataRow } from './RobotCardDataRow';
 
 /** RobotCardConnection

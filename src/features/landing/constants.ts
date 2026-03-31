@@ -1,6 +1,6 @@
 import { Joystick, LayoutGrid, Activity, Network } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import type { FeatureItem } from './types/LandingPage.types';
+import type { FeatureItem } from './types/LandingFeatures.types';
 
 /**
  * FEATURE_ICONS

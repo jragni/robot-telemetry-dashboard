@@ -11,7 +11,7 @@ function TopicSelector({ topicName }: { topicName: string }) {
   return (
     <button
       aria-label="Topic options"
-      className="ml-1 flex items-center gap-1 font-mono text-xs text-text-muted hover:text-accent transition-colors cursor-pointer truncate"
+      className="ml-1 flex items-center gap-1 font-mono text-xs text-text-muted hover:text-accent transition-colors cursor-pointer truncate focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
     >
       {topicName}
       <ChevronDown className="size-3 shrink-0" />
@@ -33,7 +33,7 @@ export function WorkspacePanel({
   children,
 }: WorkspacePanelProps) {
   return (
-    <div className="relative bg-surface-primary border border-border rounded-sm shadow-[inset_0_1px_0_0_var(--color-surface-glow)] flex flex-col h-full">
+    <div className="relative bg-surface-primary border border-border rounded-sm shadow-glow-top flex flex-col h-full">
       <div className="flex items-center gap-2 px-3 h-9 shrink-0 border-b border-border">
         <Icon className="size-3.5 text-text-muted shrink-0" />
         <span className="font-mono text-xs font-semibold text-text-secondary uppercase tracking-widest shrink-0">
@@ -51,7 +51,7 @@ export function WorkspacePanel({
             Component={
               <button
                 onClick={onMinimize}
-                className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer"
+                className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
                 aria-label="Minimize panel"
               >
                 <Minus className="size-3" />
@@ -59,7 +59,7 @@ export function WorkspacePanel({
             }
           />
           <button
-            className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer"
+            className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
             aria-label="Fullscreen"
           >
             <Maximize2 className="size-3" />

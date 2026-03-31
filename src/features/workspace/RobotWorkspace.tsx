@@ -13,6 +13,10 @@ import { WorkspaceGrid } from './components/WorkspaceGrid';
 import type { PanelConfig } from './components/WorkspaceGrid';
 import { WORKSPACE_PANELS, IMU_VIZ_OPTIONS } from './constants';
 import type { ImuVariant } from './constants';
+import type {
+  DisconnectedOverlayProps,
+  ImuVizSelectProps,
+} from './types/RobotWorkspace.types';
 import { MockCamera } from './mocks/MockCamera';
 import { MockLidar } from './mocks/MockLidar';
 import { MockControls } from './mocks/MockControls';
@@ -20,7 +24,7 @@ import { MockTelemetry } from './mocks/MockTelemetry';
 import { AnimatedMockImu } from './mocks/MockImu';
 import { MockSystemStatus } from './mocks/MockSystemStatus';
 
-function DisconnectedOverlay({ robotName }: { robotName: string }) {
+function DisconnectedOverlay({ robotName }: DisconnectedOverlayProps) {
   return (
     <span className="font-mono text-xs text-text-muted text-center">
       {robotName} is not connected
@@ -95,13 +99,7 @@ function buildPanels(
  * @param value - Currently selected variant.
  * @param onChange - Callback when selection changes.
  */
-function ImuVizSelect({
-  value,
-  onChange,
-}: {
-  readonly value: ImuVariant;
-  readonly onChange: (v: ImuVariant) => void;
-}) {
+function ImuVizSelect({ value, onChange }: ImuVizSelectProps) {
   return (
     <Select
       value={value}
@@ -149,7 +147,10 @@ export function RobotWorkspace() {
 
   if (!robot) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-4">
+      <section
+        aria-label="Robot not found"
+        className="flex flex-col items-center justify-center h-full gap-4"
+      >
         <span className="font-mono text-xs text-text-muted">
           Robot not found: {id}
         </span>
@@ -159,7 +160,7 @@ export function RobotWorkspace() {
         >
           Back to Fleet
         </Link>
-      </div>
+      </section>
     );
   }
 

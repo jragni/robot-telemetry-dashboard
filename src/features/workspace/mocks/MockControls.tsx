@@ -10,7 +10,7 @@ export function MockControls() {
     <div className="flex flex-col items-center gap-4">
       <button
         aria-label="Emergency stop"
-        className="w-20 h-10 bg-status-critical rounded-sm font-mono text-xs font-semibold text-white flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity"
+        className="w-20 h-10 bg-status-critical rounded-sm font-mono text-xs font-semibold text-white flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
       >
         <OctagonX className="size-4" />
         E-STOP

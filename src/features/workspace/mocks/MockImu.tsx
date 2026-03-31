@@ -1,4 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import type { MockImuProps } from '@/features/workspace/types/MockImu.types';
+import {
+  COMPASS_CARDINALS,
+  PITCH_LADDER_DEGREES,
+} from '@/features/workspace/constants';
 
 /**
  * Appends an alpha channel to a resolved CSS color string.
@@ -120,7 +125,7 @@ function AttitudeIndicator({ roll, pitch }: { roll: number; pitch: number }) {
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    for (const deg of [-20, -10, 10, 20]) {
+    for (const deg of PITCH_LADDER_DEGREES) {
       const y = pitchOffset - (deg / 90) * r * 0.6;
       const halfW = deg % 20 === 0 ? 10 : 6;
       ctx.beginPath();
@@ -188,12 +193,7 @@ function CompassHeading({ yaw }: { yaw: number }) {
     ctx.translate(cx, cy);
     ctx.rotate((-yaw * Math.PI) / 180);
 
-    const cardinals = [
-      { label: 'N', deg: 0 },
-      { label: 'E', deg: 90 },
-      { label: 'S', deg: 180 },
-      { label: 'W', deg: 270 },
-    ];
+    const cardinals = COMPASS_CARDINALS;
 
     for (let deg = 0; deg < 360; deg += 10) {
       const angleRad = ((deg - 90) * Math.PI) / 180;
@@ -296,15 +296,7 @@ export function AnimatedMockImu() {
  * @param pitch - Pitch angle in degrees.
  * @param yaw - Yaw heading in degrees.
  */
-export function MockImu({
-  roll,
-  pitch,
-  yaw,
-}: {
-  roll: number;
-  pitch: number;
-  yaw: number;
-}) {
+export function MockImu({ roll, pitch, yaw }: MockImuProps) {
   return (
     <div className="flex items-center gap-3 font-mono text-xs">
       <AttitudeIndicator roll={roll} pitch={pitch} />

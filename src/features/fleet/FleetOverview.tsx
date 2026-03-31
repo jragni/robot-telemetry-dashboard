@@ -2,7 +2,7 @@ import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { RobotCard } from './components/RobotCard/RobotCard';
 import { FleetEmptyState } from './components/FleetEmptyState';
 import { AddRobotModal } from './components/AddRobotModal';
-import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
+import type { FleetRobotGridProps } from './types/FleetOverview.types';
 
 /** FleetEmptyView
  * @description Renders the centered empty state when no robots are connected.
@@ -24,13 +24,7 @@ function FleetEmptyView() {
  * @param robots - Array of robot connections to display.
  * @param onRemove - Callback to remove a robot by id.
  */
-function FleetRobotGrid({
-  robots,
-  onRemove,
-}: {
-  robots: RobotConnection[];
-  onRemove: (id: string) => void;
-}) {
+function FleetRobotGrid({ robots, onRemove }: FleetRobotGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
       {robots.map((robot) => (

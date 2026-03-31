@@ -22,6 +22,11 @@
   /* -- Border radius -------------------------------------------- */
   --radius-sm: 2px;
   --radius-md: 4px;
+
+  /* -- Shadows -------------------------------------------------- */
+  --shadow-glow-top: inset 0 1px 0 0 var(--color-surface-glow);
+  --shadow-glow-bottom: inset 0 -1px 0 0 var(--color-surface-glow);
+  --shadow-glow-right: inset -1px 0 0 0 var(--color-surface-glow);
 }
 
 /* Register color tokens with Tailwind so utilities like

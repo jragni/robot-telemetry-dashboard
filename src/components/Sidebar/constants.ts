@@ -38,3 +38,20 @@ export const ROBOT_COLOR_TEXT: Record<RobotColor, string> = {
   red: 'text-robot-red',
   purple: 'text-robot-purple',
 };
+
+/** NAV_ITEM_BASE
+ * @description Base classes shared by all sidebar navigation items.
+ */
+export const NAV_ITEM_BASE =
+  'flex items-center gap-2 w-full text-left font-sans text-sm cursor-pointer whitespace-nowrap overflow-hidden border-none transition-all duration-150 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px]';
+
+/** NAV_ITEM_ACTIVE
+ * @description Classes applied to the currently active navigation item.
+ */
+export const NAV_ITEM_ACTIVE = 'text-accent bg-accent-subtle';
+
+/** NAV_ITEM_INACTIVE
+ * @description Classes applied to inactive navigation items.
+ */
+export const NAV_ITEM_INACTIVE =
+  'text-text-secondary bg-transparent hover:bg-accent-subtle hover:text-text-primary';

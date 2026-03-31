@@ -1,9 +1,6 @@
 import { Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface FleetEmptyStateProps {
-  readonly onAddRobot: () => void;
-}
+import type { FleetEmptyStateProps } from '@/features/fleet/types/FleetEmptyState.types';
 
 /** FleetEmptyState
  * @description Renders the empty state displayed when no robots are

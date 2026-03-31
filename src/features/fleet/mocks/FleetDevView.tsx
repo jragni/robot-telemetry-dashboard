@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { IMU_VIZ_OPTIONS } from '@/features/workspace/constants';
 import { RobotCard } from '../components/RobotCard/RobotCard';
 import { FleetEmptyState } from '../components/FleetEmptyState';
 import { AddRobotModal } from '../components/AddRobotModal';
@@ -31,13 +32,6 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
     </h3>
   );
 }
-
-const IMU_VIZ_OPTIONS = [
-  { value: 'attitude-compass', label: 'Attitude + Compass' },
-  { value: 'numbers', label: 'Numbers Only' },
-  { value: 'attitude', label: 'Attitude Indicator' },
-  { value: '3d', label: '3D Wireframe' },
-] as const;
 
 /** ImuVizSelect
  * @description Renders a dropdown selector for IMU visualization variant.

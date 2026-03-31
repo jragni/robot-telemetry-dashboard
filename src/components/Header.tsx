@@ -46,7 +46,7 @@ export function Header({
   const breadcrumb = getBreadcrumb(location.pathname);
 
   return (
-    <header className="bg-surface-primary border-b border-border flex items-center px-3 gap-2.5 h-full shadow-[inset_0_-1px_0_0_var(--color-surface-glow)] relative z-10">
+    <header className="bg-surface-primary border-b border-border flex items-center px-3 gap-2.5 h-full shadow-glow-bottom relative z-10">
       <ConditionalRender
         shouldRender={showHamburger}
         Component={

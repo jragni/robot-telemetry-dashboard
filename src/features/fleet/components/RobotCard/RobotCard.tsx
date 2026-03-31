@@ -5,7 +5,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { ConditionalRender } from '@/components/ConditionalRender';
-import type { RobotCardProps } from '../../types/RobotCard.types';
+import type { RobotCardProps } from '@/features/fleet/types/RobotCard.types';
 import { ROBOT_COLOR_BORDER, ROBOT_COLOR_TEXT } from './RobotCard.constants';
 import { RobotCardIdentity } from './RobotCardIdentity';
 import { RobotCardConnection } from './RobotCardConnection';
@@ -26,7 +26,7 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
 
   return (
     <Card
-      className={`border-l-4 ${borderColor} rounded-sm bg-surface-primary shadow-[inset_0_1px_0_0_var(--color-surface-glow)] p-0 gap-0`}
+      className={`border-l-4 ${borderColor} rounded-sm bg-surface-primary shadow-glow-top p-0 gap-0`}
     >
       <CardHeader className="p-4 pb-0">
         <RobotCardIdentity

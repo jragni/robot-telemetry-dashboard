@@ -8,3 +8,9 @@ export interface PanelConfig {
   content: ReactNode;
   footerActions?: ReactNode;
 }
+
+export interface PanelGridProps {
+  readonly panels: PanelConfig[];
+  readonly gridCols: string;
+  readonly onMinimize: (id: string) => void;
+}

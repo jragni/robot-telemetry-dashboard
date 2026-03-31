@@ -35,7 +35,7 @@ export function LandingFeatures() {
                 {feature.description}
               </p>
             </div>
-            <div className="landing-feature-visual bg-surface-primary border border-border rounded-sm shadow-[inset_0_1px_0_0_var(--color-surface-glow)] h-40 flex items-center justify-center relative">
+            <div className="landing-feature-visual bg-surface-primary border border-border rounded-sm shadow-glow-top h-40 flex items-center justify-center relative">
               <Icon size={36} className="text-accent opacity-30" />
             </div>
           </div>

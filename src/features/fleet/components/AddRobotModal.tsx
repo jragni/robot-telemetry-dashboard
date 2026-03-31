@@ -60,7 +60,7 @@ export function AddRobotModal() {
           Add Robot
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-surface-primary border border-border rounded-sm shadow-[inset_0_1px_0_0_var(--color-surface-glow)] max-w-md">
+      <DialogContent className="bg-surface-primary border border-border rounded-sm shadow-glow-top max-w-md">
         <DialogHeader>
           <DialogTitle className="font-sans text-xl font-semibold text-text-primary">
             Add Robot

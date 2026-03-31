@@ -12,6 +12,7 @@ GSD for state tracking (STATE.md, ROADMAP.md). Freeform pair programming for exe
   3. **Approve** — get explicit user "go ahead" on the direction informed by research
   4. **Implement** — invoke `/frontend-design` for aesthetic guidance, then write code
   5. **Verify** — visual check before claiming done
+- **Self-audit before presenting.** After creating or editing any file, re-read it against the Pre-Write Checklist and Code Conventions before claiming it's done. Do not move to the next file until the current one passes all rules.
 - **Build features as verticals, not horizontal slices.** Each feature built end-to-end (types → store → hook → component → tests → visual verification → checkpoint) before starting the next. Never build all stores, then all hooks, then all components.
 - **Research tools FIRST.** Query context7, ui-ux-pro-max, /frontend-design BEFORE proposing any solution. Do not propose from own knowledge then validate — tools first, then recommendations. Apply the research findings when writing code.
 - **Visual work executes inline.** Never delegate visual components to parallel subagents — they cannot invoke `/frontend-design` or `ui-ux-pro-max`.
@@ -55,12 +56,13 @@ These docs are the source of truth. CLAUDE.md does not duplicate their content.
 ## Code Conventions
 
 - One component per `.tsx` file
-- Types in feature `types/` folder as `{ComponentName}.types.ts` — never inline in `.tsx` files, never co-located next to components. Shared types (cross-feature) go in `src/types/`.
+- Types in feature `types/` folder as `{ComponentName}.types.ts` (named after the primary consumer) — never inline in `.tsx` files, never co-located next to components. Shared types (cross-feature) go in `src/types/`.
 - No barrel files (ADR-001) — import directly from source
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
 - **Status indicators:** Triple-redundant (color + icon + text label per MIL-STD-1472H). Terminology: Nominal / Caution / Critical / Offline.
-- **Feature folder structure:** Each feature has `components/` for UI, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types.ts`. Page-level components (e.g., `FleetOverview`, `RobotWorkspace`) live at the feature root. Mock/demo components and dev views live in `mocks/` — never mix mock components with production components.
+- **Feature folder structure:** Each feature has `components/` for UI, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types/` for interfaces. Page-level components (e.g., `FleetOverview`, `RobotWorkspace`) live at the feature root. Mock/demo components and dev views live in `mocks/` — never mix mock components with production components.
+- **Shared component folders:** Components in `src/components/` with 2+ files (component + constants/types) get their own folder (e.g., `src/components/Sidebar/`). Single-file components stay flat.
 - **Docstrings:** All exported components and functions must have JSDoc docstrings following [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html). Format: `/** ComponentName` on the first line, `@description` on the next line with a verb phrase in third person. `@param` and `@returns` required where applicable. Lines wrap at 100 characters — continue on the next line indented with `*  `. Example:
   ```ts
   /** MyComponent

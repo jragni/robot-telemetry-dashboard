@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { WorkspacePanel } from './WorkspacePanel';
 import { ConditionalRender } from '@/components/ConditionalRender';
-import type { PanelConfig } from '../types/WorkspaceGrid.types';
+import type { PanelConfig, PanelGridProps } from '../types/WorkspaceGrid.types';
 
 export type { PanelConfig } from '../types/WorkspaceGrid.types';
 
@@ -11,15 +11,7 @@ export type { PanelConfig } from '../types/WorkspaceGrid.types';
  * @param gridCols - CSS grid-template-columns value.
  * @param onMinimize - Callback to minimize a panel by id.
  */
-function PanelGrid({
-  panels,
-  gridCols,
-  onMinimize,
-}: {
-  panels: PanelConfig[];
-  gridCols: string;
-  onMinimize: (id: string) => void;
-}) {
+function PanelGrid({ panels, gridCols, onMinimize }: PanelGridProps) {
   return (
     <div
       className="flex-1 grid gap-3 min-h-0"
@@ -107,7 +99,7 @@ export function WorkspaceGrid({ panels }: { panels: PanelConfig[] }) {
                 onClick={() => {
                   restore(panel.id);
                 }}
-                className="flex items-center gap-1.5 px-3 h-8 bg-surface-secondary border border-border rounded-sm font-mono text-xs text-text-muted hover:text-text-primary hover:border-border-hover transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 h-8 bg-surface-secondary border border-border rounded-sm font-mono text-xs text-text-muted hover:text-text-primary hover:border-border-hover transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
               >
                 <panel.icon className="size-3" />
                 {panel.label}

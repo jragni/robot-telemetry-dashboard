@@ -36,5 +36,14 @@ export const IMU_VIZ_OPTIONS: readonly { value: ImuVariant; label: string }[] =
     { value: '3d', label: '3D Wireframe' },
   ];
 
+export const COMPASS_CARDINALS = [
+  { label: 'N', deg: 0 },
+  { label: 'E', deg: 90 },
+  { label: 'S', deg: 180 },
+  { label: 'W', deg: 270 },
+] as const;
+
+export const PITCH_LADDER_DEGREES = [-20, -10, 10, 20] as const;
+
 export const DPAD_BTN =
-  'w-8 h-8 bg-surface-tertiary border border-border rounded-sm font-mono text-xs flex items-center justify-center cursor-pointer hover:border-border-hover transition-colors';
+  'w-8 h-8 bg-surface-tertiary border border-border rounded-sm font-mono text-xs flex items-center justify-center cursor-pointer hover:border-border-hover transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none';
