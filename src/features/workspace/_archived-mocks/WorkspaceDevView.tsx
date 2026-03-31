@@ -1,15 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Activity,
-  Camera,
-  Compass,
-  Gamepad2,
-  Radar,
-  Shield,
-} from 'lucide-react';
-import { WorkspaceGrid } from '../components/WorkspaceGrid';
-import type { PanelConfig } from '../components/WorkspaceGrid';
+import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
+import { WorkspaceGrid } from '../components/WorkspaceGrid/WorkspaceGrid';
+import type { PanelConfig } from '../types/WorkspaceGrid.types';
 import { MockCamera } from './MockCamera';
 import { MockLidar } from './MockLidar';
 import { MockControls } from './MockControls';
@@ -45,11 +38,7 @@ export function WorkspaceDevView() {
         label: 'System Status',
         icon: Shield,
         content: (
-          <MockSystemStatus
-            name="Atlas-01"
-            url="ws://192.168.1.100:9090"
-            lastSeen={mockNow}
-          />
+          <MockSystemStatus name="Atlas-01" url="ws://192.168.1.100:9090" lastSeen={mockNow} />
         ),
       },
       {
@@ -89,9 +78,7 @@ export function WorkspaceDevView() {
           >
             Components
           </Link>
-          <span className="text-accent border-b border-accent pb-1">
-            Workspace
-          </span>
+          <span className="text-accent border-b border-accent pb-1">Workspace</span>
         </nav>
       </div>
 

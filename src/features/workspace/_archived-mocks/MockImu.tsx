@@ -1,9 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { MockImuProps } from '@/features/workspace/types/MockImu.types';
-import {
-  COMPASS_CARDINALS,
-  PITCH_LADDER_DEGREES,
-} from '@/features/workspace/constants';
+import { COMPASS_CARDINALS, PITCH_LADDER_DEGREES } from '@/features/workspace/constants';
 
 /**
  * Appends an alpha channel to a resolved CSS color string.
@@ -22,13 +19,7 @@ function withAlpha(color: string, alpha: number): string {
 }
 
 /* ── Stable number display ────────────────────────────────────── */
-function StableValue({
-  value,
-  suffix = '°',
-}: {
-  value: number;
-  suffix?: string;
-}) {
+function StableValue({ value, suffix = '°' }: { value: number; suffix?: string }) {
   return (
     <span className="font-mono text-accent font-semibold tabular-nums w-16 text-right inline-block">
       {value.toFixed(1)}
@@ -72,19 +63,13 @@ function AttitudeIndicator({ roll, pitch }: { roll: number; pitch: number }) {
     ctx.clearRect(0, 0, size, size);
 
     const styles = getComputedStyle(canvas);
-    const borderColor =
-      styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
-    const accentColor =
-      styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
-    const imuSky =
-      styles.getPropertyValue('--color-imu-sky') || 'oklch(0.5 0.14 230)';
-    const imuGround =
-      styles.getPropertyValue('--color-imu-ground') || 'oklch(0.35 0.1 65)';
-    const textPrimary =
-      styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
+    const borderColor = styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
+    const accentColor = styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
+    const imuSky = styles.getPropertyValue('--color-imu-sky') || 'oklch(0.5 0.14 230)';
+    const imuGround = styles.getPropertyValue('--color-imu-ground') || 'oklch(0.35 0.1 65)';
+    const textPrimary = styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
     const textSecondary =
-      styles.getPropertyValue('--color-text-secondary') ||
-      'oklch(0.65 0.02 260)';
+      styles.getPropertyValue('--color-text-secondary') || 'oklch(0.65 0.02 260)';
 
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -151,9 +136,7 @@ function AttitudeIndicator({ roll, pitch }: { roll: number; pitch: number }) {
     draw();
   }, [draw]);
 
-  return (
-    <canvas ref={canvasRef} width={100} height={100} className="rounded-full" />
-  );
+  return <canvas ref={canvasRef} width={100} height={100} className="rounded-full" />;
 }
 
 /* ── Compass Heading (canvas) ─────────────────────────────────── */
@@ -174,14 +157,10 @@ function CompassHeading({ yaw }: { yaw: number }) {
     ctx.clearRect(0, 0, size, size);
 
     const styles = getComputedStyle(canvas);
-    const accentColor =
-      styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
-    const borderColor =
-      styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
-    const mutedColor =
-      styles.getPropertyValue('--color-text-muted') || 'oklch(0.57 0.02 260)';
-    const primaryColor =
-      styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
+    const accentColor = styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
+    const borderColor = styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
+    const mutedColor = styles.getPropertyValue('--color-text-muted') || 'oklch(0.57 0.02 260)';
+    const primaryColor = styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
 
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -203,10 +182,7 @@ function CompassHeading({ yaw }: { yaw: number }) {
 
       ctx.beginPath();
       ctx.moveTo(Math.cos(angleRad) * r, Math.sin(angleRad) * r);
-      ctx.lineTo(
-        Math.cos(angleRad) * (r - tickLen),
-        Math.sin(angleRad) * (r - tickLen),
-      );
+      ctx.lineTo(Math.cos(angleRad) * (r - tickLen), Math.sin(angleRad) * (r - tickLen));
       ctx.strokeStyle = isCardinal ? primaryColor : mutedColor;
       ctx.lineWidth = isCardinal ? 1.5 : 0.8;
       ctx.stroke();
@@ -218,11 +194,7 @@ function CompassHeading({ yaw }: { yaw: number }) {
       ctx.fillStyle = label === 'N' ? accentColor : primaryColor;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(
-        label,
-        Math.cos(angleRad) * (r - 18),
-        Math.sin(angleRad) * (r - 18),
-      );
+      ctx.fillText(label, Math.cos(angleRad) * (r - 18), Math.sin(angleRad) * (r - 18));
     }
 
     ctx.restore();
@@ -247,9 +219,7 @@ function CompassHeading({ yaw }: { yaw: number }) {
     draw();
   }, [draw]);
 
-  return (
-    <canvas ref={canvasRef} width={100} height={100} className="rounded-full" />
-  );
+  return <canvas ref={canvasRef} width={100} height={100} className="rounded-full" />;
 }
 
 /* ── Animated hook ────────────────────────────────────────────── */

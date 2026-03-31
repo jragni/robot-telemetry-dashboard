@@ -18,13 +18,10 @@ export function MockTelemetry() {
     ctx.clearRect(0, 0, w, h);
 
     const styles = getComputedStyle(canvas);
-    const accentColor =
-      styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
-    const borderColor =
-      styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
+    const accentColor = styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
+    const borderColor = styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
     const nominalColor =
-      styles.getPropertyValue('--color-status-nominal') ||
-      'oklch(0.70 0.19 155)';
+      styles.getPropertyValue('--color-status-nominal') || 'oklch(0.70 0.19 155)';
 
     // Grid lines
     ctx.strokeStyle = borderColor;
@@ -43,9 +40,7 @@ export function MockTelemetry() {
     for (let x = 0; x < w; x++) {
       const t = x / w;
       const y =
-        h / 2 +
-        Math.sin(t * Math.PI * 4) * (h * 0.3) +
-        Math.sin(t * Math.PI * 7) * (h * 0.1);
+        h / 2 + Math.sin(t * Math.PI * 4) * (h * 0.3) + Math.sin(t * Math.PI * 7) * (h * 0.1);
       if (x === 0) {
         ctx.moveTo(x, y);
       } else {
@@ -86,12 +81,7 @@ export function MockTelemetry() {
           <span className="text-text-muted">/odom angular.z</span>
         </div>
       </div>
-      <canvas
-        ref={canvasRef}
-        width={300}
-        height={120}
-        className="w-full flex-1"
-      />
+      <canvas ref={canvasRef} width={300} height={120} className="w-full flex-1" />
     </div>
   );
 }

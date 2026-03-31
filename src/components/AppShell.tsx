@@ -41,23 +41,13 @@ export function AppShell() {
   }, [drawerOpen, closeDrawer]);
 
   return (
-    <div
-      className={`shell-grid ${sidebarCollapsed ? 'shell-grid--collapsed' : ''}`}
-    >
+    <div className={`shell-grid ${sidebarCollapsed ? 'shell-grid--collapsed' : ''}`}>
       <div className="shell-header">
-        <Header
-          showHamburger
-          onToggleDrawer={toggleDrawer}
-          theme={theme}
-          onToggleTheme={toggle}
-        />
+        <Header showHamburger onToggleDrawer={toggleDrawer} theme={theme} onToggleTheme={toggle} />
       </div>
 
       <div className="shell-sidebar">
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          onToggleCollapse={toggleCollapse}
-        />
+        <Sidebar collapsed={sidebarCollapsed} onToggleCollapse={toggleCollapse} />
       </div>
 
       <ConditionalRender
@@ -72,7 +62,7 @@ export function AppShell() {
       />
 
       <div
-        className={`shell-drawer fixed top-10 bottom-0 left-0 w-65 z-50 bg-surface-primary border-r border-border transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden ${
+        className={`shell-drawer fixed top-10 bottom-0 left-0 w-65 z-50 bg-surface-primary border-r border-border transition-transform duration-300 ease-in-out md:hidden ${
           drawerOpen ? 'translate-x-0 shell-drawer--open' : '-translate-x-full'
         }`}
       >

@@ -1,4 +1,4 @@
-import type { ImuVariant } from '../constants';
+import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
 
 export interface DisconnectedOverlayProps {
   readonly robotName: string;

@@ -61,7 +61,8 @@ These docs are the source of truth. CLAUDE.md does not duplicate their content.
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
 - **Status indicators:** Triple-redundant (color + icon + text label per MIL-STD-1472H). Terminology: Nominal / Caution / Critical / Offline.
-- **Feature folder structure:** Each feature has `components/` for UI, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types/` for interfaces. Page-level components (e.g., `FleetOverview`, `RobotWorkspace`) live at the feature root. Mock/demo components and dev views live in `mocks/` — never mix mock components with production components.
+- **Feature folder structure:** Each feature has `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types/` for interfaces. Page-level components (e.g., `FleetOverview`, `RobotWorkspace`) live at the feature root. Mock/demo components and dev views live in `mocks/` — never mix mock components with production components.
+- **Hook folder structure:** When a hook grows beyond a single file (has its own types, constants, or helpers), give it its own folder: `hooks/{hookName}/` with `{hookName}.ts`, `types.ts`, `constants.ts`, `helpers.ts`. Same pattern as component folders.
 - **Shared component folders:** Components in `src/components/` with 2+ files (component + constants/types) get their own folder (e.g., `src/components/Sidebar/`). Single-file components stay flat.
 - **Docstrings:** All exported components and functions must have JSDoc docstrings following [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html). Format: `/** ComponentName` on the first line, `@description` on the next line with a verb phrase in third person. `@param` and `@returns` required where applicable. Lines wrap at 100 characters — continue on the next line indented with `*  `. Example:
   ```ts

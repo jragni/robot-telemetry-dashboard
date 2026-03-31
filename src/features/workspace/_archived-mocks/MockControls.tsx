@@ -18,27 +18,13 @@ export function MockControls() {
         <OctagonX className="size-4" />
         E-STOP
       </Button>
-      <div
-        className="grid grid-cols-3 gap-1"
-        role="group"
-        aria-label="Directional controls"
-      >
+      <div className="grid grid-cols-3 gap-1" role="group" aria-label="Directional controls">
         <div />
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label="Move forward"
-          className={DPAD_BTN}
-        >
+        <Button variant="ghost" size="icon-sm" aria-label="Move forward" className={DPAD_BTN}>
           ▲
         </Button>
         <div />
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label="Turn left"
-          className={DPAD_BTN}
-        >
+        <Button variant="ghost" size="icon-sm" aria-label="Turn left" className={DPAD_BTN}>
           ◀
         </Button>
         <Button
@@ -49,21 +35,11 @@ export function MockControls() {
         >
           ■
         </Button>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label="Turn right"
-          className={DPAD_BTN}
-        >
+        <Button variant="ghost" size="icon-sm" aria-label="Turn right" className={DPAD_BTN}>
           ▶
         </Button>
         <div />
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label="Move backward"
-          className={DPAD_BTN}
-        >
+        <Button variant="ghost" size="icon-sm" aria-label="Move backward" className={DPAD_BTN}>
           ▼
         </Button>
         <div />

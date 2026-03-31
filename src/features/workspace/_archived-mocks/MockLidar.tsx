@@ -21,12 +21,9 @@ export function MockLidar() {
     ctx.clearRect(0, 0, size, size);
 
     const styles = getComputedStyle(canvas);
-    const borderColor =
-      styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
-    const accentColor =
-      styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
-    const textPrimary =
-      styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
+    const borderColor = styles.getPropertyValue('--color-border') || 'rgba(255,255,255,0.15)';
+    const accentColor = styles.getPropertyValue('--color-accent') || 'oklch(0.70 0.20 230)';
+    const textPrimary = styles.getPropertyValue('--color-text-primary') || 'oklch(0.93 0.01 260)';
 
     // Range rings
     for (let r = maxR / 3; r <= maxR; r += maxR / 3) {

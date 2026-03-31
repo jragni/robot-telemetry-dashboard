@@ -10,12 +10,7 @@ import type { MockSystemStatusProps } from '@/features/workspace/types/MockSyste
  * @param lastSeen - Timestamp of last rosbridge message, or null.
  * @param connected - Whether the robot is currently connected.
  */
-export function MockSystemStatus({
-  name,
-  url,
-  lastSeen,
-  connected = true,
-}: MockSystemStatusProps) {
+export function MockSystemStatus({ name, url, lastSeen, connected = true }: MockSystemStatusProps) {
   return (
     <div className="flex flex-col gap-2 font-mono text-xs w-full px-2 self-start pt-1">
       <div className="flex items-center justify-between">
@@ -24,11 +19,7 @@ export function MockSystemStatus({
           <span
             className={`size-2 rounded-full ${connected ? 'bg-status-nominal animate-pulse' : 'bg-status-offline'}`}
           />
-          <span
-            className={
-              connected ? 'text-status-nominal' : 'text-status-offline'
-            }
-          >
+          <span className={connected ? 'text-status-nominal' : 'text-status-offline'}>
             {connected ? 'CONNECTED' : 'DISCONNECTED'}
           </span>
         </div>
@@ -52,34 +43,24 @@ export function MockSystemStatus({
       />
       <div className="flex justify-between">
         <span className="text-text-muted">LAST SEEN</span>
-        <span className="text-text-primary tabular-nums">
-          {formatLastSeen(lastSeen)}
-        </span>
+        <span className="text-text-primary tabular-nums">{formatLastSeen(lastSeen)}</span>
       </div>
       <div className="border-t border-border border-dashed my-1" />
       <div className="flex justify-between">
         <span className="text-text-muted">NODES</span>
-        <span className="text-text-primary tabular-nums">
-          {connected ? '12' : '—'}
-        </span>
+        <span className="text-text-primary tabular-nums">{connected ? '12' : '—'}</span>
       </div>
       <div className="flex justify-between">
         <span className="text-text-muted">TOPICS</span>
-        <span className="text-text-primary tabular-nums">
-          {connected ? '34' : '—'}
-        </span>
+        <span className="text-text-primary tabular-nums">{connected ? '34' : '—'}</span>
       </div>
       <div className="flex justify-between">
         <span className="text-text-muted">SERVICES</span>
-        <span className="text-text-primary tabular-nums">
-          {connected ? '18' : '—'}
-        </span>
+        <span className="text-text-primary tabular-nums">{connected ? '18' : '—'}</span>
       </div>
       <div className="flex justify-between">
         <span className="text-text-muted">ACTIONS</span>
-        <span className="text-text-primary tabular-nums">
-          {connected ? '3' : '—'}
-        </span>
+        <span className="text-text-primary tabular-nums">{connected ? '3' : '—'}</span>
       </div>
     </div>
   );

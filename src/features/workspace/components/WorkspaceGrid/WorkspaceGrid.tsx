@@ -1,60 +1,16 @@
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { WorkspacePanel } from './WorkspacePanel';
 import { ConditionalRender } from '@/components/ConditionalRender';
-import type { PanelConfig, PanelGridProps } from '../types/WorkspaceGrid.types';
-
-export type { PanelConfig } from '../types/WorkspaceGrid.types';
-
-/** PanelGrid
- * @description Renders the visible panels in a responsive grid layout.
- * @param panels - Array of visible panel configurations.
- * @param gridCols - CSS grid-template-columns value.
- * @param onMinimize - Callback to minimize a panel by id.
- */
-function PanelGrid({ panels, gridCols, onMinimize }: PanelGridProps) {
-  return (
-    <div
-      className="flex-1 grid gap-3 min-h-0"
-      style={{ gridTemplateColumns: gridCols }}
-    >
-      {panels.map((panel) => (
-        <WorkspacePanel
-          key={panel.id}
-          label={panel.label}
-          icon={panel.icon}
-          topicName={panel.topicName}
-          footerActions={panel.footerActions}
-          onMinimize={() => {
-            onMinimize(panel.id);
-          }}
-        >
-          {panel.content}
-        </WorkspacePanel>
-      ))}
-    </div>
-  );
-}
-
-/** AllMinimizedMessage
- * @description Displays a message when all workspace panels are minimized.
- */
-function AllMinimizedMessage() {
-  return (
-    <div className="flex-1 flex items-center justify-center">
-      <span className="font-mono text-xs text-text-muted">
-        All panels minimized — click a tab below to restore
-      </span>
-    </div>
-  );
-}
+import type { WorkspaceGridProps } from '@/features/workspace/types/WorkspaceGrid.types';
+import { PanelGrid } from './PanelGrid';
+import { AllMinimizedMessage } from './AllMinimizedMessage';
 
 /** WorkspaceGrid
  * @description Manages the workspace grid layout for panels with
  *  minimize-to-dock functionality.
  * @param panels - Array of panel configurations to render in the grid.
  */
-export function WorkspaceGrid({ panels }: { panels: PanelConfig[] }) {
+export function WorkspaceGrid({ panels }: WorkspaceGridProps) {
   const [minimized, setMinimized] = useState(new Set<string>());
 
   const minimize = useCallback((id: string) => {
@@ -78,11 +34,7 @@ export function WorkspaceGrid({ panels }: { panels: PanelConfig[] }) {
   return (
     <div className="flex flex-col h-full gap-3 p-4">
       {visiblePanels.length > 0 ? (
-        <PanelGrid
-          panels={visiblePanels}
-          gridCols={gridCols}
-          onMinimize={minimize}
-        />
+        <PanelGrid panels={visiblePanels} gridCols={gridCols} onMinimize={minimize} />
       ) : (
         <AllMinimizedMessage />
       )}
@@ -90,10 +42,7 @@ export function WorkspaceGrid({ panels }: { panels: PanelConfig[] }) {
       <ConditionalRender
         shouldRender={minimizedPanels.length > 0}
         Component={
-          <nav
-            aria-label="Minimized panels"
-            className="flex items-center gap-1 shrink-0"
-          >
+          <nav aria-label="Minimized panels" className="flex items-center gap-1 shrink-0">
             {minimizedPanels.map((panel) => (
               <Button
                 key={panel.id}

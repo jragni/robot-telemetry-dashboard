@@ -11,9 +11,7 @@ export function MockCamera() {
         <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,oklch(0.16_0.02_260)_3px,oklch(0.16_0.02_260)_4px)] opacity-20" />
         <div className="flex flex-col items-center gap-2 z-10">
           <Camera className="size-8 text-text-muted opacity-30" />
-          <span className="font-mono text-xs text-text-muted">
-            /camera/image_raw
-          </span>
+          <span className="font-mono text-xs text-text-muted">/camera/image_raw</span>
           <span className="font-mono text-xs text-accent">640×480 @ 30fps</span>
         </div>
       </div>

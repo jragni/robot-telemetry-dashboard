@@ -23,7 +23,7 @@ export function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
       onClick={onClick}
       title={collapsed ? item.label : undefined}
       className={`${NAV_ITEM_BASE} ${
-        collapsed ? 'justify-center py-2 px-0' : 'py-2 px-3'
+        collapsed ? 'py-2 px-0' : 'py-2 px-3'
       } ${active ? NAV_ITEM_ACTIVE : NAV_ITEM_INACTIVE}`}
     >
       <item.Icon
@@ -40,9 +40,7 @@ export function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
       />
       <ConditionalRender
         shouldRender={!collapsed}
-        Component={
-          <span className="overflow-hidden text-ellipsis">{item.label}</span>
-        }
+        Component={<span className="overflow-hidden text-ellipsis">{item.label}</span>}
       />
     </Button>
   );

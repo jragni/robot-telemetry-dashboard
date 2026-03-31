@@ -1,26 +1,8 @@
-import { ChevronDown, Maximize2, Minus } from 'lucide-react';
+import { Maximize2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
-
-/** TopicSelector
- * @description Renders the topic name button with dropdown chevron for
- *  panel topic selection.
- * @param topicName - The ROS topic name to display.
- */
-function TopicSelector({ topicName }: { topicName: string }) {
-  return (
-    <Button
-      variant="ghost"
-      size="xs"
-      aria-label="Topic options"
-      className="ml-1 font-mono text-xs text-text-muted hover:text-accent truncate"
-    >
-      {topicName}
-      <ChevronDown className="size-3 shrink-0" />
-    </Button>
-  );
-}
+import { TopicSelector } from './TopicSelector';
 
 /** WorkspacePanel
  * @description Renders a reusable panel container with header controls,
@@ -42,11 +24,7 @@ export function WorkspacePanel({
         <span className="font-mono text-xs font-semibold text-text-secondary uppercase tracking-widest shrink-0">
           {label}
         </span>
-        {topicName ? (
-          <TopicSelector topicName={topicName} />
-        ) : (
-          <span className="ml-1" />
-        )}
+        {topicName ? <TopicSelector topicName={topicName} /> : <span className="ml-1" />}
         <div className="ml-auto flex items-center gap-1 shrink-0">
           {headerActions}
           <ConditionalRender
@@ -74,9 +52,7 @@ export function WorkspacePanel({
         </div>
       </div>
       <div className="flex-1 flex flex-col min-h-0">
-        <div className="flex-1 flex items-center justify-center p-4">
-          {children}
-        </div>
+        <div className="flex-1 flex items-center justify-center p-4">{children}</div>
         <ConditionalRender
           shouldRender={!!footerActions}
           Component={
