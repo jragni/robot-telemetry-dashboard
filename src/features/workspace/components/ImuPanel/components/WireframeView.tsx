@@ -1,32 +1,9 @@
 import { useRef, useEffect, useCallback } from 'react';
+import { formatDegrees } from '@/utils/formatDegrees';
 import { normalizeHeading } from '@/utils/normalizeHeading';
+import { useThemeChange } from '@/hooks/useThemeChange';
 import type { WireframeViewProps } from '@/features/workspace/types/ImuPanel.types';
-
-const CUBE_VERTICES: readonly [number, number, number][] = [
-  [-1, -1, -1],
-  [1, -1, -1],
-  [1, 1, -1],
-  [-1, 1, -1],
-  [-1, -1, 1],
-  [1, -1, 1],
-  [1, 1, 1],
-  [-1, 1, 1],
-];
-
-const CUBE_EDGES: readonly [number, number][] = [
-  [0, 1],
-  [1, 2],
-  [2, 3],
-  [3, 0],
-  [4, 5],
-  [5, 6],
-  [6, 7],
-  [7, 4],
-  [0, 4],
-  [1, 5],
-  [2, 6],
-  [3, 7],
-];
+import { CUBE_VERTICES, CUBE_EDGES } from '../constants';
 
 /** WireframeView
  * @description Renders a 3D wireframe rectangular prism that rotates based on
@@ -44,6 +21,10 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     muted: 'oklch(0.57 0.02 260)',
   });
   const colorsResolved = useRef(false);
+
+  useThemeChange(() => {
+    colorsResolved.current = false;
+  });
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -134,16 +115,16 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
         width={160}
         height={160}
         className="rounded-full"
-        aria-label={`3D wireframe: roll ${String(Math.round(roll * 10) / 10)}°, pitch ${String(Math.round(pitch * 10) / 10)}°, heading ${String(Math.round(heading))}°`}
+        aria-label={`3D wireframe: roll ${formatDegrees(roll)}°, pitch ${formatDegrees(pitch)}°, heading ${String(Math.round(heading))}°`}
       />
       <dl className="flex gap-4 font-mono text-xs">
         <div className="flex items-center gap-2">
           <dt className="font-sans text-text-muted">R</dt>
-          <dd className="text-accent tabular-nums">{String(Math.round(roll * 10) / 10)}°</dd>
+          <dd className="text-accent tabular-nums">{formatDegrees(roll)}°</dd>
         </div>
         <div className="flex items-center gap-2">
           <dt className="font-sans text-text-muted">P</dt>
-          <dd className="text-accent tabular-nums">{String(Math.round(pitch * 10) / 10)}°</dd>
+          <dd className="text-accent tabular-nums">{formatDegrees(pitch)}°</dd>
         </div>
         <div className="flex items-center gap-2">
           <dt className="font-sans text-text-muted">Y</dt>

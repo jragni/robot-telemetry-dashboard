@@ -1,3 +1,4 @@
+import { formatDegrees } from '@/utils/formatDegrees';
 import type { AttitudeViewProps } from '@/features/workspace/types/ImuPanel.types';
 import { AttitudeIndicator } from './AttitudeIndicator';
 
@@ -17,13 +18,13 @@ export function AttitudeView({ roll, pitch }: AttitudeViewProps) {
         <div className="flex items-center gap-2">
           <dt className="font-sans text-text-muted">ROLL</dt>
           <dd className="text-accent font-semibold tabular-nums w-14 text-right">
-            {String(Math.round(roll * 10) / 10)}°
+            {formatDegrees(roll)}°
           </dd>
         </div>
         <div className="flex items-center gap-2">
           <dt className="font-sans text-text-muted">PITCH</dt>
           <dd className="text-accent font-semibold tabular-nums w-14 text-right">
-            {String(Math.round(pitch * 10) / 10)}°
+            {formatDegrees(pitch)}°
           </dd>
         </div>
       </dl>

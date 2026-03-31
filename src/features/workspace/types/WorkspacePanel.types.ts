@@ -9,7 +9,5 @@ export interface WorkspacePanelProps {
   readonly icon: React.ComponentType<{ className?: string }>;
   readonly topicName?: string;
   readonly headerActions?: ReactNode;
-  readonly footerActions?: ReactNode;
-  readonly onMinimize?: () => void;
   readonly children: ReactNode;
 }

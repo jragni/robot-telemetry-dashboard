@@ -1,5 +1,7 @@
 import { useRef, useEffect, useCallback } from 'react';
+import { formatDegrees } from '@/utils/formatDegrees';
 import { withAlpha } from '@/utils/withAlpha';
+import { useThemeChange } from '@/hooks/useThemeChange';
 import { PITCH_LADDER_DEGREES } from '@/features/workspace/constants';
 import type { AttitudeIndicatorProps } from '@/features/workspace/types/ImuPanel.types';
 
@@ -21,6 +23,10 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
     textSecondaryAlpha: withAlpha('oklch(0.65 0.02 260)', 0.5),
   });
   const colorsResolved = useRef(false);
+
+  useThemeChange(() => {
+    colorsResolved.current = false;
+  });
 
   const resolveColors = useCallback(() => {
     const canvas = canvasRef.current;
@@ -129,7 +135,7 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
       width={120}
       height={120}
       className="rounded-full"
-      aria-label={`Attitude indicator: roll ${String(Math.round(roll * 10) / 10)}°, pitch ${String(Math.round(pitch * 10) / 10)}°`}
+      aria-label={`Attitude indicator: roll ${formatDegrees(roll)}°, pitch ${formatDegrees(pitch)}°`}
     />
   );
 }

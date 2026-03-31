@@ -1,3 +1,4 @@
+import { formatDegrees } from '@/utils/formatDegrees';
 import { normalizeHeading } from '@/utils/normalizeHeading';
 import type { NumbersViewProps } from '@/features/workspace/types/ImuPanel.types';
 
@@ -15,16 +16,12 @@ export function NumbersView({ roll, pitch, yaw }: NumbersViewProps) {
     <dl className="flex flex-col gap-4 w-full px-4">
       <div className="flex items-baseline justify-between">
         <dt className="font-sans text-xs text-text-muted">ROLL</dt>
-        <dd className="font-mono text-xl tabular-nums text-accent">
-          {String(Math.round(roll * 10) / 10)}°
-        </dd>
+        <dd className="font-mono text-xl tabular-nums text-accent">{formatDegrees(roll)}°</dd>
       </div>
       <div className="border-t border-border border-dashed" />
       <div className="flex items-baseline justify-between">
         <dt className="font-sans text-xs text-text-muted">PITCH</dt>
-        <dd className="font-mono text-xl tabular-nums text-accent">
-          {String(Math.round(pitch * 10) / 10)}°
-        </dd>
+        <dd className="font-mono text-xl tabular-nums text-accent">{formatDegrees(pitch)}°</dd>
       </div>
       <div className="border-t border-border border-dashed" />
       <div className="flex items-baseline justify-between">

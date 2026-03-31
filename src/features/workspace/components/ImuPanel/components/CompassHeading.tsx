@@ -1,5 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { normalizeHeading } from '@/utils/normalizeHeading';
+import { useThemeChange } from '@/hooks/useThemeChange';
 import { COMPASS_CARDINALS } from '@/features/workspace/constants';
 import type { CompassHeadingProps } from '@/features/workspace/types/ImuPanel.types';
 
@@ -18,6 +19,10 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
     primary: 'oklch(0.93 0.01 260)',
   });
   const colorsResolved = useRef(false);
+
+  useThemeChange(() => {
+    colorsResolved.current = false;
+  });
 
   const resolveColors = useCallback(() => {
     const canvas = canvasRef.current;

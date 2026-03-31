@@ -6,8 +6,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { IMU_VIZ_OPTIONS } from '@/features/workspace/constants';
-import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
-import type { ImuVizSelectProps } from '@/features/workspace/types/RobotWorkspace.types';
+import type { ImuVariant, ImuVizSelectProps } from '@/features/workspace/types/ImuPanel.types';
 
 /** ImuVizSelect
  * @description Renders an IMU variant selector dropdown with abbreviated
