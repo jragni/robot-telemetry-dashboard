@@ -11,6 +11,7 @@ import { ControlsPanel } from './components/ControlsPanel/ControlsPanel';
 import { ImuPanel } from './components/ImuPanel/ImuPanel';
 import { LidarPanel } from './components/LidarPanel';
 import { TelemetryPanel } from './components/TelemetryPanel';
+import { CameraPanel } from './components/CameraPanel';
 import {
   VELOCITY_LIMITS,
   WORKSPACE_PANEL_META,
@@ -54,13 +55,14 @@ export function RobotWorkspace() {
 
   const connected = robot.status === 'connected';
   const visibleCount = WORKSPACE_PANEL_IDS.length - minimizedIds.size;
-  const gridCols = maximizedId
-    ? 'grid-cols-1'
-    : (GRID_COL_MAP[Math.min(visibleCount, 3)] ?? 'grid-cols-3');
+  const cols = maximizedId ? 1 : Math.min(visibleCount, 3);
+  const rows = maximizedId ? 1 : Math.max(1, Math.ceil(visibleCount / cols));
+  const gridCols = GRID_COL_MAP[cols] ?? 'grid-cols-3';
+  const gridRows = rows === 1 ? 'grid-rows-1' : 'grid-rows-2';
 
   return (
     <div className="flex flex-col h-full gap-3 p-4">
-      <div className={`flex-1 grid gap-3 min-h-0 ${gridCols}`}>
+      <div className={`flex-1 grid gap-3 min-h-0 overflow-hidden ${gridCols} ${gridRows}`}>
         <ConditionalRender
           shouldRender={!isMinimized('camera')}
           Component={
@@ -77,7 +79,7 @@ export function RobotWorkspace() {
               onRestoreAll={restoreAll}
               maximized={isMaximized('camera')}
             >
-              {null}
+              <CameraPanel connected={connected} label="/camera/image_raw" />
             </WorkspacePanel>
           }
         />
