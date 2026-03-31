@@ -12,6 +12,7 @@ import { ImuPanel } from './components/ImuPanel/ImuPanel';
 import { LidarPanel } from './components/LidarPanel';
 import { TelemetryPanel } from './components/TelemetryPanel';
 import { CameraPanel } from './components/CameraPanel';
+import { DesktopOnlyGate } from './components/DesktopOnlyGate';
 import {
   VELOCITY_LIMITS,
   WORKSPACE_PANEL_META,
@@ -61,175 +62,177 @@ export function RobotWorkspace() {
   const gridRows = rows === 1 ? 'grid-rows-1' : 'grid-rows-2';
 
   return (
-    <div className="flex flex-col h-full gap-3 p-4">
-      <div className={`flex-1 grid gap-3 min-h-0 overflow-hidden ${gridCols} ${gridRows}`}>
-        <ConditionalRender
-          shouldRender={!isMinimized('camera')}
-          Component={
-            <WorkspacePanel
-              label="Camera"
-              icon={Camera}
-              topicName="/camera/image_raw"
-              onMinimize={() => {
-                minimize('camera');
-              }}
-              onMaximize={() => {
-                maximize('camera');
-              }}
-              onRestoreAll={restoreAll}
-              maximized={isMaximized('camera')}
-            >
-              <CameraPanel connected={connected} label="/camera/image_raw" />
-            </WorkspacePanel>
-          }
-        />
+    <DesktopOnlyGate>
+      <div className="flex flex-col h-full gap-3 p-4">
+        <div className={`flex-1 grid gap-3 min-h-0 overflow-hidden ${gridCols} ${gridRows}`}>
+          <ConditionalRender
+            shouldRender={!isMinimized('camera')}
+            Component={
+              <WorkspacePanel
+                label="Camera"
+                icon={Camera}
+                topicName="/camera/image_raw"
+                onMinimize={() => {
+                  minimize('camera');
+                }}
+                onMaximize={() => {
+                  maximize('camera');
+                }}
+                onRestoreAll={restoreAll}
+                maximized={isMaximized('camera')}
+              >
+                <CameraPanel connected={connected} label="/camera/image_raw" />
+              </WorkspacePanel>
+            }
+          />
+
+          <ConditionalRender
+            shouldRender={!isMinimized('lidar')}
+            Component={
+              <WorkspacePanel
+                label="LiDAR"
+                icon={Radar}
+                topicName="/scan"
+                onMinimize={() => {
+                  minimize('lidar');
+                }}
+                onMaximize={() => {
+                  maximize('lidar');
+                }}
+                onRestoreAll={restoreAll}
+                maximized={isMaximized('lidar')}
+              >
+                <LidarPanel points={[]} rangeMax={10} connected={connected} />
+              </WorkspacePanel>
+            }
+          />
+
+          <ConditionalRender
+            shouldRender={!isMinimized('status')}
+            Component={
+              <WorkspacePanel
+                label="System Status"
+                icon={Shield}
+                onMinimize={() => {
+                  minimize('status');
+                }}
+                onMaximize={() => {
+                  maximize('status');
+                }}
+                onRestoreAll={restoreAll}
+                maximized={isMaximized('status')}
+              >
+                <SystemStatusPanel
+                  name={robot.name}
+                  url={robot.url}
+                  connected={connected}
+                  lastSeen={robot.lastSeen}
+                  uptimeSeconds={null}
+                  battery={null}
+                  rosGraph={null}
+                />
+              </WorkspacePanel>
+            }
+          />
+
+          <ConditionalRender
+            shouldRender={!isMinimized('imu')}
+            Component={
+              <WorkspacePanel
+                label="IMU Attitude"
+                icon={Compass}
+                topicName="/imu/data"
+                onMinimize={() => {
+                  minimize('imu');
+                }}
+                onMaximize={() => {
+                  maximize('imu');
+                }}
+                onRestoreAll={restoreAll}
+                maximized={isMaximized('imu')}
+              >
+                <ImuPanel roll={0} pitch={0} yaw={0} connected={connected} />
+              </WorkspacePanel>
+            }
+          />
+
+          <ConditionalRender
+            shouldRender={!isMinimized('controls')}
+            Component={
+              <WorkspacePanel
+                label="Controls"
+                icon={Gamepad2}
+                topicName="/cmd_vel"
+                onMinimize={() => {
+                  minimize('controls');
+                }}
+                onMaximize={() => {
+                  maximize('controls');
+                }}
+                onRestoreAll={restoreAll}
+                maximized={isMaximized('controls')}
+              >
+                <ControlsPanel
+                  linearVelocity={controls.linearVelocity}
+                  angularVelocity={controls.angularVelocity}
+                  linearLimits={VELOCITY_LIMITS.linear}
+                  angularLimits={VELOCITY_LIMITS.angular}
+                  isActive={controls.isActive}
+                  connected={connected}
+                  onDirectionStart={controls.handleDirectionStart}
+                  onDirectionEnd={controls.handleDirectionEnd}
+                  onLinearVelocityChange={controls.handleLinearChange}
+                  onAngularVelocityChange={controls.handleAngularChange}
+                  onEmergencyStop={controls.handleEmergencyStop}
+                />
+              </WorkspacePanel>
+            }
+          />
+
+          <ConditionalRender
+            shouldRender={!isMinimized('telemetry')}
+            Component={
+              <WorkspacePanel
+                label="Telemetry"
+                icon={Activity}
+                topicName="/odom"
+                onMinimize={() => {
+                  minimize('telemetry');
+                }}
+                onMaximize={() => {
+                  maximize('telemetry');
+                }}
+                onRestoreAll={restoreAll}
+                maximized={isMaximized('telemetry')}
+              >
+                <TelemetryPanel series={[]} timeWindowMs={30000} connected={connected} />
+              </WorkspacePanel>
+            }
+          />
+        </div>
 
         <ConditionalRender
-          shouldRender={!isMinimized('lidar')}
+          shouldRender={minimizedIds.size > 0}
           Component={
-            <WorkspacePanel
-              label="LiDAR"
-              icon={Radar}
-              topicName="/scan"
-              onMinimize={() => {
-                minimize('lidar');
-              }}
-              onMaximize={() => {
-                maximize('lidar');
-              }}
-              onRestoreAll={restoreAll}
-              maximized={isMaximized('lidar')}
-            >
-              <LidarPanel points={[]} rangeMax={10} connected={connected} />
-            </WorkspacePanel>
-          }
-        />
-
-        <ConditionalRender
-          shouldRender={!isMinimized('status')}
-          Component={
-            <WorkspacePanel
-              label="System Status"
-              icon={Shield}
-              onMinimize={() => {
-                minimize('status');
-              }}
-              onMaximize={() => {
-                maximize('status');
-              }}
-              onRestoreAll={restoreAll}
-              maximized={isMaximized('status')}
-            >
-              <SystemStatusPanel
-                name={robot.name}
-                url={robot.url}
-                connected={connected}
-                lastSeen={robot.lastSeen}
-                uptimeSeconds={null}
-                battery={null}
-                rosGraph={null}
-              />
-            </WorkspacePanel>
-          }
-        />
-
-        <ConditionalRender
-          shouldRender={!isMinimized('imu')}
-          Component={
-            <WorkspacePanel
-              label="IMU Attitude"
-              icon={Compass}
-              topicName="/imu/data"
-              onMinimize={() => {
-                minimize('imu');
-              }}
-              onMaximize={() => {
-                maximize('imu');
-              }}
-              onRestoreAll={restoreAll}
-              maximized={isMaximized('imu')}
-            >
-              <ImuPanel roll={0} pitch={0} yaw={0} connected={connected} />
-            </WorkspacePanel>
-          }
-        />
-
-        <ConditionalRender
-          shouldRender={!isMinimized('controls')}
-          Component={
-            <WorkspacePanel
-              label="Controls"
-              icon={Gamepad2}
-              topicName="/cmd_vel"
-              onMinimize={() => {
-                minimize('controls');
-              }}
-              onMaximize={() => {
-                maximize('controls');
-              }}
-              onRestoreAll={restoreAll}
-              maximized={isMaximized('controls')}
-            >
-              <ControlsPanel
-                linearVelocity={controls.linearVelocity}
-                angularVelocity={controls.angularVelocity}
-                linearLimits={VELOCITY_LIMITS.linear}
-                angularLimits={VELOCITY_LIMITS.angular}
-                isActive={controls.isActive}
-                connected={connected}
-                onDirectionStart={controls.handleDirectionStart}
-                onDirectionEnd={controls.handleDirectionEnd}
-                onLinearVelocityChange={controls.handleLinearChange}
-                onAngularVelocityChange={controls.handleAngularChange}
-                onEmergencyStop={controls.handleEmergencyStop}
-              />
-            </WorkspacePanel>
-          }
-        />
-
-        <ConditionalRender
-          shouldRender={!isMinimized('telemetry')}
-          Component={
-            <WorkspacePanel
-              label="Telemetry"
-              icon={Activity}
-              topicName="/odom"
-              onMinimize={() => {
-                minimize('telemetry');
-              }}
-              onMaximize={() => {
-                maximize('telemetry');
-              }}
-              onRestoreAll={restoreAll}
-              maximized={isMaximized('telemetry')}
-            >
-              <TelemetryPanel series={[]} timeWindowMs={30000} connected={connected} />
-            </WorkspacePanel>
+            <nav aria-label="Minimized panels" className="flex items-center gap-1 shrink-0">
+              {WORKSPACE_PANEL_META.filter((p) => isMinimized(p.id)).map((panel) => (
+                <Button
+                  key={panel.id}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    restore(panel.id);
+                  }}
+                  className="font-mono text-xs text-text-muted hover:text-text-primary cursor-pointer"
+                >
+                  <panel.icon className="size-3" aria-hidden="true" />
+                  {panel.label}
+                </Button>
+              ))}
+            </nav>
           }
         />
       </div>
-
-      <ConditionalRender
-        shouldRender={minimizedIds.size > 0}
-        Component={
-          <nav aria-label="Minimized panels" className="flex items-center gap-1 shrink-0">
-            {WORKSPACE_PANEL_META.filter((p) => isMinimized(p.id)).map((panel) => (
-              <Button
-                key={panel.id}
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  restore(panel.id);
-                }}
-                className="font-mono text-xs text-text-muted hover:text-text-primary cursor-pointer"
-              >
-                <panel.icon className="size-3" aria-hidden="true" />
-                {panel.label}
-              </Button>
-            ))}
-          </nav>
-        }
-      />
-    </div>
+    </DesktopOnlyGate>
   );
 }
