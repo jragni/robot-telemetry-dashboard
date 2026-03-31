@@ -1,38 +1,8 @@
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { RobotCard } from './components/RobotCard/RobotCard';
-import { FleetEmptyState } from './components/FleetEmptyState';
+import { ConditionalRender } from '@/components/ConditionalRender';
 import { AddRobotModal } from './components/AddRobotModal';
-import type { FleetRobotGridProps } from './types/FleetOverview.types';
-
-/** FleetEmptyView
- * @description Renders the centered empty state when no robots are connected.
- */
-function FleetEmptyView() {
-  return (
-    <div className="flex-1 flex items-center justify-center">
-      <FleetEmptyState
-        onAddRobot={() => {
-          /* noop — modal trigger is in header */
-        }}
-      />
-    </div>
-  );
-}
-
-/** FleetRobotGrid
- * @description Renders the robot cards in a responsive grid layout.
- * @param robots - Array of robot connections to display.
- * @param onRemove - Callback to remove a robot by id.
- */
-function FleetRobotGrid({ robots, onRemove }: FleetRobotGridProps) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-      {robots.map((robot) => (
-        <RobotCard key={robot.id} robot={robot} onRemove={onRemove} />
-      ))}
-    </div>
-  );
-}
+import { FleetEmptyView } from './components/FleetEmptyView';
+import { FleetRobotGrid } from './components/FleetRobotGrid';
 
 /** FleetOverview
  * @description Renders the fleet page showing robot cards grid or empty state
@@ -42,21 +12,25 @@ export function FleetOverview() {
   const robots = useConnectionStore((s) => s.robots);
   const removeRobot = useConnectionStore((s) => s.removeRobot);
   const robotList = Object.values(robots);
+  const hasRobots = robotList.length > 0;
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
+    <section className="h-full flex flex-col">
+      <header className="flex items-center justify-between mb-4">
         <h1 className="font-sans text-xl font-semibold text-text-primary">
           Fleet Overview
         </h1>
-        <AddRobotModal />
-      </div>
+        <ConditionalRender
+          shouldRender={hasRobots}
+          Component={<AddRobotModal />}
+        />
+      </header>
 
-      {robotList.length === 0 ? (
-        <FleetEmptyView />
-      ) : (
+      {hasRobots ? (
         <FleetRobotGrid robots={robotList} onRemove={removeRobot} />
+      ) : (
+        <FleetEmptyView />
       )}
-    </div>
+    </section>
   );
 }

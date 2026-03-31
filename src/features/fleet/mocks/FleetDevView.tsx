@@ -21,7 +21,7 @@ import {
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { IMU_VIZ_OPTIONS } from '@/features/workspace/constants';
 import { RobotCard } from '../components/RobotCard/RobotCard';
-import { FleetEmptyState } from '../components/FleetEmptyState';
+import { FleetEmptyView } from '../components/FleetEmptyView';
 import { AddRobotModal } from '../components/AddRobotModal';
 import { WorkspacePanel } from '@/features/workspace/components/WorkspacePanel';
 
@@ -260,11 +260,7 @@ export function FleetDevView() {
       <div>
         <SectionTitle>Fleet — Empty State</SectionTitle>
         <div className="bg-surface-primary border border-border rounded-sm">
-          <FleetEmptyState
-            onAddRobot={() => {
-              /* noop — standalone preview */
-            }}
-          />
+          <FleetEmptyView />
         </div>
       </div>
 
