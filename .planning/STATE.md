@@ -59,20 +59,27 @@ See: .planning/PROJECT.md
 ## Session Continuity
 
 Last session: 2026-03-30
-Current: Polish sweep — completing queued cleanup tasks.
+Current: Phase 10 polish sweep — fleet card actions in progress.
 
-### Next Session Tasks
+### Completed This Session
 
-1. Finalize file structure (RobotCard types — consolidate or keep granular?)
-2. ~~JSDoc format — add @description tag + component name to all docstrings~~ ✅
-3. Fleet card — move trash icon to top-right corner (needs /frontend-design)
-4. Landing page — add roadmap/what's next, docs, rosbridge instructions (needs /frontend-design)
-5. ~~Tour guide — add to deferred roadmap~~ ✅ (already in ROADMAP.md)
-6. In-depth panel design for /robot/:id — design all 6 panels (needs /frontend-design)
-7. ~~Ternary extraction rule — multi-line branches become named components~~ ✅
-8. ~~Final audit of src/components/ (non-ui)~~ ✅
-9. Button + Badge a11y contrast audit — WCAG compliance in light/dark for all variants in /dev/components
-10. Header brand link — "Robot Telemetry Dashboard" text links to /fleet in AppShell, links to / on landing page
+- ✅ JSDoc `/** ComponentName` format (42 files)
+- ✅ Ternary extraction (4 files)
+- ✅ Components audit (inline types extracted, stale TODO removed)
+- ✅ Button + Badge a11y (shadcn token mapping, hover/disabled improvements)
+- ✅ Header brand link (→ /fleet in app, → / on landing)
+- ✅ tsconfig.json fix for shadcn CLI path resolution
+- ✅ .planning cleanup (removed ISSUES.md, METRICS.md, config.json, stale v3 spec)
+- ✅ REQUIREMENTS.md traceability updated
+- ✅ Two-step visual gate rule added to CLAUDE.md
+
+- ✅ Fleet card actions redesign (two-row layout, AlertDialog delete, Connect/Disconnect, touch targets)
+
+### Remaining
+
+- [ ] Finalize RobotCard types (consolidate or keep granular?)
+- [ ] Landing page — add roadmap/what's next, docs, rosbridge instructions (needs /frontend-design)
+- [ ] In-depth panel design for /robot/:id — design all 6 panels (needs /frontend-design)
 
 ### Workspace Design Decisions
 

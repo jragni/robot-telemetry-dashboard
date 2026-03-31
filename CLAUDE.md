@@ -6,6 +6,12 @@ GSD for state tracking (STATE.md, ROADMAP.md). Freeform pair programming for exe
 
 ### Execution Rules
 
+- **Visual work pipeline.** Before touching any `.tsx` file for a visual change, follow all 5 steps in order:
+  1. **Discuss** — present approaches and trade-offs to the user
+  2. **Research** — query `ui-ux-pro-max` for design intelligence (layout patterns, component styles, accessibility)
+  3. **Approve** — get explicit user "go ahead" on the direction informed by research
+  4. **Implement** — invoke `/frontend-design` for aesthetic guidance, then write code
+  5. **Verify** — visual check before claiming done
 - **Build features as verticals, not horizontal slices.** Each feature built end-to-end (types → store → hook → component → tests → visual verification → checkpoint) before starting the next. Never build all stores, then all hooks, then all components.
 - **Research tools FIRST.** Query context7, ui-ux-pro-max, /frontend-design BEFORE proposing any solution. Do not propose from own knowledge then validate — tools first, then recommendations. Apply the research findings when writing code.
 - **Visual work executes inline.** Never delegate visual components to parallel subagents — they cannot invoke `/frontend-design` or `ui-ux-pro-max`.
@@ -15,10 +21,12 @@ GSD for state tracking (STATE.md, ROADMAP.md). Freeform pair programming for exe
 
 ### UI Tool Chain (MANDATORY for visual work)
 
-1. **`ui-ux-pro-max`** — Query design intelligence DB for recommendations
-2. **`/frontend-design`** — Production-grade implementation with anti-AI-slop filter
-3. **`/gsd:ui-review`** — 6-pillar visual audit. Must score 7+ on AI Slop, Defense Aesthetic, Polish.
-4. **Playwright MCP** — Screenshots at 1280x800 + 375x812
+| Step | Tool               | Purpose                                                                          | When                                  |
+| ---- | ------------------ | -------------------------------------------------------------------------------- | ------------------------------------- |
+| 1    | `ui-ux-pro-max`    | Design intelligence — layout patterns, component styles, palettes, accessibility | Before designing (informs options)    |
+| 2    | `/frontend-design` | Aesthetic implementation filter — anti-AI-slop, distinctive execution            | Before coding (guides how to build)   |
+| 3    | `context7`         | Library docs — shadcn/Tailwind/React API specifics                               | During coding (API details)           |
+| 4    | **Playwright MCP** | Visual verification — screenshots at 1280x800 + 375x812                          | After coding (verify rendered output) |
 
 ### Pre-Write Checklist
 

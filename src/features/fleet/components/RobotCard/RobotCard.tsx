@@ -58,6 +58,7 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
         <RobotCardActions
           robotId={robot.id}
           robotName={robot.name}
+          status={robot.status}
           onRemove={() => {
             onRemove(robot.id);
           }}
