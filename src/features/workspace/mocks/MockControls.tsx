@@ -1,4 +1,5 @@
 import { OctagonX } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { DPAD_BTN } from '../constants';
 
 /** MockControls
@@ -8,51 +9,63 @@ import { DPAD_BTN } from '../constants';
 export function MockControls() {
   return (
     <div className="flex flex-col items-center gap-4">
-      <button
+      <Button
+        variant="danger"
+        size="sm"
         aria-label="Emergency stop"
-        className="w-20 h-10 bg-status-critical rounded-sm font-mono text-xs font-semibold text-white flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+        className="w-20 font-mono text-xs font-semibold"
       >
         <OctagonX className="size-4" />
         E-STOP
-      </button>
+      </Button>
       <div
         className="grid grid-cols-3 gap-1"
         role="group"
         aria-label="Directional controls"
       >
         <div />
-        <button
+        <Button
+          variant="ghost"
+          size="icon-sm"
           aria-label="Move forward"
-          className={`${DPAD_BTN} text-text-muted`}
+          className={DPAD_BTN}
         >
           ▲
-        </button>
+        </Button>
         <div />
-        <button
+        <Button
+          variant="ghost"
+          size="icon-sm"
           aria-label="Turn left"
-          className={`${DPAD_BTN} text-text-muted`}
+          className={DPAD_BTN}
         >
           ◀
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon-sm"
           aria-label="Stop"
           className={`${DPAD_BTN} text-status-critical`}
         >
           ■
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon-sm"
           aria-label="Turn right"
-          className={`${DPAD_BTN} text-text-muted`}
+          className={DPAD_BTN}
         >
           ▶
-        </button>
+        </Button>
         <div />
-        <button
+        <Button
+          variant="ghost"
+          size="icon-sm"
           aria-label="Move backward"
-          className={`${DPAD_BTN} text-text-muted`}
+          className={DPAD_BTN}
         >
           ▼
-        </button>
+        </Button>
         <div />
       </div>
       <div className="flex gap-4 font-mono text-xs">

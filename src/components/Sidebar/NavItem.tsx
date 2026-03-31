@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import type { NavItemProps } from '@/types/Sidebar.types';
 import {
@@ -17,8 +18,8 @@ import {
  */
 export function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
       onClick={onClick}
       title={collapsed ? item.label : undefined}
       className={`${NAV_ITEM_BASE} ${
@@ -43,6 +44,6 @@ export function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
           <span className="overflow-hidden text-ellipsis">{item.label}</span>
         }
       />
-    </button>
+    </Button>
   );
 }

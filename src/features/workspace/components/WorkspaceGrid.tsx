@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
 import { WorkspacePanel } from './WorkspacePanel';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import type { PanelConfig, PanelGridProps } from '../types/WorkspaceGrid.types';
@@ -94,16 +95,18 @@ export function WorkspaceGrid({ panels }: { panels: PanelConfig[] }) {
             className="flex items-center gap-1 shrink-0"
           >
             {minimizedPanels.map((panel) => (
-              <button
+              <Button
                 key={panel.id}
+                variant="outline"
+                size="sm"
                 onClick={() => {
                   restore(panel.id);
                 }}
-                className="flex items-center gap-1.5 px-3 h-8 bg-surface-secondary border border-border rounded-sm font-mono text-xs text-text-muted hover:text-text-primary hover:border-border-hover transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+                className="font-mono text-xs text-text-muted hover:text-text-primary"
               >
                 <panel.icon className="size-3" />
                 {panel.label}
-              </button>
+              </Button>
             ))}
           </nav>
         }

@@ -1,4 +1,5 @@
 import { ChevronDown, Maximize2, Minus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
 
@@ -9,13 +10,15 @@ import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
  */
 function TopicSelector({ topicName }: { topicName: string }) {
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="xs"
       aria-label="Topic options"
-      className="ml-1 flex items-center gap-1 font-mono text-xs text-text-muted hover:text-accent transition-colors cursor-pointer truncate focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+      className="ml-1 font-mono text-xs text-text-muted hover:text-accent truncate"
     >
       {topicName}
       <ChevronDown className="size-3 shrink-0" />
-    </button>
+    </Button>
   );
 }
 
@@ -49,21 +52,25 @@ export function WorkspacePanel({
           <ConditionalRender
             shouldRender={!!onMinimize}
             Component={
-              <button
+              <Button
+                variant="ghost"
+                size="icon-xs"
                 onClick={onMinimize}
-                className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
                 aria-label="Minimize panel"
+                className="text-text-muted hover:text-text-primary hover:bg-surface-tertiary"
               >
                 <Minus className="size-3" />
-              </button>
+              </Button>
             }
           />
-          <button
-            className="p-1 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-tertiary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+          <Button
+            variant="ghost"
+            size="icon-xs"
             aria-label="Fullscreen"
+            className="text-text-muted hover:text-text-primary hover:bg-surface-tertiary"
           >
             <Maximize2 className="size-3" />
-          </button>
+          </Button>
         </div>
       </div>
       <div className="flex-1 flex flex-col min-h-0">

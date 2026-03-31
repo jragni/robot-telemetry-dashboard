@@ -45,5 +45,8 @@ export const COMPASS_CARDINALS = [
 
 export const PITCH_LADDER_DEGREES = [-20, -10, 10, 20] as const;
 
+/** DPAD_BTN
+ * @description Styling overrides for D-pad directional control buttons.
+ */
 export const DPAD_BTN =
-  'w-8 h-8 bg-surface-tertiary border border-border rounded-sm font-mono text-xs flex items-center justify-center cursor-pointer hover:border-border-hover transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none';
+  'w-8 h-8 bg-surface-tertiary border border-border rounded-sm font-mono text-xs text-text-muted hover:border-border-hover';
