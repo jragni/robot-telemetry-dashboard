@@ -102,3 +102,33 @@ export const TELEMETRY_AXIS_PADDING = 40;
  * @description Bottom padding in pixels for time axis labels.
  */
 export const TELEMETRY_BOTTOM_PADDING = 20;
+
+/** PANEL_TOPIC_TYPES
+ * @description Maps each panel ID to its compatible ROS message types.
+ *  Used to filter the topic dropdown per panel.
+ */
+export const PANEL_TOPIC_TYPES: Record<string, readonly string[]> = {
+  camera: ['sensor_msgs/msg/CompressedImage', 'sensor_msgs/msg/Image'],
+  lidar: ['sensor_msgs/msg/LaserScan'],
+  imu: ['sensor_msgs/msg/Imu'],
+  controls: ['geometry_msgs/msg/Twist'],
+  telemetry: [
+    'nav_msgs/msg/Odometry',
+    'geometry_msgs/msg/Twist',
+    'sensor_msgs/msg/Imu',
+    'sensor_msgs/msg/BatteryState',
+    'sensor_msgs/msg/LaserScan',
+  ],
+};
+
+/** DEFAULT_PANEL_TOPICS
+ * @description Default topic name for each panel, used until the user selects
+ *  a different one or auto-discovery finds a match.
+ */
+export const DEFAULT_PANEL_TOPICS: Record<string, string> = {
+  camera: '/camera/image_raw',
+  lidar: '/scan',
+  imu: '/imu/data',
+  controls: '/cmd_vel',
+  telemetry: '/odom',
+};

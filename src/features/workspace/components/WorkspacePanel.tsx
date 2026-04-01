@@ -21,6 +21,8 @@ export function WorkspacePanel({
   label,
   icon: Icon,
   topicName,
+  availableTopics,
+  onTopicChange,
   headerActions,
   onMinimize,
   onMaximize,
@@ -37,7 +39,7 @@ export function WorkspacePanel({
         </span>
         {topicName ? (
           <div className="min-w-0 shrink" title={topicName}>
-            <TopicSelector topicName={topicName} />
+            <TopicSelector topicName={topicName} availableTopics={availableTopics} onTopicChange={onTopicChange} />
           </div>
         ) : (
           <span className="ml-1" />

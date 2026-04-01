@@ -1,30 +1,37 @@
 import { Link } from 'react-router-dom';
-import { Crosshair, Unplug, PlugZap } from 'lucide-react';
+import { Crosshair, Loader2, Unplug, PlugZap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { RobotCardActionsProps } from '../types/RobotCardActions.types';
 import { RobotDeleteButton } from './RobotDeleteButton';
 
 /** RobotCardActions
- * @description Renders the card action row with View, Pilot, Disconnect/Reconnect,
+ * @description Renders the card action row with View, Pilot, Connect/Disconnect,
  *  and delete buttons.
  * @param robotId - Robot identifier for navigation links.
  * @param robotName - Robot name for delete button aria-label.
- * @param status - Current connection status (for disconnect/reconnect toggle).
+ * @param status - Current connection status.
  * @param onRemove - Callback invoked when user confirms deletion.
+ * @param onConnect - Callback to initiate robot connection.
+ * @param onDisconnect - Callback to disconnect robot.
  */
 export function RobotCardActions({
   robotId,
   robotName,
   status,
   onRemove,
+  onConnect,
+  onDisconnect,
 }: RobotCardActionsProps) {
-  // TODO: Wire disconnect/reconnect actions:
-  // - connected → "Disconnect" triggers graceful roslib disconnect
-  // - disconnected → "Reconnect" triggers roslib reconnect
-  // - connecting → show spinner, disable button
+  const isConnecting = status === 'connecting';
   const isConnected = status === 'connected';
-  const ConnectionIcon = isConnected ? Unplug : PlugZap;
-  const connectionLabel = isConnected ? 'Disconnect' : 'Connect';
+
+  function handleConnectionToggle() {
+    if (isConnected) {
+      onDisconnect();
+    } else {
+      onConnect();
+    }
+  }
 
   return (
     <div className="flex flex-col gap-0 w-full">
@@ -53,12 +60,27 @@ export function RobotCardActions({
         <Button
           variant="outline"
           size="sm"
-          disabled
-          className="flex-1 font-sans text-xs uppercase tracking-widest"
-          aria-label={`${connectionLabel} robot (not yet available)`}
+          disabled={isConnecting}
+          onClick={handleConnectionToggle}
+          className="flex-1 font-sans text-xs uppercase tracking-widest cursor-pointer transition"
+          aria-label={isConnecting ? 'Connecting to robot' : isConnected ? `Disconnect ${robotName}` : `Connect ${robotName}`}
         >
-          <ConnectionIcon size={12} aria-hidden="true" />
-          {connectionLabel}
+          {isConnecting ? (
+            <>
+              <Loader2 size={12} className="animate-spin" aria-hidden="true" />
+              Connecting
+            </>
+          ) : isConnected ? (
+            <>
+              <Unplug size={12} aria-hidden="true" />
+              Disconnect
+            </>
+          ) : (
+            <>
+              <PlugZap size={12} aria-hidden="true" />
+              Connect
+            </>
+          )}
         </Button>
         <RobotDeleteButton robotName={robotName} onRemove={onRemove} />
       </div>

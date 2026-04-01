@@ -1,9 +1,12 @@
+import type { Ros } from 'roslib';
 import type { TwistMessage } from '@/types/ros2-messages.types';
 import type { Direction } from '@/types/control.types';
 
 export interface UseControlPublisherOptions {
   readonly publishRate?: number;
   readonly onPublish?: (twist: TwistMessage) => void;
+  readonly ros?: Ros;
+  readonly topicName?: string;
 }
 
 export interface UseControlPublisherReturn {

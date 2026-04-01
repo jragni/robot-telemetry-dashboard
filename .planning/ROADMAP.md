@@ -86,3 +86,6 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 | Workspace Panels    | ✅ Complete | 2026-03-31 |
 | Controls            | ✅ Complete | 2026-03-31 |
 | Demo Mode           | Not started | —          |
+
+## Backlog
+- [ ] Add LLM chat interface to dashboard for robot interaction/diagnostics

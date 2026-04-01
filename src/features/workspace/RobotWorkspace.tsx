@@ -1,10 +1,19 @@
+import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { useRobotConnection } from '@/hooks/useRobotConnection';
+import { useRosGraph } from '@/hooks/useRosGraph';
+import { useRosTopics } from '@/hooks/useRosTopics';
+import { useBatterySubscription } from '@/hooks/useBatterySubscription';
+import { useConnectionUptime } from '@/hooks/useConnectionUptime';
+import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
 import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
 import { useMinimizedPanels } from './hooks/useMinimizedPanels';
+import { useLidarSubscription } from './hooks/useLidarSubscription';
+import { useImuSubscription } from './hooks/useImuSubscription';
+import { useTelemetrySubscription } from './hooks/useTelemetrySubscription';
 import { WorkspacePanel } from './components/WorkspacePanel';
 import { SystemStatusPanel } from './components/SystemStatusPanel';
 import { ControlsPanel } from './components/ControlsPanel/ControlsPanel';
@@ -13,22 +22,55 @@ import { LidarPanel } from './components/LidarPanel';
 import { TelemetryPanel } from './components/TelemetryPanel';
 import { CameraPanel } from './components/CameraPanel';
 import { DesktopOnlyGate } from '@/components/DesktopOnlyGate';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import {
   WORKSPACE_PANEL_META,
   WORKSPACE_PANEL_IDS,
   GRID_COL_MAP,
+  PANEL_TOPIC_TYPES,
+  DEFAULT_PANEL_TOPICS,
 } from './constants';
 import { VELOCITY_LIMITS } from '@/constants/controls.constants';
 
 /** RobotWorkspace
  * @description Renders the workspace page for a single robot with a 3x2 grid
- *  of panels. Supports minimize, maximize, and restore. Grid reflows
- *  dynamically based on visible panel count.
+ *  of panels. Supports minimize, maximize, and restore. Subscribes to real
+ *  ROS topics when connected.
  */
 export function RobotWorkspace() {
   const { id } = useParams<{ id: string }>();
-  const robot = useConnectionStore((s) => (id ? s.robots[id] : undefined));
-  const controls = useControlPublisher();
+  const { robot, connected, ros, connect, disconnect } = useRobotConnection(id);
+  const rosGraph = useRosGraph(ros);
+  const availableTopics = useRosTopics(ros);
+  const battery = useBatterySubscription(ros, availableTopics);
+  const uptimeSeconds = useConnectionUptime(id, connected);
+  const { videoRef } = useWebRtcStream({ url: robot?.url ?? '', enabled: connected });
+
+  // ── Per-panel selected topics (persisted in store, shared with pilot) ──
+  const selectedTopics = robot?.selectedTopics ?? DEFAULT_PANEL_TOPICS;
+  const setRobotTopic = useConnectionStore((s) => s.setRobotTopic);
+  const controls = useControlPublisher({ ros, topicName: selectedTopics.controls });
+
+  function setTopic(panelId: string, topicName: string) {
+    if (id) setRobotTopic(id, panelId, topicName);
+  }
+
+  // ── Subscriptions (use selected topics) ──────────────────────────
+  const lidar = useLidarSubscription(ros, selectedTopics.lidar ?? '/scan');
+  const imu = useImuSubscription(ros, selectedTopics.imu ?? '/imu/data');
+  // Look up the message type for the selected telemetry topic
+  const telemetryTopicType = availableTopics.find((t) => t.name === selectedTopics.telemetry)?.type ?? 'nav_msgs/msg/Odometry';
+  const telemetrySeries = useTelemetrySubscription(ros, selectedTopics.telemetry ?? '/odom', telemetryTopicType);
+
+  // ── Filtered topic lists per panel (single memo to stabilize hook count) ──
+  const filteredTopics = useMemo(() => ({
+    camera: availableTopics.filter((t) => PANEL_TOPIC_TYPES.camera.includes(t.type)),
+    lidar: availableTopics.filter((t) => PANEL_TOPIC_TYPES.lidar.includes(t.type)),
+    imu: availableTopics.filter((t) => PANEL_TOPIC_TYPES.imu.includes(t.type)),
+    controls: availableTopics.filter((t) => PANEL_TOPIC_TYPES.controls.includes(t.type)),
+    telemetry: availableTopics.filter((t) => PANEL_TOPIC_TYPES.telemetry.includes(t.type)),
+  }), [availableTopics]);
+
   const {
     isMinimized,
     isMaximized,
@@ -54,7 +96,6 @@ export function RobotWorkspace() {
     );
   }
 
-  const connected = robot.status === 'connected';
   const visibleCount = WORKSPACE_PANEL_IDS.length - minimizedIds.size;
   const cols = maximizedId ? 1 : Math.min(visibleCount, 3);
   const rows = maximizedId ? 1 : Math.max(1, Math.ceil(visibleCount / cols));
@@ -71,17 +112,12 @@ export function RobotWorkspace() {
               <WorkspacePanel
                 label="Camera"
                 icon={Camera}
-                topicName="/camera/image_raw"
-                onMinimize={() => {
-                  minimize('camera');
-                }}
-                onMaximize={() => {
-                  maximize('camera');
-                }}
+                onMinimize={() => { minimize('camera'); }}
+                onMaximize={() => { maximize('camera'); }}
                 onRestoreAll={restoreAll}
                 maximized={isMaximized('camera')}
               >
-                <CameraPanel connected={connected} label="/camera/image_raw" />
+                <CameraPanel streamRef={videoRef} connected={connected} label={selectedTopics.camera} />
               </WorkspacePanel>
             }
           />
@@ -92,17 +128,15 @@ export function RobotWorkspace() {
               <WorkspacePanel
                 label="LiDAR"
                 icon={Radar}
-                topicName="/scan"
-                onMinimize={() => {
-                  minimize('lidar');
-                }}
-                onMaximize={() => {
-                  maximize('lidar');
-                }}
+                topicName={selectedTopics.lidar}
+                availableTopics={filteredTopics.lidar}
+                onTopicChange={(t) => { setTopic('lidar', t); }}
+                onMinimize={() => { minimize('lidar'); }}
+                onMaximize={() => { maximize('lidar'); }}
                 onRestoreAll={restoreAll}
                 maximized={isMaximized('lidar')}
               >
-                <LidarPanel points={[]} rangeMax={10} connected={connected} />
+                <LidarPanel points={lidar.points} rangeMax={lidar.rangeMax} connected={connected} />
               </WorkspacePanel>
             }
           />
@@ -113,12 +147,8 @@ export function RobotWorkspace() {
               <WorkspacePanel
                 label="System Status"
                 icon={Shield}
-                onMinimize={() => {
-                  minimize('status');
-                }}
-                onMaximize={() => {
-                  maximize('status');
-                }}
+                onMinimize={() => { minimize('status'); }}
+                onMaximize={() => { maximize('status'); }}
                 onRestoreAll={restoreAll}
                 maximized={isMaximized('status')}
               >
@@ -126,10 +156,13 @@ export function RobotWorkspace() {
                   name={robot.name}
                   url={robot.url}
                   connected={connected}
+                  status={robot.status}
                   lastSeen={robot.lastSeen}
-                  uptimeSeconds={null}
-                  battery={null}
-                  rosGraph={null}
+                  uptimeSeconds={uptimeSeconds}
+                  battery={battery}
+                  rosGraph={rosGraph}
+                  onConnect={connect}
+                  onDisconnect={disconnect}
                 />
               </WorkspacePanel>
             }
@@ -141,17 +174,22 @@ export function RobotWorkspace() {
               <WorkspacePanel
                 label="IMU Attitude"
                 icon={Compass}
-                topicName="/imu/data"
-                onMinimize={() => {
-                  minimize('imu');
-                }}
-                onMaximize={() => {
-                  maximize('imu');
-                }}
+                topicName={selectedTopics.imu}
+                availableTopics={filteredTopics.imu}
+                onTopicChange={(t) => { setTopic('imu', t); }}
+                onMinimize={() => { minimize('imu'); }}
+                onMaximize={() => { maximize('imu'); }}
                 onRestoreAll={restoreAll}
                 maximized={isMaximized('imu')}
               >
-                <ImuPanel roll={0} pitch={0} yaw={0} connected={connected} />
+                <ImuPanel
+                  roll={imu.roll}
+                  pitch={imu.pitch}
+                  yaw={imu.yaw}
+                  angularVelocity={imu.angularVelocity}
+                  linearAcceleration={imu.linearAcceleration}
+                  connected={connected}
+                />
               </WorkspacePanel>
             }
           />
@@ -162,13 +200,11 @@ export function RobotWorkspace() {
               <WorkspacePanel
                 label="Controls"
                 icon={Gamepad2}
-                topicName="/cmd_vel"
-                onMinimize={() => {
-                  minimize('controls');
-                }}
-                onMaximize={() => {
-                  maximize('controls');
-                }}
+                topicName={selectedTopics.controls}
+                availableTopics={filteredTopics.controls}
+                onTopicChange={(t) => { setTopic('controls', t); }}
+                onMinimize={() => { minimize('controls'); }}
+                onMaximize={() => { maximize('controls'); }}
                 onRestoreAll={restoreAll}
                 maximized={isMaximized('controls')}
               >
@@ -196,17 +232,15 @@ export function RobotWorkspace() {
               <WorkspacePanel
                 label="Telemetry"
                 icon={Activity}
-                topicName="/odom"
-                onMinimize={() => {
-                  minimize('telemetry');
-                }}
-                onMaximize={() => {
-                  maximize('telemetry');
-                }}
+                topicName={selectedTopics.telemetry}
+                availableTopics={filteredTopics.telemetry}
+                onTopicChange={(t) => { setTopic('telemetry', t); }}
+                onMinimize={() => { minimize('telemetry'); }}
+                onMaximize={() => { maximize('telemetry'); }}
                 onRestoreAll={restoreAll}
                 maximized={isMaximized('telemetry')}
               >
-                <TelemetryPanel series={[]} timeWindowMs={30000} connected={connected} />
+                <TelemetryPanel series={telemetrySeries} timeWindowMs={30000} connected={connected} />
               </WorkspacePanel>
             }
           />

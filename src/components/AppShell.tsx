@@ -7,6 +7,8 @@ import { useTheme } from '@/hooks/useTheme';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar/Sidebar';
 import { StatusBar } from './StatusBar';
+import { Toaster } from '@/components/ui/sonner';
+import { ConnectionToastProvider } from '@/components/ConnectionToastProvider';
 
 /** AppShell
  * @description Renders the top-level shell layout with sidebar, header,
@@ -85,6 +87,9 @@ export function AppShell() {
       <div className="shell-statusbar">
         <StatusBar />
       </div>
+
+      <Toaster />
+      <ConnectionToastProvider />
     </div>
   );
 }

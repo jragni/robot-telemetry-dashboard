@@ -139,7 +139,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
   const headingNormalized = ((heading % 360) + 360) % 360;
 
   return (
-    <div className="flex flex-col items-center gap-0.5 pointer-events-auto">
+    <div className="flex flex-col items-center gap-0.5 pointer-events-auto bg-surface-base/60 backdrop-blur-sm rounded-sm px-2 py-1">
       <canvas
         ref={canvasRef}
         width={stripWidth}

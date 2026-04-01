@@ -134,8 +134,9 @@ export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinim
     ctx.shadowBlur = LIDAR_POINT_GLOW;
 
     for (const point of points) {
-      const px = half + point.x * scale;
-      const py = half - point.y * scale;
+      // Robot frame: X = forward (up on screen), Y = left (left on screen)
+      const px = half - point.y * scale;
+      const py = half - point.x * scale;
       const ratio = point.distance / rangeMax;
 
       let color = colors.nominal;

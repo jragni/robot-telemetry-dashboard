@@ -144,8 +144,8 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
 
     for (let i = 0; i <= TELEMETRY_GRID_LINES_V; i++) {
       const x = left + (plotW / TELEMETRY_GRID_LINES_V) * i;
-      const t = timeWindowMs - (timeWindowMs / TELEMETRY_GRID_LINES_V) * i;
-      const label = t === 0 ? '0s' : `-${String(Math.round(t / 1000))}s`;
+      const t = (timeWindowMs / TELEMETRY_GRID_LINES_V) * i;
+      const label = t === 0 ? 'now' : `-${String(Math.round(t / 1000))}s`;
       ctx.fillText(label, x, plotH + 4);
     }
 
@@ -170,7 +170,7 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
         let started = false;
         for (const pt of s.data) {
           if (pt.timestamp < tMin || pt.timestamp > now) continue;
-          const x = left + ((pt.timestamp - tMin) / timeWindowMs) * plotW;
+          const x = left + (1 - (pt.timestamp - tMin) / timeWindowMs) * plotW;
           const y = plotH - ((pt.value - vMin) / (vMax - vMin)) * plotH;
 
           if (!started) {
@@ -214,7 +214,7 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
           aria-label={`Telemetry chart: ${String(seriesCount)} series, ${String(totalPoints)} points, ${String(Math.round(timeWindowMs / 1000))}s window`}
         />
       </div>
-      <div className="flex items-center gap-3 font-mono text-xs shrink-0 px-1">
+      <div className="flex items-center gap-3 font-mono text-xs shrink-0 px-1 overflow-x-auto flex-wrap">
         {series.map((s) => (
           <div key={s.label} className="flex items-center gap-1.5">
             <span className="w-3 h-px inline-block" style={{ backgroundColor: s.color }} />

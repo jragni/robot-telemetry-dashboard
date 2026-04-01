@@ -122,6 +122,36 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
       ctx.stroke();
     }
 
+    // Axis distance labels — X (forward) on vertical axis, Y (left) on horizontal
+    ctx.font = '12px "Roboto Mono", monospace';
+    ctx.fillStyle = c.textMuted;
+    ctx.globalAlpha = 0.7;
+    const metersPerGrid = rangeMax / (LIDAR_GRID_LINE_COUNT / 2) / zoom;
+    for (let i = 1; i < LIDAR_GRID_LINE_COUNT; i++) {
+      const pos = i * gridSpacing;
+      const distFromCenter = ((i - LIDAR_GRID_LINE_COUNT / 2) * metersPerGrid);
+      const labelVal = Math.abs(distFromCenter);
+      if (labelVal < 0.01) continue;
+      const label = labelVal >= 1 ? `${labelVal.toFixed(0)}m` : `${labelVal.toFixed(1)}m`;
+      // Y axis labels (horizontal — left/right)
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(label, pos, size - 14);
+      // X axis labels (vertical — forward/backward)
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, 4, pos);
+    }
+    // Axis name labels
+    ctx.fillStyle = c.accent;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('X', cx, 4);
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Y', size - 4, cy);
+    ctx.globalAlpha = 1;
+
     // Center crosshair
     ctx.strokeStyle = c.textPrimary;
     ctx.lineWidth = 1;
@@ -161,8 +191,9 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
       for (const point of points) {
         const dist = point.distance;
         const ratio = Math.min(dist / rangeMax, 1);
-        const x = cx + Math.cos(point.angle) * dist * scale;
-        const y = cy - Math.sin(point.angle) * dist * scale;
+        // Robot frame: X = forward (up), Y = left (screen-left)
+        const x = cx - Math.sin(point.angle) * dist * scale;
+        const y = cy - Math.cos(point.angle) * dist * scale;
 
         if (x < 0 || x > size || y < 0 || y > size) continue;
 

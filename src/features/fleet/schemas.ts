@@ -1,0 +1,23 @@
+import { z } from 'zod';
+import { normalizeRosbridgeUrl } from './helpers';
+
+/** addRobotSchema
+ * @description Validates the Add Robot form inputs. Ensures the robot name is
+ *  non-empty and the URL is a valid WebSocket-compatible endpoint.
+ */
+export const addRobotSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Robot name is required'),
+  url: z
+    .string()
+    .trim()
+    .min(1, 'Rosbridge URL is required')
+    .refine(
+      (val) => normalizeRosbridgeUrl(val) !== '',
+      { message: 'Invalid URL — enter an IP, hostname, or WebSocket URL' },
+    ),
+});
+
+export type AddRobotInput = z.infer<typeof addRobotSchema>;

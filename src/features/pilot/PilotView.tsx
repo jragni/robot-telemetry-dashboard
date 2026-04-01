@@ -2,12 +2,17 @@ import { useParams, Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { DesktopOnlyGate } from '@/components/DesktopOnlyGate';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { useRobotConnection } from '@/hooks/useRobotConnection';
 import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
 import { PilotCamera } from './components/PilotCamera';
 import { PilotHud } from './components/PilotHud';
-import { useWebRtcStream } from './hooks/useWebRtcStream';
+import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
+import { useRosTopics } from '@/hooks/useRosTopics';
+import { useBatterySubscription } from '@/hooks/useBatterySubscription';
+import { useLidarSubscription } from '@/features/workspace/hooks/useLidarSubscription';
+import { useImuSubscription } from '@/features/workspace/hooks/useImuSubscription';
 import { usePilotFullscreen } from './hooks/usePilotFullscreen';
-import { PLACEHOLDER_TELEMETRY, PILOT_FULLSCREEN_Z } from './constants';
+import { PILOT_FULLSCREEN_Z } from './constants';
 import type { ProxyStatus } from './types/PilotView.types';
 
 /** PilotView
@@ -18,12 +23,36 @@ import type { ProxyStatus } from './types/PilotView.types';
 export function PilotView() {
   const { id } = useParams<{ id: string }>();
   const robot = useConnectionStore((s) => (id ? s.robots[id] : undefined));
-  const controls = useControlPublisher();
-  const { status: videoStatus, videoRef } = useWebRtcStream(robot?.url ?? '', !!robot);
+  const { ros, connected } = useRobotConnection(id);
+  const selectedTopics = robot?.selectedTopics;
+  const controls = useControlPublisher({ ros, topicName: selectedTopics?.controls });
+  const { status: videoStatus, videoRef } = useWebRtcStream({
+    url: robot?.url ?? '',
+    enabled: !!robot,
+  });
   const { isFullscreen, toggleFullscreen } = usePilotFullscreen();
 
-  // TODO: Replace with usePilotTelemetry (pair-programmed)
-  const telemetry = PLACEHOLDER_TELEMETRY;
+  // ── ROS subscriptions (shared topics from workspace) ─────────────
+  const availableTopics = useRosTopics(ros);
+  const lidar = useLidarSubscription(ros, selectedTopics?.lidar ?? '/scan');
+  const imu = useImuSubscription(ros, selectedTopics?.imu ?? '/imu/data');
+  const battery = useBatterySubscription(ros, availableTopics);
+
+  // Convert polar LidarPoints (workspace) to Cartesian (pilot minimap)
+  const pilotLidarPoints = lidar.points.map((p) => ({
+    x: Math.cos(p.angle) * p.distance,
+    y: Math.sin(p.angle) * p.distance,
+    distance: p.distance,
+  }));
+
+  const telemetry = {
+    imu: connected ? { roll: imu.roll, pitch: imu.pitch, yaw: imu.yaw } : null,
+    lidarPoints: pilotLidarPoints,
+    lidarRangeMax: lidar.rangeMax,
+    battery: battery ? { percentage: battery.percentage, voltage: battery.voltage } : null,
+    linearSpeed: 0,
+    uptimeSeconds: null,
+  };
 
   if (!robot) {
     return (
@@ -39,14 +68,13 @@ export function PilotView() {
     );
   }
 
-  const connected = robot.status === 'connected';
   const rosbridgeStatus: ProxyStatus = connected ? 'connected' : 'disconnected';
 
   return (
     <DesktopOnlyGate>
       <div
         className={cn(
-          'relative w-full h-full overflow-hidden bg-surface-base',
+          'relative w-full h-full overflow-clip bg-surface-base',
           isFullscreen && `fixed inset-0 ${PILOT_FULLSCREEN_Z}`,
         )}
       >

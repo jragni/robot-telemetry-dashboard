@@ -1,4 +1,7 @@
 import type { Direction } from '@/types/control.types';
+import type { VideoStreamStatus } from '@/types/streaming.types';
+
+export type { VideoStreamStatus };
 
 /** LidarPoint
  * @description A single LiDAR scan point in Cartesian coordinates with distance metadata.
@@ -21,11 +24,6 @@ export interface PilotTelemetry {
   readonly linearSpeed: number;
   readonly uptimeSeconds: number | null;
 }
-
-/** VideoStreamStatus
- * @description WebRTC video stream connection states.
- */
-export type VideoStreamStatus = 'idle' | 'connecting' | 'streaming' | 'failed';
 
 /** ProxyStatus
  * @description Connection state for each independent proxy (rosbridge or video).

@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ConnectionStore } from './useConnectionStore.types';
 import { assignRobotColor } from './useConnectionStore.helpers';
+import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
+import { DEFAULT_PANEL_TOPICS } from '@/features/workspace/constants';
 
 /**
  * useConnectionStore
@@ -25,12 +27,14 @@ export const useConnectionStore = create<ConnectionStore>()(
               lastSeen: null,
               lastError: null,
               color: assignRobotColor(name),
+              selectedTopics: { ...DEFAULT_PANEL_TOPICS },
             },
           },
         }));
       },
 
       removeRobot: (id) => {
+        ConnectionManager.disconnect(id);
         set((state) => {
           const { [id]: _removed, ...rest } = state.robots;
           void _removed;
@@ -50,6 +54,32 @@ export const useConnectionStore = create<ConnectionStore>()(
           };
         });
       },
+
+      connectRobot: async (id) => {
+        const robot = useConnectionStore.getState().robots[id];
+        if (!robot) return;
+        await ConnectionManager.connect(id, robot.url);
+      },
+
+      disconnectRobot: (id) => {
+        ConnectionManager.disconnect(id);
+      },
+
+      setRobotTopic: (id, panelId, topicName) => {
+        set((state) => {
+          const existing = state.robots[id];
+          if (!existing) return state;
+          return {
+            robots: {
+              ...state.robots,
+              [id]: {
+                ...existing,
+                selectedTopics: { ...existing.selectedTopics, [panelId]: topicName },
+              },
+            },
+          };
+        });
+      },
     }),
     {
       name: 'rtd-connections',
@@ -65,6 +95,7 @@ export const useConnectionStore = create<ConnectionStore>()(
               lastSeen: null,
               lastError: null,
               color: robot.color,
+              selectedTopics: robot.selectedTopics,
             },
           ]),
         ),
@@ -83,15 +114,13 @@ export const useConnectionStore = create<ConnectionStore>()(
               id: (robot.id as string) || key,
               name: (robot.name as string) || key,
               url: (robot.url as string) || '',
-              status:
-                robot.status === 'connected'
-                  ? ('connected' as const)
-                  : ('disconnected' as const),
+              status: 'disconnected' as const,
               lastSeen: null,
               lastError: null,
               color: (robot.color as string | undefined)
                 ? (robot.color as 'blue')
                 : assignRobotColor((robot.name as string) || key),
+              selectedTopics: (robot.selectedTopics as Record<string, string> | undefined) ?? { ...DEFAULT_PANEL_TOPICS },
             },
           ]),
         );

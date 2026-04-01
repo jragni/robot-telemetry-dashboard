@@ -1,4 +1,4 @@
-import { CheckCircle, MinusCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Loader2, MinusCircle } from 'lucide-react';
 import type {
   ConnectionStatus,
   RobotColor,
@@ -17,6 +17,18 @@ export const STATUS_CONFIG: Record<ConnectionStatus, StatusConfig> = {
     color: 'text-status-offline',
     bg: 'bg-status-offline-bg',
     Icon: MinusCircle,
+  },
+  connecting: {
+    label: 'Connecting',
+    color: 'text-status-caution',
+    bg: 'bg-status-caution-bg',
+    Icon: Loader2,
+  },
+  error: {
+    label: 'Error',
+    color: 'text-status-critical',
+    bg: 'bg-status-critical-bg',
+    Icon: AlertTriangle,
   },
 };
 

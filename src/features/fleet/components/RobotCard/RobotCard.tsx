@@ -5,6 +5,10 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { ConditionalRender } from '@/components/ConditionalRender';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { useRobotConnection } from '@/hooks/useRobotConnection';
+import { useRosTopics } from '@/hooks/useRosTopics';
+import { useBatterySubscription } from '@/hooks/useBatterySubscription';
 import type { RobotCardProps } from './types/RobotCard.types';
 import { ROBOT_COLOR_CLASSES } from './constants';
 import { RobotCardIdentity } from './components/RobotCardIdentity';
@@ -20,6 +24,11 @@ import { RobotCardActions } from './components/RobotCardActions';
  * @param onRemove - Callback invoked with robot ID on removal confirmation.
  */
 export function RobotCard({ robot, onRemove }: RobotCardProps) {
+  const connectRobot = useConnectionStore((s) => s.connectRobot);
+  const disconnectRobot = useConnectionStore((s) => s.disconnectRobot);
+  const { ros } = useRobotConnection(robot.id);
+  const topics = useRosTopics(ros);
+  const battery = useBatterySubscription(ros, topics);
   const borderColor = ROBOT_COLOR_CLASSES[robot.color].border;
   const iconColor = ROBOT_COLOR_CLASSES[robot.color].text;
   const isConnected = robot.status === 'connected';
@@ -45,7 +54,7 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
           shouldRender={isConnected}
           Component={
             <>
-              <RobotCardVitals />
+              <RobotCardVitals battery={battery} />
               <hr className="border-border border-dashed" />
             </>
           }
@@ -61,6 +70,12 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
           status={robot.status}
           onRemove={() => {
             onRemove(robot.id);
+          }}
+          onConnect={() => {
+            void connectRobot(robot.id);
+          }}
+          onDisconnect={() => {
+            disconnectRobot(robot.id);
           }}
         />
       </CardFooter>

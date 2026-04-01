@@ -5,4 +5,6 @@ export interface RobotCardActionsProps {
   readonly robotName: string;
   readonly status: ConnectionStatus;
   readonly onRemove: () => void;
+  readonly onConnect: () => void;
+  readonly onDisconnect: () => void;
 }

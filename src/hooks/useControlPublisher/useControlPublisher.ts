@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Topic } from 'roslib';
 import type { Direction } from '@/types/control.types';
 import { VELOCITY_LIMITS } from '@/constants/controls.constants';
 import type { UseControlPublisherOptions, UseControlPublisherReturn } from './types';
@@ -16,7 +17,7 @@ import { buildTwist } from './helpers';
 export function useControlPublisher(
   options: UseControlPublisherOptions = {},
 ): UseControlPublisherReturn {
-  const { publishRate = DEFAULT_PUBLISH_RATE, onPublish } = options;
+  const { publishRate = DEFAULT_PUBLISH_RATE, onPublish, ros, topicName = '/cmd_vel' } = options;
   const intervalMs = Math.round(1000 / publishRate);
 
   const linearDefault: number = VELOCITY_LIMITS.linear.default;
@@ -26,9 +27,26 @@ export function useControlPublisher(
   const [isActive, setIsActive] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const topicRef = useRef<Topic | null>(null);
   const onPublishRef = useRef(onPublish);
   const linearRef = useRef(linearVelocity);
   const angularRef = useRef(angularVelocity);
+
+  // Create/destroy roslib Topic when ros or topicName changes
+  useEffect(() => {
+    if (!ros) {
+      topicRef.current = null;
+      return;
+    }
+    topicRef.current = new Topic({
+      ros,
+      name: topicName,
+      messageType: 'geometry_msgs/msg/Twist',
+    });
+    return () => {
+      topicRef.current = null;
+    };
+  }, [ros, topicName]);
 
   useEffect(() => {
     onPublishRef.current = onPublish;
@@ -46,12 +64,17 @@ export function useControlPublisher(
     };
   }, []);
 
+  function publish(twist: typeof ZERO_TWIST) {
+    onPublishRef.current?.(twist);
+    topicRef.current?.publish(twist);
+  }
+
   function stop() {
     if (timerRef.current !== null) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-    onPublishRef.current?.(ZERO_TWIST);
+    publish(ZERO_TWIST);
   }
 
   function handleDirectionStart(direction: Direction) {
@@ -62,9 +85,9 @@ export function useControlPublisher(
     }
     stop();
     setIsActive(true);
-    onPublishRef.current?.(buildTwist(direction, linearRef.current, angularRef.current));
+    publish(buildTwist(direction, linearRef.current, angularRef.current));
     timerRef.current = setInterval(() => {
-      onPublishRef.current?.(buildTwist(direction, linearRef.current, angularRef.current));
+      publish(buildTwist(direction, linearRef.current, angularRef.current));
     }, intervalMs);
   }
 
