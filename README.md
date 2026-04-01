@@ -1,65 +1,111 @@
 # Robot Telemetry Dashboard
 
-A professional drone operator control interface built with Next.js 15, React 18, and TypeScript. This dashboard provides real-time visualization and control of ROS-enabled robots through WebSocket connections.
+A real-time web dashboard for monitoring and controlling ROS2-enabled robots. Connects via WebSocket (rosbridge) for telemetry and commands, with WebRTC video streaming for low-latency camera feeds.
 
-## 🚁 Features
+## Features
 
-### Real-Time Data Visualization
-- **Camera Streams**: Live video feed from robot cameras (compressed & raw formats)
-- **LiDAR Visualization**: Real-time laser scan data with 2D polar plots
-- **IMU Telemetry**: Three-axis orientation, acceleration, and angular velocity graphs
-- **Topic Monitoring**: Live topic list with message counts and types
+### Real-Time Sensor Visualization
+- **LiDAR** — Canvas 2D tactical display with robot-frame orientation (X=forward, Y=left), zoom controls, distance labels
+- **IMU Attitude** — Quaternion-to-Euler conversion with compass, attitude indicator, numbers, and 3D wireframe views
+- **Telemetry Graphing** — Multi-topic time-series plotting supporting Odometry, Twist, IMU, BatteryState, and LaserScan
+- **Camera** — WebRTC video stream via aiortc REST signaling
+- **System Status** — Live ROS computation graph (nodes, topics, services, actions) with expandable name lists
 
 ### Robot Control
-- **Movement Controls**: Directional movement with linear and angular velocity
-- **Real-Time Commands**: Prioritized command publishing for responsive control
-- **Frame Rate Control**: Optimized 15 FPS streaming for smooth video without control lag
+- D-pad directional control with configurable linear/angular velocity
+- Keyboard arrow key support
+- Emergency stop
+- Real-time `geometry_msgs/msg/Twist` publishing to `/cmd_vel` via roslib
+- Pilot Mode — fullscreen FPV view with HUD overlays
 
-### Professional Interface
-- **Drone Operator Layout**: Information-dense design optimized for mission-critical operations
-- **Responsive Design**: Full desktop experience with mobile-optimized layouts
-- **Dark Theme**: Operator-friendly dark interface with HUD-style overlays
-- **Connection Management**: Multiple robot connection support with automatic discovery
+### Connection Management
+- Multi-robot support with persistent connection store
+- Connection test before adding robots
+- Auto-reconnection with exponential backoff (2s → 30s cap, 5 attempts)
+- Toast notifications for connection state transitions
+- Per-robot topic selection shared between Workspace and Pilot views
 
-## 🛠 Technology Stack
+### Interface
+- Midnight Operations dark theme (OKLCH hue 260)
+- Triple-redundant status indicators (color + icon + text per MIL-STD-1472H)
+- 6-panel workspace with minimize/maximize
+- Responsive fleet card grid with connect/disconnect/delete
+- Topic dropdowns filtered by compatible ROS message types per panel
 
-- **Frontend**: Next.js 15.4, React 18, TypeScript
-- **Styling**: Tailwind CSS, shadcn/ui components
-- **Data Visualization**: D3.js v7 for charts and plots
-- **Robot Communication**: ROS Bridge (roslib.js) via WebSocket
-- **Build Tool**: Turbopack for fast development
+## Tech Stack
 
-## 🚀 Quick Start
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | React 19, TypeScript 5.9, Vite 7 |
+| **Styling** | Tailwind CSS v4, shadcn/ui (Radix), Lucide React |
+| **Fonts** | Exo (UI) + Roboto Mono (telemetry data) |
+| **State** | Zustand with localStorage persistence |
+| **ROS Bridge** | roslib 2.x (pure ESM) via WebSocket |
+| **Video** | WebRTC with aiortc REST signaling |
+| **Validation** | Zod v4 |
+| **Notifications** | Sonner |
+| **Quality** | ESLint, TypeScript strict, eslint-plugin-boundaries (3-tier) |
 
-### Prerequisites
-- Node.js 18+ and npm
-- ROS system (ROS1 or ROS2)
-- Robot with camera, LiDAR, and IMU sensors
-- Internet connection for remote access (if using ngrok)
+## Architecture
 
-### Installation
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd robot-telemetry-dashboard
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-npm start
+```
+┌─────────────────────────────────────────┐
+│  Robot (ROS2)                           │
+│  nginx reverse proxy (:8000)            │
+│    /rosbridge → rosbridge_server (9090) │
+│    /webrtc    → aiortc signaling (8080) │
+└──────────────────┬──────────────────────┘
+                   │
+    ┌──────────────┼──────────────┐
+    │              │              │
+    ▼              ▼              ▼
+ roslib        WebRTC        REST API
+ Topics      PeerConn       SDP offer
+    │              │              │
+    ▼              ▼              ▼
+┌─────────────────────────────────────────┐
+│  Dashboard (Browser)                    │
+│                                         │
+│  ConnectionManager ← module singleton   │
+│    └→ Map<robotId, Ros>                 │
+│                                         │
+│  Zustand Store ← serializable state     │
+│    └→ robots, status, selectedTopics    │
+│                                         │
+│  React Hooks ← per-panel subscriptions  │
+│    └→ useRosSubscriber, useRosGraph,    │
+│       useLidarSubscription, useImu...   │
+│                                         │
+│  Components ← Canvas 2D + shadcn/ui    │
+└─────────────────────────────────────────┘
 ```
 
-### Robot Setup
+**Three-layer data flow:**
+1. **ConnectionManager** (module singleton) — holds live Ros instances, pushes status to store
+2. **Zustand Store** — serializable UI state, persisted to localStorage
+3. **React Components** — read store via selectors, subscribe to topics via hooks
 
-#### 1. Install ROS Bridge Server
+## Prerequisites
 
-**For ROS2:**
+**Web Application:** Node.js 18+, npm
+
+**Robot System:** Ubuntu 22.04+, ROS2 Humble, Python 3.10+, camera (USB/CSI) (TurtleBot 3 used)
+
+## Quick Start
+
+```bash
+git clone https://github.com/jragni/robot-telemetry-dashboard.git
+cd robot-telemetry-dashboard
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`. Click **Add Robot**, enter the robot's base URL.
+
+## Robot Setup
+
+### 1. Install ROS Bridge Server
+
 ```bash
 # Install rosbridge_server
 sudo apt install ros-${ROS_DISTRO}-rosbridge-server
@@ -70,243 +116,113 @@ git clone https://github.com/RobotWebTools/rosbridge_suite.git
 cd ~/ros2_ws && colcon build --packages-select rosbridge_server
 ```
 
-**For ROS1:**
+Launch rosbridge:
 ```bash
-# Install rosbridge_server
-sudo apt install ros-${ROS_DISTRO}-rosbridge-server
-
-# Or build from source
-cd ~/catkin_ws/src
-git clone https://github.com/RobotWebTools/rosbridge_suite.git
-cd ~/catkin_ws && catkin_make
-```
-
-#### 2. Launch ROS Bridge Server
-
-**For ROS2:**
-```bash
-# Source your workspace
 source ~/ros2_ws/install/setup.bash
-
-# Launch rosbridge websocket server
-ros2 launch rosbridge_server rosbridge_websocket.launch
+ros2 launch rosbridge_server rosbridge_websocket.launch.xml
+# Default port: 9090
 ```
 
-**For ROS1:**
-```bash
-# Source your workspace
-source ~/catkin_ws/devel/setup.bash
+### 2. WebRTC Video Streaming
 
-# Launch rosbridge websocket server
-roslaunch rosbridge_server rosbridge_websocket.launch
+For low-latency camera streaming, use the companion WebRTC server:
+
+**[github.com/jragni/ros-webrtc](https://github.com/jragni/ros-webrtc)** — lightweight Python-based WebRTC streaming using aiortc.
+
+Follow the installation instructions in that repository. Default port: 8080.
+
+### 3. Configure Nginx Reverse Proxy
+
+Nginx consolidates rosbridge and WebRTC behind a single port so the dashboard only needs one base URL.
+
+```bash
+sudo apt update && sudo apt install nginx
+sudo vim /etc/nginx/sites-available/robot-teleop
 ```
 
-#### 3. Remote Access Setup (Optional)
+Add this configuration:
+```nginx
+server {
+    listen 8000;
+    server_name _;
 
-If your robot is not on the same network as your dashboard, use ngrok for secure tunneling:
+    # WebSocket for rosbridge
+    location /rosbridge {
+        rewrite ^/rosbridge/?(.*)$ /$1 break;
+        proxy_pass http://localhost:9090;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 86400;
+    }
 
-**Install ngrok:**
-```bash
-# Download and install ngrok
-curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
-echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
-sudo apt update && sudo apt install ngrok
-
-# Or download directly
-wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
-tar xvzf ngrok-v3-stable-linux-amd64.tgz
-sudo mv ngrok /usr/local/bin
+    # WebRTC signaling server
+    location /webrtc/ {
+        rewrite ^/webrtc/?(.*)$ /$1 break;
+        proxy_pass http://localhost:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
 ```
 
-**Setup ngrok tunnel:**
+Enable and start:
 ```bash
-# Create account at https://ngrok.com and get your authtoken
+sudo ln -s /etc/nginx/sites-available/robot-teleop /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+Your robot is now accessible at:
+- Rosbridge: `ws://<robot-ip>:8000/rosbridge`
+- WebRTC: `http://<robot-ip>:8000/webrtc/`
+
+### 4. Remote Access with ngrok (optional)
+
+For accessing the robot over the internet:
+```bash
+sudo apt install ngrok
 ngrok config add-authtoken YOUR_AUTHTOKEN
-
-# For HTTPS deployments (GitHub Pages, Vercel, etc.) - use HTTP tunnel for WSS support
-ngrok http 9090
-
-# For local development only - TCP tunnel
-ngrok tcp 9090
+ngrok http 8000
 ```
 
-**Use the ngrok URL in dashboard:**
-
-**For HTTPS sites (GitHub Pages, production):**
-- HTTP tunnel provides: `https://abc123.ngrok.io`
-- Use in dashboard as: `wss://abc123.ngrok.io`
-
-**For local development (localhost):**
-- TCP tunnel provides: `tcp://0.tcp.ngrok.io:12345`
-- Use in dashboard as: `ws://0.tcp.ngrok.io:12345`
-
-## 📱 Usage
-
-### Connecting to Robot
-1. Open the dashboard in your browser
-2. Click "Add Connection" in the sidebar
-3. Enter robot details:
-   - **Name**: Friendly name for your robot
-   - **WebSocket URL**: 
-     - Local network: `ws://your-robot-ip:9090`
-     - Remote (ngrok): `ws://0.tcp.ngrok.io:12345`
-4. Click "Connect"
-
-**Connection Examples:**
-
-**For HTTPS deployments (GitHub Pages, production):**
-- **Remote via ngrok HTTP**: `wss://abc123.ngrok.io`
-- **Secure WebSocket**: `wss://your-robot.example.com:9090`
-
-**For local development only:**
-- **Local Robot**: `ws://192.168.1.100:9090`
-- **Localhost**: `ws://localhost:9090`
-- **Remote via ngrok TCP**: `ws://0.tcp.ngrok.io:12345`
-
-### Supported Message Types
-- **Camera**: `sensor_msgs/CompressedImage`, `sensor_msgs/Image`
-- **LiDAR**: `sensor_msgs/LaserScan`
-- **IMU**: `sensor_msgs/Imu`
-- **Control**: `geometry_msgs/Twist`
-
-### Camera Stream
-- **Topic Selection**: Choose from available image topics
-- **Format Support**: JPEG, PNG (compressed) and RGB8, BGR8, Mono8 (raw)
-- **Controls**: START/STOP streaming with live FPS counter
-
-### LiDAR Visualization
-- **Real-Time Plotting**: 2D polar coordinate visualization
-- **Range Display**: Configurable range limits (default: 5m)
-- **Square Aspect Ratio**: Maintains proper scaling
-
-### IMU Telemetry
-- **Orientation**: Roll, pitch, yaw in degrees or radians
-- **Linear Acceleration**: 3-axis acceleration in m/s²
-- **Angular Velocity**: 3-axis rotation in rad/s or deg/s
-- **Dynamic Scaling**: Auto-adjusting chart bounds
-
-### Robot Control
-- **Movement Grid**: 8-directional movement controls
-- **Velocity Sliders**: Linear and angular velocity adjustment
-- **Emergency Stop**: Immediate halt command
-
-## 🎯 Design Philosophy
-
-### Control Priority
-The dashboard prioritizes control commands over streaming data to ensure responsive robot operation. Video streams are throttled to 15 FPS while commands are published immediately.
-
-### Operator Experience
-Designed for professional drone operators with:
-- High information density
-- Quick access to critical controls
-- Minimal visual distractions
-- Reliable performance under stress
-
-### Mobile Responsiveness
-- **Portrait Mode**: Optimized stacked layout
-- **Touch Controls**: Finger-friendly button sizing
-- **Scrollable Views**: All data accessible on small screens
-
-## 🔧 Configuration
-
-### Environment Variables
-```env
-# Optional: Custom port (default: 3000)
-PORT=3004
-
-# Optional: Custom host
-HOST=0.0.0.0
+Use the ngrok URL in the dashboard — replace `https://` with `wss://`:
+```
+ngrok gives:  https://abc123.ngrok-free.app
+dashboard:    wss://abc123.ngrok-free.app
 ```
 
-### ROS Topic Configuration
-The dashboard automatically discovers available topics. Default topics:
-- Camera: `/camera/image_raw/compressed`
-- LiDAR: `/scan`
-- IMU: `/imu`
-- Control: `/cmd_vel`
+## Connection Format
 
-## 🏗 Architecture
+Enter the base URL only — the dashboard appends `/rosbridge` and `/webrtc` automatically:
+- **Local:** `ws://192.168.1.100:8000`
+- **ngrok:** `wss://abc123.ngrok-free.app`
 
-### Component Structure
-```
-├── components/
-│   ├── dashboard/          # Main layout and connection management
-│   ├── sensorsection/      # Camera, LiDAR, IMU visualizations
-│   ├── controlsection/     # Robot movement controls
-│   ├── topicsection/       # Topic monitoring
-│   └── sidebar/           # Connection management
-```
+## Supported ROS Message Types
 
-### Data Flow
-1. **Connection**: WebSocket established via rosbridge
-2. **Discovery**: Automatic topic discovery using rosapi
-3. **Subscription**: Subscribe to selected topics
-4. **Processing**: Real-time data processing and visualization
-5. **Control**: Command publishing with priority handling
+| Type | Topic Example | Used By |
+|------|--------------|---------|
+| `sensor_msgs/msg/LaserScan` | `/scan` | LiDAR panel |
+| `sensor_msgs/msg/Imu` | `/imu/data` | IMU panel, Telemetry |
+| `sensor_msgs/msg/BatteryState` | `/battery` | System Status, Fleet cards |
+| `nav_msgs/msg/Odometry` | `/odom` | Telemetry panel |
+| `geometry_msgs/msg/Twist` | `/cmd_vel` | Controls (publish) |
+| `sensor_msgs/msg/CompressedImage` | `/camera/image_raw/compressed` | Camera (via WebRTC) |
 
-## 📊 Performance Optimizations
+## Development
 
-- **Frame Rate Control**: 15 FPS video streaming
-- **Canvas Rendering**: Hardware-accelerated chart updates
-- **Memory Management**: Limited data history (1000 points)
-- **WebSocket Optimization**: Binary data transfer
-- **Component Optimization**: React.memo and useCallback
-
-## 🛡 Security Considerations
-
-- **Input Validation**: All user inputs sanitized
-- **WebSocket Security**: Secure connection handling
-- **No Secret Storage**: Credentials not persisted
-- **CORS Handling**: Proper cross-origin setup
-
-## 🧪 Development
-
-### Code Quality
-- **TypeScript**: Full type safety
-- **ESLint**: Code linting with custom rules
-- **Prettier**: Consistent code formatting
-
-### Testing
 ```bash
-# Run linting
-npm run lint
-
-# Fix auto-fixable issues
-npm run lint:fix
-
-# Type checking
-npm run type-check
+npm run dev          # Dev server with HMR
+npm run build        # Production build
+npm run lint         # ESLint
+npx tsc --noEmit     # Type check
 ```
 
-### Contributing
-1. Follow existing code style
-2. Add TypeScript types for new features
-3. Test on both desktop and mobile
-4. Ensure ROS compatibility
+## License
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Support
-
-For issues and questions:
-1. Check existing GitHub issues
-2. Create new issue with details:
-   - ROS version and setup
-   - Browser and device info
-   - Steps to reproduce
-   - Console errors
-
-## 🔄 Roadmap
-
-- [ ] Multi-robot support
-- [ ] Data recording and playback
-- [ ] Custom dashboard layouts
-- [ ] Plugin system for sensors
-- [ ] WebRTC video streaming
-- [ ] 3D visualization support
-
----
-
-Built with ❤️ for the robotics community
+MIT

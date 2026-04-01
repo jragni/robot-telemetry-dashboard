@@ -1,0 +1,477 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* =================================================================
+   Design System — Midnight Operations
+
+   Palette D: Deep blue-shifted surfaces (hue 260) with bright
+   accent clarity. Exo for UI, Roboto Mono for telemetry data.
+
+   All tokens defined via @theme so Tailwind v4 generates
+   utility classes automatically (bg-surface-base, text-accent, etc.)
+   ================================================================= */
+
+@theme {
+  /* -- Fonts ---------------------------------------------------- */
+  --font-sans: 'Exo', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', ui-monospace, monospace;
+
+  /* -- Spacing (base unit: 4px) --------------------------------- */
+  --spacing: 4px;
+
+  /* -- Border radius -------------------------------------------- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* -- Shadows -------------------------------------------------- */
+  --shadow-glow-top: inset 0 1px 0 0 var(--color-surface-glow);
+  --shadow-glow-bottom: inset 0 -1px 0 0 var(--color-surface-glow);
+  --shadow-glow-right: inset -1px 0 0 0 var(--color-surface-glow);
+  --shadow-glow-accent: 0 0 24px var(--color-accent-glow), 0 8px 16px var(--color-shadow);
+  --shadow-glow-accent-heavy: 0 0 40px var(--color-accent-subtle), 0 20px 60px var(--color-shadow-heavy);
+}
+
+/* Register color tokens with Tailwind so utilities like
+   bg-surface-primary, text-accent, border-border are generated.
+   Values come from :root / [data-theme] below — @theme inline
+   tells Tailwind to resolve var() references at build time. */
+@theme inline {
+  /* Surfaces */
+  --color-surface-base: var(--color-surface-base);
+  --color-surface-primary: var(--color-surface-primary);
+  --color-surface-secondary: var(--color-surface-secondary);
+  --color-surface-tertiary: var(--color-surface-tertiary);
+
+  /* Accent */
+  --color-accent: var(--color-accent);
+  --color-accent-glow: var(--color-accent-glow);
+  --color-accent-subtle: var(--color-accent-subtle);
+
+  /* Status */
+  --color-status-nominal: var(--color-status-nominal);
+  --color-status-nominal-bg: var(--color-status-nominal-bg);
+  --color-status-caution: var(--color-status-caution);
+  --color-status-caution-bg: var(--color-status-caution-bg);
+  --color-status-critical: var(--color-status-critical);
+  --color-status-critical-bg: var(--color-status-critical-bg);
+  --color-status-offline: var(--color-status-offline);
+  --color-status-offline-bg: var(--color-status-offline-bg);
+
+  /* Text */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+
+  /* Borders */
+  --color-border: var(--color-border);
+  --color-border-hover: var(--color-border-hover);
+
+  /* Effects */
+  --color-surface-glow: var(--color-surface-glow);
+  --color-hud-overlay: var(--color-hud-overlay);
+
+  /* Shadows */
+  --color-shadow: var(--color-shadow);
+  --color-shadow-heavy: var(--color-shadow-heavy);
+
+  /* shadcn compatibility — maps shadcn tokens to design system */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Robot identity colors */
+  --color-robot-blue: var(--color-robot-blue);
+  --color-robot-cyan: var(--color-robot-cyan);
+  --color-robot-green: var(--color-robot-green);
+  --color-robot-amber: var(--color-robot-amber);
+  --color-robot-red: var(--color-robot-red);
+  --color-robot-purple: var(--color-robot-purple);
+  --color-robot-teal: var(--color-robot-teal);
+  --color-robot-orange: var(--color-robot-orange);
+  --color-robot-pink: var(--color-robot-pink);
+  --color-robot-lime: var(--color-robot-lime);
+  --color-robot-indigo: var(--color-robot-indigo);
+  --color-robot-rose: var(--color-robot-rose);
+
+  /* IMU */
+  --color-imu-sky: var(--color-imu-sky);
+  --color-imu-ground: var(--color-imu-ground);
+}
+
+/* =================================================================
+   Dark theme (default)
+   ================================================================= */
+
+:root,
+[data-theme='dark'] {
+  /* Surfaces — 4-tier depth hierarchy, hue 260 */
+  --color-surface-base: oklch(0.09 0.02 260);
+  --color-surface-primary: oklch(0.12 0.02 260);
+  --color-surface-secondary: oklch(0.16 0.02 260);
+  --color-surface-tertiary: oklch(0.2 0.02 260);
+
+  /* Accent — blue primary */
+  --color-accent: oklch(0.7 0.2 230);
+  --color-accent-glow: oklch(0.7 0.2 230 / 0.3);
+  --color-accent-subtle: oklch(0.7 0.2 230 / 0.08);
+
+  /* Status — triple-redundant (always paired with icon + label) */
+  --color-status-nominal: oklch(0.7 0.19 155);
+  --color-status-nominal-bg: oklch(0.7 0.19 155 / 0.1);
+  --color-status-caution: oklch(0.75 0.18 65);
+  --color-status-caution-bg: oklch(0.75 0.18 65 / 0.1);
+  --color-status-critical: oklch(0.6 0.24 25);
+  --color-status-critical-bg: oklch(0.6 0.24 25 / 0.1);
+  --color-status-offline: oklch(0.45 0.02 260);
+  --color-status-offline-bg: oklch(0.45 0.02 260 / 0.1);
+
+  /* Text */
+  --color-text-primary: oklch(0.93 0.01 260);
+  --color-text-secondary: oklch(0.72 0.02 260);
+  --color-text-muted: oklch(0.57 0.02 260);
+
+  /* Borders */
+  --color-border: oklch(0.38 0.02 260);
+  --color-border-hover: oklch(0.7 0.2 230);
+
+  /* Effects */
+  --color-surface-glow: oklch(0.7 0.2 230 / 0.04);
+  --color-hud-overlay: oklch(0.09 0.02 260 / 0.75);
+
+  /* Shadows */
+  --color-shadow: oklch(0 0 0 / 0.4);
+  --color-shadow-heavy: oklch(0 0 0 / 0.5);
+
+  /* Robot identity colors — 12 perceptually distinct hues around OKLCH wheel */
+  --color-robot-blue: oklch(0.65 0.18 230);
+  --color-robot-cyan: oklch(0.7 0.15 200);
+  --color-robot-green: oklch(0.65 0.17 155);
+  --color-robot-amber: oklch(0.7 0.16 65);
+  --color-robot-red: oklch(0.58 0.2 25);
+  --color-robot-purple: oklch(0.6 0.18 300);
+  --color-robot-teal: oklch(0.68 0.14 175);
+  --color-robot-orange: oklch(0.68 0.18 45);
+  --color-robot-pink: oklch(0.62 0.18 330);
+  --color-robot-lime: oklch(0.72 0.16 115);
+  --color-robot-indigo: oklch(0.58 0.18 275);
+  --color-robot-rose: oklch(0.62 0.2 355);
+
+  /* shadcn compatibility — aliased to design system values */
+  --background: oklch(0.09 0.02 260);
+  --foreground: oklch(0.93 0.01 260);
+  --primary: oklch(0.7 0.2 230);
+  --primary-foreground: oklch(0.09 0.02 260);
+  --secondary: oklch(0.16 0.02 260);
+  --secondary-foreground: oklch(0.65 0.02 260);
+  --muted: oklch(0.2 0.02 260);
+  --muted-foreground: oklch(0.57 0.02 260);
+  --accent-foreground: oklch(0.93 0.01 260);
+  --destructive: oklch(0.6 0.24 25);
+  --destructive-foreground: oklch(0.93 0.01 260);
+  --card: oklch(0.12 0.02 260);
+  --card-foreground: oklch(0.93 0.01 260);
+  --popover: oklch(0.12 0.02 260);
+  --popover-foreground: oklch(0.93 0.01 260);
+  --input: oklch(0.25 0.02 260);
+  --ring: oklch(0.7 0.2 230);
+
+  /* IMU widget */
+  --color-imu-sky: oklch(0.5 0.14 230);
+  --color-imu-ground: oklch(0.35 0.1 65);
+}
+
+/* =================================================================
+   Light theme — muted professional (cool grays, not stark white)
+   ================================================================= */
+
+[data-theme='light'] {
+  /* Surfaces — warm gray, not pure white */
+  --color-surface-base: oklch(0.95 0.005 260);
+  --color-surface-primary: oklch(0.92 0.008 260);
+  --color-surface-secondary: oklch(0.88 0.01 260);
+  --color-surface-tertiary: oklch(0.84 0.01 260);
+
+  /* Accent — deeper blue for contrast on light */
+  --color-accent: oklch(0.5 0.22 230);
+  --color-accent-glow: oklch(0.5 0.22 230 / 0.2);
+  --color-accent-subtle: oklch(0.5 0.22 230 / 0.06);
+
+  /* Status */
+  --color-status-nominal: oklch(0.48 0.17 155);
+  --color-status-nominal-bg: oklch(0.48 0.17 155 / 0.1);
+  --color-status-caution: oklch(0.55 0.17 65);
+  --color-status-caution-bg: oklch(0.55 0.17 65 / 0.1);
+  --color-status-critical: oklch(0.5 0.22 25);
+  --color-status-critical-bg: oklch(0.5 0.22 25 / 0.1);
+  --color-status-offline: oklch(0.55 0.02 260);
+  --color-status-offline-bg: oklch(0.55 0.02 260 / 0.1);
+
+  /* Text */
+  --color-text-primary: oklch(0.18 0.02 260);
+  --color-text-secondary: oklch(0.32 0.02 260);
+  --color-text-muted: oklch(0.45 0.02 260);
+
+  /* Borders */
+  --color-border: oklch(0.68 0.01 260);
+  --color-border-hover: oklch(0.5 0.22 230);
+
+  /* Effects */
+  --color-surface-glow: oklch(0.5 0.22 230 / 0.04);
+  --color-hud-overlay: oklch(0.18 0.02 260 / 0.7);
+
+  /* Shadows */
+  --color-shadow: oklch(0 0 0 / 0.3);
+  --color-shadow-heavy: oklch(0 0 0 / 0.4);
+
+  /* Robot identity colors (slightly darker for light bg contrast) */
+  --color-robot-blue: oklch(0.5 0.18 230);
+  --color-robot-cyan: oklch(0.55 0.15 200);
+  --color-robot-green: oklch(0.5 0.17 155);
+  --color-robot-amber: oklch(0.55 0.16 65);
+  --color-robot-red: oklch(0.48 0.2 25);
+  --color-robot-purple: oklch(0.48 0.18 300);
+  --color-robot-teal: oklch(0.52 0.14 175);
+  --color-robot-orange: oklch(0.52 0.18 45);
+  --color-robot-pink: oklch(0.48 0.18 330);
+  --color-robot-lime: oklch(0.55 0.16 115);
+  --color-robot-indigo: oklch(0.45 0.18 275);
+  --color-robot-rose: oklch(0.48 0.2 355);
+
+  /* shadcn compatibility — aliased to design system values */
+  --background: oklch(0.95 0.005 260);
+  --foreground: oklch(0.18 0.02 260);
+  --primary: oklch(0.5 0.22 230);
+  --primary-foreground: oklch(0.95 0.005 260);
+  --secondary: oklch(0.88 0.01 260);
+  --secondary-foreground: oklch(0.4 0.02 260);
+  --muted: oklch(0.84 0.01 260);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent-foreground: oklch(0.18 0.02 260);
+  --destructive: oklch(0.5 0.22 25);
+  --destructive-foreground: oklch(0.95 0.005 260);
+  --card: oklch(0.92 0.008 260);
+  --card-foreground: oklch(0.18 0.02 260);
+  --popover: oklch(0.92 0.008 260);
+  --popover-foreground: oklch(0.18 0.02 260);
+  --input: oklch(0.82 0.01 260);
+  --ring: oklch(0.5 0.22 230);
+
+  /* IMU widget */
+  --color-imu-sky: oklch(0.65 0.12 230);
+  --color-imu-ground: oklch(0.5 0.1 65);
+}
+
+/* =================================================================
+   Base styles
+   ================================================================= */
+
+html {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  background-color: var(--color-surface-base);
+  color: var(--color-text-primary);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* =================================================================
+   Shell layout — CSS Grid
+   ================================================================= */
+
+.shell-grid {
+  display: grid;
+  grid-template-columns: var(--sidebar-width, 200px) 1fr;
+  grid-template-rows: 40px 1fr 28px;
+  grid-template-areas:
+    'header  header'
+    'sidebar content'
+    'sidebar statusbar';
+  height: 100dvh;
+  overflow: hidden;
+  transition: grid-template-columns 250ms ease;
+}
+
+.shell-grid--collapsed {
+  --sidebar-width: 48px;
+}
+
+.shell-sidebar {
+  grid-area: sidebar;
+}
+
+.shell-header {
+  grid-area: header;
+}
+
+.shell-content {
+  grid-area: content;
+  overflow-y: auto;
+  min-width: 0;
+  background-color: var(--color-surface-base);
+  padding: 12px;
+}
+
+.shell-statusbar {
+  grid-area: statusbar;
+}
+
+/* Mobile: sidebar hidden, single column */
+@media (max-width: 767px) {
+  .shell-grid,
+  .shell-grid--collapsed {
+    grid-template-columns: 1fr;
+    grid-template-rows: 40px 1fr 28px;
+    grid-template-areas:
+      'header'
+      'content'
+      'statusbar';
+  }
+
+  .shell-sidebar {
+    display: none;
+  }
+}
+
+/* Shell drawer shadow */
+.shell-drawer--open {
+  box-shadow: 4px 0 24px var(--color-shadow-heavy);
+}
+
+/* =================================================================
+   Landing page
+   ================================================================= */
+
+/* Atmospheric scanlines */
+.landing-scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    var(--color-border) 3px,
+    var(--color-border) 4px
+  );
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Scan beam animation */
+@keyframes landing-scan-beam {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+.landing-scan-beam::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--color-accent-subtle), transparent);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 1;
+  animation: landing-scan-beam 10s linear infinite;
+}
+
+/* Hero perspective viewport */
+.landing-hero-perspective {
+  perspective: 1200px;
+}
+
+.landing-hero-viewport {
+  aspect-ratio: 16 / 10;
+  transform: rotateY(-6deg) rotateX(2deg);
+}
+
+/* Section divider */
+.landing-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-border),
+    var(--color-accent-subtle),
+    var(--color-border),
+    transparent
+  );
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Feature stagger layout */
+.landing-feature:nth-child(odd) .landing-feature-content {
+  order: 1;
+}
+.landing-feature:nth-child(odd) .landing-feature-visual {
+  order: 2;
+}
+.landing-feature:nth-child(even) .landing-feature-content {
+  order: 2;
+}
+.landing-feature:nth-child(even) .landing-feature-visual {
+  order: 1;
+}
+
+/* Problem/Solution vertical divider */
+.landing-ps-grid::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  bottom: 15%;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--color-border),
+    var(--color-accent-subtle),
+    var(--color-border),
+    transparent
+  );
+}
+
+/* Mobile: landing */
+@media (max-width: 767px) {
+  .landing-feature .landing-feature-content {
+    order: 1 !important;
+  }
+  .landing-feature .landing-feature-visual {
+    order: 2 !important;
+  }
+  .landing-ps-grid::after {
+    display: none;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .landing-scan-beam::after {
+    animation: none;
+    display: none;
+  }
+}
