@@ -49,6 +49,7 @@ export function useMockTelemetry(): MockTelemetryData {
     const now = Date.now();
     for (let i = 0; i < seriesRef.current.length; i++) {
       const series = seriesRef.current[i];
+      if (!series) continue;
       const phase = i * 2;
       const value = Math.sin(now / 1000 + phase) * 50 + 50 + (Math.random() - 0.5) * 10;
       series.data.push({ timestamp: now, value });

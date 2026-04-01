@@ -27,17 +27,18 @@ export function useBatterySubscription(
     [availableTopics],
   );
 
-  const onMessage = useCallback((msg: BatteryStateMessage) => {
+  const onMessage = useCallback((msg: unknown) => {
+    const { percentage, voltage, power_supply_status } = msg as BatteryStateMessage;
     // ROS BatteryState.percentage can be 0-1 (fraction) or 0-100 (percent)
-    const pct = msg.percentage > 1 ? msg.percentage : msg.percentage * 100;
+    const pct = percentage > 1 ? percentage : percentage * 100;
     setBattery({
       percentage: pct,
-      voltage: msg.voltage,
-      charging: msg.power_supply_status === POWER_SUPPLY_CHARGING,
+      voltage,
+      charging: power_supply_status === POWER_SUPPLY_CHARGING,
     });
   }, []);
 
-  useRosSubscriber<BatteryStateMessage>(
+  useRosSubscriber(
     ros,
     batteryTopic,
     'sensor_msgs/msg/BatteryState',

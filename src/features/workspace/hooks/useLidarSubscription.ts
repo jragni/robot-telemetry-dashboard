@@ -33,11 +33,11 @@ export function useLidarSubscription(ros: Ros | undefined, topicName: string): U
     const parsed: LidarPoint[] = [];
     for (let i = 0; i < m.ranges.length; i++) {
       const range = m.ranges[i];
-      if (!Number.isFinite(range) || range < m.range_min || range > m.range_max) continue;
+      if (range === undefined || !Number.isFinite(range) || range < m.range_min || range > m.range_max) continue;
       parsed.push({
         angle: m.angle_min + i * m.angle_increment,
         distance: range,
-        intensity: m.intensities[i],
+        intensity: m.intensities[i] ?? 0,
       });
     }
     throttledSet(parsed);

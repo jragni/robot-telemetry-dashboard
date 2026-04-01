@@ -161,9 +161,10 @@ export const LIDAR_ROBOT_TRIANGLE_MIN = 5;
 /** VIDEO_STATUS_LABELS
  * @description Maps non-streaming video statuses to user-facing labels.
  */
-export const VIDEO_STATUS_LABELS: Record<'idle' | 'connecting' | 'failed', string> = {
+export const VIDEO_STATUS_LABELS: Record<'idle' | 'connecting' | 'reconnecting' | 'failed', string> = {
   idle: 'No video stream',
   connecting: 'Connecting...',
+  reconnecting: 'Reconnecting...',
   failed: 'Stream failed',
 };
 

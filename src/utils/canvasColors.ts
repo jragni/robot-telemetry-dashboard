@@ -16,4 +16,4 @@ export const CANVAS_FALLBACKS = {
   imuSky: 'oklch(0.5 0.14 230)',
   imuGround: 'oklch(0.35 0.1 65)',
   surfaceBase: 'oklch(0.09 0.02 260)',
-} as const;
+} satisfies Record<string, string>;

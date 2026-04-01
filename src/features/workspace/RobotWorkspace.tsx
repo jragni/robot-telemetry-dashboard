@@ -64,11 +64,11 @@ export function RobotWorkspace() {
 
   // ── Filtered topic lists per panel (single memo to stabilize hook count) ──
   const filteredTopics = useMemo(() => ({
-    camera: availableTopics.filter((t) => PANEL_TOPIC_TYPES.camera.includes(t.type)),
-    lidar: availableTopics.filter((t) => PANEL_TOPIC_TYPES.lidar.includes(t.type)),
-    imu: availableTopics.filter((t) => PANEL_TOPIC_TYPES.imu.includes(t.type)),
-    controls: availableTopics.filter((t) => PANEL_TOPIC_TYPES.controls.includes(t.type)),
-    telemetry: availableTopics.filter((t) => PANEL_TOPIC_TYPES.telemetry.includes(t.type)),
+    camera: availableTopics.filter((t) => PANEL_TOPIC_TYPES.camera?.includes(t.type)),
+    lidar: availableTopics.filter((t) => PANEL_TOPIC_TYPES.lidar?.includes(t.type)),
+    imu: availableTopics.filter((t) => PANEL_TOPIC_TYPES.imu?.includes(t.type)),
+    controls: availableTopics.filter((t) => PANEL_TOPIC_TYPES.controls?.includes(t.type)),
+    telemetry: availableTopics.filter((t) => PANEL_TOPIC_TYPES.telemetry?.includes(t.type)),
   }), [availableTopics]);
 
   const {

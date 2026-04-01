@@ -1,5 +1,6 @@
 import { Ros } from 'roslib';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
 import { deriveRosbridgeUrl } from '@/stores/connection/useConnectionStore.helpers';
 import {
   RECONNECT_MAX_ATTEMPTS,
@@ -43,7 +44,7 @@ const connectedAtMap = new Map<string, number>();
 /** updateStore
  * @description Pushes a status patch into the Zustand store from outside React.
  */
-function updateStore(id: string, patch: { status?: string; lastSeen?: number | null; lastError?: string | null }) {
+function updateStore(id: string, patch: Partial<Pick<RobotConnection, 'status' | 'lastSeen' | 'lastError'>>) {
   useConnectionStore.getState().updateRobot(id, patch);
 }
 
@@ -146,12 +147,13 @@ export async function connect(id: string, url: string): Promise<void> {
       resolve();
     });
 
-    ros.on('error', (err: Error) => {
+    ros.on('error', (err: unknown) => {
       if (settled) return;
       settled = true;
       clearTimeout(timeout);
       connections.delete(id);
-      updateStore(id, { status: 'error', lastError: err.message });
+      const message = err instanceof Error ? err.message : 'Connection error';
+      updateStore(id, { status: 'error', lastError: message });
       scheduleReconnect(id, url);
       reject(err);
     });
@@ -236,12 +238,12 @@ export async function testConnection(url: string, timeoutMs = CONNECTION_TIMEOUT
       resolve();
     });
 
-    ros.on('error', (err: Error) => {
+    ros.on('error', (err: unknown) => {
       if (settled) return;
       settled = true;
       clearTimeout(timeout);
       cleanup();
-      reject(new Error(err.message));
+      reject(err instanceof Error ? err : new Error('Connection error'));
     });
 
     ros.on('close', () => {

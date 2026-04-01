@@ -1,5 +1,5 @@
 export interface CameraPanelProps {
-  readonly streamRef?: React.RefObject<HTMLVideoElement>;
+  readonly streamRef?: React.RefObject<HTMLVideoElement | null>;
   readonly connected: boolean;
   readonly label?: string;
 }

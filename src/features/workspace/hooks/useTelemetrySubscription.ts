@@ -136,7 +136,7 @@ export function useTelemetrySubscription(
 
       newSeries.push({
         label,
-        color: SERIES_COLORS[colorIdx % SERIES_COLORS.length],
+        color: SERIES_COLORS[colorIdx % SERIES_COLORS.length] ?? CANVAS_FALLBACKS.accent,
         data: [...buf],
       });
       colorIdx += 1;

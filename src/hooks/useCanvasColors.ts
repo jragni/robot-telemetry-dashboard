@@ -35,7 +35,9 @@ export function useCanvasColors<T extends Record<string, string>>(
 
     for (const key of Object.keys(tokenMap)) {
       if (key in resolved) {
-        const value = style.getPropertyValue(tokenMap[key]).trim();
+        const token = tokenMap[key];
+        if (!token) continue;
+        const value = style.getPropertyValue(token).trim();
         if (value) {
           (resolved as Record<string, string>)[key] = value;
         }
