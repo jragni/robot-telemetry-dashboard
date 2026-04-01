@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Direction } from '@/types/control.types';
-import { VELOCITY_LIMITS } from '@/features/workspace/constants';
+import { VELOCITY_LIMITS } from '@/constants/controls.constants';
 import type { UseControlPublisherOptions, UseControlPublisherReturn } from './types';
 import { ZERO_TWIST, DEFAULT_PUBLISH_RATE } from './constants';
 import { buildTwist } from './helpers';

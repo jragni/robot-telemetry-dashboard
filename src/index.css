@@ -27,6 +27,8 @@
   --shadow-glow-top: inset 0 1px 0 0 var(--color-surface-glow);
   --shadow-glow-bottom: inset 0 -1px 0 0 var(--color-surface-glow);
   --shadow-glow-right: inset -1px 0 0 0 var(--color-surface-glow);
+  --shadow-glow-accent: 0 0 24px var(--color-accent-glow), 0 8px 16px var(--color-shadow);
+  --shadow-glow-accent-heavy: 0 0 40px var(--color-accent-subtle), 0 20px 60px var(--color-shadow-heavy);
 }
 
 /* Register color tokens with Tailwind so utilities like
@@ -98,6 +100,12 @@
   --color-robot-amber: var(--color-robot-amber);
   --color-robot-red: var(--color-robot-red);
   --color-robot-purple: var(--color-robot-purple);
+  --color-robot-teal: var(--color-robot-teal);
+  --color-robot-orange: var(--color-robot-orange);
+  --color-robot-pink: var(--color-robot-pink);
+  --color-robot-lime: var(--color-robot-lime);
+  --color-robot-indigo: var(--color-robot-indigo);
+  --color-robot-rose: var(--color-robot-rose);
 
   /* IMU */
   --color-imu-sky: var(--color-imu-sky);
@@ -133,11 +141,11 @@
 
   /* Text */
   --color-text-primary: oklch(0.93 0.01 260);
-  --color-text-secondary: oklch(0.65 0.02 260);
+  --color-text-secondary: oklch(0.72 0.02 260);
   --color-text-muted: oklch(0.57 0.02 260);
 
   /* Borders */
-  --color-border: oklch(0.3 0.02 260);
+  --color-border: oklch(0.38 0.02 260);
   --color-border-hover: oklch(0.7 0.2 230);
 
   /* Effects */
@@ -148,13 +156,19 @@
   --color-shadow: oklch(0 0 0 / 0.4);
   --color-shadow-heavy: oklch(0 0 0 / 0.5);
 
-  /* Robot identity colors */
+  /* Robot identity colors — 12 perceptually distinct hues around OKLCH wheel */
   --color-robot-blue: oklch(0.65 0.18 230);
   --color-robot-cyan: oklch(0.7 0.15 200);
   --color-robot-green: oklch(0.65 0.17 155);
   --color-robot-amber: oklch(0.7 0.16 65);
   --color-robot-red: oklch(0.58 0.2 25);
   --color-robot-purple: oklch(0.6 0.18 300);
+  --color-robot-teal: oklch(0.68 0.14 175);
+  --color-robot-orange: oklch(0.68 0.18 45);
+  --color-robot-pink: oklch(0.62 0.18 330);
+  --color-robot-lime: oklch(0.72 0.16 115);
+  --color-robot-indigo: oklch(0.58 0.18 275);
+  --color-robot-rose: oklch(0.62 0.2 355);
 
   /* shadcn compatibility — aliased to design system values */
   --background: oklch(0.09 0.02 260);
@@ -208,11 +222,11 @@
 
   /* Text */
   --color-text-primary: oklch(0.18 0.02 260);
-  --color-text-secondary: oklch(0.38 0.02 260);
+  --color-text-secondary: oklch(0.32 0.02 260);
   --color-text-muted: oklch(0.45 0.02 260);
 
   /* Borders */
-  --color-border: oklch(0.75 0.01 260);
+  --color-border: oklch(0.68 0.01 260);
   --color-border-hover: oklch(0.5 0.22 230);
 
   /* Effects */
@@ -230,6 +244,12 @@
   --color-robot-amber: oklch(0.55 0.16 65);
   --color-robot-red: oklch(0.48 0.2 25);
   --color-robot-purple: oklch(0.48 0.18 300);
+  --color-robot-teal: oklch(0.52 0.14 175);
+  --color-robot-orange: oklch(0.52 0.18 45);
+  --color-robot-pink: oklch(0.48 0.18 330);
+  --color-robot-lime: oklch(0.55 0.16 115);
+  --color-robot-indigo: oklch(0.45 0.18 275);
+  --color-robot-rose: oklch(0.48 0.2 355);
 
   /* shadcn compatibility — aliased to design system values */
   --background: oklch(0.95 0.005 260);

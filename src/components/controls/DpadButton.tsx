@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { DPAD_BTN, DPAD_BTN_ACTIVE } from '@/features/workspace/constants';
-import type { DpadButtonProps } from '@/features/workspace/types/ControlsPanel.types';
+import { DPAD_BTN, DPAD_BTN_ACTIVE } from '@/constants/controls.constants';
+import type { DpadButtonProps } from '@/types/DpadButton.types';
 
 /** DpadButton
  * @description Renders a single D-pad directional button with press-and-hold

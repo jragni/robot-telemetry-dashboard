@@ -13,7 +13,7 @@ export function RobotCardDataRow({
 }: RobotCardDataRowProps) {
   return (
     <div className="flex justify-between items-baseline">
-      <dt className="font-sans text-xs text-text-muted">{label}</dt>
+      <dt className="font-sans text-xs text-text-secondary">{label}</dt>
       <dd className={`font-mono text-xs tabular-nums ${valueClassName}`}>
         {value}
       </dd>

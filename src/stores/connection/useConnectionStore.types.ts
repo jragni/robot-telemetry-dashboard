@@ -1,6 +1,8 @@
 export type ConnectionStatus = 'connected' | 'disconnected';
 
-export type RobotColor = 'blue' | 'cyan' | 'green' | 'amber' | 'red' | 'purple';
+export type RobotColor =
+  | 'blue' | 'cyan' | 'green' | 'amber' | 'red' | 'purple'
+  | 'teal' | 'orange' | 'pink' | 'lime' | 'indigo' | 'rose';
 
 export interface RobotConnection {
   readonly id: string;

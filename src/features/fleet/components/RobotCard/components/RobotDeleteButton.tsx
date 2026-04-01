@@ -55,7 +55,7 @@ export function RobotDeleteButton({
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onRemove}
-            className="bg-status-critical text-white hover:bg-status-critical/75 font-sans text-xs uppercase tracking-widest"
+            className="bg-status-critical text-text-primary hover:bg-status-critical/75 font-sans text-xs uppercase tracking-widest"
           >
             Remove
           </AlertDialogAction>

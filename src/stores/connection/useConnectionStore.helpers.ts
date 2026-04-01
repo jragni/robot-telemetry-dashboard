@@ -7,6 +7,12 @@ const ROBOT_COLORS: readonly RobotColor[] = [
   'amber',
   'red',
   'purple',
+  'teal',
+  'orange',
+  'pink',
+  'lime',
+  'indigo',
+  'rose',
 ];
 
 /** assignRobotColor

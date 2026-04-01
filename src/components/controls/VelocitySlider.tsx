@@ -1,5 +1,5 @@
 import { Slider } from '@/components/ui/slider';
-import type { VelocitySliderProps } from '@/features/workspace/types/ControlsPanel.types';
+import type { VelocitySliderProps } from '@/types/VelocitySlider.types';
 
 /** VelocitySlider
  * @description Renders a labeled velocity slider with current value readout.

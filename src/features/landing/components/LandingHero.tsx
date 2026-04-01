@@ -35,7 +35,7 @@ export function LandingHero() {
               onClick={() => {
                 void navigate('/fleet');
               }}
-              className="uppercase tracking-wide px-8 py-3 hover:shadow-[0_0_24px_var(--color-accent-glow),0_8px_16px_var(--color-shadow)] hover:-translate-y-0.5"
+              className="uppercase tracking-wide px-8 py-3 hover:shadow-glow-accent hover:-translate-y-0.5"
             >
               Launch Dashboard
             </Button>
@@ -53,7 +53,7 @@ export function LandingHero() {
 
         {/* TODO: Replace with real dashboard screenshot once workspace feature is built */}
         <div className="hidden md:block landing-hero-perspective">
-          <div className="w-full bg-surface-primary border border-border rounded-sm shadow-[0_0_40px_var(--color-accent-subtle),0_20px_60px_var(--color-shadow-heavy)] flex items-center justify-center font-mono text-xs text-text-muted aspect-video landing-hero-viewport">
+          <div className="w-full bg-surface-primary border border-border rounded-sm shadow-glow-accent-heavy flex items-center justify-center font-mono text-xs text-text-muted aspect-video landing-hero-viewport">
             <p className="font-mono text-xs text-text-muted">
               Dashboard screenshot — pending
             </p>

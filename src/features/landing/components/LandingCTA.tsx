@@ -24,7 +24,7 @@ export function LandingCTA() {
         onClick={() => {
           void navigate('/demo');
         }}
-        className="uppercase tracking-wide px-8 py-3 hover:shadow-[0_0_24px_var(--color-accent-glow),0_8px_16px_var(--color-shadow)] hover:-translate-y-0.5"
+        className="uppercase tracking-wide px-8 py-3 hover:shadow-glow-accent hover:-translate-y-0.5"
       >
         Try Demo
       </Button>

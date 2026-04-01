@@ -12,13 +12,13 @@ import { ImuPanel } from './components/ImuPanel/ImuPanel';
 import { LidarPanel } from './components/LidarPanel';
 import { TelemetryPanel } from './components/TelemetryPanel';
 import { CameraPanel } from './components/CameraPanel';
-import { DesktopOnlyGate } from './components/DesktopOnlyGate';
+import { DesktopOnlyGate } from '@/components/DesktopOnlyGate';
 import {
-  VELOCITY_LIMITS,
   WORKSPACE_PANEL_META,
   WORKSPACE_PANEL_IDS,
   GRID_COL_MAP,
 } from './constants';
+import { VELOCITY_LIMITS } from '@/constants/controls.constants';
 
 /** RobotWorkspace
  * @description Renders the workspace page for a single robot with a 3x2 grid
@@ -179,6 +179,7 @@ export function RobotWorkspace() {
                   angularLimits={VELOCITY_LIMITS.angular}
                   isActive={controls.isActive}
                   connected={connected}
+                  robotId={id}
                   onDirectionStart={controls.handleDirectionStart}
                   onDirectionEnd={controls.handleDirectionEnd}
                   onLinearVelocityChange={controls.handleLinearChange}

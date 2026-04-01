@@ -20,29 +20,22 @@ export const STATUS_CONFIG: Record<ConnectionStatus, StatusConfig> = {
   },
 };
 
-export const ROBOT_COLOR_BORDER: Record<RobotColor, string> = {
-  blue: 'border-l-robot-blue',
-  cyan: 'border-l-robot-cyan',
-  green: 'border-l-robot-green',
-  amber: 'border-l-robot-amber',
-  red: 'border-l-robot-red',
-  purple: 'border-l-robot-purple',
-};
-
-export const ROBOT_COLOR_BG: Record<RobotColor, string> = {
-  blue: 'bg-robot-blue',
-  cyan: 'bg-robot-cyan',
-  green: 'bg-robot-green',
-  amber: 'bg-robot-amber',
-  red: 'bg-robot-red',
-  purple: 'bg-robot-purple',
-};
-
-export const ROBOT_COLOR_TEXT: Record<RobotColor, string> = {
-  blue: 'text-robot-blue',
-  cyan: 'text-robot-cyan',
-  green: 'text-robot-green',
-  amber: 'text-robot-amber',
-  red: 'text-robot-red',
-  purple: 'text-robot-purple',
+/** ROBOT_COLOR_CLASSES
+ * @description Maps each robot color to its Tailwind utility classes for
+ *  border, background, and text. Single source of truth — eliminates
+ *  duplicated color maps.
+ */
+export const ROBOT_COLOR_CLASSES: Record<RobotColor, { border: string; bg: string; text: string }> = {
+  blue: { border: 'border-l-robot-blue', bg: 'bg-robot-blue', text: 'text-robot-blue' },
+  cyan: { border: 'border-l-robot-cyan', bg: 'bg-robot-cyan', text: 'text-robot-cyan' },
+  green: { border: 'border-l-robot-green', bg: 'bg-robot-green', text: 'text-robot-green' },
+  amber: { border: 'border-l-robot-amber', bg: 'bg-robot-amber', text: 'text-robot-amber' },
+  red: { border: 'border-l-robot-red', bg: 'bg-robot-red', text: 'text-robot-red' },
+  purple: { border: 'border-l-robot-purple', bg: 'bg-robot-purple', text: 'text-robot-purple' },
+  teal: { border: 'border-l-robot-teal', bg: 'bg-robot-teal', text: 'text-robot-teal' },
+  orange: { border: 'border-l-robot-orange', bg: 'bg-robot-orange', text: 'text-robot-orange' },
+  pink: { border: 'border-l-robot-pink', bg: 'bg-robot-pink', text: 'text-robot-pink' },
+  lime: { border: 'border-l-robot-lime', bg: 'bg-robot-lime', text: 'text-robot-lime' },
+  indigo: { border: 'border-l-robot-indigo', bg: 'bg-robot-indigo', text: 'text-robot-indigo' },
+  rose: { border: 'border-l-robot-rose', bg: 'bg-robot-rose', text: 'text-robot-rose' },
 };

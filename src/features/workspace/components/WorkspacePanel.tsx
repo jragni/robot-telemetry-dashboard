@@ -30,12 +30,18 @@ export function WorkspacePanel({
 }: WorkspacePanelProps) {
   return (
     <article className="relative bg-surface-primary border border-border rounded-sm shadow-glow-top flex flex-col h-full">
-      <header className="flex items-center gap-2 px-3 h-9 shrink-0 border-b border-border">
+      <header className="flex items-center gap-2 px-3 h-9 shrink-0 border-b border-border min-w-0">
         <Icon className="size-3.5 text-text-muted shrink-0" aria-hidden="true" />
         <span className="font-mono text-xs font-semibold text-text-secondary uppercase tracking-widest shrink-0">
           {label}
         </span>
-        {topicName ? <TopicSelector topicName={topicName} /> : <span className="ml-1" />}
+        {topicName ? (
+          <div className="min-w-0 shrink" title={topicName}>
+            <TopicSelector topicName={topicName} />
+          </div>
+        ) : (
+          <span className="ml-1" />
+        )}
         <div className="ml-auto flex items-center gap-1 shrink-0">
           {headerActions}
           <ConditionalRender

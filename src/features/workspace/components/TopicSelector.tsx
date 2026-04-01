@@ -13,7 +13,7 @@ export function TopicSelector({ topicName }: TopicSelectorProps) {
       variant="ghost"
       size="xs"
       aria-label="Topic options"
-      className="ml-1 font-mono text-xs text-text-muted hover:text-accent truncate"
+      className="ml-1 font-mono text-xs text-text-muted hover:text-accent truncate max-w-full"
     >
       {topicName}
       <ChevronDown className="size-3 shrink-0" />

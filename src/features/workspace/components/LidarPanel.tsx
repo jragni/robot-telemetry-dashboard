@@ -11,6 +11,7 @@ import {
   LIDAR_POINT_RADIUS,
   LIDAR_ROBOT_SIZE,
 } from '@/features/workspace/constants';
+import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import type { LidarPanelProps } from '@/features/workspace/types/LidarPanel.types';
 
 /** LidarPanel
@@ -30,14 +31,15 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
   const [themeVersion, setThemeVersion] = useState(0);
 
   const colorsRef = useRef({
-    border: 'rgba(255,255,255,0.15)',
-    textPrimary: 'oklch(0.93 0.01 260)',
-    textSecondary: 'oklch(0.65 0.02 260)',
-    textMuted: 'oklch(0.57 0.02 260)',
-    accent: 'oklch(0.70 0.20 230)',
-    critical: 'oklch(0.60 0.24 25)',
-    caution: 'oklch(0.75 0.18 65)',
-    nominal: 'oklch(0.70 0.19 155)',
+    border: CANVAS_FALLBACKS.border,
+    textPrimary: CANVAS_FALLBACKS.textPrimary,
+    textSecondary: CANVAS_FALLBACKS.textSecondary,
+    textMuted: CANVAS_FALLBACKS.textMuted,
+    accent: CANVAS_FALLBACKS.accent,
+    critical: CANVAS_FALLBACKS.statusCritical,
+    caution: CANVAS_FALLBACKS.statusCaution,
+    nominal: CANVAS_FALLBACKS.statusNominal,
+    surfaceBase: CANVAS_FALLBACKS.surfaceBase,
   });
   const colorsResolved = useRef(false);
 
@@ -77,6 +79,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
       critical: styles.getPropertyValue('--color-status-critical') || colorsRef.current.critical,
       caution: styles.getPropertyValue('--color-status-caution') || colorsRef.current.caution,
       nominal: styles.getPropertyValue('--color-status-nominal') || colorsRef.current.nominal,
+      surfaceBase: styles.getPropertyValue('--color-surface-base') || colorsRef.current.surfaceBase,
     };
     colorsResolved.current = true;
   }, []);
@@ -96,8 +99,14 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
 
     ctx.clearRect(0, 0, size, size);
 
-    // Grid lines
+    // Semi-transparent background — tactical radar scope effect
+    ctx.fillStyle = c.surfaceBase;
+    ctx.globalAlpha = 0.85;
+    ctx.fillRect(0, 0, size, size);
     ctx.globalAlpha = 1;
+
+    // Grid lines
+    ctx.globalAlpha = 0.4;
     ctx.strokeStyle = c.textMuted;
     ctx.lineWidth = 0.5;
     const gridSpacing = size / LIDAR_GRID_LINE_COUNT;
@@ -204,7 +213,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     <div
       className={cn('flex flex-col items-center gap-2 w-full h-full', !connected && 'opacity-50')}
     >
-      <div ref={containerRef} className="flex-1 flex items-center justify-center w-full min-h-0">
+      <div ref={containerRef} className="flex-1 flex items-center justify-center w-full min-h-0 aspect-square max-h-full">
         <canvas
           ref={canvasRef}
           width={canvasSize}

@@ -8,7 +8,7 @@ See: .planning/PROJECT.md
 
 ## Current Position
 
-**Next:** Demo Mode, roslib integration, or responsive grid layout
+**Next:** Mockups page (design system reference + live component gallery)
 **Status:** Phase 11 complete — all 6 production workspace panels built and wired
 **Branch:** EPIC/v4-rebuild
 
@@ -85,7 +85,35 @@ See: .planning/PROJECT.md
 ## Session Continuity
 
 Last session: 2026-03-31
-Current: Phase 11 complete. Ready for Demo Mode, roslib integration, or responsive layout.
+Current: Starting Mockups page (living design system reference + live component gallery).
+
+### Next Task: Mockups Page
+
+**Route:** `/mockups`
+**Sidebar:** Link at bottom of sidebar, below Settings
+**Type:** Living reference (reads real CSS tokens) + mock data for fully working component demos
+
+**Approved sections:**
+1. **Colors** — all token namespaces (surface, text, accent, status, border) as swatches from getComputedStyle. Both themes.
+2. **Typography** — 4-size scale (12/14/20/36px), Exo + Roboto Mono, weights 400/600.
+3. **Spacing** — visual scale (4px increments) with Tailwind class labels.
+4. **Status Indicators** — triple-redundant (color + icon + text) for Nominal/Caution/Critical/Offline.
+5. **Buttons** — all variants (Primary, Secondary, Danger, Ghost) in default/hover/disabled.
+6. **Panels** — each workspace panel with mock data flowing:
+   - SystemStatus: battery 87%, uptime ticking, connected
+   - Controls: active D-pad, sliders at different positions
+   - IMU: animated roll/pitch/yaw cycling through values
+   - LiDAR: mock scan points rendered
+   - Telemetry: mock sine wave data
+   - Camera: empty state
+7. **Icons** — Lucide icon set used in the app.
+8. **Borders & Effects** — panel contract, shadow-glow-top, border tokens.
+9. **Empty States** — fleet empty, panel disconnected states.
+10. **Animations** — breathe pulse, scan-beam.
+
+**Mock data approach:** useEffect + setInterval for cycling values (same pattern as old useAnimatedIMU).
+
+**Status:** Discussed and approved. Needs research (ui-ux-pro-max, /frontend-design) before implementation.
 
 ### Open Issues
 

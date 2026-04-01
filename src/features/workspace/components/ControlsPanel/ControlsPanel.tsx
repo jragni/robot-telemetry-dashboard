@@ -1,12 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { OctagonX, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Square } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import {
+  OctagonX,
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Square,
+  Crosshair,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import type { Direction } from '@/types/control.types';
 import type { ControlsPanelProps } from '@/features/workspace/types/ControlsPanel.types';
-import { KEY_TO_DIRECTION } from '@/features/workspace/constants';
-import { DpadButton } from './DpadButton';
-import { VelocitySlider } from './VelocitySlider';
+import { KEY_TO_DIRECTION } from '@/constants/controls.constants';
+import { DpadButton } from '@/components/controls/DpadButton';
+import { VelocitySlider } from '@/components/controls/VelocitySlider';
 
 /** ControlsPanel
  * @description Renders robot directional controls with E-STOP, D-pad for
@@ -30,6 +39,7 @@ export function ControlsPanel({
   angularLimits,
   isActive,
   connected,
+  robotId,
   onDirectionStart,
   onDirectionEnd,
   onLinearVelocityChange,
@@ -37,6 +47,7 @@ export function ControlsPanel({
   onEmergencyStop,
 }: ControlsPanelProps) {
   const disabled = !connected;
+  const navigate = useNavigate();
   const [activeDirection, setActiveDirection] = useState<Direction | null>(null);
   const activeRef = useRef<Direction | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -219,6 +230,24 @@ export function ControlsPanel({
           {!connected ? 'DISCONNECTED' : isActive ? 'ACTIVE' : 'STOPPED'}
         </span>
       </div>
+
+      {robotId && (
+        <>
+          <hr className="w-full border-border" />
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-full font-sans text-xs cursor-pointer transition-all duration-200"
+            aria-label="Enter Pilot Mode"
+            onClick={() => {
+              void navigate(`/pilot/${robotId as string}`);
+            }}
+          >
+            <Crosshair className="size-3.5" />
+            Pilot Mode
+          </Button>
+        </>
+      )}
     </div>
   );
 }

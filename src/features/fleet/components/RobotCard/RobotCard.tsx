@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/card';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import type { RobotCardProps } from './types/RobotCard.types';
-import { ROBOT_COLOR_BORDER, ROBOT_COLOR_TEXT } from './constants';
+import { ROBOT_COLOR_CLASSES } from './constants';
 import { RobotCardIdentity } from './components/RobotCardIdentity';
 import { RobotCardConnection } from './components/RobotCardConnection';
 import { RobotCardVitals } from './components/RobotCardVitals';
@@ -20,8 +20,8 @@ import { RobotCardActions } from './components/RobotCardActions';
  * @param onRemove - Callback invoked with robot ID on removal confirmation.
  */
 export function RobotCard({ robot, onRemove }: RobotCardProps) {
-  const borderColor = ROBOT_COLOR_BORDER[robot.color];
-  const iconColor = ROBOT_COLOR_TEXT[robot.color];
+  const borderColor = ROBOT_COLOR_CLASSES[robot.color].border;
+  const iconColor = ROBOT_COLOR_CLASSES[robot.color].text;
   const isConnected = robot.status === 'connected';
 
   return (

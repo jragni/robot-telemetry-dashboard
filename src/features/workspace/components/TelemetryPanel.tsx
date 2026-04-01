@@ -8,6 +8,7 @@ import {
   TELEMETRY_AXIS_PADDING,
   TELEMETRY_BOTTOM_PADDING,
 } from '@/features/workspace/constants';
+import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import type { TelemetryPanelProps } from '@/features/workspace/types/TelemetryPanel.types';
 
 /** TelemetryPanel
@@ -26,10 +27,10 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
   const [themeVersion, setThemeVersion] = useState(0);
 
   const colorsRef = useRef({
-    textMuted: 'oklch(0.57 0.02 260)',
-    textSecondary: 'oklch(0.65 0.02 260)',
-    textPrimary: 'oklch(0.93 0.01 260)',
-    border: 'oklch(0.30 0.02 260)',
+    textMuted: CANVAS_FALLBACKS.textMuted,
+    textSecondary: CANVAS_FALLBACKS.textSecondary,
+    textPrimary: CANVAS_FALLBACKS.textPrimary,
+    border: CANVAS_FALLBACKS.border,
   });
   const colorsResolved = useRef(false);
 
@@ -85,7 +86,7 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
     ctx.clearRect(0, 0, w, h);
 
     // Grid lines
-    ctx.strokeStyle = c.textMuted;
+    ctx.strokeStyle = c.border;
     ctx.lineWidth = 0.5;
 
     for (let i = 0; i <= TELEMETRY_GRID_LINES_H; i++) {

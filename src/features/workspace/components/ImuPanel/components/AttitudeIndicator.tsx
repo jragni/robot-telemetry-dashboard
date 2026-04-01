@@ -3,6 +3,7 @@ import { formatDegrees } from '@/utils/formatDegrees';
 import { withAlpha } from '@/utils/withAlpha';
 import { useThemeChange } from '@/hooks/useThemeChange';
 import { PITCH_LADDER_DEGREES } from '@/features/workspace/constants';
+import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import type { AttitudeIndicatorProps } from '@/features/workspace/types/ImuPanel.types';
 
 /** AttitudeIndicator
@@ -15,12 +16,12 @@ import type { AttitudeIndicatorProps } from '@/features/workspace/types/ImuPanel
 export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const colorsRef = useRef({
-    border: 'rgba(255,255,255,0.15)',
-    accent: 'oklch(0.70 0.20 230)',
-    skyAlpha: withAlpha('oklch(0.5 0.14 230)', 0.6),
-    groundAlpha: withAlpha('oklch(0.35 0.1 65)', 0.8),
-    textPrimary: 'oklch(0.93 0.01 260)',
-    textSecondaryAlpha: withAlpha('oklch(0.65 0.02 260)', 0.5),
+    border: CANVAS_FALLBACKS.border,
+    accent: CANVAS_FALLBACKS.accent,
+    skyAlpha: withAlpha(CANVAS_FALLBACKS.imuSky, 0.6),
+    groundAlpha: withAlpha(CANVAS_FALLBACKS.imuGround, 0.8),
+    textPrimary: CANVAS_FALLBACKS.textPrimary,
+    textSecondaryAlpha: withAlpha(CANVAS_FALLBACKS.textSecondary, 0.5),
   });
   const colorsResolved = useRef(false);
 

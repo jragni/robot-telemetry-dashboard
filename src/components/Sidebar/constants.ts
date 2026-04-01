@@ -1,4 +1,4 @@
-import { Crosshair, LayoutGrid, Map, Settings } from 'lucide-react';
+import { LayoutGrid, Map, Palette, Settings } from 'lucide-react';
 import type { RobotColor } from '@/stores/connection/useConnectionStore.types';
 import type { NavItemData } from '@/types/Sidebar.types';
 
@@ -8,9 +8,9 @@ import type { NavItemData } from '@/types/Sidebar.types';
  */
 export const SYSTEM_ITEMS: readonly NavItemData[] = [
   { Icon: LayoutGrid, label: 'Fleet', path: '/fleet' },
-  { Icon: Crosshair, label: 'Pilot', path: '/pilot' },
   { Icon: Map, label: 'Map', path: '/map' },
   { Icon: Settings, label: 'Settings', path: '/settings' },
+  { Icon: Palette, label: 'Mockups', path: '/mockups' },
 ];
 
 /**
@@ -24,6 +24,12 @@ export const ROBOT_COLOR_DOT: Record<RobotColor, string> = {
   amber: 'bg-robot-amber',
   red: 'bg-robot-red',
   purple: 'bg-robot-purple',
+  teal: 'bg-robot-teal',
+  orange: 'bg-robot-orange',
+  pink: 'bg-robot-pink',
+  lime: 'bg-robot-lime',
+  indigo: 'bg-robot-indigo',
+  rose: 'bg-robot-rose',
 };
 
 /**
@@ -37,6 +43,12 @@ export const ROBOT_COLOR_TEXT: Record<RobotColor, string> = {
   amber: 'text-robot-amber',
   red: 'text-robot-red',
   purple: 'text-robot-purple',
+  teal: 'text-robot-teal',
+  orange: 'text-robot-orange',
+  pink: 'text-robot-pink',
+  lime: 'text-robot-lime',
+  indigo: 'text-robot-indigo',
+  rose: 'text-robot-rose',
 };
 
 /** NAV_ITEM_BASE

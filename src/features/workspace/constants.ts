@@ -17,28 +17,6 @@ export const COMPASS_CARDINALS = [
 
 export const PITCH_LADDER_DEGREES = [-20, -10, 10, 20] as const;
 
-/** KEY_TO_DIRECTION
- * @description Maps keyboard keys to robot movement directions for D-pad
- *  keyboard control.
- */
-export const KEY_TO_DIRECTION: Record<string, 'forward' | 'backward' | 'left' | 'right'> = {
-  ArrowUp: 'forward',
-  ArrowDown: 'backward',
-  ArrowLeft: 'left',
-  ArrowRight: 'right',
-};
-
-/** DPAD_BTN
- * @description Styling overrides for D-pad directional control buttons.
- */
-export const DPAD_BTN =
-  'w-10 h-10 bg-surface-tertiary border border-border rounded-sm font-mono text-xs text-text-muted hover:border-border-hover cursor-pointer transition-all duration-200 select-none';
-
-/** DPAD_BTN_ACTIVE
- * @description Additional styling when a D-pad button is actively pressed.
- */
-export const DPAD_BTN_ACTIVE = 'bg-accent-subtle text-accent border-accent';
-
 /** LIDAR_ZOOM_MIN
  * @description Minimum zoom level for LiDAR panel.
  */
@@ -68,15 +46,6 @@ export const LIDAR_POINT_RADIUS = 2;
  * @description Size in pixels for the robot triangle indicator.
  */
 export const LIDAR_ROBOT_SIZE = 10;
-
-/** VELOCITY_LIMITS
- * @description Default velocity ranges for robot control. Matches ROS2 cmd_vel
- *  conventions from EPIC/refactor-for-quality-of-life.
- */
-export const VELOCITY_LIMITS = {
-  linear: { min: 0, max: 1.0, default: 0.15 },
-  angular: { min: 0, max: 2.0, default: 0.39 },
-} as const;
 
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
 
