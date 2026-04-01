@@ -125,14 +125,16 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
       vMax = 1;
     }
     if (vMin === vMax) {
-      vMin -= 0.5;
-      vMax += 0.5;
+      vMax += 1;
     }
+
+    // Floor at 0 unless data contains negative values
+    if (vMin >= 0) vMin = 0;
 
     const vRange = vMax - vMin;
     const vPadding = vRange * 0.1;
-    vMin -= vPadding;
     vMax += vPadding;
+    if (vMin < 0) vMin -= vPadding;
 
     // Time axis labels
     ctx.font = '12px "Roboto Mono", monospace';

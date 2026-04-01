@@ -33,10 +33,20 @@ export const PILOT_ZOOM_MAX = 4;
  */
 export const PILOT_ZOOM_STEP = 0.2;
 
-/** COMPASS_STRIP_WIDTH
- * @description Width in pixels for the compass heading strip canvas.
+/** COMPASS_STRIP_WIDTH_MIN
+ * @description Minimum width in pixels for the compass heading strip canvas.
  */
-export const COMPASS_STRIP_WIDTH = 320;
+export const COMPASS_STRIP_WIDTH_MIN = 200;
+
+/** COMPASS_STRIP_WIDTH_MAX
+ * @description Maximum width in pixels for the compass heading strip canvas.
+ */
+export const COMPASS_STRIP_WIDTH_MAX = 320;
+
+/** COMPASS_STRIP_VIEWPORT_RATIO
+ * @description Fraction of viewport width used to derive compass strip width.
+ */
+export const COMPASS_STRIP_VIEWPORT_RATIO = 0.25;
 
 /** COMPASS_STRIP_HEIGHT
  * @description Height in pixels for the compass heading strip canvas.
@@ -68,6 +78,94 @@ export const COMPASS_CARDINALS: readonly { label: string; deg: number }[] = [
  * @description Total degrees visible in the compass strip viewport.
  */
 export const COMPASS_DEGREES_VISIBLE = 120;
+
+/** COMPASS_TICK_HEIGHT_MAJOR
+ * @description Pixel height of major tick marks on the compass strip.
+ */
+export const COMPASS_TICK_HEIGHT_MAJOR = 12;
+
+/** COMPASS_TICK_HEIGHT_MINOR
+ * @description Pixel height of minor tick marks on the compass strip.
+ */
+export const COMPASS_TICK_HEIGHT_MINOR = 6;
+
+/** COMPASS_FADE_WIDTH
+ * @description Width in pixels of the gradient fade at compass strip edges.
+ */
+export const COMPASS_FADE_WIDTH = 30;
+
+/** COMPASS_POINTER_HALF_WIDTH
+ * @description Half-width in pixels of the center pointer triangle.
+ */
+export const COMPASS_POINTER_HALF_WIDTH = 5;
+
+/** COMPASS_POINTER_HEIGHT
+ * @description Height in pixels of the center pointer triangle.
+ */
+export const COMPASS_POINTER_HEIGHT = 6;
+
+/** COMPASS_COLORS
+ * @description Color resolution mapping for compass canvas — maps local keys
+ *  to CSS custom property names.
+ */
+export const COMPASS_TOKEN_MAP: Record<string, string> = {
+  accent: '--color-accent',
+  textMuted: '--color-text-muted',
+  tickMinor: '--color-border',
+  tickMajor: '--color-text-secondary',
+};
+
+/** LIDAR_TOKEN_MAP
+ * @description Color resolution mapping for LiDAR minimap canvas — maps local
+ *  keys to CSS custom property names.
+ */
+export const LIDAR_TOKEN_MAP: Record<string, string> = {
+  accent: '--color-accent',
+  textMuted: '--color-text-muted',
+  gridLine: '--color-border',
+  nominal: '--color-status-nominal',
+  caution: '--color-status-caution',
+  critical: '--color-status-critical',
+};
+
+/** LIDAR_TICK_LENGTH
+ * @description Length in pixels for radial edge tick marks on the minimap.
+ */
+export const LIDAR_TICK_LENGTH = 4;
+
+/** LIDAR_DETAIL_THRESHOLD
+ * @description Minimap size in pixels above which all distance labels are shown.
+ */
+export const LIDAR_DETAIL_THRESHOLD = 160;
+
+/** LIDAR_DISTANCE_RATIO_CAUTION
+ * @description Distance ratio threshold above which points are colored caution.
+ */
+export const LIDAR_DISTANCE_RATIO_CAUTION = 0.4;
+
+/** LIDAR_DISTANCE_RATIO_CRITICAL
+ * @description Distance ratio threshold above which points are colored critical.
+ */
+export const LIDAR_DISTANCE_RATIO_CRITICAL = 0.7;
+
+/** LIDAR_ROBOT_TRIANGLE_RATIO
+ * @description Robot triangle size as a fraction of minimap size.
+ */
+export const LIDAR_ROBOT_TRIANGLE_RATIO = 0.035;
+
+/** LIDAR_ROBOT_TRIANGLE_MIN
+ * @description Minimum robot triangle size in pixels.
+ */
+export const LIDAR_ROBOT_TRIANGLE_MIN = 5;
+
+/** VIDEO_STATUS_LABELS
+ * @description Maps non-streaming video statuses to user-facing labels.
+ */
+export const VIDEO_STATUS_LABELS: Record<'idle' | 'connecting' | 'failed', string> = {
+  idle: 'No video stream',
+  connecting: 'Connecting...',
+  failed: 'Stream failed',
+};
 
 /** HUD_PANEL_BASE
  * @description Shared Tailwind classes for all HUD overlay panels. Tactical

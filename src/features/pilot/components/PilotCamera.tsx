@@ -1,15 +1,7 @@
 import { Camera } from 'lucide-react';
 import { ConditionalRender } from '@/components/ConditionalRender';
+import { VIDEO_STATUS_LABELS } from '../constants';
 import type { PilotCameraProps } from '../types/PilotView.types';
-
-/** STATUS_LABELS
- * @description Maps video stream status to user-facing labels.
- */
-const STATUS_LABELS: Record<string, string> = {
-  idle: 'No video stream',
-  connecting: 'Connecting...',
-  failed: 'Stream failed',
-};
 
 /** PilotCamera
  * @description Renders the full-bleed camera background for Pilot Mode.
@@ -44,7 +36,7 @@ export function PilotCamera({ videoStatus, videoRef }: PilotCameraProps) {
             <div className="flex flex-col items-center gap-3">
               <Camera className="size-12 text-text-muted" aria-hidden="true" />
               <p className="font-mono text-sm text-text-muted">
-                {STATUS_LABELS[videoStatus] ?? 'No video stream'}
+                {videoStatus !== 'streaming' ? VIDEO_STATUS_LABELS[videoStatus] : ''}
               </p>
             </div>
           </div>

@@ -41,7 +41,6 @@ export interface PilotHudProps {
   readonly rosbridgeStatus: ProxyStatus;
   readonly isFullscreen: boolean;
   readonly connected: boolean;
-  readonly activeDirection: Direction | null;
   readonly onToggleFullscreen: () => void;
   readonly onDirectionStart: (direction: Direction) => void;
   readonly onDirectionEnd: () => void;
@@ -50,7 +49,6 @@ export interface PilotHudProps {
   readonly onEmergencyStop: () => void;
   readonly linearVelocity: number;
   readonly angularVelocity: number;
-  readonly isActive: boolean;
 }
 
 /** PilotCameraProps
@@ -84,7 +82,6 @@ export interface PilotGyroReadoutProps {
   readonly pitch: number | null;
   readonly roll: number | null;
   readonly yaw: number | null;
-  readonly linearSpeed: number;
 }
 
 /** PilotStatusBarProps
@@ -94,7 +91,6 @@ export interface PilotStatusBarProps {
   readonly battery: { percentage: number; voltage: number } | null;
   readonly rosbridgeStatus: ProxyStatus;
   readonly videoStatus: VideoStreamStatus;
-  readonly uptimeSeconds: number | null;
 }
 
 /** PilotControlsProps
@@ -102,10 +98,8 @@ export interface PilotStatusBarProps {
  */
 export interface PilotControlsProps {
   readonly connected: boolean;
-  readonly activeDirection: Direction | null;
   readonly linearVelocity: number;
   readonly angularVelocity: number;
-  readonly isActive: boolean;
   readonly isFullscreen: boolean;
   readonly onDirectionStart: (direction: Direction) => void;
   readonly onDirectionEnd: () => void;

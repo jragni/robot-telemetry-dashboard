@@ -1,7 +1,9 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useThemeChange } from '@/hooks/useThemeChange';
+import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import {
   LIDAR_POINT_RADIUS,
   LIDAR_POINT_GLOW,
@@ -12,8 +14,27 @@ import {
   PILOT_ZOOM_MAX,
   PILOT_ZOOM_STEP,
   HUD_PANEL_BASE,
+  LIDAR_TOKEN_MAP,
+  LIDAR_TICK_LENGTH,
+  LIDAR_DETAIL_THRESHOLD,
+  LIDAR_DISTANCE_RATIO_CAUTION,
+  LIDAR_DISTANCE_RATIO_CRITICAL,
+  LIDAR_ROBOT_TRIANGLE_RATIO,
+  LIDAR_ROBOT_TRIANGLE_MIN,
 } from '../constants';
 import type { PilotLidarMinimapProps } from '../types/PilotView.types';
+
+/** LIDAR_COLOR_FALLBACKS
+ * @description Initial fallback colors for the LiDAR minimap canvas.
+ */
+const LIDAR_COLOR_FALLBACKS = {
+  accent: CANVAS_FALLBACKS.accent,
+  textMuted: CANVAS_FALLBACKS.textMuted,
+  gridLine: CANVAS_FALLBACKS.border,
+  nominal: CANVAS_FALLBACKS.statusNominal,
+  caution: CANVAS_FALLBACKS.statusCaution,
+  critical: CANVAS_FALLBACKS.statusCritical,
+};
 
 /** clampSize
  * @description Derives minimap size from viewport height, clamped to min/max.
@@ -35,54 +56,12 @@ function clampSize(): number {
  */
 export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinimapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [themeVersion, setThemeVersion] = useState(0);
   const [zoom, setZoom] = useState(1);
-  const [size, setSize] = useState(clampSize);
-
-  const colorsRef = useRef({
-    accent: 'oklch(0.70 0.20 230)',
-    textMuted: 'oklch(0.57 0.02 260)',
-    gridLine: 'rgba(255,255,255,0.08)',
-    nominal: 'oklch(0.70 0.19 155)',
-    caution: 'oklch(0.75 0.18 65)',
-    critical: 'oklch(0.60 0.24 25)',
-  });
-  const colorsResolved = useRef(false);
-
-  useThemeChange(() => {
-    colorsResolved.current = false;
-    setThemeVersion((v) => v + 1);
-  });
-
-  // Responsive resize
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-    function handleResize() {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        setSize(clampSize());
-      }, 150);
-    }
-    window.addEventListener('resize', handleResize);
-    return () => {
-      clearTimeout(timeout);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  const resolveColors = useCallback(() => {
-    if (colorsResolved.current) return;
-    const style = getComputedStyle(document.documentElement);
-    colorsRef.current = {
-      accent: style.getPropertyValue('--color-accent').trim() || colorsRef.current.accent,
-      textMuted: style.getPropertyValue('--color-text-muted').trim() || colorsRef.current.textMuted,
-      gridLine: style.getPropertyValue('--color-border').trim() || colorsRef.current.gridLine,
-      nominal: style.getPropertyValue('--color-status-nominal').trim() || colorsRef.current.nominal,
-      caution: style.getPropertyValue('--color-status-caution').trim() || colorsRef.current.caution,
-      critical: style.getPropertyValue('--color-status-critical').trim() || colorsRef.current.critical,
-    };
-    colorsResolved.current = true;
-  }, []);
+  const size = useResponsiveSize(clampSize);
+  const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
+    LIDAR_COLOR_FALLBACKS,
+    LIDAR_TOKEN_MAP,
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -95,9 +74,10 @@ export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinim
     const dpr = window.devicePixelRatio || 1;
     const half = size / 2;
 
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    ctx.scale(dpr, dpr);
+    const scaledSize = size * dpr;
+    if (canvas.width !== scaledSize) canvas.width = scaledSize;
+    if (canvas.height !== scaledSize) canvas.height = scaledSize;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size, size);
 
     // Circular clip
@@ -118,32 +98,26 @@ export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinim
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Radial edge ticks at 0°/90°/180°/270°
-    const tickLen = 4;
+    // Radial edge ticks at 0/90/180/270 degrees
     ctx.strokeStyle = colors.textMuted;
     ctx.lineWidth = 1;
     ctx.beginPath();
-    // Top (0°)
     ctx.moveTo(half, 1);
-    ctx.lineTo(half, 1 + tickLen);
-    // Right (90°)
+    ctx.lineTo(half, 1 + LIDAR_TICK_LENGTH);
     ctx.moveTo(size - 1, half);
-    ctx.lineTo(size - 1 - tickLen, half);
-    // Bottom (180°)
+    ctx.lineTo(size - 1 - LIDAR_TICK_LENGTH, half);
     ctx.moveTo(half, size - 1);
-    ctx.lineTo(half, size - 1 - tickLen);
-    // Left (270°)
+    ctx.lineTo(half, size - 1 - LIDAR_TICK_LENGTH);
     ctx.moveTo(1, half);
-    ctx.lineTo(1 + tickLen, half);
+    ctx.lineTo(1 + LIDAR_TICK_LENGTH, half);
     ctx.stroke();
 
     // Distance labels along horizontal axis
     const scale = (half - 6) / rangeMax * zoom;
-    const showAllLabels = size >= 160;
+    const showAllLabels = size >= LIDAR_DETAIL_THRESHOLD;
     const labelSteps = showAllLabels ? [0.25, 0.5, 0.75, 1.0] : [0.5, 1.0];
 
-    const fontSize = size >= 160 ? 9 : 8;
-    ctx.font = `400 ${String(fontSize)}px "Roboto Mono", monospace`;
+    ctx.font = '400 12px "Roboto Mono", monospace';
     ctx.fillStyle = colors.textMuted;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'bottom';
@@ -165,8 +139,8 @@ export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinim
       const ratio = point.distance / rangeMax;
 
       let color = colors.nominal;
-      if (ratio > 0.7) color = colors.critical;
-      else if (ratio > 0.4) color = colors.caution;
+      if (ratio > LIDAR_DISTANCE_RATIO_CRITICAL) color = colors.critical;
+      else if (ratio > LIDAR_DISTANCE_RATIO_CAUTION) color = colors.caution;
 
       ctx.shadowColor = color;
       ctx.beginPath();
@@ -179,7 +153,7 @@ export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinim
 
     // Robot triangle at center
     const headingRad = (heading * Math.PI) / 180;
-    const triSize = Math.max(5, size * 0.035);
+    const triSize = Math.max(LIDAR_ROBOT_TRIANGLE_MIN, size * LIDAR_ROBOT_TRIANGLE_RATIO);
     ctx.save();
     ctx.translate(half, half);
     ctx.rotate(-headingRad);
@@ -194,7 +168,7 @@ export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinim
 
     ctx.restore();
 
-  }, [points, rangeMax, heading, zoom, size, themeVersion, resolveColors]);
+  }, [points, rangeMax, heading, zoom, size, themeVersion, resolveColors, colorsRef]);
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();

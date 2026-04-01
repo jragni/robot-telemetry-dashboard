@@ -55,7 +55,7 @@ export function DpadButton({
         }
       }}
     >
-      <Icon className="size-4" />
+      <Icon className="size-3.5 @xs:size-4" />
     </Button>
   );
 }

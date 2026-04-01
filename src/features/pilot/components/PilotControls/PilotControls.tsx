@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { OctagonX, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Square } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Square } from 'lucide-react';
 import { DpadButton } from '@/components/controls/DpadButton';
 import { VelocitySlider } from '@/components/controls/VelocitySlider';
 import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls.constants';
 import type { Direction } from '@/types/control.types';
-import { HUD_PANEL_BASE } from '../constants';
-import type { PilotControlsProps } from '../types/PilotView.types';
+import { HUD_PANEL_BASE } from '../../constants';
+import type { PilotControlsProps } from '../../types/PilotView.types';
+import { EStopButton } from './EStopButton';
 
 /** PilotControls
  * @description Renders the compact HUD controls overlay with D-pad, velocity
@@ -15,10 +15,8 @@ import type { PilotControlsProps } from '../types/PilotView.types';
  *  to the panel ref. Escape priority: fullscreen exit takes precedence over
  *  E-STOP when in fullscreen mode.
  * @param connected - Whether the robot is connected.
- * @param activeDirection - Currently active D-pad direction.
  * @param linearVelocity - Current linear velocity in m/s.
  * @param angularVelocity - Current angular velocity in rad/s.
- * @param isActive - Whether controls are actively sending commands.
  * @param isFullscreen - Whether Pilot Mode is in fullscreen (affects Escape handling).
  * @param onDirectionStart - Callback when a direction press begins.
  * @param onDirectionEnd - Callback when a direction press ends.
@@ -104,7 +102,7 @@ export function PilotControls({
   return (
     <div
       ref={panelRef}
-      className={`${HUD_PANEL_BASE} p-3 flex flex-col gap-3`}
+      className={`${HUD_PANEL_BASE} @container p-2 lg:p-3 flex flex-col gap-2 lg:gap-3`}
       tabIndex={0}
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
@@ -112,7 +110,7 @@ export function PilotControls({
       <EStopButton disabled={disabled} onEmergencyStop={onEmergencyStop} />
 
       <div
-        className="grid grid-cols-3 gap-0.5"
+        className="grid grid-cols-3 gap-0.5 w-fit mx-auto"
         role="group"
         aria-label="Directional controls"
       >
@@ -132,33 +130,5 @@ export function PilotControls({
         <VelocitySlider label="ANG" value={angularVelocity} min={VELOCITY_LIMITS.angular.min} max={VELOCITY_LIMITS.angular.max} step={0.01} unit="rad/s" disabled={disabled} onChange={onAngularVelocityChange} />
       </div>
     </div>
-  );
-}
-
-/** EStopButtonProps
- * @description Props for the E-STOP button subcomponent.
- */
-interface EStopButtonProps {
-  readonly disabled: boolean;
-  readonly onEmergencyStop: () => void;
-}
-
-/** EStopButton
- * @description Renders the emergency stop button with pulsing border glow,
- *  OctagonX icon, and letter-spaced stencil text.
- */
-function EStopButton({ disabled, onEmergencyStop }: EStopButtonProps) {
-  return (
-    <Button
-      variant="danger"
-      size="sm"
-      disabled={disabled}
-      aria-label="Emergency stop"
-      className="w-full font-mono text-xs font-semibold tracking-widest cursor-pointer transition-all duration-200"
-      onClick={onEmergencyStop}
-    >
-      <OctagonX className="size-4" />
-      E-STOP
-    </Button>
   );
 }

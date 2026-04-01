@@ -1,14 +1,42 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
-import { useThemeChange } from '@/hooks/useThemeChange';
+import { useRef, useEffect } from 'react';
+import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import {
-  COMPASS_STRIP_WIDTH,
+  COMPASS_STRIP_WIDTH_MIN,
+  COMPASS_STRIP_WIDTH_MAX,
+  COMPASS_STRIP_VIEWPORT_RATIO,
   COMPASS_STRIP_HEIGHT,
   COMPASS_TICK_MAJOR_INTERVAL,
   COMPASS_TICK_MINOR_INTERVAL,
+  COMPASS_TICK_HEIGHT_MAJOR,
+  COMPASS_TICK_HEIGHT_MINOR,
+  COMPASS_FADE_WIDTH,
+  COMPASS_POINTER_HALF_WIDTH,
+  COMPASS_POINTER_HEIGHT,
   COMPASS_CARDINALS,
   COMPASS_DEGREES_VISIBLE,
+  COMPASS_TOKEN_MAP,
 } from '../constants';
 import type { PilotCompassProps } from '../types/PilotView.types';
+
+/** COMPASS_COLOR_FALLBACKS
+ * @description Initial fallback colors for the compass canvas, keyed by local name.
+ */
+const COMPASS_COLOR_FALLBACKS = {
+  accent: CANVAS_FALLBACKS.accent,
+  textMuted: CANVAS_FALLBACKS.textMuted,
+  tickMinor: CANVAS_FALLBACKS.border,
+  tickMajor: CANVAS_FALLBACKS.textSecondary,
+};
+
+/** clampCompassWidth
+ * @description Derives compass strip width from viewport width, clamped to min/max.
+ */
+function clampCompassWidth(): number {
+  const derived = Math.floor(window.innerWidth * COMPASS_STRIP_VIEWPORT_RATIO);
+  return Math.min(COMPASS_STRIP_WIDTH_MAX, Math.max(COMPASS_STRIP_WIDTH_MIN, derived));
+}
 
 /** PilotCompass
  * @description Renders a horizontal compass heading strip using Canvas 2D.
@@ -20,32 +48,11 @@ import type { PilotCompassProps } from '../types/PilotView.types';
  */
 export function PilotCompass({ heading }: PilotCompassProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [themeVersion, setThemeVersion] = useState(0);
-
-  const colorsRef = useRef({
-    accent: 'oklch(0.70 0.20 230)',
-    textMuted: 'oklch(0.57 0.02 260)',
-    tickMinor: 'rgba(255,255,255,0.15)',
-    tickMajor: 'rgba(255,255,255,0.35)',
-  });
-  const colorsResolved = useRef(false);
-
-  useThemeChange(() => {
-    colorsResolved.current = false;
-    setThemeVersion((v) => v + 1);
-  });
-
-  const resolveColors = useCallback(() => {
-    if (colorsResolved.current) return;
-    const style = getComputedStyle(document.documentElement);
-    colorsRef.current = {
-      accent: style.getPropertyValue('--color-accent').trim() || colorsRef.current.accent,
-      textMuted: style.getPropertyValue('--color-text-muted').trim() || colorsRef.current.textMuted,
-      tickMinor: style.getPropertyValue('--color-border').trim() || colorsRef.current.tickMinor,
-      tickMajor: style.getPropertyValue('--color-text-secondary').trim() || colorsRef.current.tickMajor,
-    };
-    colorsResolved.current = true;
-  }, []);
+  const stripWidth = useResponsiveSize(clampCompassWidth);
+  const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
+    COMPASS_COLOR_FALLBACKS,
+    COMPASS_TOKEN_MAP,
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -56,12 +63,14 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     resolveColors();
     const colors = colorsRef.current;
     const dpr = window.devicePixelRatio || 1;
-    const w = COMPASS_STRIP_WIDTH;
+    const w = stripWidth;
     const h = COMPASS_STRIP_HEIGHT;
 
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    ctx.scale(dpr, dpr);
+    const scaledW = w * dpr;
+    const scaledH = h * dpr;
+    if (canvas.width !== scaledW) canvas.width = scaledW;
+    if (canvas.height !== scaledH) canvas.height = scaledH;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
 
     const centerX = w / 2;
@@ -83,7 +92,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
       ctx.beginPath();
       ctx.strokeStyle = isMajor ? colors.tickMajor : colors.tickMinor;
       ctx.lineWidth = isMajor ? 1.5 : 0.5;
-      const tickHeight = isMajor ? 12 : 6;
+      const tickHeight = isMajor ? COMPASS_TICK_HEIGHT_MAJOR : COMPASS_TICK_HEIGHT_MINOR;
       ctx.moveTo(x, 0);
       ctx.lineTo(x, tickHeight);
       ctx.stroke();
@@ -94,7 +103,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
         ctx.textAlign = 'center';
         ctx.fillText(cardinal, x, 24);
       } else if (isMajor) {
-        ctx.font = '400 9px "Roboto Mono", monospace';
+        ctx.font = '400 12px "Roboto Mono", monospace';
         ctx.fillStyle = colors.textMuted;
         ctx.textAlign = 'center';
         ctx.fillText(`${String(deg)}°`, x, 22);
@@ -104,29 +113,28 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     // Center pointer triangle
     ctx.beginPath();
     ctx.fillStyle = colors.accent;
-    ctx.moveTo(centerX - 5, 0);
-    ctx.lineTo(centerX + 5, 0);
-    ctx.lineTo(centerX, 6);
+    ctx.moveTo(centerX - COMPASS_POINTER_HALF_WIDTH, 0);
+    ctx.lineTo(centerX + COMPASS_POINTER_HALF_WIDTH, 0);
+    ctx.lineTo(centerX, COMPASS_POINTER_HEIGHT);
     ctx.closePath();
     ctx.fill();
 
-    // Fade edges with gradient
-    const fadeWidth = 30;
-    const fadeLeft = ctx.createLinearGradient(0, 0, fadeWidth, 0);
+    // Fade edges — uses rgba for Canvas 2D compositing (cannot use CSS tokens)
+    const fadeLeft = ctx.createLinearGradient(0, 0, COMPASS_FADE_WIDTH, 0);
     fadeLeft.addColorStop(0, 'rgba(0,0,0,1)');
     fadeLeft.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.globalCompositeOperation = 'destination-out';
     ctx.fillStyle = fadeLeft;
-    ctx.fillRect(0, 0, fadeWidth, h);
+    ctx.fillRect(0, 0, COMPASS_FADE_WIDTH, h);
 
-    const fadeRight = ctx.createLinearGradient(w - fadeWidth, 0, w, 0);
+    const fadeRight = ctx.createLinearGradient(w - COMPASS_FADE_WIDTH, 0, w, 0);
     fadeRight.addColorStop(0, 'rgba(0,0,0,0)');
     fadeRight.addColorStop(1, 'rgba(0,0,0,1)');
     ctx.fillStyle = fadeRight;
-    ctx.fillRect(w - fadeWidth, 0, fadeWidth, h);
+    ctx.fillRect(w - COMPASS_FADE_WIDTH, 0, COMPASS_FADE_WIDTH, h);
     ctx.globalCompositeOperation = 'source-over';
 
-  }, [heading, themeVersion, resolveColors]);
+  }, [heading, stripWidth, themeVersion, resolveColors, colorsRef]);
 
   const headingNormalized = ((heading % 360) + 360) % 360;
 
@@ -134,9 +142,9 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     <div className="flex flex-col items-center gap-0.5 pointer-events-auto">
       <canvas
         ref={canvasRef}
-        width={COMPASS_STRIP_WIDTH}
+        width={stripWidth}
         height={COMPASS_STRIP_HEIGHT}
-        style={{ width: COMPASS_STRIP_WIDTH, height: COMPASS_STRIP_HEIGHT }}
+        style={{ width: stripWidth, height: COMPASS_STRIP_HEIGHT }}
         aria-label={`Heading: ${headingNormalized.toFixed(0)} degrees`}
       />
       <span className="font-mono text-xl font-semibold text-accent tabular-nums">

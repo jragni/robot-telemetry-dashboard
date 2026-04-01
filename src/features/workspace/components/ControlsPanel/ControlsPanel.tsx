@@ -114,7 +114,7 @@ export function ControlsPanel({
   return (
     <div
       ref={panelRef}
-      className="flex flex-col items-center gap-3 w-full px-2 pt-1 overflow-y-auto"
+      className="@container flex flex-col items-center gap-2 @sm:gap-3 w-full px-2 pt-1 overflow-y-auto"
       tabIndex={0}
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
@@ -132,7 +132,7 @@ export function ControlsPanel({
       </Button>
 
       <div
-        className="grid grid-cols-3 gap-1"
+        className="grid grid-cols-3 gap-0.5 @xs:gap-1 w-fit mx-auto"
         role="group"
         aria-label="Directional controls — press and hold"
       >
@@ -240,7 +240,7 @@ export function ControlsPanel({
             className="w-full font-sans text-xs cursor-pointer transition-all duration-200"
             aria-label="Enter Pilot Mode"
             onClick={() => {
-              void navigate(`/pilot/${robotId as string}`);
+              void navigate(`/pilot/${robotId}`);
             }}
           >
             <Crosshair className="size-3.5" />

@@ -1,8 +1,8 @@
 import { PilotCompass } from './PilotCompass';
 import { PilotLidarMinimap } from './PilotLidarMinimap';
-import { PilotGyroReadout } from './PilotGyroReadout';
-import { PilotStatusBar } from './PilotStatusBar';
-import { PilotControls } from './PilotControls';
+import { PilotGyroReadout } from './PilotGyroReadout/PilotGyroReadout';
+import { PilotStatusBar } from './PilotStatusBar/PilotStatusBar';
+import { PilotControls } from './PilotControls/PilotControls';
 import { PilotFullscreenToggle } from './PilotFullscreenToggle';
 import type { PilotHudProps } from '../types/PilotView.types';
 
@@ -33,13 +33,12 @@ export function PilotHud({
   onEmergencyStop,
   linearVelocity,
   angularVelocity,
-  isActive,
 }: PilotHudProps) {
   const heading = telemetry.imu?.yaw ?? 0;
 
   return (
     <div className="absolute inset-0 pointer-events-none" aria-label="Pilot HUD overlay">
-      <div className="absolute top-3 left-3">
+      <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
         <PilotLidarMinimap
           points={telemetry.lidarPoints}
           rangeMax={telemetry.lidarRangeMax}
@@ -47,38 +46,34 @@ export function PilotHud({
         />
       </div>
 
-      <div className="absolute top-3 left-1/2 -translate-x-1/2">
+      <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2">
         <PilotCompass heading={heading} />
       </div>
 
-      <div className="absolute top-3 right-3 pointer-events-auto">
+      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-36 sm:w-44 pointer-events-auto">
         <PilotStatusBar
           battery={telemetry.battery}
           rosbridgeStatus={rosbridgeStatus}
           videoStatus={videoStatus}
-          uptimeSeconds={telemetry.uptimeSeconds}
         />
       </div>
 
-      <div className="absolute bottom-3 left-3 flex flex-col items-start gap-3">
+      <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 flex flex-col items-start gap-2 sm:gap-3">
         <PilotGyroReadout
           pitch={telemetry.imu?.pitch ?? null}
           roll={telemetry.imu?.roll ?? null}
           yaw={telemetry.imu?.yaw ?? null}
-          linearSpeed={telemetry.linearSpeed}
         />
         <div className="pointer-events-auto">
           <PilotFullscreenToggle isFullscreen={isFullscreen} onToggle={onToggleFullscreen} />
         </div>
       </div>
 
-      <div className="absolute bottom-3 right-3">
+      <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-40 sm:w-48">
         <PilotControls
           connected={connected}
-          activeDirection={null}
           linearVelocity={linearVelocity}
           angularVelocity={angularVelocity}
-          isActive={isActive}
           isFullscreen={isFullscreen}
           onDirectionStart={onDirectionStart}
           onDirectionEnd={onDirectionEnd}

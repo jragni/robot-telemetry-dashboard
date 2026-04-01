@@ -59,10 +59,8 @@ export function PilotView() {
           isFullscreen={isFullscreen}
           connected={connected}
           onToggleFullscreen={toggleFullscreen}
-          activeDirection={null}
           linearVelocity={controls.linearVelocity}
           angularVelocity={controls.angularVelocity}
-          isActive={controls.isActive}
           onDirectionStart={controls.handleDirectionStart}
           onDirectionEnd={controls.handleDirectionEnd}
           onLinearVelocityChange={controls.handleLinearChange}
