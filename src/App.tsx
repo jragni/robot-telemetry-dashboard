@@ -13,7 +13,7 @@ import { MockupsPage } from './features/mockups/MockupsPage';
  */
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         {/* Landing page — standalone, outside AppShell, forces dark theme */}
         <Route path="/" element={<LandingPage />} />
