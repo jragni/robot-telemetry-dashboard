@@ -1,6 +1,15 @@
+import type { ComponentType } from 'react';
+
 import { Activity, Camera, Compass, Crosshair, Gamepad2, Radar, Shield } from 'lucide-react';
 import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
-import type { MobileTabId } from './types/RobotWorkspaceMobile.types';
+
+import { CameraPanel } from './components/CameraPanel';
+import { ImuPanel } from './components/ImuPanel/ImuPanel';
+import { LidarPanel } from './components/LidarPanel';
+import { SystemStatusPanel } from './components/SystemStatusPanel';
+import { TelemetryPanel } from './components/TelemetryPanel';
+
+import type { MobileDataPanelId, MobileTabId } from './types/RobotWorkspaceMobile.types';
 
 export const IMU_VIZ_OPTIONS: readonly { value: ImuVariant; label: string; shortLabel: string }[] =
   [
@@ -87,8 +96,16 @@ export const PANEL_TOPIC_TYPES: Record<string, readonly string[]> = {
 
 export const DEFAULT_PANEL_TOPICS: Record<string, string> = {
   camera: '/camera/image_raw',
-  lidar: '/scan',
-  imu: '/imu/data',
   controls: '/cmd_vel',
+  imu: '/imu/data',
+  lidar: '/scan',
   telemetry: '/odom',
+};
+
+export const MOBILE_PANEL_COMPONENTS: Record<MobileDataPanelId, ComponentType<object>> = {
+  camera: CameraPanel as ComponentType<object>,
+  imu: ImuPanel as ComponentType<object>,
+  lidar: LidarPanel as ComponentType<object>,
+  status: SystemStatusPanel as ComponentType<object>,
+  telemetry: TelemetryPanel as ComponentType<object>,
 };

@@ -46,8 +46,3 @@ export interface RobotWorkspaceMobileProps {
   readonly filteredTopics: Record<string, readonly RosTopic[]>;
   readonly onTopicChange: (panelId: string, topicName: string) => void;
 }
-
-export type ActivePanelContentProps =
-  Omit<RobotWorkspaceMobileProps, 'robotId' | 'selectedTopics' | 'filteredTopics' | 'onTopicChange'> & {
-    readonly activePanel: MobileDataPanelId;
-  };
