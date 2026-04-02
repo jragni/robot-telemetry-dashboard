@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useRobotConnection } from '@/hooks/useRobotConnection';
 import { useRosGraph } from '@/hooks/useRosGraph';
@@ -161,9 +161,7 @@ export function RobotWorkspace() {
   return (
     <div className="flex flex-col h-full gap-3 p-4">
       <div className={`flex-1 grid gap-3 min-h-0 overflow-hidden ${gridCols} ${gridRows}`}>
-          <ConditionalRender
-            shouldRender={!isMinimized('camera')}
-            Component={
+          {!isMinimized('camera') && (
               <WorkspacePanel
                 label="Camera"
                 icon={Camera}
@@ -174,12 +172,9 @@ export function RobotWorkspace() {
               >
                 <CameraPanel streamRef={videoRef} connected={connected} label={selectedTopics.camera} />
               </WorkspacePanel>
-            }
-          />
+          )}
 
-          <ConditionalRender
-            shouldRender={!isMinimized('lidar')}
-            Component={
+          {!isMinimized('lidar') && (
               <WorkspacePanel
                 label="LiDAR"
                 icon={Radar}
@@ -193,12 +188,9 @@ export function RobotWorkspace() {
               >
                 <LidarPanel points={lidar.points} rangeMax={lidar.rangeMax} connected={connected} />
               </WorkspacePanel>
-            }
-          />
+          )}
 
-          <ConditionalRender
-            shouldRender={!isMinimized('status')}
-            Component={
+          {!isMinimized('status') && (
               <WorkspacePanel
                 label="System Status"
                 icon={Shield}
@@ -220,12 +212,9 @@ export function RobotWorkspace() {
                   onDisconnect={disconnect}
                 />
               </WorkspacePanel>
-            }
-          />
+          )}
 
-          <ConditionalRender
-            shouldRender={!isMinimized('imu')}
-            Component={
+          {!isMinimized('imu') && (
               <WorkspacePanel
                 label="IMU Attitude"
                 icon={Compass}
@@ -246,12 +235,9 @@ export function RobotWorkspace() {
                   connected={connected}
                 />
               </WorkspacePanel>
-            }
-          />
+          )}
 
-          <ConditionalRender
-            shouldRender={!isMinimized('controls')}
-            Component={
+          {!isMinimized('controls') && (
               <WorkspacePanel
                 label="Controls"
                 icon={Gamepad2}
@@ -278,12 +264,9 @@ export function RobotWorkspace() {
                   onEmergencyStop={controls.handleEmergencyStop}
                 />
               </WorkspacePanel>
-            }
-          />
+          )}
 
-          <ConditionalRender
-            shouldRender={!isMinimized('telemetry')}
-            Component={
+          {!isMinimized('telemetry') && (
               <WorkspacePanel
                 label="Telemetry"
                 icon={Activity}
@@ -297,13 +280,10 @@ export function RobotWorkspace() {
               >
                 <TelemetryPanel series={telemetrySeries} timeWindowMs={TELEMETRY_TIME_WINDOW_MS} connected={connected} />
               </WorkspacePanel>
-            }
-          />
+          )}
         </div>
 
-        <ConditionalRender
-          shouldRender={minimizedIds.size > 0}
-          Component={
+        {minimizedIds.size > 0 && (
             <nav aria-label="Minimized panels" className="flex items-center gap-1 shrink-0">
               {WORKSPACE_PANEL_META.filter((p) => isMinimized(p.id)).map((panel) => (
                 <Button
@@ -320,8 +300,7 @@ export function RobotWorkspace() {
                 </Button>
               ))}
             </nav>
-          }
-        />
+        )}
     </div>
   );
 }

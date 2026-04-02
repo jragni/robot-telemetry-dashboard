@@ -1,6 +1,5 @@
 import { Maximize2, Minimize2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ConditionalRender } from '@/components/ConditionalRender';
 import { PanelErrorBoundary } from '@/components/PanelErrorBoundary';
 import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
 import { TopicSelector } from './TopicSelector';
@@ -47,9 +46,7 @@ export function WorkspacePanel({
         )}
         <div className="ml-auto flex items-center gap-1 shrink-0">
           {headerActions}
-          <ConditionalRender
-            shouldRender={!!onMinimize && !maximized}
-            Component={
+          {!!onMinimize && !maximized && (
               <Button
                 variant="ghost"
                 size="icon-xs"
@@ -59,8 +56,7 @@ export function WorkspacePanel({
               >
                 <Minus className="size-3" />
               </Button>
-            }
-          />
+          )}
           {maximized ? (
             <Button
               variant="ghost"

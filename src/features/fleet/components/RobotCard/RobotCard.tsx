@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { useRobotConnection } from '@/hooks/useRobotConnection';
 import { useRosTopics } from '@/hooks/useRosTopics';
@@ -43,15 +43,12 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
         <RobotCardConnection url={robot.url} lastSeen={robot.lastSeen} />
         <hr className="border-border border-dashed" />
 
-        <ConditionalRender
-          shouldRender={isConnected}
-          Component={
+        {isConnected && (
             <>
               <RobotCardVitals battery={battery} />
               <hr className="border-border border-dashed" />
             </>
-          }
-        />
+        )}
 
         <RobotCardGraph graph={rosGraph} isConnected={isConnected} />
       </CardContent>

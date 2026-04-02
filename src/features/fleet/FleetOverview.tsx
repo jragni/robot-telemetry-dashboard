@@ -1,5 +1,5 @@
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import { AddRobotModal } from './components/AddRobotModal/AddRobotModal';
 import { FleetEmptyView } from './components/FleetEmptyView';
 import { FleetRobotGrid } from './components/FleetRobotGrid';
@@ -20,10 +20,7 @@ export function FleetOverview() {
         <h1 className="font-sans text-xl font-semibold text-text-primary">
           Fleet Overview
         </h1>
-        <ConditionalRender
-          shouldRender={hasRobots}
-          Component={<AddRobotModal />}
-        />
+        {hasRobots && <AddRobotModal />}
       </header>
 
       {hasRobots ? (

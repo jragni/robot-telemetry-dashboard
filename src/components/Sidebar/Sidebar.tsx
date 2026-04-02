@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bot, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import type { SidebarProps, NavItemData } from '@/types/Sidebar.types';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { SYSTEM_ITEMS } from './constants';
@@ -31,17 +31,12 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
       className="bg-surface-primary border-r border-border flex flex-col overflow-hidden shadow-glow-right h-full"
     >
       <nav className="flex-1 overflow-y-auto overflow-x-hidden">
-        <ConditionalRender
-          shouldRender={!collapsed}
-          Component={
+        {!collapsed && (
             <h2 className="font-sans text-xs font-semibold text-text-muted uppercase tracking-widest px-3 pt-3.5 pb-1.5">
               Fleet
             </h2>
-          }
-        />
-        <ConditionalRender
-          shouldRender={robots.length > 0}
-          Component={
+        )}
+        {robots.length > 0 && (
             <>
               {robots.map((item) => (
                 <NavItem
@@ -55,25 +50,18 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                 />
               ))}
             </>
-          }
-        />
-        <ConditionalRender
-          shouldRender={robots.length === 0 && !collapsed}
-          Component={
+        )}
+        {robots.length === 0 && !collapsed && (
             <p className="px-3 py-2 font-mono text-xs text-text-muted">
               No robots
             </p>
-          }
-        />
+        )}
 
-        <ConditionalRender
-          shouldRender={!collapsed}
-          Component={
+        {!collapsed && (
             <h2 className="font-sans text-xs font-semibold text-text-muted uppercase tracking-widest px-3 pt-3.5 pb-1.5">
               System
             </h2>
-          }
-        />
+        )}
         {SYSTEM_ITEMS.map((item) => (
           <NavItem
             key={item.path}
@@ -94,10 +82,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         className="w-full h-8 rounded-none border-t border-border text-text-muted font-mono text-xs hover:text-accent hover:bg-surface-tertiary shrink-0"
       >
         {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
-        <ConditionalRender
-          shouldRender={!collapsed}
-          Component={<span>Collapse</span>}
-        />
+        {!collapsed && <span>Collapse</span>}
       </Button>
     </aside>
   );
