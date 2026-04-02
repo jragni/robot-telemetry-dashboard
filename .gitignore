@@ -22,10 +22,11 @@ coverage/
 test-results/
 playwright-report/
 
-# claude
+# tools & config
+CLAUDE.md
 .claude/
-
-# MCP config (may contain API keys)
+.serena/
+.superpowers/
 .mcp.json
 
 # Playwright MCP artifacts
