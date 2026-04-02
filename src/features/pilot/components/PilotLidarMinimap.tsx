@@ -1,8 +1,9 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useResponsiveSize } from '@/hooks/useResponsiveSize';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { useZoom } from '@/hooks/useZoom';
 import {
   LIDAR_POINT_RADIUS,
   LIDAR_POINT_GLOW,
@@ -47,7 +48,11 @@ function clampSize(ceiling = MINIMAP_SIZE_MAX): number {
  */
 export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotLidarMinimapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [zoom, setZoom] = useState(1);
+  const { zoom, zoomIn, zoomOut, handleWheel } = useZoom({
+    min: PILOT_ZOOM_MIN,
+    max: PILOT_ZOOM_MAX,
+    step: PILOT_ZOOM_STEP,
+  });
   const computeSize = useCallback(() => clampSize(maxSize), [maxSize]);
   const size = useResponsiveSize(computeSize);
   const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
@@ -162,24 +167,6 @@ export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotL
     ctx.restore();
 
   }, [points, rangeMax, heading, zoom, size, themeVersion, resolveColors, colorsRef]);
-
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    setZoom((prev) =>
-      Math.min(
-        PILOT_ZOOM_MAX,
-        Math.max(PILOT_ZOOM_MIN, prev + (e.deltaY > 0 ? -PILOT_ZOOM_STEP : PILOT_ZOOM_STEP)),
-      ),
-    );
-  }, []);
-
-  const zoomIn = useCallback(() => {
-    setZoom((prev) => Math.min(PILOT_ZOOM_MAX, prev + PILOT_ZOOM_STEP));
-  }, []);
-
-  const zoomOut = useCallback(() => {
-    setZoom((prev) => Math.max(PILOT_ZOOM_MIN, prev - PILOT_ZOOM_STEP));
-  }, []);
 
   return (
     <div className="flex flex-col items-center gap-1" aria-label="LiDAR minimap">
