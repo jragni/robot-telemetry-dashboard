@@ -1,4 +1,6 @@
+import { Activity, Camera, Compass, Crosshair, Gamepad2, Radar, Shield } from 'lucide-react';
 import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
+import type { MobileTabId } from './types/RobotWorkspaceMobile.types';
 
 export const IMU_VIZ_OPTIONS: readonly { value: ImuVariant; label: string; shortLabel: string }[] =
   [
@@ -47,8 +49,6 @@ export const LIDAR_POINT_RADIUS = 2;
  */
 export const LIDAR_ROBOT_SIZE = 10;
 
-import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
-
 /** WORKSPACE_PANEL_META
  * @description Panel metadata for dock bar restore buttons and minimize hook.
  */
@@ -66,6 +66,19 @@ export const WORKSPACE_PANEL_META = [
  * @description Array of all panel IDs for minimize/maximize hook.
  */
 export const WORKSPACE_PANEL_IDS = WORKSPACE_PANEL_META.map((p) => p.id);
+
+/** MOBILE_TAB_META
+ * @description Tab metadata for the mobile workspace bottom bar. Five data
+ *  panels plus a Pilot nav action. Short labels fit the narrow tab bar.
+ */
+export const MOBILE_TAB_META: readonly { id: MobileTabId; label: string; icon: typeof Camera }[] = [
+  { id: 'camera', label: 'CAM', icon: Camera },
+  { id: 'lidar', label: 'LDR', icon: Radar },
+  { id: 'status', label: 'SYS', icon: Shield },
+  { id: 'imu', label: 'IMU', icon: Compass },
+  { id: 'telemetry', label: 'TEL', icon: Activity },
+  { id: 'pilot', label: 'PILOT', icon: Crosshair },
+];
 
 /** GRID_COL_MAP
  * @description Maps visible panel count to Tailwind grid-cols class.
@@ -87,6 +100,11 @@ export const TELEMETRY_GRID_LINES_H = 4;
  * @description Number of vertical grid lines in the telemetry chart.
  */
 export const TELEMETRY_GRID_LINES_V = 6;
+
+/** TELEMETRY_TIME_WINDOW_MS
+ * @description Default time window in milliseconds for the telemetry chart.
+ */
+export const TELEMETRY_TIME_WINDOW_MS = 30_000;
 
 /** TELEMETRY_LINE_WIDTH
  * @description Stroke width for telemetry series lines.

@@ -1,19 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Ros } from 'roslib';
-
-/** RosGraph
- * @description Counts and names of active ROS computational graph entities.
- */
-export interface RosGraph {
-  readonly nodes: number;
-  readonly nodeNames: readonly string[];
-  readonly topics: number;
-  readonly topicNames: readonly string[];
-  readonly services: number;
-  readonly serviceNames: readonly string[];
-  readonly actions: number;
-  readonly actionNames: readonly string[];
-}
+import type { RosGraph } from '@/types/ros-graph.types';
 
 /** useRosGraph
  * @description Fetches the ROS computation graph summary from a live Ros
@@ -32,37 +19,57 @@ export function useRosGraph(ros: Ros | undefined): RosGraph | null {
     function maybeDone() {
       pending -= 1;
       if (pending === 0) {
-        setGraph({
-          nodes: result.nodes.length,
-          nodeNames: result.nodes.sort(),
-          topics: result.topics.length,
-          topicNames: result.topics.sort(),
-          services: result.services.length,
-          serviceNames: result.services.sort(),
-          actions: result.actions.length,
-          actionNames: result.actions.sort(),
+        setGraph((prev) => {
+          // Bail out if counts haven't changed to avoid unnecessary re-renders
+          const nodeCount = new Set(result.nodes).size;
+          const topicCount = new Set(result.topics).size;
+          const serviceCount = new Set(result.services).size;
+          const actionCount = new Set(result.actions).size;
+
+          if (
+            prev?.nodes === nodeCount &&
+            prev.topics === topicCount &&
+            prev.services === serviceCount &&
+            prev.actions === actionCount
+          ) return prev;
+
+          const nodeNames = [...new Set(result.nodes)].sort();
+          const topicNames = [...new Set(result.topics)].sort();
+          const serviceNames = [...new Set(result.services)].sort();
+          const actionNames = [...new Set(result.actions)].sort();
+
+          return {
+            nodes: nodeNames.length,
+            nodeNames,
+            topics: topicNames.length,
+            topicNames,
+            services: serviceNames.length,
+            serviceNames,
+            actions: actionNames.length,
+            actionNames,
+          };
         });
       }
     }
 
     instance.getNodes(
       (nodes) => { result.nodes = nodes; maybeDone(); },
-      () => { maybeDone(); },
+      (err) => { console.warn('[useRosGraph] Failed to fetch nodes:', err); maybeDone(); },
     );
 
     instance.getTopics(
       (res) => { result.topics = res.topics; maybeDone(); },
-      () => { maybeDone(); },
+      (err) => { console.warn('[useRosGraph] Failed to fetch topics:', err); maybeDone(); },
     );
 
     instance.getServices(
       (services) => { result.services = services; maybeDone(); },
-      () => { maybeDone(); },
+      (err) => { console.warn('[useRosGraph] Failed to fetch services:', err); maybeDone(); },
     );
 
     instance.getActionServers(
       (actions) => { result.actions = actions; maybeDone(); },
-      () => { maybeDone(); },
+      (err) => { console.warn('[useRosGraph] Failed to fetch actions:', err); maybeDone(); },
     );
   }, []);
 

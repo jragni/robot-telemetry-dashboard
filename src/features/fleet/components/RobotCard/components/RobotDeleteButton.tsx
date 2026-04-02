@@ -34,7 +34,7 @@ export function RobotDeleteButton({
           variant="ghost"
           size="icon"
           aria-label={`Remove ${robotName}`}
-          className="size-8 min-w-11 text-text-muted hover:text-status-critical"
+          className="size-8 min-w-11 text-text-muted hover:text-status-critical cursor-pointer transition"
         >
           <Trash2 size={14} />
         </Button>

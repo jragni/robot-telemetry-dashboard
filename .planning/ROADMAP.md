@@ -19,7 +19,7 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 - [x] **Fleet + Robot Management** — Robot cards with shadcn Card, subcomponents (Identity, Connection, Vitals, Graph, Actions, DataRow), Add Robot modal, store-driven sidebar, empty state, robot color system, Pilot button, system diagnostics on card.
 - [x] **Robot Workspace** — 3×2 grid at /robot/:id with 6 production panels (Camera, LiDAR, System Status, IMU, Controls, Telemetry). Minimize/maximize with dock bar, dynamic grid reflow. Each panel handles own connected/disconnected state. Canvas 2D for LiDAR/IMU/Telemetry, theme-aware redraw. **Needs: real roslib wiring, WebRTC camera stream.**
 - [x] **Controls** — E-Stop, D-pad (press-and-hold continuous publishing at 10Hz), velocity sliders, disabled when disconnected, keyboard support (arrow keys + Escape). useControlPublisher hook in src/hooks/.
-- [ ] **Demo Mode** — /demo route with 3-4 mock robots streaming at 10Hz, DEMO MODE badge in header, same components as production, clean mount/unmount lifecycle.
+- [x] **Mockups Page** — Living design system reference at /mockups with live token swatches, component gallery, workspace panels with mock data.
 
 ### Cross-Cutting (ongoing)
 
@@ -43,6 +43,7 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 ### Deferred (can add later)
 
 - System Status inline expand (click nodes/topics/services/actions counts to see lists)
+- Demo Mode (/demo route with 3-4 mock robots streaming at 10Hz, DEMO MODE badge in header, same components as production, clean mount/unmount lifecycle)
 - Pilot Mode (/pilot/:id with camera HUD overlay, first-person robot control, LiDAR minimap, velocity controls)
 - Map View (/map with occupancy grid via Web Worker)
 - Settings page
@@ -85,7 +86,7 @@ Five polished features deliver a portfolio-ready robot telemetry dashboard. Poli
 | Polish Sweep        | ✅ Complete | 2026-03-30 |
 | Workspace Panels    | ✅ Complete | 2026-03-31 |
 | Controls            | ✅ Complete | 2026-03-31 |
-| Demo Mode           | Not started | —          |
+| Mockups Page        | ✅ Complete | 2026-04-01 |
 
 ## Backlog
 - [ ] Add LLM chat interface to dashboard for robot interaction/diagnostics

@@ -7,7 +7,7 @@ import { FEATURES, FEATURE_ICONS } from '../constants';
  */
 export function LandingFeatures() {
   return (
-    <section id="features" className="py-24 px-8 max-w-300 mx-auto">
+    <section id="features" className="py-12 sm:py-24 px-4 sm:px-8 max-w-300 mx-auto">
       <div className="mb-16">
         <span className="font-mono text-xs font-semibold text-accent uppercase tracking-widest block mb-3">
           Capabilities
@@ -22,7 +22,7 @@ export function LandingFeatures() {
         return (
           <div
             key={feature.number}
-            className="landing-feature grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20 last:mb-0"
+            className="landing-feature grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 items-center mb-10 sm:mb-20 last:mb-0"
           >
             <div className="landing-feature-content">
               <span className="font-mono text-xs font-semibold text-accent tracking-widest block mb-3">
@@ -35,7 +35,7 @@ export function LandingFeatures() {
                 {feature.description}
               </p>
             </div>
-            <div className="landing-feature-visual bg-surface-primary border border-border rounded-sm shadow-glow-top h-40 flex items-center justify-center relative">
+            <div className="landing-feature-visual bg-surface-primary border border-border rounded-sm shadow-glow-top h-28 sm:h-40 flex items-center justify-center relative">
               <Icon size={36} className="text-accent opacity-30" />
             </div>
           </div>

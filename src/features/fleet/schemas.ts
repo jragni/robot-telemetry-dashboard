@@ -9,7 +9,8 @@ export const addRobotSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, 'Robot name is required'),
+    .min(1, 'Robot name is required')
+    .max(50, 'Robot name must be 50 characters or fewer'),
   url: z
     .string()
     .trim()

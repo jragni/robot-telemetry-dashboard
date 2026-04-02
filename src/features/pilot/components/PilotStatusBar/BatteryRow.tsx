@@ -1,4 +1,4 @@
-import { BATTERY_THRESHOLDS } from '../../constants';
+import { getBatteryColor } from '@/utils/getBatteryColor';
 
 /** BatteryRowProps
  * @description Props for the battery display row.
@@ -30,14 +30,4 @@ export function BatteryRow({ percentage }: BatteryRowProps) {
       </div>
     </div>
   );
-}
-
-/** getBatteryColor
- * @description Returns the appropriate status color class for a battery percentage.
- */
-function getBatteryColor(percentage: number | null): string {
-  if (percentage === null) return 'text-text-muted';
-  if (percentage <= BATTERY_THRESHOLDS.critical) return 'text-status-critical';
-  if (percentage <= BATTERY_THRESHOLDS.caution) return 'text-status-caution';
-  return 'text-status-nominal';
 }

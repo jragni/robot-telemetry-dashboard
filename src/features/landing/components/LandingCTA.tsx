@@ -11,7 +11,7 @@ export function LandingCTA() {
   return (
     <section
       id="demo"
-      className="py-24 px-8 text-center flex flex-col items-center gap-6"
+      className="py-12 sm:py-24 px-4 sm:px-8 text-center flex flex-col items-center gap-6"
     >
       <h2 className="font-sans text-xl font-semibold text-text-primary uppercase tracking-wide">
         See It in Action

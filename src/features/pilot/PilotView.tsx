@@ -1,11 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { DesktopOnlyGate } from '@/components/DesktopOnlyGate';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { useRobotConnection } from '@/hooks/useRobotConnection';
 import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
 import { PilotCamera } from './components/PilotCamera';
 import { PilotHud } from './components/PilotHud';
+import { PilotHudMobile } from './components/PilotHudMobile';
 import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
 import { useRosTopics } from '@/hooks/useRosTopics';
 import { useBatterySubscription } from '@/hooks/useBatterySubscription';
@@ -31,6 +32,7 @@ export function PilotView() {
     enabled: !!robot,
   });
   const { isFullscreen, toggleFullscreen } = usePilotFullscreen();
+  const isMobile = useIsMobile();
 
   // ── ROS subscriptions (shared topics from workspace) ─────────────
   const availableTopics = useRosTopics(ros);
@@ -71,15 +73,30 @@ export function PilotView() {
   const rosbridgeStatus: ProxyStatus = connected ? 'connected' : 'disconnected';
 
   return (
-    <DesktopOnlyGate>
-      <div
-        className={cn(
-          'relative w-full h-full overflow-clip bg-surface-base',
-          isFullscreen && `fixed inset-0 ${PILOT_FULLSCREEN_Z}`,
-        )}
-      >
-        <PilotCamera videoStatus={videoStatus} videoRef={videoRef} />
+    <div
+      className={cn(
+        'relative w-full h-full overflow-clip bg-surface-base',
+        isFullscreen && `fixed inset-0 ${PILOT_FULLSCREEN_Z}`,
+      )}
+      style={{ overscrollBehavior: 'contain' }}
+    >
+      <PilotCamera videoStatus={videoStatus} videoRef={videoRef} />
 
+      {isMobile ? (
+        <PilotHudMobile
+          telemetry={telemetry}
+          videoStatus={videoStatus}
+          rosbridgeStatus={rosbridgeStatus}
+          connected={connected}
+          linearVelocity={controls.linearVelocity}
+          angularVelocity={controls.angularVelocity}
+          onDirectionStart={controls.handleDirectionStart}
+          onDirectionEnd={controls.handleDirectionEnd}
+          onLinearVelocityChange={controls.handleLinearChange}
+          onAngularVelocityChange={controls.handleAngularChange}
+          onEmergencyStop={controls.handleEmergencyStop}
+        />
+      ) : (
         <PilotHud
           telemetry={telemetry}
           videoStatus={videoStatus}
@@ -96,7 +113,7 @@ export function PilotView() {
           onEmergencyStop={controls.handleEmergencyStop}
           robotId={id}
         />
-      </div>
-    </DesktopOnlyGate>
+      )}
+    </div>
   );
 }

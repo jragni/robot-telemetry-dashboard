@@ -3,7 +3,6 @@ import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useResponsiveSize } from '@/hooks/useResponsiveSize';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import {
   LIDAR_POINT_RADIUS,
   LIDAR_POINT_GLOW,
@@ -15,6 +14,7 @@ import {
   PILOT_ZOOM_STEP,
   HUD_PANEL_BASE,
   LIDAR_TOKEN_MAP,
+  LIDAR_COLOR_FALLBACKS,
   LIDAR_TICK_LENGTH,
   LIDAR_DETAIL_THRESHOLD,
   LIDAR_DISTANCE_RATIO_CAUTION,
@@ -24,24 +24,14 @@ import {
 } from '../constants';
 import type { PilotLidarMinimapProps } from '../types/PilotView.types';
 
-/** LIDAR_COLOR_FALLBACKS
- * @description Initial fallback colors for the LiDAR minimap canvas.
- */
-const LIDAR_COLOR_FALLBACKS = {
-  accent: CANVAS_FALLBACKS.accent,
-  textMuted: CANVAS_FALLBACKS.textMuted,
-  gridLine: CANVAS_FALLBACKS.border,
-  nominal: CANVAS_FALLBACKS.statusNominal,
-  caution: CANVAS_FALLBACKS.statusCaution,
-  critical: CANVAS_FALLBACKS.statusCritical,
-};
-
 /** clampSize
  * @description Derives minimap size from viewport height, clamped to min/max.
+ *  Accepts an optional ceiling to constrain the maximum for mobile contexts.
  */
-function clampSize(): number {
+function clampSize(ceiling = MINIMAP_SIZE_MAX): number {
+  const max = Math.min(MINIMAP_SIZE_MAX, ceiling);
   const derived = Math.floor(window.innerHeight * MINIMAP_VIEWPORT_RATIO);
-  return Math.min(MINIMAP_SIZE_MAX, Math.max(MINIMAP_SIZE_MIN, derived));
+  return Math.min(max, Math.max(MINIMAP_SIZE_MIN, derived));
 }
 
 /** PilotLidarMinimap
@@ -53,11 +43,13 @@ function clampSize(): number {
  * @param points - Array of LiDAR scan points in Cartesian coordinates.
  * @param rangeMax - Maximum display range in meters.
  * @param heading - Current heading in degrees for robot triangle orientation.
+ * @param maxSize - Optional maximum pixel size override for mobile contexts.
  */
-export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinimapProps) {
+export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotLidarMinimapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(1);
-  const size = useResponsiveSize(clampSize);
+  const computeSize = useCallback(() => clampSize(maxSize), [maxSize]);
+  const size = useResponsiveSize(computeSize);
   const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
     LIDAR_COLOR_FALLBACKS,
     LIDAR_TOKEN_MAP,

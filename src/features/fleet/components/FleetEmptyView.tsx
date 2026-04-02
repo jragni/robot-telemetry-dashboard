@@ -1,5 +1,5 @@
 import { Radio } from 'lucide-react';
-import { AddRobotModal } from './AddRobotModal';
+import { AddRobotModal } from './AddRobotModal/AddRobotModal';
 
 /** FleetEmptyView
  * @description Renders the centered empty state when no robots are connected,

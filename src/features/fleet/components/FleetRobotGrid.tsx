@@ -8,10 +8,12 @@ import type { FleetRobotGridProps } from '@/features/fleet/types/FleetOverview.t
  */
 export function FleetRobotGrid({ robots, onRemove }: FleetRobotGridProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 list-none">
       {robots.map((robot) => (
-        <RobotCard key={robot.id} robot={robot} onRemove={onRemove} />
+        <li key={robot.id}>
+          <RobotCard robot={robot} onRemove={onRemove} />
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

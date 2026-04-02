@@ -4,8 +4,8 @@
  */
 export function LandingProblemSolution() {
   return (
-    <section className="bg-surface-primary border-t border-b border-border py-24 px-8">
-      <div className="landing-ps-grid max-w-300 mx-auto grid grid-cols-1 md:grid-cols-2 gap-24 items-center relative">
+    <section className="bg-surface-primary border-t border-b border-border py-12 sm:py-24 px-4 sm:px-8">
+      <div className="landing-ps-grid max-w-300 mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-24 items-center relative">
         <div>
           <span className="font-mono text-xs font-semibold text-accent uppercase tracking-widest block mb-4">
             The Problem

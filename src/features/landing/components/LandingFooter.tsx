@@ -4,7 +4,7 @@
  */
 export function LandingFooter() {
   return (
-    <footer className="bg-surface-primary border-t border-border shadow-glow-top py-8 px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer className="bg-surface-primary border-t border-border shadow-glow-top py-8 px-4 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
       <span className="font-sans text-sm font-semibold text-text-secondary tracking-wide">
         Robot Telemetry Dashboard
       </span>

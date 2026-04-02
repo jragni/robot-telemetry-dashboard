@@ -1,24 +1,18 @@
-export interface BatteryStatus {
-  readonly percentage: number;
-  readonly voltage: number;
-  readonly charging: boolean;
-}
-
-export interface RosGraphCounts {
-  readonly nodes: number;
-  readonly nodeNames: readonly string[];
-  readonly topics: number;
-  readonly topicNames: readonly string[];
-  readonly services: number;
-  readonly serviceNames: readonly string[];
-  readonly actions: number;
-  readonly actionNames: readonly string[];
-}
+import type { BatteryStatus } from '@/types/battery.types';
+import type { RosGraph } from '@/types/ros-graph.types';
 
 export interface StatusRowProps {
   readonly label: string;
   readonly value: string;
   readonly valueClass?: string;
+}
+
+export interface ExpandableRowProps {
+  readonly label: string;
+  readonly count: number;
+  readonly names: readonly string[];
+  readonly expanded: boolean;
+  readonly onToggle: () => void;
 }
 
 export interface SystemStatusPanelProps {
@@ -29,7 +23,7 @@ export interface SystemStatusPanelProps {
   readonly lastSeen: number | null;
   readonly uptimeSeconds: number | null;
   readonly battery: BatteryStatus | null;
-  readonly rosGraph: RosGraphCounts | null;
+  readonly rosGraph: RosGraph | null;
   readonly onConnect?: () => void;
   readonly onDisconnect?: () => void;
 }
