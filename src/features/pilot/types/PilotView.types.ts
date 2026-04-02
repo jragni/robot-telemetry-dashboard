@@ -72,6 +72,7 @@ export interface PilotLidarMinimapProps {
   readonly points: readonly LidarPoint[];
   readonly rangeMax: number;
   readonly heading: number;
+  readonly maxSize?: number;
 }
 
 /** PilotGyroReadoutProps
@@ -90,6 +91,41 @@ export interface PilotStatusBarProps {
   readonly battery: { percentage: number; voltage: number } | null;
   readonly rosbridgeStatus: ProxyStatus;
   readonly videoStatus: VideoStreamStatus;
+}
+
+/** PilotHudMobileProps
+ * @description Props for the mobile HUD layout. Rendered by PilotView when
+ *  viewport is below MOBILE_BREAKPOINT.
+ */
+export interface PilotHudMobileProps {
+  readonly telemetry: PilotTelemetry;
+  readonly videoStatus: VideoStreamStatus;
+  readonly rosbridgeStatus: ProxyStatus;
+  readonly connected: boolean;
+  readonly onDirectionStart: (direction: Direction) => void;
+  readonly onDirectionEnd: () => void;
+  readonly onLinearVelocityChange: (value: number) => void;
+  readonly onAngularVelocityChange: (value: number) => void;
+  readonly onEmergencyStop: () => void;
+  readonly linearVelocity: number;
+  readonly angularVelocity: number;
+}
+
+/** StatusDotProps
+ * @description Props for the mobile HUD status dot indicator.
+ */
+export interface StatusDotProps {
+  readonly connected: boolean;
+  readonly label: string;
+}
+
+/** GyroInlineProps
+ * @description Props for the inline R/P/Y gyro readout in the mobile HUD.
+ */
+export interface GyroInlineProps {
+  readonly roll: number | null;
+  readonly pitch: number | null;
+  readonly yaw: number | null;
 }
 
 /** PilotControlsProps

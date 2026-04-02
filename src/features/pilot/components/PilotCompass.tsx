@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useResponsiveSize } from '@/hooks/useResponsiveSize';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import {
   COMPASS_STRIP_WIDTH_MIN,
   COMPASS_STRIP_WIDTH_MAX,
@@ -17,18 +16,9 @@ import {
   COMPASS_CARDINALS,
   COMPASS_DEGREES_VISIBLE,
   COMPASS_TOKEN_MAP,
+  COMPASS_COLOR_FALLBACKS,
 } from '../constants';
 import type { PilotCompassProps } from '../types/PilotView.types';
-
-/** COMPASS_COLOR_FALLBACKS
- * @description Initial fallback colors for the compass canvas, keyed by local name.
- */
-const COMPASS_COLOR_FALLBACKS = {
-  accent: CANVAS_FALLBACKS.accent,
-  textMuted: CANVAS_FALLBACKS.textMuted,
-  tickMinor: CANVAS_FALLBACKS.border,
-  tickMajor: CANVAS_FALLBACKS.textSecondary,
-};
 
 /** clampCompassWidth
  * @description Derives compass strip width from viewport width, clamped to min/max.

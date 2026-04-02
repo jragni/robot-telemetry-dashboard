@@ -1,3 +1,5 @@
+import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
+
 /** MINIMAP_SIZE_MIN
  * @description Minimum pixel size for the responsive LiDAR minimap canvas.
  */
@@ -115,6 +117,17 @@ export const COMPASS_TOKEN_MAP: Record<string, string> = {
   tickMajor: '--color-text-secondary',
 };
 
+/** COMPASS_COLOR_FALLBACKS
+ * @description Initial fallback colors for the compass canvas, keyed by local
+ *  name. Used by both desktop and mobile compass components.
+ */
+export const COMPASS_COLOR_FALLBACKS = {
+  accent: CANVAS_FALLBACKS.accent,
+  textMuted: CANVAS_FALLBACKS.textMuted,
+  tickMinor: CANVAS_FALLBACKS.border,
+  tickMajor: CANVAS_FALLBACKS.textSecondary,
+};
+
 /** LIDAR_TOKEN_MAP
  * @description Color resolution mapping for LiDAR minimap canvas — maps local
  *  keys to CSS custom property names.
@@ -126,6 +139,18 @@ export const LIDAR_TOKEN_MAP: Record<string, string> = {
   nominal: '--color-status-nominal',
   caution: '--color-status-caution',
   critical: '--color-status-critical',
+};
+
+/** LIDAR_COLOR_FALLBACKS
+ * @description Initial fallback colors for the LiDAR minimap canvas.
+ */
+export const LIDAR_COLOR_FALLBACKS = {
+  accent: CANVAS_FALLBACKS.accent,
+  textMuted: CANVAS_FALLBACKS.textMuted,
+  gridLine: CANVAS_FALLBACKS.border,
+  nominal: CANVAS_FALLBACKS.statusNominal,
+  caution: CANVAS_FALLBACKS.statusCaution,
+  critical: CANVAS_FALLBACKS.statusCritical,
 };
 
 /** LIDAR_TICK_LENGTH
@@ -190,6 +215,38 @@ export const LIDAR_POINT_GLOW = 2;
  * @description Z-index for the fullscreen overlay. Must exceed AppShell sidebar (z-40).
  */
 export const PILOT_FULLSCREEN_Z = 'z-50';
+
+// ── Mobile responsive constants ─────────────────────────────────────
+
+/** MINIMAP_SIZE_MOBILE_MAX
+ * @description Maximum pixel size for the LiDAR minimap on mobile.
+ */
+export const MINIMAP_SIZE_MOBILE_MAX = 100;
+
+/** COMPASS_STRIP_HEIGHT_MOBILE
+ * @description Height in pixels for the mobile compass strip canvas.
+ */
+export const COMPASS_STRIP_HEIGHT_MOBILE = 24;
+
+/** COMPASS_TICK_HEIGHT_MAJOR_MOBILE
+ * @description Major tick height for mobile compass — extends from center.
+ */
+export const COMPASS_TICK_HEIGHT_MAJOR_MOBILE = 8;
+
+/** COMPASS_TICK_HEIGHT_MINOR_MOBILE
+ * @description Minor tick height for mobile compass — shorter whiskers.
+ */
+export const COMPASS_TICK_HEIGHT_MINOR_MOBILE = 4;
+
+/** COMPASS_POINTER_HALF_WIDTH_MOBILE
+ * @description Half-width in pixels of the mobile compass center pointer.
+ */
+export const COMPASS_POINTER_HALF_WIDTH_MOBILE = 4;
+
+/** COMPASS_POINTER_HEIGHT_MOBILE
+ * @description Height in pixels of the mobile compass center pointer.
+ */
+export const COMPASS_POINTER_HEIGHT_MOBILE = 5;
 
 /** PLACEHOLDER_TELEMETRY
  * @description Static placeholder telemetry data used before ROS wiring is
