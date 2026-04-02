@@ -21,23 +21,33 @@ export function useRosGraph(ros: Ros | undefined): RosGraph | null {
       if (pending === 0) {
         setGraph((prev) => {
           // Bail out if counts haven't changed to avoid unnecessary re-renders
+          const nodeCount = new Set(result.nodes).size;
+          const topicCount = new Set(result.topics).size;
+          const serviceCount = new Set(result.services).size;
+          const actionCount = new Set(result.actions).size;
+
           if (
             prev &&
-            prev.nodes === result.nodes.length &&
-            prev.topics === result.topics.length &&
-            prev.services === result.services.length &&
-            prev.actions === result.actions.length
+            prev.nodes === nodeCount &&
+            prev.topics === topicCount &&
+            prev.services === serviceCount &&
+            prev.actions === actionCount
           ) return prev;
 
+          const nodeNames = [...new Set(result.nodes)].sort();
+          const topicNames = [...new Set(result.topics)].sort();
+          const serviceNames = [...new Set(result.services)].sort();
+          const actionNames = [...new Set(result.actions)].sort();
+
           return {
-            nodes: result.nodes.length,
-            nodeNames: result.nodes.sort(),
-            topics: result.topics.length,
-            topicNames: result.topics.sort(),
-            services: result.services.length,
-            serviceNames: result.services.sort(),
-            actions: result.actions.length,
-            actionNames: result.actions.sort(),
+            nodes: nodeNames.length,
+            nodeNames,
+            topics: topicNames.length,
+            topicNames,
+            services: serviceNames.length,
+            serviceNames,
+            actions: actionNames.length,
+            actionNames,
           };
         });
       }

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Loader2, PlugZap, Unplug } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatLastSeen } from '@/utils/formatLastSeen';
@@ -26,9 +27,14 @@ export function SystemStatusPanel({
   onDisconnect,
 }: SystemStatusPanelProps) {
   const isConnecting = status === 'connecting';
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  function toggleSection(section: string) {
+    setExpandedSection((prev) => prev === section ? null : section);
+  }
 
   return (
-    <dl className="flex flex-col gap-2 font-mono text-xs w-full h-full px-2 pt-1 overflow-y-auto">
+    <dl className="flex flex-col gap-2 font-mono text-xs w-full h-full px-2 pt-1 overflow-y-auto scrollbar-thin">
       <div className="flex items-center justify-between">
         <span className="font-sans text-xs font-semibold text-text-primary">{name}</span>
         <div className="flex items-center gap-1.5" aria-live="polite">
@@ -92,10 +98,10 @@ export function SystemStatusPanel({
 
       <hr className="border-border border-dashed my-1" />
 
-      <ExpandableRow label="NODES" count={rosGraph?.nodes ?? 0} names={rosGraph?.nodeNames ?? []} />
-      <ExpandableRow label="TOPICS" count={rosGraph?.topics ?? 0} names={rosGraph?.topicNames ?? []} />
-      <ExpandableRow label="SERVICES" count={rosGraph?.services ?? 0} names={rosGraph?.serviceNames ?? []} />
-      <ExpandableRow label="ACTIONS" count={rosGraph?.actions ?? 0} names={rosGraph?.actionNames ?? []} />
+      <ExpandableRow label="NODES" count={rosGraph?.nodes ?? 0} names={rosGraph?.nodeNames ?? []} expanded={expandedSection === 'nodes'} onToggle={() => { toggleSection('nodes'); }} />
+      <ExpandableRow label="TOPICS" count={rosGraph?.topics ?? 0} names={rosGraph?.topicNames ?? []} expanded={expandedSection === 'topics'} onToggle={() => { toggleSection('topics'); }} />
+      <ExpandableRow label="SERVICES" count={rosGraph?.services ?? 0} names={rosGraph?.serviceNames ?? []} expanded={expandedSection === 'services'} onToggle={() => { toggleSection('services'); }} />
+      <ExpandableRow label="ACTIONS" count={rosGraph?.actions ?? 0} names={rosGraph?.actionNames ?? []} expanded={expandedSection === 'actions'} onToggle={() => { toggleSection('actions'); }} />
     </dl>
   );
 }
