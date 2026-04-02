@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
+import { quaternionToEuler } from '@/utils/quaternionToEuler';
 import type { ImuMessage } from '@/types/ros2-messages.types';
 import type { Vector3 } from '@/types/ros2-primitives.types';
 
@@ -13,10 +14,7 @@ interface UseImuReturn {
   readonly linearAcceleration: Vector3 | undefined;
 }
 
-/** quaternionToEuler
- * @description Converts a quaternion to Euler angles in degrees.
- */
-function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
+export function quaternionToEuler(q: { w: number; x: number; y: number; z: number }) {
   const sinr = 2 * (q.w * q.x + q.y * q.z);
   const cosr = 1 - 2 * (q.x * q.x + q.y * q.y);
   const roll = Math.atan2(sinr, cosr);
@@ -29,7 +27,7 @@ function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
   const yaw = Math.atan2(siny, cosy);
 
   const toDeg = 180 / Math.PI;
-  return { roll: roll * toDeg, pitch: pitch * toDeg, yaw: yaw * toDeg };
+  return { pitch: pitch * toDeg, roll: roll * toDeg, yaw: yaw * toDeg };
 }
 
 export function useImuSubscription(ros: Ros | undefined, topicName: string): UseImuReturn {
