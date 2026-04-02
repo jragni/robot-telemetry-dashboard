@@ -1,19 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Ros } from 'roslib';
-
-/** RosGraph
- * @description Counts and names of active ROS computational graph entities.
- */
-export interface RosGraph {
-  readonly nodes: number;
-  readonly nodeNames: readonly string[];
-  readonly topics: number;
-  readonly topicNames: readonly string[];
-  readonly services: number;
-  readonly serviceNames: readonly string[];
-  readonly actions: number;
-  readonly actionNames: readonly string[];
-}
+import type { RosGraph } from '@/types/ros-graph.types';
 
 /** useRosGraph
  * @description Fetches the ROS computation graph summary from a live Ros
@@ -32,15 +19,26 @@ export function useRosGraph(ros: Ros | undefined): RosGraph | null {
     function maybeDone() {
       pending -= 1;
       if (pending === 0) {
-        setGraph({
-          nodes: result.nodes.length,
-          nodeNames: result.nodes.sort(),
-          topics: result.topics.length,
-          topicNames: result.topics.sort(),
-          services: result.services.length,
-          serviceNames: result.services.sort(),
-          actions: result.actions.length,
-          actionNames: result.actions.sort(),
+        setGraph((prev) => {
+          // Bail out if counts haven't changed to avoid unnecessary re-renders
+          if (
+            prev &&
+            prev.nodes === result.nodes.length &&
+            prev.topics === result.topics.length &&
+            prev.services === result.services.length &&
+            prev.actions === result.actions.length
+          ) return prev;
+
+          return {
+            nodes: result.nodes.length,
+            nodeNames: result.nodes.sort(),
+            topics: result.topics.length,
+            topicNames: result.topics.sort(),
+            services: result.services.length,
+            serviceNames: result.services.sort(),
+            actions: result.actions.length,
+            actionNames: result.actions.sort(),
+          };
         });
       }
     }

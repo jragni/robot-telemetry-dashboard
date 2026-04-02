@@ -1,13 +1,9 @@
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { useRobotConnection } from '@/hooks/useRobotConnection';
 import { useRosTopics } from '@/hooks/useRosTopics';
+import { useRosGraph } from '@/hooks/useRosGraph';
 import { useBatterySubscription } from '@/hooks/useBatterySubscription';
 import type { RobotCardProps } from './types/RobotCard.types';
 import { ROBOT_COLOR_CLASSES } from './constants';
@@ -28,6 +24,7 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
   const disconnectRobot = useConnectionStore((s) => s.disconnectRobot);
   const { ros } = useRobotConnection(robot.id);
   const topics = useRosTopics(ros);
+  const rosGraph = useRosGraph(ros);
   const battery = useBatterySubscription(ros, topics);
   const borderColor = ROBOT_COLOR_CLASSES[robot.color].border;
   const iconColor = ROBOT_COLOR_CLASSES[robot.color].text;
@@ -38,11 +35,7 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
       className={`border-l-4 ${borderColor} rounded-sm bg-surface-primary shadow-glow-top p-0 gap-0`}
     >
       <CardHeader className="p-4 pb-0">
-        <RobotCardIdentity
-          name={robot.name}
-          status={robot.status}
-          iconColor={iconColor}
-        />
+        <RobotCardIdentity name={robot.name} status={robot.status} iconColor={iconColor} />
       </CardHeader>
 
       <CardContent className="p-4 flex flex-col gap-3">
@@ -60,7 +53,7 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
           }
         />
 
-        <RobotCardGraph isConnected={isConnected} />
+        <RobotCardGraph graph={rosGraph} isConnected={isConnected} />
       </CardContent>
 
       <CardFooter className="p-4 pt-0">

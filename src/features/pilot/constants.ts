@@ -186,14 +186,6 @@ export const LIDAR_POINT_RADIUS = 2;
  */
 export const LIDAR_POINT_GLOW = 2;
 
-/** BATTERY_THRESHOLDS
- * @description Battery percentage thresholds for status color changes.
- */
-export const BATTERY_THRESHOLDS = {
-  critical: 15,
-  caution: 30,
-} as const;
-
 /** PILOT_FULLSCREEN_Z
  * @description Z-index for the fullscreen overlay. Must exceed AppShell sidebar (z-40).
  */

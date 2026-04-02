@@ -11,10 +11,10 @@ export function RobotStatusBadge({ status }: RobotStatusBadgeProps) {
 
   return (
     <span
-      className={`flex items-center gap-2 font-mono text-xs ${config.color}`}
+      className={`flex items-center gap-2 font-sans text-xs ${config.color}`}
     >
       <config.Icon size={12} className={status === 'connecting' ? 'animate-spin' : undefined} />
-      <span className="font-sans">{config.label}</span>
+      {config.label}
     </span>
   );
 }

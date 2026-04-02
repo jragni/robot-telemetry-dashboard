@@ -3,7 +3,7 @@ import type { Ros } from 'roslib';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import type { BatteryStateMessage } from '@/types/ros2-messages.types';
 import type { RosTopic } from '@/hooks/useRosTopics';
-import type { BatteryStatus } from '@/features/workspace/types/SystemStatusPanel.types';
+import type { BatteryStatus } from '@/types/battery.types';
 
 /** POWER_SUPPLY_CHARGING
  * @description sensor_msgs/msg/BatteryState power_supply_status value for charging.

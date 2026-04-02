@@ -1,10 +1,6 @@
-import type { BatteryStatus } from '@/features/workspace/types/SystemStatusPanel.types';
+import { getBatteryColor } from '@/utils/getBatteryColor';
 import { RobotCardDataRow } from './RobotCardDataRow';
-
-/** RobotCardVitalsProps */
-interface RobotCardVitalsProps {
-  readonly battery: BatteryStatus | null;
-}
+import type { RobotCardVitalsProps } from '../types/RobotCardVitals.types';
 
 /** RobotCardVitals
  * @description Renders battery vitals when the robot is connected.
@@ -12,13 +8,7 @@ interface RobotCardVitalsProps {
  */
 export function RobotCardVitals({ battery }: RobotCardVitalsProps) {
   const batteryValue = battery ? `${String(Math.round(battery.percentage))}%` : '—';
-  const batteryColor = battery && battery.percentage > 50
-    ? 'text-status-nominal'
-    : battery && battery.percentage > 20
-      ? 'text-status-caution'
-      : battery
-        ? 'text-status-critical'
-        : undefined;
+  const batteryColor = getBatteryColor(battery?.percentage ?? null);
 
   return (
     <dl className="flex flex-col gap-2">
