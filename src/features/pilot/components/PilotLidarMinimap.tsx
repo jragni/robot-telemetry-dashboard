@@ -203,17 +203,17 @@ export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinim
           onWheel={handleWheel}
         />
       </div>
-      <div className="flex items-center gap-1 pointer-events-auto">
+      <div className="flex items-center gap-1 pointer-events-auto bg-surface-base/60 backdrop-blur-sm rounded-sm px-2 py-1">
         <Button
           variant="ghost"
           size="icon-xs"
           onClick={zoomOut}
           aria-label="Zoom out"
-          className="text-text-muted hover:text-text-primary"
+          className="text-text-primary hover:text-accent cursor-pointer"
         >
           <Minus className="size-3" />
         </Button>
-        <span className="font-mono text-xs text-text-muted tabular-nums w-6 text-center">
+        <span className="font-mono text-xs text-text-primary tabular-nums w-6 text-center">
           {zoom.toFixed(1)}x
         </span>
         <Button
@@ -221,7 +221,7 @@ export function PilotLidarMinimap({ points, rangeMax, heading }: PilotLidarMinim
           size="icon-xs"
           onClick={zoomIn}
           aria-label="Zoom in"
-          className="text-text-muted hover:text-text-primary"
+          className="text-text-primary hover:text-accent cursor-pointer"
         >
           <Plus className="size-3" />
         </Button>

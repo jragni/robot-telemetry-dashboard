@@ -13,9 +13,9 @@ import type {
 } from '@/types/ros2-messages.types';
 
 /** MAX_POINTS
- * @description Maximum data points per series in the ring buffer (~30s at 10Hz).
+ * @description Maximum data points per series in the ring buffer (~30s at 20Hz).
  */
-const MAX_POINTS = 300;
+const MAX_POINTS = 600;
 
 /** SERIES_COLORS
  * @description Resolved OKLCH colors for telemetry series lines.

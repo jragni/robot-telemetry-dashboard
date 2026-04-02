@@ -155,7 +155,7 @@ export async function connect(id: string, url: string): Promise<void> {
       const message = err instanceof Error ? err.message : 'Connection error';
       updateStore(id, { status: 'error', lastError: message });
       scheduleReconnect(id, url);
-      reject(err);
+      reject(new Error(message));
     });
 
     ros.on('close', () => {

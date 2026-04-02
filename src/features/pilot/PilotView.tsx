@@ -94,6 +94,7 @@ export function PilotView() {
           onLinearVelocityChange={controls.handleLinearChange}
           onAngularVelocityChange={controls.handleAngularChange}
           onEmergencyStop={controls.handleEmergencyStop}
+          robotId={id}
         />
       </div>
     </DesktopOnlyGate>

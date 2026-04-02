@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -70,6 +70,28 @@ export function RobotWorkspace() {
     controls: availableTopics.filter((t) => PANEL_TOPIC_TYPES.controls?.includes(t.type)),
     telemetry: availableTopics.filter((t) => PANEL_TOPIC_TYPES.telemetry?.includes(t.type)),
   }), [availableTopics]);
+
+  // Auto-select first valid topic per panel when topics are discovered
+  const autoSelectedRef = useRef(false);
+  useEffect(() => {
+    if (!id || availableTopics.length === 0 || autoSelectedRef.current) return;
+    autoSelectedRef.current = true;
+
+    for (const [panelId, topics] of Object.entries(filteredTopics)) {
+      if (topics.length > 0) {
+        const current = selectedTopics[panelId];
+        const currentExists = topics.some((t) => t.name === current);
+        if (!currentExists) {
+          setRobotTopic(id, panelId, topics[0].name);
+        }
+      }
+    }
+  }, [availableTopics, filteredTopics, id, selectedTopics, setRobotTopic]);
+
+  // Reset auto-select flag when robot changes
+  useEffect(() => {
+    autoSelectedRef.current = false;
+  }, [id]);
 
   const {
     isMinimized,

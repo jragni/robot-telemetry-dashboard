@@ -25,7 +25,7 @@ export function BatteryRow({ percentage }: BatteryRowProps) {
           <div className={`h-full ${color} bg-current`} style={{ width: barWidth }} />
         </div>
         <span className={`font-mono text-sm font-semibold tabular-nums ${color}`}>
-          {percentage !== null ? `${String(pct)}%` : '--'}
+          {percentage !== null ? `${String(Math.round(pct))}%` : '--'}
         </span>
       </div>
     </div>

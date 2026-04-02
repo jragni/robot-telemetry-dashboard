@@ -33,16 +33,16 @@ function ExpandableRow({ label, count, names }: {
           {String(count)}
           <ConditionalRender
             shouldRender={hasNames}
-            Component={<Chevron className="size-3 text-text-muted" />}
+            Component={<Chevron className="size-3 text-text-primary" />}
           />
         </span>
       </button>
       <ConditionalRender
         shouldRender={expanded}
         Component={
-          <ul className="ml-3 mt-1 mb-1 flex flex-col gap-0.5 max-h-24 overflow-y-auto border-l border-border pl-2">
+          <ul className="ml-3 mt-1 mb-1 flex flex-col gap-0.5 max-h-24 overflow-y-auto border-l border-border pl-2 w-full min-w-0">
             {names.map((name) => (
-              <li key={name} className="font-mono text-xs text-text-muted truncate">{name}</li>
+              <li key={name} className="font-mono text-xs text-text-primary truncate w-full">{name}</li>
             ))}
           </ul>
         }

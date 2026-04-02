@@ -47,6 +47,7 @@ export interface PilotHudProps {
   readonly onEmergencyStop: () => void;
   readonly linearVelocity: number;
   readonly angularVelocity: number;
+  readonly robotId?: string;
 }
 
 /** PilotCameraProps

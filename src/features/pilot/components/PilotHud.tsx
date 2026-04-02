@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { PilotCompass } from './PilotCompass';
 import { PilotLidarMinimap } from './PilotLidarMinimap';
 import { PilotGyroReadout } from './PilotGyroReadout/PilotGyroReadout';
@@ -33,6 +36,7 @@ export function PilotHud({
   onEmergencyStop,
   linearVelocity,
   angularVelocity,
+  robotId,
 }: PilotHudProps) {
   const heading = telemetry.imu?.yaw ?? 0;
 
@@ -50,12 +54,15 @@ export function PilotHud({
         <PilotCompass heading={heading} />
       </div>
 
-      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-36 sm:w-44 pointer-events-auto">
-        <PilotStatusBar
-          battery={telemetry.battery}
-          rosbridgeStatus={rosbridgeStatus}
-          videoStatus={videoStatus}
-        />
+      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col items-end gap-2 pointer-events-auto">
+        <PilotFullscreenToggle isFullscreen={isFullscreen} onToggle={onToggleFullscreen} />
+        <div className="w-36 sm:w-44">
+          <PilotStatusBar
+            battery={telemetry.battery}
+            rosbridgeStatus={rosbridgeStatus}
+            videoStatus={videoStatus}
+          />
+        </div>
       </div>
 
       <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 flex flex-col items-start gap-2 sm:gap-3">
@@ -64,9 +71,21 @@ export function PilotHud({
           roll={telemetry.imu?.roll ?? null}
           yaw={telemetry.imu?.yaw ?? null}
         />
-        <div className="pointer-events-auto">
-          <PilotFullscreenToggle isFullscreen={isFullscreen} onToggle={onToggleFullscreen} />
-        </div>
+        {robotId ? (
+          <div className="pointer-events-auto">
+            <Link to={`/robot/${robotId}`}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="bg-surface-base/60 backdrop-blur-sm text-text-primary hover:bg-surface-base/80 font-mono text-xs gap-1.5 cursor-pointer"
+                aria-label="Back to dashboard"
+              >
+                <ArrowLeft size={14} />
+                Dashboard
+              </Button>
+            </Link>
+          </div>
+        ) : null}
       </div>
 
       <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-40 sm:w-48">

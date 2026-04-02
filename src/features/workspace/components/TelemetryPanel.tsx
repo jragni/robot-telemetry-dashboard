@@ -146,17 +146,23 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
       const x = left + (plotW / TELEMETRY_GRID_LINES_V) * i;
       const t = (timeWindowMs / TELEMETRY_GRID_LINES_V) * i;
       const label = t === 0 ? 'now' : `-${String(Math.round(t / 1000))}s`;
+      // Align first label left, last label right, rest center to avoid clipping
+      ctx.textAlign = i === 0 ? 'left' : i === TELEMETRY_GRID_LINES_V ? 'right' : 'center';
       ctx.fillText(label, x, plotH + 4);
     }
+    ctx.textAlign = 'center';
 
     // Value axis labels
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
 
+    // Choose decimal places based on value range
+    const decimals = vMax - vMin < 0.1 ? 3 : vMax - vMin < 1 ? 2 : 1;
+
     for (let i = 0; i <= TELEMETRY_GRID_LINES_H; i++) {
-      const y = (plotH / TELEMETRY_GRID_LINES_H) * i;
+      const y = Math.max(8, (plotH / TELEMETRY_GRID_LINES_H) * i);
       const val = vMax - ((vMax - vMin) / TELEMETRY_GRID_LINES_H) * i;
-      ctx.fillText(val.toFixed(1), left - 4, y);
+      ctx.fillText(val.toFixed(decimals), left - 4, y);
     }
 
     // Draw series lines
