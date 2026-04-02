@@ -3,7 +3,7 @@ import type { Ros } from 'roslib';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
 import type { LaserScanMessage } from '@/types/ros2-messages.types';
-import type { LidarPoint } from '../types/LidarPanel.types';
+import type { LidarPoint } from '@/features/workspace/types/LidarPanel.types';
 
 /** LIDAR_DISPLAY_RANGE
  * @description Fixed display range in meters for the LiDAR panel.
