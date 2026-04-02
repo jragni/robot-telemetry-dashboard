@@ -23,6 +23,7 @@ import { LidarPanel } from './components/LidarPanel';
 import { TelemetryPanel } from './components/TelemetryPanel';
 import { CameraPanel } from './components/CameraPanel';
 import { RobotWorkspaceMobile } from './components/RobotWorkspaceMobile';
+import { WorkspaceProvider } from './context/WorkspaceContext';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import {
   WORKSPACE_PANEL_META,
@@ -84,8 +85,9 @@ export function RobotWorkspace() {
       if (topics.length > 0) {
         const current = selectedTopics[panelId];
         const currentExists = topics.some((t) => t.name === current);
-        if (!currentExists) {
-          setRobotTopic(id, panelId, topics[0].name);
+        const firstTopic = topics[0];
+        if (!currentExists && firstTopic) {
+          setRobotTopic(id, panelId, firstTopic.name);
         }
       }
     }
@@ -129,31 +131,35 @@ export function RobotWorkspace() {
 
   if (isMobile) {
     return (
-      <RobotWorkspaceMobile
-        robotId={id ?? ''}
-        robotName={robot.name}
-        robotUrl={robot.url}
-        connected={connected}
-        status={robot.status}
-        lastSeen={robot.lastSeen}
-        onConnect={connect}
-        onDisconnect={disconnect}
-        videoRef={videoRef}
-        selectedCameraTopic={selectedTopics.camera}
-        lidarPoints={lidar.points}
-        lidarRangeMax={lidar.rangeMax}
-        uptimeSeconds={uptimeSeconds}
-        battery={battery}
-        rosGraph={rosGraph}
-        imuRoll={imu.roll}
-        imuPitch={imu.pitch}
-        imuYaw={imu.yaw}
-        telemetrySeries={telemetrySeries}
-        telemetryTimeWindowMs={TELEMETRY_TIME_WINDOW_MS}
-        selectedTopics={selectedTopics}
-        filteredTopics={filteredTopics}
-        onTopicChange={setTopic}
-      />
+      <WorkspaceProvider
+        value={{
+          robotId: id ?? '',
+          robotName: robot.name,
+          robotUrl: robot.url,
+          connected,
+          status: robot.status,
+          lastSeen: robot.lastSeen,
+          onConnect: connect,
+          onDisconnect: disconnect,
+          videoRef,
+          selectedCameraTopic: selectedTopics.camera ?? '',
+          lidarPoints: lidar.points,
+          lidarRangeMax: lidar.rangeMax,
+          uptimeSeconds,
+          battery,
+          rosGraph,
+          imuRoll: imu.roll,
+          imuPitch: imu.pitch,
+          imuYaw: imu.yaw,
+          telemetrySeries,
+          telemetryTimeWindowMs: TELEMETRY_TIME_WINDOW_MS,
+          selectedTopics,
+          filteredTopics,
+          onTopicChange: setTopic,
+        }}
+      >
+        <RobotWorkspaceMobile />
+      </WorkspaceProvider>
     );
   }
 

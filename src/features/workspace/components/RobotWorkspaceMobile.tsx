@@ -6,10 +6,9 @@ import { SystemStatusPanel } from './SystemStatusPanel';
 import { ImuPanel } from './ImuPanel/ImuPanel';
 import { TelemetryPanel } from './TelemetryPanel';
 import { TopicSelector } from './TopicSelector';
+import { useWorkspaceContext } from '../context/useWorkspaceContext';
 import { MOBILE_TAB_META, WORKSPACE_PANEL_META } from '../constants';
 import type {
-  RobotWorkspaceMobileProps,
-  ActivePanelContentProps,
   MobileDataPanelId,
   MobileTabId,
 } from '../types/RobotWorkspaceMobile.types';
@@ -18,33 +17,17 @@ import type {
  * @description Renders the mobile workspace layout with a single active panel
  *  and a bottom tab bar for switching. Five data panels (Camera, LiDAR, System
  *  Status, IMU, Telemetry) plus a Pilot nav action tab. Controls panel is
- *  excluded — robot control happens in Pilot Mode.
+ *  excluded — robot control happens in Pilot Mode. All workspace state is
+ *  consumed via WorkspaceContext instead of props.
  */
-export function RobotWorkspaceMobile({
-  robotId,
-  robotName,
-  robotUrl,
-  connected,
-  status,
-  lastSeen,
-  onConnect,
-  onDisconnect,
-  videoRef,
-  selectedCameraTopic,
-  lidarPoints,
-  lidarRangeMax,
-  uptimeSeconds,
-  battery,
-  rosGraph,
-  imuRoll,
-  imuPitch,
-  imuYaw,
-  telemetrySeries,
-  telemetryTimeWindowMs,
-  selectedTopics,
-  filteredTopics,
-  onTopicChange,
-}: RobotWorkspaceMobileProps) {
+export function RobotWorkspaceMobile() {
+  const {
+    robotId,
+    selectedTopics,
+    filteredTopics,
+    onTopicChange,
+  } = useWorkspaceContext();
+
   const [activePanel, setActivePanel] = useState<MobileDataPanelId>('camera');
   const navigate = useNavigate();
 
@@ -91,28 +74,7 @@ export function RobotWorkspaceMobile({
 
       {/* ── Active panel content ──────────────────────────────────── */}
       <div className="flex-1 flex items-center justify-center p-3 min-h-0 overflow-hidden bg-surface-primary">
-        <ActivePanelContent
-          activePanel={activePanel}
-          connected={connected}
-          videoRef={videoRef}
-          selectedCameraTopic={selectedCameraTopic}
-          lidarPoints={lidarPoints}
-          lidarRangeMax={lidarRangeMax}
-          robotName={robotName}
-          robotUrl={robotUrl}
-          status={status}
-          lastSeen={lastSeen}
-          uptimeSeconds={uptimeSeconds}
-          battery={battery}
-          rosGraph={rosGraph}
-          onConnect={onConnect}
-          onDisconnect={onDisconnect}
-          imuRoll={imuRoll}
-          imuPitch={imuPitch}
-          imuYaw={imuYaw}
-          telemetrySeries={telemetrySeries}
-          telemetryTimeWindowMs={telemetryTimeWindowMs}
-        />
+        <ActivePanelContent activePanel={activePanel} />
       </div>
 
       {/* ── Bottom tab bar ────────────────────────────────────────── */}
@@ -152,30 +114,32 @@ export function RobotWorkspaceMobile({
 
 /** ActivePanelContent
  * @description Renders the content for the currently active panel tab.
- *  Each panel reuses its existing desktop component unchanged.
+ *  Each panel reuses its existing desktop component unchanged. All data
+ *  is consumed from WorkspaceContext.
  */
-function ActivePanelContent({
-  activePanel,
-  connected,
-  videoRef,
-  selectedCameraTopic,
-  lidarPoints,
-  lidarRangeMax,
-  robotName,
-  robotUrl,
-  status,
-  lastSeen,
-  uptimeSeconds,
-  battery,
-  rosGraph,
-  onConnect,
-  onDisconnect,
-  imuRoll,
-  imuPitch,
-  imuYaw,
-  telemetrySeries,
-  telemetryTimeWindowMs,
-}: ActivePanelContentProps) {
+function ActivePanelContent({ activePanel }: { readonly activePanel: MobileDataPanelId }) {
+  const {
+    connected,
+    videoRef,
+    selectedCameraTopic,
+    lidarPoints,
+    lidarRangeMax,
+    robotName,
+    robotUrl,
+    status,
+    lastSeen,
+    uptimeSeconds,
+    battery,
+    rosGraph,
+    onConnect,
+    onDisconnect,
+    imuRoll,
+    imuPitch,
+    imuYaw,
+    telemetrySeries,
+    telemetryTimeWindowMs,
+  } = useWorkspaceContext();
+
   switch (activePanel) {
     case 'camera':
       return <CameraPanel streamRef={videoRef} connected={connected} label={selectedCameraTopic} />;
