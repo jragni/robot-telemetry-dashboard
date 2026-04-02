@@ -20,7 +20,7 @@ export interface ConnectionState {
 }
 
 export interface ConnectionActions {
-  readonly addRobot: (name: string, url: string) => void;
+  readonly addRobot: (name: string, url: string) => string | null;
   readonly removeRobot: (id: string) => void;
   readonly updateRobot: (id: string, patch: Partial<RobotConnection>) => void;
   readonly connectRobot: (id: string) => Promise<void>;

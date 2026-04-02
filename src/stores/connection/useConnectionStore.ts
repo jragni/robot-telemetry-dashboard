@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ConnectionStore } from './useConnectionStore.types';
-import { assignRobotColor } from './useConnectionStore.helpers';
+import { assignRobotColor, toRobotId, persistedStateSchema } from './useConnectionStore.helpers';
 import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { DEFAULT_PANEL_TOPICS } from '@/features/workspace/constants';
 
@@ -11,7 +11,10 @@ export const useConnectionStore = create<ConnectionStore>()(
       robots: {},
 
       addRobot: (name, url) => {
-        const id = name.toLowerCase().replace(/\s+/g, '-');
+        const id = toRobotId(name);
+        const existing = useConnectionStore.getState().robots[id];
+        if (existing) return null;
+
         set((state) => ({
           robots: {
             ...state.robots,
@@ -27,6 +30,7 @@ export const useConnectionStore = create<ConnectionStore>()(
             },
           },
         }));
+        return id;
       },
 
       removeRobot: (id) => {
@@ -97,26 +101,23 @@ export const useConnectionStore = create<ConnectionStore>()(
         ),
       }),
       merge: (persisted, current) => {
-        const persistedState = persisted as Record<string, unknown> | undefined;
-        if (!persistedState?.robots) return current;
-        const robots = persistedState.robots as Record<
-          string,
-          Record<string, unknown>
-        >;
+        const parsed = persistedStateSchema.safeParse(persisted);
+        if (!parsed.success) return current;
+
         const migratedRobots = Object.fromEntries(
-          Object.entries(robots).map(([key, robot]) => [
+          Object.entries(parsed.data.robots).map(([key, robot]) => [
             key,
             {
-              id: (robot.id as string) || key,
-              name: (robot.name as string) || key,
-              url: (robot.url as string) || '',
+              id: robot.id || key,
+              name: robot.name || key,
+              url: robot.url || '',
               status: 'disconnected' as const,
               lastSeen: null,
               lastError: null,
-              color: (robot.color as string | undefined)
+              color: robot.color
                 ? (robot.color as 'blue')
-                : assignRobotColor((robot.name as string) || key),
-              selectedTopics: (robot.selectedTopics as Record<string, string> | undefined) ?? { ...DEFAULT_PANEL_TOPICS },
+                : assignRobotColor(robot.name || key),
+              selectedTopics: robot.selectedTopics ?? { ...DEFAULT_PANEL_TOPICS },
             },
           ]),
         );

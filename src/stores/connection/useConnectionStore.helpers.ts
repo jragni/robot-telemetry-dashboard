@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { RobotColor } from './useConnectionStore.types';
 
 const ROBOT_COLORS: readonly RobotColor[] = [
@@ -15,6 +16,29 @@ const ROBOT_COLORS: readonly RobotColor[] = [
   'rose',
 ];
 
+export function toRobotId(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export const robotConnectionSchema = z.object({
+  color: z.string().optional(),
+  id: z.string(),
+  lastError: z.string().nullable().optional(),
+  lastSeen: z.number().nullable().optional(),
+  name: z.string(),
+  selectedTopics: z.record(z.string(), z.string()).optional(),
+  status: z.string().optional(),
+  url: z.string(),
+});
+
+export const persistedStateSchema = z.object({
+  robots: z.record(z.string(), robotConnectionSchema),
+});
 export function deriveWebRtcUrl(baseUrl: string): string {
   if (!baseUrl) return '';
   const clean = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
