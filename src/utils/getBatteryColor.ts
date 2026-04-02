@@ -13,7 +13,7 @@ const BATTERY_THRESHOLDS = {
  * @returns Tailwind text color class string.
  */
 export function getBatteryColor(percentage: number | null): string {
-  if (percentage === null) return 'text-text-muted';
+  if (percentage === null || Number.isNaN(percentage)) return 'text-text-muted';
   if (percentage <= BATTERY_THRESHOLDS.critical) return 'text-status-critical';
   if (percentage <= BATTERY_THRESHOLDS.caution) return 'text-status-caution';
   return 'text-status-nominal';

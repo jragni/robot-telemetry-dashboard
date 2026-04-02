@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
-import { normalizeHeading } from '@/utils/normalizeHeading';
 import {
   COMPASS_TICK_MAJOR_INTERVAL,
   COMPASS_TICK_MINOR_INTERVAL,
@@ -147,10 +146,8 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     ctx.globalCompositeOperation = 'source-over';
   }, [heading, width, themeVersion, resolveColors, colorsRef]);
 
-  const headingNormalized = normalizeHeading(heading);
-
   return (
-    <div ref={containerRef} className="w-full" aria-label={`Heading: ${headingNormalized.toFixed(0)} degrees`}>
+    <div ref={containerRef} className="w-full" aria-label={`Heading: ${heading.toFixed(0)} degrees`}>
       <canvas
         ref={canvasRef}
         style={{ width: '100%', height: COMPASS_STRIP_HEIGHT_MOBILE, display: 'block' }}

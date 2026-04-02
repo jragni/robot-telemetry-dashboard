@@ -1,4 +1,5 @@
 import type { RosTopic } from '@/hooks/useRosTopics';
+import type { ConnectionStatus } from '@/stores/connection/useConnectionStore.types';
 import type { BatteryStatus } from '@/types/battery.types';
 import type { RosGraph } from '@/types/ros-graph.types';
 import type { LidarPoint } from '@/features/workspace/types/LidarPanel.types';
@@ -26,7 +27,7 @@ export interface RobotWorkspaceMobileProps {
   readonly robotName: string;
   readonly robotUrl: string;
   readonly connected: boolean;
-  readonly status: 'connected' | 'disconnected' | 'connecting' | 'error';
+  readonly status: ConnectionStatus;
   readonly lastSeen: number | null;
   readonly onConnect: () => void;
   readonly onDisconnect: () => void;
@@ -58,3 +59,12 @@ export interface RobotWorkspaceMobileProps {
   readonly filteredTopics: Record<string, readonly RosTopic[]>;
   readonly onTopicChange: (panelId: string, topicName: string) => void;
 }
+
+/** ActivePanelContentProps
+ * @description Derived from RobotWorkspaceMobileProps — excludes fields
+ *  only needed by the tab bar and topic selector, adds activePanel.
+ */
+export type ActivePanelContentProps =
+  Omit<RobotWorkspaceMobileProps, 'robotId' | 'selectedTopics' | 'filteredTopics' | 'onTopicChange'> & {
+    readonly activePanel: MobileDataPanelId;
+  };

@@ -11,7 +11,7 @@ export function MobileHeader({ onClose }: MobileHeaderProps) {
       <button
         type="button"
         onClick={onClose}
-        className="text-text-secondary hover:text-text-primary transition-colors duration-150 cursor-pointer"
+        className="text-text-secondary hover:text-text-primary transition-colors duration-150 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none rounded-sm"
         aria-label="Close add robot form"
       >
         <ArrowLeft size={20} />

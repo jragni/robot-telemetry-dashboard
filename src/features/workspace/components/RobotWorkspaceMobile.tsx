@@ -9,6 +9,7 @@ import { TopicSelector } from './TopicSelector';
 import { MOBILE_TAB_META, WORKSPACE_PANEL_META } from '../constants';
 import type {
   RobotWorkspaceMobileProps,
+  ActivePanelContentProps,
   MobileDataPanelId,
   MobileTabId,
 } from '../types/RobotWorkspaceMobile.types';
@@ -56,7 +57,7 @@ export function RobotWorkspaceMobile({
 
   function handleTabPress(tabId: MobileTabId) {
     if (tabId === 'pilot') {
-      void navigate(`/pilot/${robotId}`);
+      if (robotId) void navigate(`/pilot/${robotId}`);
       return;
     }
     setActivePanel(tabId);
@@ -128,9 +129,9 @@ export function RobotWorkspaceMobile({
               key={tab.id}
               type="button"
               onClick={() => { handleTabPress(tab.id); }}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-2 cursor-pointer transition-colors duration-150
+              className={`flex-1 flex flex-col items-center gap-0.5 py-2 cursor-pointer transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none
                 ${isActive ? 'text-accent border-t-2 border-accent' : 'text-text-muted border-t-2 border-transparent'}
-                ${isPilot ? 'text-status-caution' : ''}
+                ${isPilot && !isActive ? 'text-status-caution' : ''}
               `}
               aria-label={isPilot ? 'Open Pilot Mode' : `Show ${tab.label} panel`}
               aria-current={isActive ? 'page' : undefined}
@@ -148,15 +149,6 @@ export function RobotWorkspaceMobile({
 // ═══════════════════════════════════════════════════════════════════════
 // Sub-component (private to this file)
 // ═══════════════════════════════════════════════════════════════════════
-
-/** ActivePanelContentProps
- * @description Derived from RobotWorkspaceMobileProps — excludes fields
- *  only needed by the tab bar and topic selector, adds activePanel.
- */
-type ActivePanelContentProps =
-  Omit<RobotWorkspaceMobileProps, 'robotId' | 'selectedTopics' | 'filteredTopics' | 'onTopicChange'> & {
-    readonly activePanel: MobileDataPanelId;
-  };
 
 /** ActivePanelContent
  * @description Renders the content for the currently active panel tab.

@@ -20,7 +20,7 @@ export function ExpandableRow({ label, count, names, expanded, onToggle }: Expan
       <button
         type="button"
         onClick={onToggle}
-        className="flex items-center justify-between w-full text-left cursor-pointer hover:bg-surface-tertiary/50 rounded-sm px-1 -mx-1 transition"
+        className="flex items-center justify-between w-full text-left cursor-pointer hover:bg-surface-tertiary/50 rounded-sm px-1 -mx-1 transition focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
         aria-expanded={expanded}
         disabled={!hasNames}
       >

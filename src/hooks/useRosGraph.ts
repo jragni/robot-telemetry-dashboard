@@ -27,8 +27,7 @@ export function useRosGraph(ros: Ros | undefined): RosGraph | null {
           const actionCount = new Set(result.actions).size;
 
           if (
-            prev &&
-            prev.nodes === nodeCount &&
+            prev?.nodes === nodeCount &&
             prev.topics === topicCount &&
             prev.services === serviceCount &&
             prev.actions === actionCount
@@ -55,22 +54,22 @@ export function useRosGraph(ros: Ros | undefined): RosGraph | null {
 
     instance.getNodes(
       (nodes) => { result.nodes = nodes; maybeDone(); },
-      () => { maybeDone(); },
+      (err) => { console.warn('[useRosGraph] Failed to fetch nodes:', err); maybeDone(); },
     );
 
     instance.getTopics(
       (res) => { result.topics = res.topics; maybeDone(); },
-      () => { maybeDone(); },
+      (err) => { console.warn('[useRosGraph] Failed to fetch topics:', err); maybeDone(); },
     );
 
     instance.getServices(
       (services) => { result.services = services; maybeDone(); },
-      () => { maybeDone(); },
+      (err) => { console.warn('[useRosGraph] Failed to fetch services:', err); maybeDone(); },
     );
 
     instance.getActionServers(
       (actions) => { result.actions = actions; maybeDone(); },
-      () => { maybeDone(); },
+      (err) => { console.warn('[useRosGraph] Failed to fetch actions:', err); maybeDone(); },
     );
   }, []);
 
