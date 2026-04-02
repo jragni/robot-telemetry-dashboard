@@ -9,7 +9,7 @@ export function LandingHero() {
   const navigate = useNavigate();
 
   return (
-    <section className="landing-scanlines landing-scan-beam min-h-dvh flex items-center relative overflow-hidden pt-12 px-8">
+    <section className="landing-scanlines landing-scan-beam min-h-dvh flex items-center relative overflow-hidden pt-12 px-4 sm:px-8">
       <div className="w-full max-w-300 mx-auto grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-12 items-center relative z-2">
         <div className="flex flex-col gap-6">
           <span className="font-mono text-xs font-semibold text-accent uppercase tracking-widest">
