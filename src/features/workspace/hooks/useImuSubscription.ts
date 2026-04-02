@@ -32,12 +32,6 @@ function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
   return { roll: roll * toDeg, pitch: pitch * toDeg, yaw: yaw * toDeg };
 }
 
-/** useImuSubscription
- * @description Subscribes to an IMU topic and converts quaternion orientation
- *  to Euler angles (degrees) for the ImuPanel. Throttled to RAF cadence.
- * @param ros - Live Ros instance, or undefined.
- * @param topicName - The IMU topic (e.g., "/imu/data").
- */
 export function useImuSubscription(ros: Ros | undefined, topicName: string): UseImuReturn {
   const [state, setState] = useState<UseImuReturn>({
     roll: 0, pitch: 0, yaw: 0,

@@ -5,10 +5,6 @@ import { assignRobotColor } from './useConnectionStore.helpers';
 import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { DEFAULT_PANEL_TOPICS } from '@/features/workspace/constants';
 
-/**
- * useConnectionStore
- * @description Manages robot connection state with localStorage persistence and migration support.
- */
 export const useConnectionStore = create<ConnectionStore>()(
   persist(
     (set) => ({

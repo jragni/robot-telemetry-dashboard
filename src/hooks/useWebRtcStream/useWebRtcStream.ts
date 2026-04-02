@@ -9,13 +9,6 @@ import { ICE_GATHERING_TIMEOUT, PEER_CONNECTION_CONFIG } from './constants';
 import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
 import type { VideoStreamStatus } from '@/types/streaming.types';
 
-/** useWebRtcStream
- * @description Manages the full WebRTC peer connection lifecycle for camera
- *  video streaming. Connects to an aiortc signaling endpoint via REST,
- *  negotiates SDP offer/answer, attaches the resulting MediaStream to a
- *  video element, and auto-reconnects with exponential backoff on failure.
- * @param options - Connection URL, enabled flag, and optional status callback.
- */
 export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStreamReturn {
   const { url, enabled, onStatusChange } = options;
 

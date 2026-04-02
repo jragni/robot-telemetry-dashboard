@@ -2,14 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { MOCK_LIDAR_POINTS, TELEMETRY_SERIES_COLORS } from '../constants';
 import type { MockTelemetryData, TelemetryDataPoint } from '../types/MockupsPage.types';
 
-/** TELEMETRY_BUFFER_SIZE
- * @description Maximum number of telemetry data points per series.
- */
 const TELEMETRY_BUFFER_SIZE = 100;
 
-/** createInitialSeries
- * @description Creates the initial telemetry series array.
- */
 function createInitialSeries(): { label: string; color: string; data: TelemetryDataPoint[] }[] {
   return [
     { label: 'Sensor A', color: TELEMETRY_SERIES_COLORS[0], data: [] },
@@ -18,12 +12,6 @@ function createInitialSeries(): { label: string; color: string; data: TelemetryD
   ];
 }
 
-/** useMockTelemetry
- * @description Provides cycling mock telemetry data for the mockups page panel
- *  demos. All state is self-contained — no external stores. Updates battery,
- *  uptime, IMU orientation, velocity values, and telemetry sine wave data.
- * @returns Mock telemetry data object.
- */
 export function useMockTelemetry(): MockTelemetryData {
   const [batteryLevel, setBatteryLevel] = useState(78);
   const [uptimeSeconds, setUptimeSeconds] = useState(3742);

@@ -1,9 +1,4 @@
-/** CANVAS_FALLBACKS
- * @description Shared fallback color values for Canvas 2D components. These must
- *  match the dark theme token values in src/index.css. Canvas components use
- *  getComputedStyle() at runtime but need OKLCH fallbacks for initial render.
- *  Update this file when design system tokens change.
- */
+// Must match dark theme token values in src/index.css — update when tokens change
 export const CANVAS_FALLBACKS = {
   border: 'oklch(0.38 0.02 260)',
   textPrimary: 'oklch(0.93 0.01 260)',

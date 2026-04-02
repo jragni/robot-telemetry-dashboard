@@ -5,9 +5,6 @@ import { rafThrottle } from '@/utils/rafThrottle';
 import type { LaserScanMessage } from '@/types/ros2-messages.types';
 import type { LidarPoint } from '../types/LidarPanel.types';
 
-/** LIDAR_DISPLAY_RANGE
- * @description Fixed display range in meters for the LiDAR panel.
- */
 const LIDAR_DISPLAY_RANGE = 15;
 
 interface UseLidarReturn {
@@ -15,12 +12,6 @@ interface UseLidarReturn {
   readonly rangeMax: number;
 }
 
-/** useLidarSubscription
- * @description Subscribes to a LaserScan topic and normalizes scan data into
- *  an array of LidarPoints. Throttled to RAF cadence.
- * @param ros - Live Ros instance, or undefined.
- * @param topicName - The LaserScan topic (e.g., "/scan").
- */
 export function useLidarSubscription(ros: Ros | undefined, topicName: string): UseLidarReturn {
   const [points, setPoints] = useState<readonly LidarPoint[]>([]);
 
