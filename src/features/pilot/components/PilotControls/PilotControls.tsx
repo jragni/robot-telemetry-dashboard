@@ -4,8 +4,8 @@ import { DpadButton } from '@/components/controls/DpadButton';
 import { VelocitySlider } from '@/components/controls/VelocitySlider';
 import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls.constants';
 import type { Direction } from '@/types/control.types';
-import { HUD_PANEL_BASE } from '../../constants';
-import type { PilotControlsProps } from '../../types/PilotView.types';
+import { HUD_PANEL_BASE } from '@/features/pilot/constants';
+import type { PilotControlsProps } from '@/features/pilot/types/PilotView.types';
 import { EStopButton } from './EStopButton';
 
 /** PilotControls
