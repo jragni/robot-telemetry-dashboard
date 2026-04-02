@@ -21,6 +21,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
   const reconnectTimerRef = useRef<number | null>(null);
   const attemptsRef = useRef(0);
   const shouldConnectRef = useRef(false);
+  const connectRef = useRef<(() => Promise<void>) | null>(null);
 
   // ── Status helper ────────────────────────────────────────────────
   const transition = useCallback(
@@ -59,9 +60,8 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     const delay = calculateBackoffDelay(attemptsRef.current - 1);
 
     reconnectTimerRef.current = window.setTimeout(() => {
-      void connect();
+      void connectRef.current?.();
     }, delay);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transition]);
 
   // ── Connect ──────────────────────────────────────────────────────
@@ -147,6 +147,9 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     }
   }, [url, teardown, transition, scheduleReconnect]);
 
+  // Keep connectRef in sync so scheduleReconnect always calls the latest connect
+  connectRef.current = connect;
+
   // ── Manual retry ─────────────────────────────────────────────────
   const retry = useCallback(() => {
     attemptsRef.current = 0;
@@ -159,8 +162,9 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     if (!video || !stream) return;
 
     video.srcObject = stream;
-    video.play().catch(() => {
-      // Autoplay may be blocked — user interaction required
+    video.play().catch((err: unknown) => {
+      if (err instanceof DOMException && err.name === 'NotAllowedError') return;
+      console.warn('[useWebRtcStream] video.play failed:', err);
     });
 
     return () => {
