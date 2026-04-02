@@ -230,8 +230,6 @@ export function RobotWorkspace() {
                   roll={imu.roll}
                   pitch={imu.pitch}
                   yaw={imu.yaw}
-                  angularVelocity={imu.angularVelocity}
-                  linearAcceleration={imu.linearAcceleration}
                   connected={connected}
                 />
               </WorkspacePanel>

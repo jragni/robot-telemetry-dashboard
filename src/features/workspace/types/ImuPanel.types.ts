@@ -1,5 +1,3 @@
-import type { Vector3 } from '@/types/ros2-primitives.types';
-
 export type ImuVariant = 'attitude-compass' | 'numbers' | 'attitude' | '3d';
 
 export interface ImuOrientation {
@@ -34,6 +32,4 @@ export interface ImuVizSelectProps {
 
 export interface ImuPanelProps extends ImuOrientation {
   readonly connected: boolean;
-  readonly angularVelocity?: Vector3;
-  readonly linearAcceleration?: Vector3;
 }
