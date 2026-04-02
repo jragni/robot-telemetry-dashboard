@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState } from 'react';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { COMPASS_CARDINALS } from '@/constants/canvas';
 import {
   COMPASS_TICK_MAJOR_INTERVAL,
   COMPASS_TICK_MINOR_INTERVAL,
-  COMPASS_CARDINALS,
   COMPASS_DEGREES_VISIBLE,
   COMPASS_TOKEN_MAP,
   COMPASS_COLOR_FALLBACKS,
@@ -72,7 +72,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
 
     const centerX = w / 2;
     const pxPerDeg = w / COMPASS_DEGREES_VISIBLE;
-    const cardinalSet = new Map(COMPASS_CARDINALS.map((c) => [c.deg, c.label]));
+    const cardinalSet = new Map<number, string>(COMPASS_CARDINALS.map((c) => [c.deg, c.label]));
 
     // ── Ticks + labels (ODST style: inline at same vertical center) ──
     for (let deg = 0; deg < 360; deg += COMPASS_TICK_MINOR_INTERVAL) {

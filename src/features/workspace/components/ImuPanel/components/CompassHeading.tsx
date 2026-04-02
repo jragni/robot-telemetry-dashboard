@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { normalizeHeading } from '@/utils/normalizeHeading';
 import { useThemeChange } from '@/hooks/useThemeChange';
-import { COMPASS_CARDINALS } from '@/features/workspace/constants';
+import { COMPASS_CARDINALS } from '@/constants/canvas';
 import type { CompassHeadingProps } from '@/features/workspace/types/ImuPanel.types';
 
 /** CompassHeading

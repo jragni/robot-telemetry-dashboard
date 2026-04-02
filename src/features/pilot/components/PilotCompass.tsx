@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { useResponsiveSize } from '@/hooks/useResponsiveSize';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { COMPASS_CARDINALS } from '@/constants/canvas';
 import {
   COMPASS_STRIP_WIDTH_MIN,
   COMPASS_STRIP_WIDTH_MAX,
@@ -13,7 +14,6 @@ import {
   COMPASS_FADE_WIDTH,
   COMPASS_POINTER_HALF_WIDTH,
   COMPASS_POINTER_HEIGHT,
-  COMPASS_CARDINALS,
   COMPASS_DEGREES_VISIBLE,
   COMPASS_TOKEN_MAP,
   COMPASS_COLOR_FALLBACKS,
@@ -66,7 +66,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     const centerX = w / 2;
     const pxPerDeg = w / COMPASS_DEGREES_VISIBLE;
 
-    const cardinalSet = new Map(COMPASS_CARDINALS.map((c) => [c.deg, c.label]));
+    const cardinalSet = new Map<number, string>(COMPASS_CARDINALS.map((c) => [c.deg, c.label]));
 
     for (let deg = 0; deg < 360; deg += COMPASS_TICK_MINOR_INTERVAL) {
       let offset = deg - heading;
