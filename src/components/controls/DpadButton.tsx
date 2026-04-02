@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { DPAD_BTN, DPAD_BTN_ACTIVE } from '@/constants/controls.constants';
+import { DPAD_BTN, DPAD_BTN_ACTIVE } from '@/constants/controls';
 import type { DpadButtonProps } from '@/types/DpadButton.types';
 
 /** DpadButton
