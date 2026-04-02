@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { ComingSoon } from './components/ComingSoon';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFound } from './components/NotFound';
 import { LandingPage } from './features/landing/LandingPage';
 import { FleetOverview } from './features/fleet/FleetOverview';
@@ -14,6 +15,7 @@ import { MockupsPage } from './features/mockups/MockupsPage';
 export function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <ErrorBoundary>
       <Routes>
         {/* Landing page — standalone, outside AppShell, forces dark theme */}
         <Route path="/" element={<LandingPage />} />
@@ -32,6 +34,7 @@ export function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

@@ -1,6 +1,7 @@
 import { Maximize2, Minimize2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
+import { PanelErrorBoundary } from '@/components/PanelErrorBoundary';
 import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
 import { TopicSelector } from './TopicSelector';
 
@@ -84,7 +85,9 @@ export function WorkspacePanel({
         </div>
       </header>
       <div className="flex-1 flex items-center justify-center p-4 min-h-0 overflow-hidden">
-        {children}
+        <PanelErrorBoundary>
+          {children}
+        </PanelErrorBoundary>
       </div>
     </article>
   );
