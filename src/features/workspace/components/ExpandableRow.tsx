@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { ConditionalRender } from '@/components/ConditionalRender';
-import type { ExpandableRowProps } from '@/features/workspace/types/SystemStatusPanel.types';
+import type { ExpandableRowProps } from '../types/ExpandableRow.types';
 
 /** ExpandableRow
  * @description Renders a status row that expands to show a list of names

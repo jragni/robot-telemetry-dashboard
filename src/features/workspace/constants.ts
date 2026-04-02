@@ -1,6 +1,9 @@
 import { Activity, Camera, Compass, Crosshair, Gamepad2, Radar, Shield } from 'lucide-react';
+
 import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
+
 import type { MobileTabId } from './types/RobotWorkspaceMobile.types';
+import type { PanelId } from './types/panel.types';
 
 export const IMU_VIZ_OPTIONS: readonly { value: ImuVariant; label: string; shortLabel: string }[] =
   [
@@ -71,11 +74,15 @@ export const TELEMETRY_AXIS_PADDING = 40;
 
 export const TELEMETRY_BOTTOM_PADDING = 20;
 
-export const PANEL_TOPIC_TYPES: Record<string, readonly string[]> = {
+/** PANEL_TOPIC_TYPES
+ * @description Maps each panel ID to its compatible ROS message types.
+ *  Used to filter the topic dropdown per panel.
+ */
+export const PANEL_TOPIC_TYPES: Partial<Record<PanelId, readonly string[]>> = {
   camera: ['sensor_msgs/msg/CompressedImage', 'sensor_msgs/msg/Image'],
-  lidar: ['sensor_msgs/msg/LaserScan'],
-  imu: ['sensor_msgs/msg/Imu'],
   controls: ['geometry_msgs/msg/Twist'],
+  imu: ['sensor_msgs/msg/Imu'],
+  lidar: ['sensor_msgs/msg/LaserScan'],
   telemetry: [
     'nav_msgs/msg/Odometry',
     'geometry_msgs/msg/Twist',
@@ -85,10 +92,14 @@ export const PANEL_TOPIC_TYPES: Record<string, readonly string[]> = {
   ],
 };
 
-export const DEFAULT_PANEL_TOPICS: Record<string, string> = {
+/** DEFAULT_PANEL_TOPICS
+ * @description Default topic name for each panel, used until the user selects
+ *  a different one or auto-discovery finds a match.
+ */
+export const DEFAULT_PANEL_TOPICS: Partial<Record<PanelId, string>> = {
   camera: '/camera/image_raw',
-  lidar: '/scan',
-  imu: '/imu/data',
   controls: '/cmd_vel',
+  imu: '/imu/data',
+  lidar: '/scan',
   telemetry: '/odom',
 };

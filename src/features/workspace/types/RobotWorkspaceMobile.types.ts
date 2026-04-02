@@ -1,9 +1,11 @@
-import type { RosTopic } from '@/hooks/useRosTopics';
-import type { ConnectionStatus } from '@/stores/connection/useConnectionStore.types';
 import type { BatteryStatus } from '@/types/battery.types';
-import type { RosGraph } from '@/types/ros-graph.types';
+import type { ConnectionStatus } from '@/stores/connection/useConnectionStore.types';
 import type { LidarPoint } from '@/features/workspace/types/LidarPanel.types';
+import type { RosGraph } from '@/types/ros-graph.types';
+import type { RosTopic } from '@/hooks/useRosTopics';
 import type { TelemetrySeries } from '@/features/workspace/types/TelemetryPanel.types';
+
+import type { PanelId } from './panel.types';
 
 export type MobileDataPanelId = 'camera' | 'lidar' | 'status' | 'imu' | 'telemetry';
 
@@ -42,12 +44,12 @@ export interface RobotWorkspaceMobileProps {
   readonly telemetryTimeWindowMs: number;
 
   // ── Topic selection ──
-  readonly selectedTopics: Record<string, string>;
+  readonly selectedTopics: Partial<Record<PanelId, string>>;
   readonly filteredTopics: Record<string, readonly RosTopic[]>;
-  readonly onTopicChange: (panelId: string, topicName: string) => void;
+  readonly onTopicChange: (panelId: PanelId, topicName: string) => void;
 }
 
 export type ActivePanelContentProps =
-  Omit<RobotWorkspaceMobileProps, 'robotId' | 'selectedTopics' | 'filteredTopics' | 'onTopicChange'> & {
+  Omit<RobotWorkspaceMobileProps, 'filteredTopics' | 'onTopicChange' | 'robotId' | 'selectedTopics'> & {
     readonly activePanel: MobileDataPanelId;
   };

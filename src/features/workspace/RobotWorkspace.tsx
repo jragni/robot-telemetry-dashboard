@@ -1,38 +1,51 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
+import { useBatterySubscription } from '@/hooks/useBatterySubscription';
+import { useConnectionUptime } from '@/hooks/useConnectionUptime';
+import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
+import { useImuSubscription } from '@/hooks/useImuSubscription';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useLidarSubscription } from '@/hooks/useLidarSubscription';
 import { useRobotConnection } from '@/hooks/useRobotConnection';
 import { useRosGraph } from '@/hooks/useRosGraph';
 import { useRosTopics } from '@/hooks/useRosTopics';
-import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-import { useConnectionUptime } from '@/hooks/useConnectionUptime';
 import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
-import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { Button } from '@/components/ui/button';
+import { ConditionalRender } from '@/components/ConditionalRender';
+import { VELOCITY_LIMITS } from '@/constants/controls';
+
 import { useMinimizedPanels } from './hooks/useMinimizedPanels';
-import { useLidarSubscription } from '@/hooks/useLidarSubscription';
-import { useImuSubscription } from '@/hooks/useImuSubscription';
 import { useTelemetrySubscription } from './hooks/useTelemetrySubscription';
-import { WorkspacePanel } from './components/WorkspacePanel';
-import { SystemStatusPanel } from './components/SystemStatusPanel';
+import { CameraPanel } from './components/CameraPanel';
 import { ControlsPanel } from './components/ControlsPanel/ControlsPanel';
 import { ImuPanel } from './components/ImuPanel/ImuPanel';
 import { LidarPanel } from './components/LidarPanel';
-import { TelemetryPanel } from './components/TelemetryPanel';
-import { CameraPanel } from './components/CameraPanel';
 import { RobotWorkspaceMobile } from './components/RobotWorkspaceMobile';
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { SystemStatusPanel } from './components/SystemStatusPanel';
+import { TelemetryPanel } from './components/TelemetryPanel';
+import { WorkspacePanel } from './components/WorkspacePanel';
 import {
-  WORKSPACE_PANEL_META,
-  WORKSPACE_PANEL_IDS,
+  DEFAULT_PANEL_TOPICS,
   GRID_COL_MAP,
   PANEL_TOPIC_TYPES,
-  DEFAULT_PANEL_TOPICS,
   TELEMETRY_TIME_WINDOW_MS,
+  WORKSPACE_PANEL_IDS,
+  WORKSPACE_PANEL_META,
 } from './constants';
-import { VELOCITY_LIMITS } from '@/constants/controls';
+import type { PanelId } from './types/panel.types';
+
+/** isPanelId
+ * @description Type guard that narrows a string to PanelId by checking
+ *  membership in WORKSPACE_PANEL_IDS.
+ * @param value - The string to check.
+ * @returns True if value is a valid PanelId.
+ */
+function isPanelId(value: string): value is PanelId {
+  return (WORKSPACE_PANEL_IDS as readonly string[]).includes(value);
+}
 
 /** RobotWorkspace
  * @description Renders the workspace page for a single robot with a 3x2 grid
@@ -54,7 +67,7 @@ export function RobotWorkspace() {
   const isMobile = useIsMobile();
   const controls = useControlPublisher({ ros: isMobile ? undefined : ros, topicName: selectedTopics.controls });
 
-  function setTopic(panelId: string, topicName: string) {
+  function setTopic(panelId: PanelId, topicName: string) {
     if (id) setRobotTopic(id, panelId, topicName);
   }
 
@@ -68,9 +81,9 @@ export function RobotWorkspace() {
   // ── Filtered topic lists per panel (single memo to stabilize hook count) ──
   const filteredTopics = useMemo(() => ({
     camera: availableTopics.filter((t) => PANEL_TOPIC_TYPES.camera?.includes(t.type)),
-    lidar: availableTopics.filter((t) => PANEL_TOPIC_TYPES.lidar?.includes(t.type)),
-    imu: availableTopics.filter((t) => PANEL_TOPIC_TYPES.imu?.includes(t.type)),
     controls: availableTopics.filter((t) => PANEL_TOPIC_TYPES.controls?.includes(t.type)),
+    imu: availableTopics.filter((t) => PANEL_TOPIC_TYPES.imu?.includes(t.type)),
+    lidar: availableTopics.filter((t) => PANEL_TOPIC_TYPES.lidar?.includes(t.type)),
     telemetry: availableTopics.filter((t) => PANEL_TOPIC_TYPES.telemetry?.includes(t.type)),
   }), [availableTopics]);
 
@@ -80,13 +93,15 @@ export function RobotWorkspace() {
     if (!id || availableTopics.length === 0 || autoSelectedRef.current) return;
     autoSelectedRef.current = true;
 
-    for (const [panelId, topics] of Object.entries(filteredTopics)) {
-      if (topics.length > 0) {
+    for (const [key, topics] of Object.entries(filteredTopics)) {
+      if (!isPanelId(key)) continue;
+      const panelId = key;
+      const first = topics[0];
+      if (first) {
         const current = selectedTopics[panelId];
         const currentExists = topics.some((t) => t.name === current);
-        const firstTopic = topics[0];
-        if (!currentExists && firstTopic) {
-          setRobotTopic(id, panelId, firstTopic.name);
+        if (!currentExists) {
+          setRobotTopic(id, panelId, first.name);
         }
       }
     }
@@ -140,7 +155,7 @@ export function RobotWorkspace() {
         onConnect={connect}
         onDisconnect={disconnect}
         videoRef={videoRef}
-        selectedCameraTopic={selectedTopics.camera ?? ''}
+        selectedCameraTopic={selectedTopics.camera ?? '/camera/image_raw'}
         lidarPoints={lidar.points}
         lidarRangeMax={lidar.rangeMax}
         uptimeSeconds={uptimeSeconds}
@@ -172,7 +187,7 @@ export function RobotWorkspace() {
                 onRestoreAll={restoreAll}
                 maximized={isMaximized('camera')}
               >
-                <CameraPanel streamRef={videoRef} connected={connected} label={selectedTopics.camera} />
+                <CameraPanel streamRef={videoRef} connected={connected} label={selectedTopics.camera ?? '/camera/image_raw'} />
               </WorkspacePanel>
             }
           />
