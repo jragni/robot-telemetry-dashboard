@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useRobotConnection } from '@/hooks/useRobotConnection';
 import { useRosGraph } from '@/hooks/useRosGraph';
 import { useRosTopics } from '@/hooks/useRosTopics';
@@ -21,7 +22,7 @@ import { ImuPanel } from './components/ImuPanel/ImuPanel';
 import { LidarPanel } from './components/LidarPanel';
 import { TelemetryPanel } from './components/TelemetryPanel';
 import { CameraPanel } from './components/CameraPanel';
-import { DesktopOnlyGate } from '@/components/DesktopOnlyGate';
+import { RobotWorkspaceMobile } from './components/RobotWorkspaceMobile';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import {
   WORKSPACE_PANEL_META,
@@ -29,6 +30,7 @@ import {
   GRID_COL_MAP,
   PANEL_TOPIC_TYPES,
   DEFAULT_PANEL_TOPICS,
+  TELEMETRY_TIME_WINDOW_MS,
 } from './constants';
 import { VELOCITY_LIMITS } from '@/constants/controls.constants';
 
@@ -49,7 +51,8 @@ export function RobotWorkspace() {
   // ── Per-panel selected topics (persisted in store, shared with pilot) ──
   const selectedTopics = robot?.selectedTopics ?? DEFAULT_PANEL_TOPICS;
   const setRobotTopic = useConnectionStore((s) => s.setRobotTopic);
-  const controls = useControlPublisher({ ros, topicName: selectedTopics.controls });
+  const isMobile = useIsMobile();
+  const controls = useControlPublisher({ ros: isMobile ? undefined : ros, topicName: selectedTopics.controls });
 
   function setTopic(panelId: string, topicName: string) {
     if (id) setRobotTopic(id, panelId, topicName);
@@ -124,10 +127,39 @@ export function RobotWorkspace() {
   const gridCols = GRID_COL_MAP[cols] ?? 'grid-cols-3';
   const gridRows = rows === 1 ? 'grid-rows-1' : 'grid-rows-2';
 
+  if (isMobile) {
+    return (
+      <RobotWorkspaceMobile
+        robotId={id ?? ''}
+        robotName={robot.name}
+        robotUrl={robot.url}
+        connected={connected}
+        status={robot.status}
+        lastSeen={robot.lastSeen}
+        onConnect={connect}
+        onDisconnect={disconnect}
+        videoRef={videoRef}
+        selectedCameraTopic={selectedTopics.camera}
+        lidarPoints={lidar.points}
+        lidarRangeMax={lidar.rangeMax}
+        uptimeSeconds={uptimeSeconds}
+        battery={battery}
+        rosGraph={rosGraph}
+        imuRoll={imu.roll}
+        imuPitch={imu.pitch}
+        imuYaw={imu.yaw}
+        telemetrySeries={telemetrySeries}
+        telemetryTimeWindowMs={TELEMETRY_TIME_WINDOW_MS}
+        selectedTopics={selectedTopics}
+        filteredTopics={filteredTopics}
+        onTopicChange={setTopic}
+      />
+    );
+  }
+
   return (
-    <DesktopOnlyGate>
-      <div className="flex flex-col h-full gap-3 p-4">
-        <div className={`flex-1 grid gap-3 min-h-0 overflow-hidden ${gridCols} ${gridRows}`}>
+    <div className="flex flex-col h-full gap-3 p-4">
+      <div className={`flex-1 grid gap-3 min-h-0 overflow-hidden ${gridCols} ${gridRows}`}>
           <ConditionalRender
             shouldRender={!isMinimized('camera')}
             Component={
@@ -262,7 +294,7 @@ export function RobotWorkspace() {
                 onRestoreAll={restoreAll}
                 maximized={isMaximized('telemetry')}
               >
-                <TelemetryPanel series={telemetrySeries} timeWindowMs={30000} connected={connected} />
+                <TelemetryPanel series={telemetrySeries} timeWindowMs={TELEMETRY_TIME_WINDOW_MS} connected={connected} />
               </WorkspacePanel>
             }
           />
@@ -289,7 +321,6 @@ export function RobotWorkspace() {
             </nav>
           }
         />
-      </div>
-    </DesktopOnlyGate>
+    </div>
   );
 }
