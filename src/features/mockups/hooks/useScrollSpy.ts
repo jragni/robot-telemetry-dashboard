@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 
-/** useScrollSpy
- * @description Tracks which section is currently visible in the viewport using
- *  IntersectionObserver. Returns the active section ID for scrollspy navigation.
- * @param sectionIds - Array of DOM element IDs to observe.
- * @returns The ID of the currently visible section.
- */
 export function useScrollSpy(sectionIds: readonly string[]): string {
   const [activeId, setActiveId] = useState(sectionIds[0] ?? '');
   const observerRef = useRef<IntersectionObserver | null>(null);

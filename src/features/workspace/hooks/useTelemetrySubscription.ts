@@ -12,14 +12,8 @@ import type {
   LaserScanMessage,
 } from '@/types/ros2-messages.types';
 
-/** MAX_POINTS
- * @description Maximum data points per series in the ring buffer (~30s at 20Hz).
- */
 const MAX_POINTS = 600;
 
-/** SERIES_COLORS
- * @description Resolved OKLCH colors for telemetry series lines.
- */
 const SERIES_COLORS = [
   CANVAS_FALLBACKS.accent,
   CANVAS_FALLBACKS.statusCaution,
@@ -29,9 +23,6 @@ const SERIES_COLORS = [
   CANVAS_FALLBACKS.textPrimary,
 ];
 
-/** parsers
- * @description Extracts named numeric values from each supported message type.
- */
 function parseMessage(msg: unknown, messageType: string): Record<string, number> {
   switch (messageType) {
     case 'nav_msgs/msg/Odometry': {
@@ -88,14 +79,6 @@ function parseMessage(msg: unknown, messageType: string): Record<string, number>
   }
 }
 
-/** useTelemetrySubscription
- * @description Subscribes to any supported ROS topic type and extracts numeric
- *  values as time series for the TelemetryPanel. Supports Odometry, Twist,
- *  IMU, BatteryState, and LaserScan message types.
- * @param ros - Live Ros instance, or undefined.
- * @param topicName - The ROS topic to subscribe to.
- * @param messageType - The ROS message type string.
- */
 export function useTelemetrySubscription(
   ros: Ros | undefined,
   topicName: string,

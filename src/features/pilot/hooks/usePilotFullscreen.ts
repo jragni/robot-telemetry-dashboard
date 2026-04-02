@@ -1,11 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { UsePilotFullscreenReturn } from '../types/usePilotFullscreen.types';
 
-/** usePilotFullscreen
- * @description Manages fullscreen toggle state for Pilot Mode. Binds F key
- *  to toggle and Escape to exit fullscreen. Document-level listeners ensure
- *  Escape exits fullscreen before reaching panel-scoped E-STOP handlers.
- */
 export function usePilotFullscreen(): UsePilotFullscreenReturn {
   const [isFullscreen, setIsFullscreen] = useState(false);
 

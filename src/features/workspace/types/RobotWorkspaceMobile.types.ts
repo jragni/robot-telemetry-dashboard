@@ -5,23 +5,10 @@ import type { RosGraph } from '@/types/ros-graph.types';
 import type { LidarPoint } from '@/features/workspace/types/LidarPanel.types';
 import type { TelemetrySeries } from '@/features/workspace/types/TelemetryPanel.types';
 
-/** MobileDataPanelId
- * @description Panel IDs available as data tabs on mobile workspace.
- *  Controls is excluded — robot control happens in Pilot Mode.
- */
 export type MobileDataPanelId = 'camera' | 'lidar' | 'status' | 'imu' | 'telemetry';
 
-/** MobileTabId
- * @description All tab IDs in the mobile workspace bottom bar.
- *  Includes 5 data panels plus the Pilot nav action.
- */
 export type MobileTabId = MobileDataPanelId | 'pilot';
 
-/** RobotWorkspaceMobileProps
- * @description Props for the mobile workspace layout. Receives all
- *  subscription data from RobotWorkspace and renders one panel at a time
- *  with a bottom tab bar for switching.
- */
 export interface RobotWorkspaceMobileProps {
   readonly robotId: string;
   readonly robotName: string;
@@ -60,10 +47,6 @@ export interface RobotWorkspaceMobileProps {
   readonly onTopicChange: (panelId: string, topicName: string) => void;
 }
 
-/** ActivePanelContentProps
- * @description Derived from RobotWorkspaceMobileProps — excludes fields
- *  only needed by the tab bar and topic selector, adds activePanel.
- */
 export type ActivePanelContentProps =
   Omit<RobotWorkspaceMobileProps, 'robotId' | 'selectedTopics' | 'filteredTopics' | 'onTopicChange'> & {
     readonly activePanel: MobileDataPanelId;

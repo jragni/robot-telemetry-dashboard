@@ -1,20 +1,8 @@
 import { useRef, useState, useCallback } from 'react';
 import { useThemeChange } from '@/hooks/useThemeChange';
 
-/** TokenMapping
- * @description Maps local color keys to CSS custom property names.
- */
 type TokenMapping = Record<string, string>;
 
-/** useCanvasColors
- * @description Manages theme-aware color resolution for Canvas 2D components.
- *  Initializes from fallback values, resolves CSS custom properties on first
- *  render, and re-resolves when the theme changes. Returns a stable ref to
- *  the resolved colors and a themeVersion counter for triggering canvas redraws.
- * @param fallbacks - Initial fallback color values keyed by local name.
- * @param tokenMap - Maps local color keys to CSS custom property names
- *  (e.g., `{ accent: '--color-accent' }`).
- */
 export function useCanvasColors<T extends Record<string, string>>(
   fallbacks: T,
   tokenMap: TokenMapping,

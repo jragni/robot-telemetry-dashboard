@@ -3,12 +3,6 @@ import type { Ros } from 'roslib';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 
-/** useRobotConnection
- * @description Convenience hook for reading a robot's connection state and
- *  accessing its live Ros instance. Combines store selectors with
- *  ConnectionManager lookups in a single API.
- * @param robotId - The robot ID to read from the connection store.
- */
 export function useRobotConnection(robotId: string | undefined) {
   const robot = useConnectionStore((s) => (robotId ? s.robots[robotId] : undefined));
   const connectRobot = useConnectionStore((s) => s.connectRobot);

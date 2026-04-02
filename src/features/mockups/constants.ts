@@ -39,9 +39,6 @@ import type {
   AnimationEntry,
 } from './types/MockupsPage.types';
 
-/** MOCK_SECTIONS
- * @description All navigable sections on the mockups page.
- */
 export const MOCK_SECTIONS: readonly MockSection[] = [
   { id: 'colors', title: 'Color Tokens', description: 'Design system color palette by namespace' },
   { id: 'typography', title: 'Typography Scale', description: 'Exo + Roboto Mono at all sizes and weights' },
@@ -55,9 +52,6 @@ export const MOCK_SECTIONS: readonly MockSection[] = [
   { id: 'animations', title: 'Animations', description: 'Motion patterns and keyframe animations' },
 ];
 
-/** COLOR_TOKEN_GROUPS
- * @description Design system tokens grouped by namespace for swatch display.
- */
 export const COLOR_TOKEN_GROUPS: readonly ColorTokenGroup[] = [
   {
     namespace: 'Surface',
@@ -110,9 +104,6 @@ export const COLOR_TOKEN_GROUPS: readonly ColorTokenGroup[] = [
   },
 ];
 
-/** TYPOGRAPHY_SAMPLES
- * @description The four permitted font sizes.
- */
 export const TYPOGRAPHY_SAMPLES: readonly TypographySample[] = [
   { sizePx: 36, tailwindClass: 'text-4xl', label: '36px — text-4xl' },
   { sizePx: 20, tailwindClass: 'text-xl', label: '20px — text-xl' },
@@ -120,9 +111,6 @@ export const TYPOGRAPHY_SAMPLES: readonly TypographySample[] = [
   { sizePx: 12, tailwindClass: 'text-xs', label: '12px — text-xs' },
 ];
 
-/** SPACING_SCALE
- * @description 4px base unit spacing increments.
- */
 export const SPACING_SCALE: readonly SpacingStep[] = [
   { px: 4, tailwindClass: 'p-1' },
   { px: 8, tailwindClass: 'p-2' },
@@ -135,9 +123,6 @@ export const SPACING_SCALE: readonly SpacingStep[] = [
   { px: 64, tailwindClass: 'p-16' },
 ];
 
-/** STATUS_STATES
- * @description The four system status states with triple-redundant indicators.
- */
 export const STATUS_STATES: readonly StatusState[] = [
   {
     label: 'Nominal',
@@ -169,9 +154,6 @@ export const STATUS_STATES: readonly StatusState[] = [
   },
 ];
 
-/** BUTTON_VARIANTS
- * @description Button variants for the showcase grid.
- */
 export const BUTTON_VARIANTS: readonly ButtonVariantDemo[] = [
   { label: 'Primary', variant: 'default' },
   { label: 'Secondary', variant: 'secondary' },
@@ -180,9 +162,6 @@ export const BUTTON_VARIANTS: readonly ButtonVariantDemo[] = [
   { label: 'Outline', variant: 'outline' },
 ];
 
-/** ICON_SET
- * @description All Lucide icons used across the application.
- */
 export const ICON_SET: readonly IconEntry[] = [
   { name: 'LayoutGrid', Icon: LayoutGrid },
   { name: 'Crosshair', Icon: Crosshair },
@@ -213,9 +192,6 @@ export const ICON_SET: readonly IconEntry[] = [
   { name: 'Palette', Icon: Palette },
 ];
 
-/** MOCK_LIDAR_POINTS
- * @description Static LiDAR scan data for panel showcase demos.
- */
 export const MOCK_LIDAR_POINTS: readonly { angle: number; distance: number }[] = Array.from(
   { length: 120 },
   (_, i) => ({
@@ -224,9 +200,6 @@ export const MOCK_LIDAR_POINTS: readonly { angle: number; distance: number }[] =
   }),
 );
 
-/** BORDER_EFFECTS
- * @description Panel border effect samples.
- */
 export const BORDER_EFFECTS: readonly BorderEffect[] = [
   { label: 'Default panel border — border border-border', className: 'border border-border' },
   { label: 'Hover border — border border-border-hover', className: 'border border-border-hover' },
@@ -235,9 +208,6 @@ export const BORDER_EFFECTS: readonly BorderEffect[] = [
   { label: 'Accent border — border-2 border-accent', className: 'border-2 border-accent' },
 ];
 
-/** ANIMATION_LIST
- * @description Animation samples for the animation showcase.
- */
 export const ANIMATION_LIST: readonly AnimationEntry[] = [
   { label: 'Pulse — motion-safe:animate-pulse', className: 'motion-safe:animate-pulse' },
   { label: 'Spin — motion-safe:animate-spin', className: 'motion-safe:animate-spin' },
@@ -245,9 +215,6 @@ export const ANIMATION_LIST: readonly AnimationEntry[] = [
   { label: 'Ping — motion-safe:animate-ping', className: 'motion-safe:animate-ping' },
 ];
 
-/** TELEMETRY_SERIES_COLORS
- * @description Colors for mock telemetry chart series.
- */
 export const TELEMETRY_SERIES_COLORS = [
   'oklch(0.7 0.2 230)',
   'oklch(0.7 0.19 155)',

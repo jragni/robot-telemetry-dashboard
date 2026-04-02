@@ -2,10 +2,6 @@ import { Joystick, LayoutGrid, Activity, Network } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { FeatureItem } from './types/LandingFeatures.types';
 
-/**
- * FEATURE_ICONS
- * @description Maps feature number strings to their corresponding Lucide icon components.
- */
 export const FEATURE_ICONS: Record<string, LucideIcon> = {
   '01': Joystick,
   '02': LayoutGrid,
@@ -13,10 +9,6 @@ export const FEATURE_ICONS: Record<string, LucideIcon> = {
   '04': Network,
 };
 
-/**
- * FEATURES
- * @description Defines the feature showcase items displayed on the landing page.
- */
 export const FEATURES: readonly FeatureItem[] = [
   {
     number: '01',

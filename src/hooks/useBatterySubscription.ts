@@ -5,17 +5,9 @@ import type { BatteryStateMessage } from '@/types/ros2-messages.types';
 import type { RosTopic } from '@/hooks/useRosTopics';
 import type { BatteryStatus } from '@/types/battery.types';
 
-/** POWER_SUPPLY_CHARGING
- * @description sensor_msgs/msg/BatteryState power_supply_status value for charging.
- */
+// sensor_msgs/msg/BatteryState power_supply_status value for charging
 const POWER_SUPPLY_CHARGING = 1;
 
-/** useBatterySubscription
- * @description Auto-discovers a BatteryState topic from the available topics
- *  list, subscribes to it, and returns normalized battery status.
- * @param ros - Live Ros instance, or undefined.
- * @param availableTopics - List of discovered topics from the robot.
- */
 export function useBatterySubscription(
   ros: Ros | undefined,
   availableTopics: readonly RosTopic[],

@@ -1,6 +1,3 @@
-/** RosGraph
- * @description Counts and names of active ROS computational graph entities.
- */
 export interface RosGraph {
   readonly nodes: number;
   readonly nodeNames: readonly string[];

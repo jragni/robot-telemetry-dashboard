@@ -2,11 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Ros } from 'roslib';
 import type { RosGraph } from '@/types/ros-graph.types';
 
-/** useRosGraph
- * @description Fetches the ROS computation graph summary from a live Ros
- *  instance. Returns counts and name arrays. Re-fetches on a 10s interval.
- * @param ros - The live Ros instance, or undefined if disconnected.
- */
 export function useRosGraph(ros: Ros | undefined): RosGraph | null {
   const [graph, setGraph] = useState<RosGraph | null>(null);
 
