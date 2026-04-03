@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { formatLastSeen } from '@/utils/formatLastSeen';
 import { formatUptime } from '@/utils/formatUptime';
 import { getBatteryColor } from '@/utils/getBatteryColor';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import type { SystemStatusPanelProps } from '@/features/workspace/types/SystemStatusPanel.types';
 import { StatusRow } from './StatusRow';
 import { ExpandableRow } from './ExpandableRow';
@@ -56,9 +56,7 @@ export function SystemStatusPanel({
 
       <span className="font-mono text-xs text-text-muted truncate">{url}</span>
 
-      <ConditionalRender
-        shouldRender={!!(onConnect ?? onDisconnect)}
-        Component={
+      {!!(onConnect ?? onDisconnect) && (
           <Button
             variant="outline"
             size="sm"
@@ -75,14 +73,11 @@ export function SystemStatusPanel({
               <><PlugZap size={12} /> Connect</>
             )}
           </Button>
-        }
-      />
+      )}
 
       <hr className="border-border border-dashed my-1" />
 
-      <ConditionalRender
-        shouldRender={connected}
-        Component={
+      {connected && (
           <>
             <StatusRow label="UPTIME" value={formatUptime(uptimeSeconds)} />
             <StatusRow
@@ -91,8 +86,7 @@ export function SystemStatusPanel({
               valueClass={getBatteryColor(battery?.percentage ?? null)}
             />
           </>
-        }
-      />
+      )}
 
       <StatusRow label="LAST SEEN" value={formatLastSeen(lastSeen)} />
 

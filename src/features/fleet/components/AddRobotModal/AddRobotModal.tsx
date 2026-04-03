@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Plus, Loader2, AlertCircle } from 'lucide-react';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import {
   Dialog,
   DialogContent,
@@ -194,9 +194,7 @@ export function AddRobotModal() {
             <FieldError id={FIELD_ERROR_IDS.url} message={errors.url} />
           </div>
 
-          <ConditionalRender
-            shouldRender={!!errors.form}
-            Component={
+          {!!errors.form && (
               <div
                 role="alert"
                 className="flex items-start gap-2 rounded-sm border border-status-critical/30 bg-status-critical/10 px-3 py-2"
@@ -209,8 +207,7 @@ export function AddRobotModal() {
                   </p>
                 </div>
               </div>
-            }
-          />
+          )}
 
           <div className="max-sm:mt-auto max-sm:pb-6 sm:mt-2">
             <Button

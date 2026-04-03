@@ -1,4 +1,4 @@
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import type { FieldErrorProps } from '../types/FieldError.types';
 
 /** FieldError
@@ -9,13 +9,12 @@ import type { FieldErrorProps } from '../types/FieldError.types';
  */
 export function FieldError({ id, message }: FieldErrorProps) {
   return (
-    <ConditionalRender
-      shouldRender={!!message}
-      Component={
+    <>
+      {!!message && (
         <p id={id} className="font-mono text-xs text-status-critical mt-1" role="alert">
           {message}
         </p>
-      }
-    />
+      )}
+    </>
   );
 }
