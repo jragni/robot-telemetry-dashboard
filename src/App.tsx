@@ -1,13 +1,27 @@
+import { lazy, Suspense } from 'react';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import { AppShell } from './components/AppShell';
 import { ComingSoon } from './components/ComingSoon';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFound } from './components/NotFound';
-import { LandingPage } from './features/landing/LandingPage';
-import { FleetOverview } from './features/fleet/FleetOverview';
-import { RobotWorkspace } from './features/workspace/RobotWorkspace';
-import { PilotView } from './features/pilot/PilotView';
-import { MockupsPage } from './features/mockups/MockupsPage';
+
+const LandingPage = lazy(() =>
+  import('./features/landing/LandingPage').then(m => ({ default: m.LandingPage }))
+);
+const FleetOverview = lazy(() =>
+  import('./features/fleet/FleetOverview').then(m => ({ default: m.FleetOverview }))
+);
+const RobotWorkspace = lazy(() =>
+  import('./features/workspace/RobotWorkspace').then(m => ({ default: m.RobotWorkspace }))
+);
+const PilotView = lazy(() =>
+  import('./features/pilot/PilotView').then(m => ({ default: m.PilotView }))
+);
+const MockupsPage = lazy(() =>
+  import('./features/mockups/MockupsPage').then(m => ({ default: m.MockupsPage }))
+);
 
 /**
  * Renders the root application with React Router, landing page route, and AppShell-wrapped feature routes.
@@ -16,6 +30,7 @@ export function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ErrorBoundary>
+      <Suspense fallback={<div className="flex h-screen items-center justify-center font-sans text-sm text-text-secondary">Loading...</div>}>
       <Routes>
         {/* Landing page — standalone, outside AppShell, forces dark theme */}
         <Route path="/" element={<LandingPage />} />
@@ -34,6 +49,7 @@ export function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
+      </Suspense>
       </ErrorBoundary>
     </BrowserRouter>
   );
