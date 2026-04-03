@@ -76,6 +76,8 @@ Titles use T-XXX: description format. Comments are plain text only — no markdo
 6. Follow the discuss → research → approve → implement → verify pipeline for every code change, including refactors.
 7. Clean up stale worktrees before dispatching new agents (old worktrees hold branch locks).
 8. Every PR must include tests for the changes. Code-only PRs are not mergeable. Test-only PRs (backfilling coverage) are fine standalone.
+9. Dispatch agents sequentially, not in parallel. Parallel agents sharing a working directory corrupt each other's branches (leaked commits, git lock files, wrong-branch commits). One agent at a time.
+10. Never merge a PR before its review agent has reported back. Merging before review defeats the pipeline.
 
 ### What Agents Must Read
 
