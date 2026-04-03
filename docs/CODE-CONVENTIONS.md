@@ -100,3 +100,4 @@ All exported `.tsx` components and functions must have JSDoc docstrings followin
 - Comments: plain text only. No markdown formatting, no bold headers, no styled bullets. State what was done.
 - No Co-Authored-By lines in commits
 - No AI mention in commits or PR comments
+- Every PR must include tests for the changes. No code-only PRs — if you change behavior, add or update tests covering that behavior. Test-only PRs (backfilling coverage) are fine standalone.

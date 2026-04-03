@@ -75,6 +75,7 @@ Titles use T-XXX: description format. Comments are plain text only — no markdo
 5. Never merge without review. Review gate is non-negotiable.
 6. Follow the discuss → research → approve → implement → verify pipeline for every code change, including refactors.
 7. Clean up stale worktrees before dispatching new agents (old worktrees hold branch locks).
+8. Every PR must include tests for the changes. Code-only PRs are not mergeable. Test-only PRs (backfilling coverage) are fine standalone.
 
 ### What Agents Must Read
 
