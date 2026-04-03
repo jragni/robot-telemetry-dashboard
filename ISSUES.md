@@ -566,6 +566,63 @@ Consolidated from parallel architecture and code quality audits.
   - [ ] E2E: mobile workspace tab switching renders correct panel content
   - [ ] `npm run build` passes; all tests pass
 
+### TICKET-022: Import Ordering Sweep
+- **Type:** non-blocking
+- **Severity:** medium
+- **Findings:** New (post-audit rule)
+- **Files affected:** All `.ts` and `.tsx` files in `src/`
+- **Conflicts with:** All other tickets — run last after all merges
+- **Branch:** `fix/ticket-022/import-ordering-sweep`
+- **Scope:** Enforce import ordering across entire codebase: 3 groups (3rd party React-first / aliased @/ / relative), hooks → 3rd party components → @/ components → types, alphabetized by import name within each sub-group. Also alphabetize destructured props in component signatures.
+- **Acceptance criteria:**
+  - [ ] All files follow 3-group import ordering with blank line separators
+  - [ ] React is always first import
+  - [ ] Hooks before components before types within each group
+  - [ ] Alphabetized by import name within sub-groups
+  - [ ] Destructured props alphabetized in component signatures
+  - [ ] `npm run build` passes
+
+### TICKET-023: Remove Styled Section Comments
+- **Type:** non-blocking
+- **Severity:** medium
+- **Findings:** New (post-audit rule)
+- **Files affected:**
+  - `src/lib/rosbridge/ConnectionManager.ts` (3 instances)
+  - `src/hooks/useWebRtcStream/useWebRtcStream.ts` (6 instances)
+  - `src/features/workspace/RobotWorkspace.tsx` (3 instances)
+  - `src/features/workspace/types/RobotWorkspaceMobile.types.ts` (6 instances)
+  - `src/features/pilot/constants.ts` (1 instance)
+  - `src/features/pilot/PilotView.tsx` (1 instance)
+  - `src/features/pilot/components/PilotCompassMobile.tsx` (5 instances)
+  - `src/features/workspace/components/RobotWorkspaceMobile.tsx` (4 instances + inline style + missing mobile JSDoc)
+- **Conflicts with:** TICKET-022 (both touch all files — run in sequence)
+- **Branch:** `fix/ticket-023/remove-styled-comments`
+- **Scope:** Remove all `// ── Section ──────` and `// ═══` decorative separator comments. Replace with plain comments only where logic isn't self-evident. Also: convert inline `style={}` to Tailwind classes where possible. Update JSDoc on mobile-only components to state they are mobile-only and name their parent consumer.
+- **Acceptance criteria:**
+  - [ ] `grep -rn '// ──' src/` returns empty
+  - [ ] `grep -rn '// ═' src/` returns empty
+  - [ ] No decorative line separators remain
+  - [ ] Inline `style={}` replaced with Tailwind where equivalent classes exist (e.g., `paddingBottom: env(safe-area-inset-bottom)` → `pb-[env(safe-area-inset-bottom)]`)
+  - [ ] Mobile-only component JSDoc descriptions include "mobile-only" and name the parent consumer
+  - [ ] `npm run build` passes
+
+### TICKET-024: Desktop-to-Mobile Resize Bug
+- **Type:** non-blocking
+- **Severity:** high
+- **Findings:** New (user-reported bug)
+- **Files affected:**
+  - `src/features/workspace/RobotWorkspace.tsx`
+  - `src/features/workspace/components/RobotWorkspaceMobile.tsx`
+  - `src/hooks/useIsMobile.ts`
+- **Conflicts with:** TICKET-013, TICKET-015, TICKET-021
+- **Branch:** `fix/ticket-024/desktop-mobile-resize`
+- **Scope:** Fix layout breakage when resizing the browser window from desktop to mobile breakpoint. Investigate `useIsMobile` hook reactivity and workspace layout transition.
+- **Acceptance criteria:**
+  - [ ] Resizing from desktop to mobile smoothly transitions to mobile layout
+  - [ ] Resizing from mobile to desktop restores full 3x2 grid
+  - [ ] No layout breakage at the breakpoint boundary
+  - [ ] `npm run build` passes
+
 ---
 
 ## Execution Plan
@@ -599,3 +656,11 @@ Serialization constraints within Wave 2:
 | TICKET-014 | TICKET-004 |
 | TICKET-017 | TICKET-005 |
 | TICKET-021 | TICKET-007, TICKET-012, TICKET-013, TICKET-016 |
+
+### Wave 4 — Codebase-wide sweeps (after all other waves)
+
+| Ticket | Depends on |
+|---|---|
+| TICKET-022 | All Wave 1-3 tickets merged |
+| TICKET-023 | All Wave 1-3 tickets merged |
+| TICKET-024 | TICKET-013, TICKET-015 |

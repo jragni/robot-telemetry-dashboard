@@ -14,8 +14,6 @@ const reconnectAttempts = new Map<string, number>();
 const intentionalDisconnects = new Set<string>();
 const connectedAtMap = new Map<string, number>();
 
-// ── Store helper ─────────────────────────────────────────────────
-
 function updateStore(id: string, patch: Partial<Pick<RobotConnection, 'status' | 'lastSeen' | 'lastError'>>) {
   useConnectionStore.getState().updateRobot(id, patch);
 }

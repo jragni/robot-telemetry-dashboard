@@ -56,6 +56,7 @@ import type { WorkspaceProps } from './types/Workspace.types';
 - Assign complex boolean conditions to named variables before using in JSX (e.g., `const canMinimize = !!onMinimize && !maximized`).
 - Conditional rendering: `&&` or ternaries. No wrapper components.
 - shadcn-first: always check if shadcn can handle it before building custom.
+- Mobile-only components must be clearly identified. File name should include `Mobile` (e.g., `RobotWorkspaceMobile.tsx`, `PilotHudMobile.tsx`). JSDoc `@description` must state it is mobile-only and name its parent consumer.
 
 ## State Management
 
