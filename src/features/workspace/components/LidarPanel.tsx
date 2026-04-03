@@ -15,6 +15,7 @@ import {
   WORKSPACE_LIDAR_TOKEN_MAP,
 } from '@/features/workspace/constants';
 import type { LidarPanelProps } from '@/features/workspace/types/LidarPanel.types';
+import { findMinDistance } from '@/features/workspace/components/LidarPanel.helpers';
 
 /** LidarPanel
  * @description Renders a top-down 2D tactical display of LiDAR scan points.
@@ -193,7 +194,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     draw();
   }, [draw, canvasSize]);
 
-  const closestPoint = points.length > 0 ? Math.min(...points.map((p) => p.distance)) : null;
+  const closestPoint = points.length > 0 ? findMinDistance(points) : null;
 
   return (
     <div
