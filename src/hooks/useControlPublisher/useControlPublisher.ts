@@ -36,6 +36,12 @@ export function useControlPublisher(
       messageType: 'geometry_msgs/msg/Twist',
     });
     return () => {
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      topicRef.current?.publish(ZERO_TWIST);
+      onPublishRef.current?.(ZERO_TWIST);
       topicRef.current = null;
     };
   }, [ros, topicName]);
@@ -49,12 +55,6 @@ export function useControlPublisher(
   useEffect(() => {
     angularRef.current = angularVelocity;
   }, [angularVelocity]);
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current !== null) clearInterval(timerRef.current);
-    };
-  }, []);
 
   function publish(twist: typeof ZERO_TWIST) {
     onPublishRef.current?.(twist);
