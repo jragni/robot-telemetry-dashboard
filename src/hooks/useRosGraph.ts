@@ -37,14 +37,14 @@ export function useRosGraph(ros: Ros | undefined): RosGraph | null {
           const actionNames = [...new Set(result.actions)].sort();
 
           return {
-            nodes: nodeNames.length,
-            nodeNames,
-            topics: topicNames.length,
-            topicNames,
-            services: serviceNames.length,
-            serviceNames,
-            actions: actionNames.length,
             actionNames,
+            actions: actionNames.length,
+            nodeNames,
+            nodes: nodeNames.length,
+            serviceNames,
+            services: serviceNames.length,
+            topicNames,
+            topics: topicNames.length,
           };
         });
       }
