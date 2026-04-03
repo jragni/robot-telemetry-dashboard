@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { Ros } from 'roslib';
+
 import { ZERO_TWIST } from './constants';
 import { useControlPublisher } from './useControlPublisher';
 
@@ -120,7 +121,7 @@ describe('useControlPublisher', () => {
       useControlPublisher(),
     );
 
-    expect(() => unmount()).not.toThrow();
+    expect(() => { unmount(); }).not.toThrow();
     expect(mockPublish).not.toHaveBeenCalled();
   });
 });
