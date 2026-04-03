@@ -4,7 +4,7 @@ import { deriveWebRtcUrl } from '@/stores/connection/useConnectionStore.helpers'
 import {
   RECONNECT_MAX_ATTEMPTS,
   calculateBackoffDelay,
-} from '@/constants/reconnection.constants';
+} from '@/constants/reconnection';
 import { ICE_GATHERING_TIMEOUT, PEER_CONNECTION_CONFIG } from './constants';
 import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
 import type { VideoStreamStatus } from '@/types/streaming.types';

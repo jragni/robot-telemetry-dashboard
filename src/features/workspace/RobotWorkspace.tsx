@@ -32,7 +32,7 @@ import {
   DEFAULT_PANEL_TOPICS,
   TELEMETRY_TIME_WINDOW_MS,
 } from './constants';
-import { VELOCITY_LIMITS } from '@/constants/controls.constants';
+import { VELOCITY_LIMITS } from '@/constants/controls';
 
 /** RobotWorkspace
  * @description Renders the workspace page for a single robot with a 3x2 grid

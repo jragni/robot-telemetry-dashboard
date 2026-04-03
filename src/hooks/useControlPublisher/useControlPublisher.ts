@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Topic } from 'roslib';
 import type { Direction } from '@/types/control.types';
-import { VELOCITY_LIMITS } from '@/constants/controls.constants';
+import { VELOCITY_LIMITS } from '@/constants/controls';
 import type { UseControlPublisherOptions, UseControlPublisherReturn } from './types';
 import { ZERO_TWIST, DEFAULT_PUBLISH_RATE } from './constants';
 import { buildTwist } from './helpers';

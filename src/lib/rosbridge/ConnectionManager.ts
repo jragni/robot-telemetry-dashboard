@@ -5,7 +5,7 @@ import { deriveRosbridgeUrl } from '@/stores/connection/useConnectionStore.helpe
 import {
   RECONNECT_MAX_ATTEMPTS,
   calculateBackoffDelay,
-} from '@/constants/reconnection.constants';
+} from '@/constants/reconnection';
 
 /** CONNECTION_TIMEOUT
  * @description Maximum time to wait for a WebSocket handshake in ms.

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection.constants';
+import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
 import type { ConnectionStatus } from '@/stores/connection/useConnectionStore.types';
 
 /** ConnectionToastProvider
