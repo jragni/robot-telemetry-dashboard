@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -54,9 +54,9 @@ export function RobotWorkspace() {
   const isMobile = useIsMobile();
   const controls = useControlPublisher({ ros: isMobile ? undefined : ros, topicName: selectedTopics.controls });
 
-  function setTopic(panelId: string, topicName: string) {
+  const setTopic = useCallback((panelId: string, topicName: string) => {
     if (id) setRobotTopic(id, panelId, topicName);
-  }
+  }, [id, setRobotTopic]);
 
   // ── Subscriptions (use selected topics) ──────────────────────────
   const lidar = useLidarSubscription(ros, selectedTopics.lidar ?? '/scan');

@@ -16,7 +16,11 @@ export function useRosTopics(ros: Ros | undefined): readonly RosTopic[] {
           name,
           type: result.types[i] ?? 'unknown',
         }));
-        setTopics(discovered);
+        setTopics((prev) => {
+          const isSame = prev.length === discovered.length &&
+            prev.every((t, i) => t.name === discovered[i]?.name && t.type === discovered[i].type);
+          return isSame ? prev : discovered;
+        });
       },
       () => {
         // Silently fail — topics will remain empty
