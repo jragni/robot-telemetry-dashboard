@@ -186,6 +186,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     ctx.lineTo(cx + robotSize * 0.7, cy + robotSize * 0.5);
     ctx.closePath();
     ctx.fill();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [points, rangeMax, connected, zoom, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {

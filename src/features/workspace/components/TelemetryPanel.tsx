@@ -177,6 +177,7 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
       ctx.fillText('No data', left + plotW / 2, plotH / 2);
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [series, timeWindowMs, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {

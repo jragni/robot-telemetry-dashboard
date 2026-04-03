@@ -107,6 +107,7 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
     ctx.closePath();
     ctx.fillStyle = c.accent;
     ctx.fill();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [roll, pitch, resolveColors, themeVersion, rawColorsRef]);
 
   useEffect(() => {

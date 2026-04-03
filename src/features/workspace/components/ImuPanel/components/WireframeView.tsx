@@ -87,6 +87,7 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     ctx.arc(cx, cy, 2, 0, Math.PI * 2);
     ctx.fillStyle = c.muted;
     ctx.fill();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [roll, pitch, yaw, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {

@@ -86,6 +86,7 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`${headingNormalized.toFixed(0)}°`, cx, cy);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [yaw, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {
