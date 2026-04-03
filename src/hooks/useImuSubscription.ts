@@ -4,8 +4,7 @@ import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
 import type { Vector3 } from '@/types/ros2-primitives.types';
-
-const vector3Schema = z.object({ x: z.number(), y: z.number(), z: z.number() });
+import { vector3Schema } from '@/types/ros2-schemas';
 
 const quaternionSchema = z.object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() });
 

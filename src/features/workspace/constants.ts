@@ -20,13 +20,6 @@ export const IMU_VIZ_OPTIONS: readonly { value: ImuVariant; label: string; short
     { value: '3d', label: '3D Wireframe', shortLabel: '3D' },
   ];
 
-export const COMPASS_CARDINALS = [
-  { label: 'N', deg: 0 },
-  { label: 'E', deg: 90 },
-  { label: 'S', deg: 180 },
-  { label: 'W', deg: 270 },
-] as const;
-
 export const PITCH_LADDER_DEGREES = [-20, -10, 10, 20] as const;
 
 export const LIDAR_ZOOM_MIN = 0.5;
@@ -36,8 +29,6 @@ export const LIDAR_ZOOM_MAX = 4;
 export const LIDAR_ZOOM_STEP = 0.2;
 
 export const LIDAR_GRID_LINE_COUNT = 8;
-
-export const LIDAR_POINT_RADIUS = 2;
 
 export const LIDAR_ROBOT_SIZE = 10;
 

@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
 import { useZoom } from '@/hooks/useZoom';
+import { LIDAR_POINT_RADIUS } from '@/constants/canvas';
 import {
   LIDAR_ZOOM_MIN,
   LIDAR_ZOOM_MAX,
   LIDAR_ZOOM_STEP,
   LIDAR_GRID_LINE_COUNT,
-  LIDAR_POINT_RADIUS,
   LIDAR_ROBOT_SIZE,
   WORKSPACE_LIDAR_COLOR_FALLBACKS,
   WORKSPACE_LIDAR_TOKEN_MAP,
