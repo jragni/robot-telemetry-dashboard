@@ -33,7 +33,6 @@ export function AddRobotModal() {
   const [isConnecting, setIsConnecting] = useState(false);
   const addRobot = useConnectionStore((s) => s.addRobot);
   const connectRobot = useConnectionStore((s) => s.connectRobot);
-  const robots = useConnectionStore((s) => s.robots);
 
   const resetForm = useCallback(() => {
     setName('');
@@ -69,13 +68,6 @@ export function AddRobotModal() {
 
     const { name: validName, url: validUrl } = result.data;
 
-    // Duplicate check
-    const id = validName.toLowerCase().replace(/\s+/g, '-');
-    if (robots[id]) {
-      setErrors((prev) => ({ ...prev, name: 'A robot with that name already exists' }));
-      return;
-    }
-
     // Normalize URL
     const normalizedUrl = normalizeRosbridgeUrl(validUrl);
     if (!normalizedUrl) {
@@ -89,7 +81,12 @@ export function AddRobotModal() {
 
     try {
       await ConnectionManager.testConnection(normalizedUrl);
-      addRobot(validName, normalizedUrl);
+      const id = addRobot(validName, normalizedUrl);
+      if (id === null) {
+        setErrors((prev) => ({ ...prev, name: 'A robot with that name already exists' }));
+        setIsConnecting(false);
+        return;
+      }
       await connectRobot(id);
       resetForm();
       setOpen(false);
