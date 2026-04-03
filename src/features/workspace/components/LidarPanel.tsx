@@ -3,6 +3,7 @@ import { Plus, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useThemeChange } from '@/hooks/useThemeChange';
+import { useZoom } from '@/hooks/useZoom';
 import {
   LIDAR_ZOOM_MIN,
   LIDAR_ZOOM_MAX,
@@ -26,7 +27,11 @@ import type { LidarPanelProps } from '@/features/workspace/types/LidarPanel.type
 export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [zoom, setZoom] = useState(1);
+  const { zoom, zoomIn, zoomOut, handleWheel } = useZoom({
+    min: LIDAR_ZOOM_MIN,
+    max: LIDAR_ZOOM_MAX,
+    step: LIDAR_ZOOM_STEP,
+  });
   const [canvasSize, setCanvasSize] = useState(300);
   const [themeVersion, setThemeVersion] = useState(0);
 
@@ -219,24 +224,6 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
   useEffect(() => {
     draw();
   }, [draw, canvasSize]);
-
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    setZoom((prev) =>
-      Math.min(
-        LIDAR_ZOOM_MAX,
-        Math.max(LIDAR_ZOOM_MIN, prev + (e.deltaY > 0 ? -LIDAR_ZOOM_STEP : LIDAR_ZOOM_STEP)),
-      ),
-    );
-  }, []);
-
-  const zoomIn = useCallback(() => {
-    setZoom((prev) => Math.min(LIDAR_ZOOM_MAX, prev + LIDAR_ZOOM_STEP));
-  }, []);
-
-  const zoomOut = useCallback(() => {
-    setZoom((prev) => Math.max(LIDAR_ZOOM_MIN, prev - LIDAR_ZOOM_STEP));
-  }, []);
 
   const closestPoint = points.length > 0 ? Math.min(...points.map((p) => p.distance)) : null;
 
