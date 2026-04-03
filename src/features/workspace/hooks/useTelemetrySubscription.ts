@@ -166,6 +166,10 @@ export function useTelemetrySubscription(
     setSeries(s);
   }), []);
 
+  useEffect(() => {
+    return () => { throttledSet.cancel(); };
+  }, [throttledSet]);
+
   const onMessage = useCallback((msg: unknown) => {
     try {
       const values = parseMessage(msg, messageType);
