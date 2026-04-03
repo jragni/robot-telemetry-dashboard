@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { useResponsiveSize } from '@/hooks/useResponsiveSize';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { COMPASS_CARDINALS } from '@/constants/canvas';
 import {
   COMPASS_STRIP_WIDTH_MIN,
   COMPASS_STRIP_WIDTH_MAX,
@@ -13,7 +14,6 @@ import {
   COMPASS_FADE_WIDTH,
   COMPASS_POINTER_HALF_WIDTH,
   COMPASS_POINTER_HEIGHT,
-  COMPASS_CARDINALS,
   COMPASS_DEGREES_VISIBLE,
   COMPASS_TOKEN_MAP,
   COMPASS_COLOR_FALLBACKS,

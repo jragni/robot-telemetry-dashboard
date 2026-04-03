@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState } from 'react';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { COMPASS_CARDINALS } from '@/constants/canvas';
 import {
   COMPASS_TICK_MAJOR_INTERVAL,
   COMPASS_TICK_MINOR_INTERVAL,
-  COMPASS_CARDINALS,
   COMPASS_DEGREES_VISIBLE,
   COMPASS_TOKEN_MAP,
   COMPASS_COLOR_FALLBACKS,

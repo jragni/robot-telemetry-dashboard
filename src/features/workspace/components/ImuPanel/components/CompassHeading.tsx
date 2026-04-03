@@ -1,8 +1,8 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { normalizeHeading } from '@/utils/normalizeHeading';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { COMPASS_CARDINALS } from '@/constants/canvas';
 import {
-  COMPASS_CARDINALS,
   COMPASS_HEADING_COLOR_FALLBACKS,
   COMPASS_HEADING_TOKEN_MAP,
 } from '@/features/workspace/constants';

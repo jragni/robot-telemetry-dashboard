@@ -26,13 +26,6 @@ export const COMPASS_TICK_MAJOR_INTERVAL = 30;
 
 export const COMPASS_TICK_MINOR_INTERVAL = 10;
 
-export const COMPASS_CARDINALS: readonly { label: string; deg: number }[] = [
-  { label: 'N', deg: 0 },
-  { label: 'E', deg: 90 },
-  { label: 'S', deg: 180 },
-  { label: 'W', deg: 270 },
-];
-
 export const COMPASS_DEGREES_VISIBLE = 120;
 
 export const COMPASS_TICK_HEIGHT_MAJOR = 12;
@@ -100,8 +93,6 @@ export const VIDEO_STATUS_LABELS: Record<'idle' | 'connecting' | 'reconnecting' 
 
 export const HUD_PANEL_BASE =
   'bg-surface-base/60 backdrop-blur-sm border border-accent/20 border-t-accent/10 rounded-sm pointer-events-auto';
-
-export const LIDAR_POINT_RADIUS = 2;
 
 export const LIDAR_POINT_GLOW = 2;
 
