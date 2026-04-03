@@ -2,6 +2,8 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 
 import type { ExpandableRowProps } from '@/features/workspace/types/SystemStatusPanel.types';
 
+import { ExpandableRowList } from './ExpandableRowList';
+
 /** ExpandableRow
  * @description Renders a status row that expands to show a list of names
  *  when toggled. Controlled by parent for accordion behavior.
@@ -11,7 +13,7 @@ import type { ExpandableRowProps } from '@/features/workspace/types/SystemStatus
  * @param expanded - Whether this row is currently expanded.
  * @param onToggle - Callback to toggle expand/collapse.
  */
-export function ExpandableRow({ label, count, names, expanded, onToggle }: ExpandableRowProps) {
+export function ExpandableRow({ count, expanded, label, names, onToggle }: ExpandableRowProps) {
   const hasNames = names.length > 0;
   const Chevron = expanded ? ChevronDown : ChevronRight;
 
@@ -30,13 +32,7 @@ export function ExpandableRow({ label, count, names, expanded, onToggle }: Expan
           {hasNames && <Chevron className="size-3 text-text-primary" />}
         </span>
       </button>
-      {expanded && (
-          <ul className="ml-3 mt-1 mb-1 max-h-32 overflow-y-auto scrollbar-thin border-l border-border pl-2">
-            {names.map((name) => (
-              <li key={name} className="font-mono text-xs text-text-primary leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">{name}</li>
-            ))}
-          </ul>
-      )}
+      {expanded && <ExpandableRowList names={names} />}
     </div>
   );
 }
