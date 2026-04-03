@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Monitor } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import type { DesktopOnlyGateProps } from '@/types/DesktopOnlyGate.types';
 
 /** DesktopOnlyGate
  * @description Renders a warning overlay when the viewport is below 1024px,
@@ -8,7 +10,7 @@ import { Button } from '@/components/ui/button';
  *  Anyway" button dismisses the gate for the session.
  * @param children - The workspace content to render when gate is dismissed or viewport is wide enough.
  */
-export function DesktopOnlyGate({ children }: { readonly children: React.ReactNode }) {
+export function DesktopOnlyGate({ children }: DesktopOnlyGateProps) {
   const [dismissed, setDismissed] = useState(false);
   const [isNarrow, setIsNarrow] = useState(false);
 

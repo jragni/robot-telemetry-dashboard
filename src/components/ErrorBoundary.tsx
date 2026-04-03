@@ -1,15 +1,8 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Component, type ErrorInfo } from 'react';
 import { AlertOctagon, RotateCcw } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
-
-interface ErrorBoundaryProps {
-  children: ReactNode;
-}
-
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error: Error | null;
-}
+import type { ErrorBoundaryProps, ErrorBoundaryState } from '@/types/ErrorBoundary.types';
 
 /** ErrorBoundary
  * @description Catches unhandled errors in the React component tree and renders
