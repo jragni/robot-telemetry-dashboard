@@ -30,26 +30,26 @@ export function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ErrorBoundary>
-      <Suspense fallback={<div className="flex h-screen items-center justify-center font-sans text-sm text-text-secondary">Loading...</div>}>
-      <Routes>
-        {/* Landing page — standalone, outside AppShell, forces dark theme */}
-        <Route path="/" element={<LandingPage />} />
+        <Suspense fallback={<div className="flex h-screen items-center justify-center font-sans text-sm text-text-secondary">Loading...</div>}>
+          <Routes>
+            {/* Landing page — standalone, outside AppShell, forces dark theme */}
+            <Route path="/" element={<LandingPage />} />
 
-        {/* App routes — inside AppShell with sidebar/header/statusbar */}
-        <Route element={<AppShell />}>
-          <Route path="/fleet" element={<FleetOverview />} />
-          <Route path="/robot/:id" element={<RobotWorkspace />} />
-          <Route path="/pilot/:id" element={<PilotView />} />
-          <Route path="/demo" element={<FleetOverview />} />
-          <Route path="/map" element={<ComingSoon label="Map" />} />
-          <Route path="/settings" element={<ComingSoon label="Settings" />} />
-          <Route path="/mockups" element={<MockupsPage />} />
-          <Route path="/dev/components" element={<ComingSoon label="Dev Components" />} />
-          <Route path="/dev/workspace" element={<ComingSoon label="Dev Workspace" />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-      </Suspense>
+            {/* App routes — inside AppShell with sidebar/header/statusbar */}
+            <Route element={<AppShell />}>
+              <Route path="/fleet" element={<FleetOverview />} />
+              <Route path="/robot/:id" element={<RobotWorkspace />} />
+              <Route path="/pilot/:id" element={<PilotView />} />
+              <Route path="/demo" element={<FleetOverview />} />
+              <Route path="/map" element={<ComingSoon label="Map" />} />
+              <Route path="/settings" element={<ComingSoon label="Settings" />} />
+              <Route path="/mockups" element={<MockupsPage />} />
+              <Route path="/dev/components" element={<ComingSoon label="Dev Components" />} />
+              <Route path="/dev/workspace" element={<ComingSoon label="Dev Workspace" />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </Suspense>
       </ErrorBoundary>
     </BrowserRouter>
   );
