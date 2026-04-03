@@ -8,11 +8,15 @@ export interface StatusRowProps {
 }
 
 export interface ExpandableRowProps {
-  readonly label: string;
   readonly count: number;
-  readonly names: readonly string[];
   readonly expanded: boolean;
+  readonly label: string;
+  readonly names: readonly string[];
   readonly onToggle: () => void;
+}
+
+export interface ExpandableRowListProps {
+  readonly names: readonly string[];
 }
 
 export interface SystemStatusPanelProps {

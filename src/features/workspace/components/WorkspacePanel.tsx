@@ -30,6 +30,8 @@ export function WorkspacePanel({
   maximized,
   children,
 }: WorkspacePanelProps) {
+  const canMinimize = !!onMinimize && !maximized;
+
   return (
     <article className="relative bg-surface-primary border border-border rounded-sm shadow-glow-top flex flex-col h-full">
       <header className="flex items-center gap-2 px-3 h-9 shrink-0 border-b border-border min-w-0">
@@ -46,7 +48,7 @@ export function WorkspacePanel({
         )}
         <div className="ml-auto flex items-center gap-1 shrink-0">
           {headerActions}
-          {!!onMinimize && !maximized && (
+          {canMinimize && (
               <Button
                 variant="ghost"
                 size="icon-xs"

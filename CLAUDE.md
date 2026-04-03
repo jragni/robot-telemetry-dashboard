@@ -50,53 +50,26 @@ Before writing ANY component file, verify:
 | Styling & Tokens | [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md)       | Colors, typography, spacing, panel contract, animations, buttons, empty states, responsive breakpoints |
 | Folder Structure | [docs/FOLDER-STRUCTURE.md](docs/FOLDER-STRUCTURE.md) | Feature domains, file naming, scoping rules, shadcn-first, constants/helpers conventions               |
 | Testing          | [docs/TESTING.md](docs/TESTING.md)                   | Co-location, unit tests, integration tests, E2E, quality gate                                          |
+| Code Conventions | [docs/CODE-CONVENTIONS.md](docs/CODE-CONVENTIONS.md) | File structure, imports, naming, comments, components, state management, semantic HTML, PR conventions  |
+| Dev Workflow     | [docs/DEVELOPMENT-WORKFLOW.md](docs/DEVELOPMENT-WORKFLOW.md) | Pair programming pipeline, 5-role agent team, audit process, wave ordering, PR conventions       |
 
 These docs are the source of truth. CLAUDE.md does not duplicate their content.
 
+## Agents
+
+Project-level agent definitions live in `.claude/agents/`. These are the team roles used by the `/codebase-audit` workflow.
+
+| Agent | File | Role |
+|-------|------|------|
+| Codebase Auditor | `.claude/agents/codebase-auditor.md` | Read-only audit, produces structured findings |
+| Codebase Fixer | `.claude/agents/codebase-fixer.md` | Implements fixes per ticket in isolated worktrees |
+| PR Reviewer | `.claude/agents/pr-reviewer.md` | First-tier PR review, comments only, never merges |
+| PR Responder | `.claude/agents/pr-responder.md` | Addresses review feedback, never mentions AI |
+| Spec Conformance | `.claude/agents/spec-conformance.md` | Checks code against CODE-CONVENTIONS.md |
+
 ## Code Conventions
 
-- One component per `.tsx` file
-- Types in feature `types/` folder as `{ComponentName}.types.ts` (named after the primary consumer) — never inline in `.tsx` files, never co-located next to components. Shared types (cross-feature) go in `src/types/`.
-- No barrel files (ADR-001) — import directly from source
-- Named exports only
-- No `@ts-ignore`, `eslint-disable`, `as any`
-- **Status indicators:** Triple-redundant (color + icon + text label per MIL-STD-1472H). Terminology: Nominal / Caution / Critical / Offline.
-- **Feature folder structure:** Each feature has `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types/` for interfaces. Page-level components (e.g., `FleetOverview`, `RobotWorkspace`) live at the feature root. Mock/demo components and dev views live in `mocks/` — never mix mock components with production components.
-- **Hook folder structure:** When a hook grows beyond a single file (has its own types, constants, or helpers), give it its own folder: `hooks/{hookName}/` with `{hookName}.ts`, `types.ts`, `constants.ts`, `helpers.ts`. Same pattern as component folders.
-- **Shared component folders:** Components in `src/components/` with 2+ files (component + constants/types) get their own folder (e.g., `src/components/Sidebar/`). Single-file components stay flat.
-- **Docstrings:** All exported components and functions must have JSDoc docstrings following [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html). Format: `/** ComponentName` on the first line, `@description` on the next line with a verb phrase in third person. `@param` and `@returns` required where applicable. Lines wrap at 100 characters — continue on the next line indented with `*  `. Example:
-  ```ts
-  /** MyComponent
-   * @description Renders the widget with configuration options.
-   * @param label - The display label for the widget.
-   */
-  ```
-- **Conditional rendering:** Use `&&` or ternaries. Ternaries with two branches (if/else) stay as ternaries. No wrapper components for conditional rendering.
-- **Semantic HTML:** Use proper semantic elements (`<section>`, `<nav>`, `<article>`, `<aside>`, `<header>`, `<footer>`, `<main>`, `<figure>`) instead of generic `<div>`. Interactive elements must be `<button>` or `<a>`, never `<div onClick>`. Navigation links use `<Link>` or `<a>`, not `<button>`. All interactive elements need `aria-label` when the visible text doesn't describe the action.
-- **Typography enforcement:** Every text element must have an explicit font family (`font-sans` or `font-mono`). Labels = `font-sans`, telemetry data = `font-mono`. Only 12/14/20/36px sizes (text-xs/text-sm/text-xl/text-4xl). Only weights 400/600. Canvas text must use design system font sizes (12/14/20/36px).
-- **Import aliases:** Use `@/` for any import outside the current feature directory. Relative imports (`./`, `../`) only for siblings within the same feature folder. Never use `../../` or deeper — use `@/` instead.
-- **Import ordering:** Three groups separated by blank lines. Within each group, order: hooks → 3rd party components → `@/` components → types. Alphabetize by import name within each sub-group. React is always the first import.
-  ```ts
-  // 3rd party — React first, then hooks, libraries, types
-  import { useEffect, useMemo } from 'react';
-  import { useParams } from 'react-router-dom';
-  import { z } from 'zod';
-  import type { Ros } from 'roslib';
-
-  // Aliased — hooks → 3rd party components → @/ components → types
-  import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-  import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-  import { Activity, Camera } from 'lucide-react';
-  import { Button } from '@/components/ui/button';
-  import type { PanelId } from '@/features/workspace/types/panel.types';
-
-  // Relative — hooks → components → types
-  import { useMinimizedPanels } from './hooks/useMinimizedPanels';
-  import { SystemStatusPanel } from './components/SystemStatusPanel';
-  import type { WorkspaceProps } from './types/Workspace.types';
-  ```
-- **Object key ordering:** All object literals — keys in alphabetical order.
-- **No React Context:** Use Zustand with selectors for all shared state. No `createContext`/`useContext`.
+See [docs/CODE-CONVENTIONS.md](docs/CODE-CONVENTIONS.md) for the full rule set.
 
 ## Connection Behavior
 
