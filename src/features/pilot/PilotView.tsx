@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -41,20 +42,27 @@ export function PilotView() {
   const battery = useBatterySubscription(ros, availableTopics);
 
   // Convert polar LidarPoints (workspace) to Cartesian (pilot minimap)
-  const pilotLidarPoints = lidar.points.map((p) => ({
-    x: Math.cos(p.angle) * p.distance,
-    y: Math.sin(p.angle) * p.distance,
-    distance: p.distance,
-  }));
+  const pilotLidarPoints = useMemo(
+    () =>
+      lidar.points.map((p) => ({
+        x: Math.cos(p.angle) * p.distance,
+        y: Math.sin(p.angle) * p.distance,
+        distance: p.distance,
+      })),
+    [lidar.points],
+  );
 
-  const telemetry = {
-    imu: connected ? { roll: imu.roll, pitch: imu.pitch, yaw: imu.yaw } : null,
-    lidarPoints: pilotLidarPoints,
-    lidarRangeMax: lidar.rangeMax,
-    battery: battery ? { percentage: battery.percentage, voltage: battery.voltage } : null,
-    linearSpeed: 0,
-    uptimeSeconds: null,
-  };
+  const telemetry = useMemo(
+    () => ({
+      imu: connected ? { roll: imu.roll, pitch: imu.pitch, yaw: imu.yaw } : null,
+      lidarPoints: pilotLidarPoints,
+      lidarRangeMax: lidar.rangeMax,
+      battery: battery ? { percentage: battery.percentage, voltage: battery.voltage } : null,
+      linearSpeed: 0,
+      uptimeSeconds: null,
+    }),
+    [connected, imu.roll, imu.pitch, imu.yaw, pilotLidarPoints, lidar.rangeMax, battery],
+  );
 
   if (!robot) {
     return (
