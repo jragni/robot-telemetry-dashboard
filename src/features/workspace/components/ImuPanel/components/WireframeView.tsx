@@ -1,7 +1,8 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { formatDegrees } from '@/utils/formatDegrees';
 import { normalizeHeading } from '@/utils/normalizeHeading';
-import { useThemeChange } from '@/hooks/useThemeChange';
+import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { WIREFRAME_COLOR_FALLBACKS, WIREFRAME_TOKEN_MAP } from '@/features/workspace/constants';
 import type { WireframeViewProps } from '@/features/workspace/types/ImuPanel.types';
 import { CUBE_VERTICES, CUBE_EDGES } from '../constants';
 
@@ -15,35 +16,18 @@ import { CUBE_VERTICES, CUBE_EDGES } from '../constants';
  */
 export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const colorsRef = useRef({
-    accent: 'oklch(0.70 0.20 230)',
-    border: 'rgba(255,255,255,0.15)',
-    muted: 'oklch(0.57 0.02 260)',
-  });
-  const colorsResolved = useRef(false);
 
-  const [themeVersion, setThemeVersion] = useState(0);
-
-  useThemeChange(() => {
-    colorsResolved.current = false;
-    setThemeVersion((v) => v + 1);
-  });
+  const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
+    WIREFRAME_COLOR_FALLBACKS,
+    WIREFRAME_TOKEN_MAP,
+  );
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    if (!colorsResolved.current) {
-      const styles = getComputedStyle(canvas);
-      colorsRef.current = {
-        accent: styles.getPropertyValue('--color-accent') || colorsRef.current.accent,
-        border: styles.getPropertyValue('--color-border') || colorsRef.current.border,
-        muted: styles.getPropertyValue('--color-text-muted') || colorsRef.current.muted,
-      };
-      colorsResolved.current = true;
-    }
+    resolveColors();
     const c = colorsRef.current;
 
     const size = canvas.width;
@@ -103,8 +87,7 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     ctx.arc(cx, cy, 2, 0, Math.PI * 2);
     ctx.fillStyle = c.muted;
     ctx.fill();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
-  }, [roll, pitch, yaw, themeVersion]);
+  }, [roll, pitch, yaw, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {
     draw();

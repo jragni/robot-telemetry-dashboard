@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 
 import { Activity, Camera, Compass, Crosshair, Gamepad2, Radar, Shield } from 'lucide-react';
+import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
 
 import { CameraPanel } from './components/CameraPanel';
@@ -108,4 +109,86 @@ export const MOBILE_PANEL_COMPONENTS: Record<MobileDataPanelId, ComponentType<ob
   lidar: LidarPanel as ComponentType<object>,
   status: SystemStatusPanel as ComponentType<object>,
   telemetry: TelemetryPanel as ComponentType<object>,
+};
+
+export const TELEMETRY_TOKEN_MAP: Record<string, string> = {
+  border: '--color-border',
+  textMuted: '--color-text-muted',
+  textPrimary: '--color-text-primary',
+  textSecondary: '--color-text-secondary',
+};
+
+export const TELEMETRY_COLOR_FALLBACKS = {
+  border: CANVAS_FALLBACKS.border,
+  textMuted: CANVAS_FALLBACKS.textMuted,
+  textPrimary: CANVAS_FALLBACKS.textPrimary,
+  textSecondary: CANVAS_FALLBACKS.textSecondary,
+};
+
+export const WORKSPACE_LIDAR_TOKEN_MAP: Record<string, string> = {
+  accent: '--color-accent',
+  border: '--color-border',
+  caution: '--color-status-caution',
+  critical: '--color-status-critical',
+  nominal: '--color-status-nominal',
+  surfaceBase: '--color-surface-base',
+  textMuted: '--color-text-muted',
+  textPrimary: '--color-text-primary',
+  textSecondary: '--color-text-secondary',
+};
+
+export const WORKSPACE_LIDAR_COLOR_FALLBACKS = {
+  accent: CANVAS_FALLBACKS.accent,
+  border: CANVAS_FALLBACKS.border,
+  caution: CANVAS_FALLBACKS.statusCaution,
+  critical: CANVAS_FALLBACKS.statusCritical,
+  nominal: CANVAS_FALLBACKS.statusNominal,
+  surfaceBase: CANVAS_FALLBACKS.surfaceBase,
+  textMuted: CANVAS_FALLBACKS.textMuted,
+  textPrimary: CANVAS_FALLBACKS.textPrimary,
+  textSecondary: CANVAS_FALLBACKS.textSecondary,
+};
+
+export const COMPASS_HEADING_TOKEN_MAP: Record<string, string> = {
+  accent: '--color-accent',
+  border: '--color-border',
+  muted: '--color-text-muted',
+  primary: '--color-text-primary',
+};
+
+export const COMPASS_HEADING_COLOR_FALLBACKS = {
+  accent: CANVAS_FALLBACKS.accent,
+  border: CANVAS_FALLBACKS.border,
+  muted: CANVAS_FALLBACKS.textMuted,
+  primary: CANVAS_FALLBACKS.textPrimary,
+};
+
+export const WIREFRAME_TOKEN_MAP: Record<string, string> = {
+  accent: '--color-accent',
+  border: '--color-border',
+  muted: '--color-text-muted',
+};
+
+export const WIREFRAME_COLOR_FALLBACKS = {
+  accent: CANVAS_FALLBACKS.accent,
+  border: CANVAS_FALLBACKS.border,
+  muted: CANVAS_FALLBACKS.textMuted,
+};
+
+export const ATTITUDE_TOKEN_MAP: Record<string, string> = {
+  accent: '--color-accent',
+  border: '--color-border',
+  ground: '--color-imu-ground',
+  sky: '--color-imu-sky',
+  textPrimary: '--color-text-primary',
+  textSecondary: '--color-text-secondary',
+};
+
+export const ATTITUDE_COLOR_FALLBACKS = {
+  accent: CANVAS_FALLBACKS.accent,
+  border: CANVAS_FALLBACKS.border,
+  ground: CANVAS_FALLBACKS.imuGround,
+  sky: CANVAS_FALLBACKS.imuSky,
+  textPrimary: CANVAS_FALLBACKS.textPrimary,
+  textSecondary: CANVAS_FALLBACKS.textSecondary,
 };
