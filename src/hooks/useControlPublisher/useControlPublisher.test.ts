@@ -121,7 +121,7 @@ describe('useControlPublisher', () => {
       useControlPublisher(),
     );
 
-    expect(() => { unmount(); }).not.toThrow();
+    expect(() => unmount()).not.toThrow();
     expect(mockPublish).not.toHaveBeenCalled();
   });
 });
