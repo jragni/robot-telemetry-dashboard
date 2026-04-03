@@ -71,10 +71,32 @@ These docs are the source of truth. CLAUDE.md does not duplicate their content.
    * @param label - The display label for the widget.
    */
   ```
-- **Conditional rendering:** Use `<ConditionalRender>` component instead of `{condition && <X />}` patterns. Ternaries with two branches (if/else) stay as ternaries.
+- **Conditional rendering:** Use `&&` or ternaries. Ternaries with two branches (if/else) stay as ternaries. No wrapper components for conditional rendering.
 - **Semantic HTML:** Use proper semantic elements (`<section>`, `<nav>`, `<article>`, `<aside>`, `<header>`, `<footer>`, `<main>`, `<figure>`) instead of generic `<div>`. Interactive elements must be `<button>` or `<a>`, never `<div onClick>`. Navigation links use `<Link>` or `<a>`, not `<button>`. All interactive elements need `aria-label` when the visible text doesn't describe the action.
 - **Typography enforcement:** Every text element must have an explicit font family (`font-sans` or `font-mono`). Labels = `font-sans`, telemetry data = `font-mono`. Only 12/14/20/36px sizes (text-xs/text-sm/text-xl/text-4xl). Only weights 400/600. Canvas text must use design system font sizes (12/14/20/36px).
 - **Import aliases:** Use `@/` for any import outside the current feature directory. Relative imports (`./`, `../`) only for siblings within the same feature folder. Never use `../../` or deeper — use `@/` instead.
+- **Import ordering:** Three groups separated by blank lines. Within each group, order: hooks → 3rd party components → `@/` components → types. Alphabetize by import name within each sub-group. React is always the first import.
+  ```ts
+  // 3rd party — React first, then hooks, libraries, types
+  import { useEffect, useMemo } from 'react';
+  import { useParams } from 'react-router-dom';
+  import { z } from 'zod';
+  import type { Ros } from 'roslib';
+
+  // Aliased — hooks → 3rd party components → @/ components → types
+  import { useBatterySubscription } from '@/hooks/useBatterySubscription';
+  import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+  import { Activity, Camera } from 'lucide-react';
+  import { Button } from '@/components/ui/button';
+  import type { PanelId } from '@/features/workspace/types/panel.types';
+
+  // Relative — hooks → components → types
+  import { useMinimizedPanels } from './hooks/useMinimizedPanels';
+  import { SystemStatusPanel } from './components/SystemStatusPanel';
+  import type { WorkspaceProps } from './types/Workspace.types';
+  ```
+- **Object key ordering:** All object literals — keys in alphabetical order.
+- **No React Context:** Use Zustand with selectors for all shared state. No `createContext`/`useContext`.
 
 ## Connection Behavior
 
@@ -83,7 +105,7 @@ These docs are the source of truth. CLAUDE.md does not duplicate their content.
 
 ## Architecture
 
-- **Data layer:** roslib 2.x (pure ESM) → RxJS (streams) → Zustand (UI state)
+- **Data layer:** roslib 2.x (pure ESM) → RxJS (streams) → Zustand (UI state). No React Context for state — Zustand only.
 - **Design:** Midnight Operations aesthetic (deep blue-shifted charcoal + blue accent, hue 260)
 - **Stack:** React 19, TypeScript 5.9, Vite 7, Tailwind CSS v4, shadcn/ui + Radix, Vitest, Playwright
 - **Fonts:** Exo (UI sans-serif) + Roboto Mono (telemetry data)

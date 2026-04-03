@@ -163,6 +163,30 @@ Helpers, constants, hooks, stores, and types all follow the same scoping pattern
 
 Start local, promote when a second consumer appears. Never prematurely share.
 
+## Import Ordering
+
+Three groups separated by blank lines. Within each group: hooks → 3rd party components → `@/` components → types. Alphabetize by import name. React is always first.
+
+```ts
+// 3rd party — React first, then hooks, libraries, types
+import { useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import { z } from 'zod';
+import type { Ros } from 'roslib';
+
+// Aliased — hooks → 3rd party components → @/ components → types
+import { useBatterySubscription } from '@/hooks/useBatterySubscription';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { Activity, Camera } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import type { PanelId } from '@/features/workspace/types/panel.types';
+
+// Relative — hooks → components → types
+import { useMinimizedPanels } from './hooks/useMinimizedPanels';
+import { SystemStatusPanel } from './components/SystemStatusPanel';
+import type { WorkspaceProps } from './types/Workspace.types';
+```
+
 ## Dev Routes
 
 Dev routes live under `/dev/*` and serve two purposes:

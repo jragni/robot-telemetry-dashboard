@@ -84,8 +84,9 @@ export function RobotWorkspace() {
       if (topics.length > 0) {
         const current = selectedTopics[panelId];
         const currentExists = topics.some((t) => t.name === current);
-        if (!currentExists) {
-          setRobotTopic(id, panelId, topics[0].name);
+        const firstTopic = topics[0];
+        if (!currentExists && firstTopic) {
+          setRobotTopic(id, panelId, firstTopic.name);
         }
       }
     }
@@ -139,7 +140,7 @@ export function RobotWorkspace() {
         onConnect={connect}
         onDisconnect={disconnect}
         videoRef={videoRef}
-        selectedCameraTopic={selectedTopics.camera}
+        selectedCameraTopic={selectedTopics.camera ?? ''}
         lidarPoints={lidar.points}
         lidarRangeMax={lidar.rangeMax}
         uptimeSeconds={uptimeSeconds}
