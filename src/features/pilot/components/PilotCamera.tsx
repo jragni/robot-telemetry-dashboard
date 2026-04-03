@@ -1,5 +1,5 @@
-import { Camera } from 'lucide-react';
-import { ConditionalRender } from '@/components/ConditionalRender';
+import { CameraEmptyState } from '@/components/CameraEmptyState';
+
 import { VIDEO_STATUS_LABELS } from '../constants';
 import type { PilotCameraProps } from '../types/PilotView.types';
 
@@ -11,14 +11,12 @@ import type { PilotCameraProps } from '../types/PilotView.types';
  * @param videoStatus - Current WebRTC stream connection status.
  * @param videoRef - Ref to attach the MediaStream to the video element.
  */
-export function PilotCamera({ videoStatus, videoRef }: PilotCameraProps) {
+export function PilotCamera({ videoRef, videoStatus }: PilotCameraProps) {
   const isStreaming = videoStatus === 'streaming';
 
   return (
     <div className="absolute inset-0" aria-label="Camera feed">
-      <ConditionalRender
-        shouldRender={isStreaming}
-        Component={
+      {isStreaming ? (
           <video
             ref={videoRef}
             autoPlay
@@ -26,22 +24,14 @@ export function PilotCamera({ videoStatus, videoRef }: PilotCameraProps) {
             muted
             className="absolute inset-0 w-full h-full object-cover"
           />
-        }
-      />
-
-      <ConditionalRender
-        shouldRender={!isStreaming}
-        Component={
+      ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-surface-base">
-            <div className="flex flex-col items-center gap-3">
-              <Camera className="size-12 text-text-muted" aria-hidden="true" />
-              <p className="font-mono text-sm text-text-muted">
-                {videoStatus !== 'streaming' ? VIDEO_STATUS_LABELS[videoStatus] : ''}
-              </p>
-            </div>
+            <CameraEmptyState
+              message={VIDEO_STATUS_LABELS[videoStatus]}
+              variant="hero"
+            />
           </div>
-        }
-      />
+      )}
     </div>
   );
 }

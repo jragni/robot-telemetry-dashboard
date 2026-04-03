@@ -1,9 +1,3 @@
-/**
- * ROS2 Primitive Types
- * @description Common ROS2 type primitives used across message definitions.
- *  Matches rosbridge_suite wire format for drop-in roslib compatibility.
- */
-
 export interface ROSHeader {
   readonly seq: number;
   readonly stamp: {

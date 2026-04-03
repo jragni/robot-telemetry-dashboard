@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { RobotColor } from './useConnectionStore.types';
 
 const ROBOT_COLORS: readonly RobotColor[] = [
@@ -15,40 +16,41 @@ const ROBOT_COLORS: readonly RobotColor[] = [
   'rose',
 ];
 
-/** assignRobotColor
- * @description Assigns a color to a robot deterministically based on
- *  its name hash.
- * @param name - The robot name to hash.
- * @returns The assigned robot color.
- */
-/** deriveWebRtcUrl
- * @description Derives the WebRTC signaling URL from a robot's base WebSocket
- *  URL. Appends `/webrtc` to the base. Returns empty string if no URL.
- * @param baseUrl - The robot's base URL (e.g., ws://192.168.1.10).
- */
+export function toRobotId(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export const robotConnectionSchema = z.object({
+  color: z.string().optional(),
+  id: z.string(),
+  lastError: z.string().nullable().optional(),
+  lastSeen: z.number().nullable().optional(),
+  name: z.string(),
+  selectedTopics: z.record(z.string(), z.string()).optional(),
+  status: z.string().optional(),
+  url: z.string(),
+});
+
+export const persistedStateSchema = z.object({
+  robots: z.record(z.string(), robotConnectionSchema),
+});
 export function deriveWebRtcUrl(baseUrl: string): string {
   if (!baseUrl) return '';
   const clean = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
   return `${clean}/webrtc`;
 }
 
-/** deriveRosbridgeUrl
- * @description Derives the rosbridge WebSocket URL from a robot's base URL.
- *  Appends `/rosbridge` to the base. Returns empty string if no URL.
- * @param baseUrl - The robot's base URL (e.g., ws://192.168.1.10).
- */
 export function deriveRosbridgeUrl(baseUrl: string): string {
   if (!baseUrl) return '';
   const clean = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
   return `${clean}/rosbridge`;
 }
 
-/** assignRobotColor
- * @description Assigns a color to a robot deterministically based on
- *  its name hash.
- * @param name - The robot name to hash.
- * @returns The assigned robot color.
- */
 export function assignRobotColor(name: string): RobotColor {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {

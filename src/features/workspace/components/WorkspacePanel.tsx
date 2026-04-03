@@ -1,6 +1,6 @@
 import { Maximize2, Minimize2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ConditionalRender } from '@/components/ConditionalRender';
+import { PanelErrorBoundary } from '@/components/PanelErrorBoundary';
 import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
 import { TopicSelector } from './TopicSelector';
 
@@ -30,6 +30,8 @@ export function WorkspacePanel({
   maximized,
   children,
 }: WorkspacePanelProps) {
+  const canMinimize = !!onMinimize && !maximized;
+
   return (
     <article className="relative bg-surface-primary border border-border rounded-sm shadow-glow-top flex flex-col h-full">
       <header className="flex items-center gap-2 px-3 h-9 shrink-0 border-b border-border min-w-0">
@@ -46,9 +48,7 @@ export function WorkspacePanel({
         )}
         <div className="ml-auto flex items-center gap-1 shrink-0">
           {headerActions}
-          <ConditionalRender
-            shouldRender={!!onMinimize && !maximized}
-            Component={
+          {canMinimize && (
               <Button
                 variant="ghost"
                 size="icon-xs"
@@ -58,8 +58,7 @@ export function WorkspacePanel({
               >
                 <Minus className="size-3" />
               </Button>
-            }
-          />
+          )}
           {maximized ? (
             <Button
               variant="ghost"
@@ -84,7 +83,9 @@ export function WorkspacePanel({
         </div>
       </header>
       <div className="flex-1 flex items-center justify-center p-4 min-h-0 overflow-hidden">
-        {children}
+        <PanelErrorBoundary>
+          {children}
+        </PanelErrorBoundary>
       </div>
     </article>
   );

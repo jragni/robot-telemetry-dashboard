@@ -1,24 +1,12 @@
-/**
- * ROS2 Message Types
- * @description Full ROS2 message interfaces matching rosbridge_suite wire format.
- *  Ported from EPIC/refactor-for-quality-of-life branch. These are the raw shapes
- *  that roslib delivers; panel components consume normalized versions instead.
- */
-
 import type { ROSHeader, Vector3, Quaternion } from './ros2-primitives.types';
 
-/** TwistMessage
- * @description geometry_msgs/msg/Twist — linear and angular velocity.
- */
+// geometry_msgs/msg/Twist
 export interface TwistMessage {
   readonly linear: Vector3;
   readonly angular: Vector3;
 }
 
-/** ImuMessage
- * @description sensor_msgs/msg/Imu — orientation, angular velocity,
- *  and linear acceleration with covariance.
- */
+// sensor_msgs/msg/Imu
 export interface ImuMessage {
   readonly header: ROSHeader;
   readonly orientation: Quaternion;
@@ -29,9 +17,7 @@ export interface ImuMessage {
   readonly linear_acceleration_covariance: readonly number[];
 }
 
-/** LaserScanMessage
- * @description sensor_msgs/msg/LaserScan — planar laser range-finder data.
- */
+// sensor_msgs/msg/LaserScan
 export interface LaserScanMessage {
   readonly header: ROSHeader;
   readonly angle_min: number;
@@ -45,9 +31,7 @@ export interface LaserScanMessage {
   readonly intensities: readonly number[];
 }
 
-/** OdometryMessage
- * @description nav_msgs/msg/Odometry — position and velocity estimate.
- */
+// nav_msgs/msg/Odometry
 export interface OdometryMessage {
   readonly header: ROSHeader;
   readonly child_frame_id: string;
@@ -64,9 +48,7 @@ export interface OdometryMessage {
   };
 }
 
-/** BatteryStateMessage
- * @description sensor_msgs/msg/BatteryState — battery telemetry.
- */
+// sensor_msgs/msg/BatteryState
 export interface BatteryStateMessage {
   readonly header: ROSHeader;
   readonly voltage: number;

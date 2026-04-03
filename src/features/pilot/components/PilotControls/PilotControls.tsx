@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Square } from 'lucide-react';
 import { DpadButton } from '@/components/controls/DpadButton';
 import { VelocitySlider } from '@/components/controls/VelocitySlider';
-import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls.constants';
+import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls';
 import type { Direction } from '@/types/control.types';
 import { HUD_PANEL_BASE } from '../../constants';
 import type { PilotControlsProps } from '../../types/PilotView.types';

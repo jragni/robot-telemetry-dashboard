@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import type { HeaderProps } from '@/types/Header.types';
 
 /** getBreadcrumb
@@ -47,9 +47,7 @@ export function Header({
 
   return (
     <header className="bg-surface-primary border-b border-border flex items-center px-3 gap-2.5 h-full shadow-glow-bottom relative z-10">
-      <ConditionalRender
-        shouldRender={showHamburger}
-        Component={
+      {showHamburger && (
           <Button
             variant="ghost"
             size="icon"
@@ -59,8 +57,7 @@ export function Header({
           >
             <Menu size={16} />
           </Button>
-        }
-      />
+      )}
 
       <Link
         to="/fleet"

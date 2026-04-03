@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Plus, Loader2, AlertCircle } from 'lucide-react';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import {
   Dialog,
   DialogContent,
@@ -33,7 +33,6 @@ export function AddRobotModal() {
   const [isConnecting, setIsConnecting] = useState(false);
   const addRobot = useConnectionStore((s) => s.addRobot);
   const connectRobot = useConnectionStore((s) => s.connectRobot);
-  const robots = useConnectionStore((s) => s.robots);
 
   const resetForm = useCallback(() => {
     setName('');
@@ -69,13 +68,6 @@ export function AddRobotModal() {
 
     const { name: validName, url: validUrl } = result.data;
 
-    // Duplicate check
-    const id = validName.toLowerCase().replace(/\s+/g, '-');
-    if (robots[id]) {
-      setErrors((prev) => ({ ...prev, name: 'A robot with that name already exists' }));
-      return;
-    }
-
     // Normalize URL
     const normalizedUrl = normalizeRosbridgeUrl(validUrl);
     if (!normalizedUrl) {
@@ -89,7 +81,12 @@ export function AddRobotModal() {
 
     try {
       await ConnectionManager.testConnection(normalizedUrl);
-      addRobot(validName, normalizedUrl);
+      const id = addRobot(validName, normalizedUrl);
+      if (id === null) {
+        setErrors((prev) => ({ ...prev, name: 'A robot with that name already exists' }));
+        setIsConnecting(false);
+        return;
+      }
       await connectRobot(id);
       resetForm();
       setOpen(false);
@@ -194,9 +191,7 @@ export function AddRobotModal() {
             <FieldError id={FIELD_ERROR_IDS.url} message={errors.url} />
           </div>
 
-          <ConditionalRender
-            shouldRender={!!errors.form}
-            Component={
+          {!!errors.form && (
               <div
                 role="alert"
                 className="flex items-start gap-2 rounded-sm border border-status-critical/30 bg-status-critical/10 px-3 py-2"
@@ -209,8 +204,7 @@ export function AddRobotModal() {
                   </p>
                 </div>
               </div>
-            }
-          />
+          )}
 
           <div className="max-sm:mt-auto max-sm:pb-6 sm:mt-2">
             <Button

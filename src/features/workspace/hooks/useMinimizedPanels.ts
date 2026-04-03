@@ -1,8 +1,5 @@
 import { useState, useCallback } from 'react';
 
-/** UseMinimizedPanelsReturn
- * @description Return value providing minimize/restore/maximize state and actions.
- */
 interface UseMinimizedPanelsReturn {
   readonly isMinimized: (id: string) => boolean;
   readonly isMaximized: (id: string) => boolean;
@@ -14,13 +11,6 @@ interface UseMinimizedPanelsReturn {
   readonly maximizedId: string | null;
 }
 
-/** useMinimizedPanels
- * @description Manages which workspace panels are minimized or maximized.
- *  Minimized panels hide from the grid and appear in the dock bar.
- *  Maximizing a panel minimizes all others so it takes the full grid.
- * @param allIds - Array of all panel IDs in the workspace.
- * @returns State and actions for minimize/restore/maximize.
- */
 export function useMinimizedPanels(allIds: readonly string[]): UseMinimizedPanelsReturn {
   const [minimized, setMinimized] = useState(new Set<string>());
   const [maximizedId, setMaximizedId] = useState<string | null>(null);

@@ -1,12 +1,5 @@
 import { useState, useEffect } from 'react';
 
-/** useResponsiveSize
- * @description Returns a reactive size value derived from viewport dimensions.
- *  Listens for window resize events with debouncing and recomputes the value.
- *  Skips setState when the computed value hasn't changed.
- * @param compute - Pure function that returns the desired size from current viewport.
- * @param debounceMs - Debounce delay in milliseconds. Defaults to 150.
- */
 export function useResponsiveSize(compute: () => number, debounceMs = 150): number {
   const [size, setSize] = useState(compute);
 

@@ -1,19 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Topic } from 'roslib';
 import type { Direction } from '@/types/control.types';
-import { VELOCITY_LIMITS } from '@/constants/controls.constants';
+import { VELOCITY_LIMITS } from '@/constants/controls';
 import type { UseControlPublisherOptions, UseControlPublisherReturn } from './types';
 import { ZERO_TWIST, DEFAULT_PUBLISH_RATE } from './constants';
 import { buildTwist } from './helpers';
 
-/** useControlPublisher
- * @description Publishes TwistMessage commands at a fixed rate while a
- *  direction button is held. Sends zero velocity on release. Uses
- *  setInterval internally — refs bridge React state into the timer
- *  callback so slider changes take effect mid-press.
- * @param options - Optional publish rate and callback.
- * @returns Control state and handlers for ControlsPanel.
- */
 export function useControlPublisher(
   options: UseControlPublisherOptions = {},
 ): UseControlPublisherReturn {

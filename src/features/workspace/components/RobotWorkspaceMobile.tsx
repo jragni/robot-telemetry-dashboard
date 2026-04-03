@@ -1,15 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CameraPanel } from './CameraPanel';
-import { LidarPanel } from './LidarPanel';
-import { SystemStatusPanel } from './SystemStatusPanel';
-import { ImuPanel } from './ImuPanel/ImuPanel';
-import { TelemetryPanel } from './TelemetryPanel';
+import { ActivePanelContent } from './ActivePanelContent';
 import { TopicSelector } from './TopicSelector';
 import { MOBILE_TAB_META, WORKSPACE_PANEL_META } from '../constants';
 import type {
   RobotWorkspaceMobileProps,
-  ActivePanelContentProps,
   MobileDataPanelId,
   MobileTabId,
 } from '../types/RobotWorkspaceMobile.types';
@@ -89,29 +84,25 @@ export function RobotWorkspaceMobile({
         ) : null}
       </header>
 
-      {/* ── Active panel content ──────────────────────────────────── */}
       <div className="flex-1 flex items-center justify-center p-3 min-h-0 overflow-hidden bg-surface-primary">
         <ActivePanelContent
           activePanel={activePanel}
-          connected={connected}
-          videoRef={videoRef}
-          selectedCameraTopic={selectedCameraTopic}
-          lidarPoints={lidarPoints}
-          lidarRangeMax={lidarRangeMax}
-          robotName={robotName}
-          robotUrl={robotUrl}
-          status={status}
-          lastSeen={lastSeen}
-          uptimeSeconds={uptimeSeconds}
-          battery={battery}
-          rosGraph={rosGraph}
-          onConnect={onConnect}
-          onDisconnect={onDisconnect}
-          imuRoll={imuRoll}
-          imuPitch={imuPitch}
-          imuYaw={imuYaw}
-          telemetrySeries={telemetrySeries}
-          telemetryTimeWindowMs={telemetryTimeWindowMs}
+          cameraProps={{ connected, label: selectedCameraTopic, streamRef: videoRef }}
+          imuProps={{ connected, pitch: imuPitch, roll: imuRoll, yaw: imuYaw }}
+          lidarProps={{ connected, points: lidarPoints, rangeMax: lidarRangeMax }}
+          statusProps={{
+            battery,
+            connected,
+            lastSeen,
+            name: robotName,
+            onConnect,
+            onDisconnect,
+            rosGraph,
+            status,
+            uptimeSeconds,
+            url: robotUrl,
+          }}
+          telemetryProps={{ connected, series: telemetrySeries, timeWindowMs: telemetryTimeWindowMs }}
         />
       </div>
 
@@ -144,68 +135,4 @@ export function RobotWorkspaceMobile({
       </nav>
     </div>
   );
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// Sub-component (private to this file)
-// ═══════════════════════════════════════════════════════════════════════
-
-/** ActivePanelContent
- * @description Renders the content for the currently active panel tab.
- *  Each panel reuses its existing desktop component unchanged.
- */
-function ActivePanelContent({
-  activePanel,
-  connected,
-  videoRef,
-  selectedCameraTopic,
-  lidarPoints,
-  lidarRangeMax,
-  robotName,
-  robotUrl,
-  status,
-  lastSeen,
-  uptimeSeconds,
-  battery,
-  rosGraph,
-  onConnect,
-  onDisconnect,
-  imuRoll,
-  imuPitch,
-  imuYaw,
-  telemetrySeries,
-  telemetryTimeWindowMs,
-}: ActivePanelContentProps) {
-  switch (activePanel) {
-    case 'camera':
-      return <CameraPanel streamRef={videoRef} connected={connected} label={selectedCameraTopic} />;
-    case 'lidar':
-      return <LidarPanel points={lidarPoints} rangeMax={lidarRangeMax} connected={connected} />;
-    case 'status':
-      return (
-        <SystemStatusPanel
-          name={robotName}
-          url={robotUrl}
-          connected={connected}
-          status={status}
-          lastSeen={lastSeen}
-          uptimeSeconds={uptimeSeconds}
-          battery={battery}
-          rosGraph={rosGraph}
-          onConnect={onConnect}
-          onDisconnect={onDisconnect}
-        />
-      );
-    case 'imu':
-      return (
-        <ImuPanel
-          roll={imuRoll}
-          pitch={imuPitch}
-          yaw={imuYaw}
-          connected={connected}
-        />
-      );
-    case 'telemetry':
-      return <TelemetryPanel series={telemetrySeries} timeWindowMs={telemetryTimeWindowMs} connected={connected} />;
-  }
 }

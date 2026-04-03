@@ -1,9 +1,22 @@
 import { useMemo, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
+import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
-import type { ImuMessage } from '@/types/ros2-messages.types';
 import type { Vector3 } from '@/types/ros2-primitives.types';
+
+const vector3Schema = z.object({ x: z.number(), y: z.number(), z: z.number() });
+
+const quaternionSchema = z.object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() });
+
+/** imuMessageSchema
+ * @description Zod schema validating the consumed fields of sensor_msgs/msg/Imu.
+ */
+export const imuMessageSchema = z.object({
+  orientation: quaternionSchema,
+  angular_velocity: vector3Schema.optional(),
+  linear_acceleration: vector3Schema.optional(),
+});
 
 interface UseImuReturn {
   readonly roll: number;
@@ -32,12 +45,6 @@ function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
   return { roll: roll * toDeg, pitch: pitch * toDeg, yaw: yaw * toDeg };
 }
 
-/** useImuSubscription
- * @description Subscribes to an IMU topic and converts quaternion orientation
- *  to Euler angles (degrees) for the ImuPanel. Throttled to RAF cadence.
- * @param ros - Live Ros instance, or undefined.
- * @param topicName - The IMU topic (e.g., "/imu/data").
- */
 export function useImuSubscription(ros: Ros | undefined, topicName: string): UseImuReturn {
   const [state, setState] = useState<UseImuReturn>({
     roll: 0, pitch: 0, yaw: 0,
@@ -52,14 +59,23 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
   }), []);
 
   const onMessage = useMemo(() => (msg: unknown) => {
-    const m = msg as ImuMessage;
-    const euler = quaternionToEuler(m.orientation);
-    const next: UseImuReturn = {
-      roll: euler.roll, pitch: euler.pitch, yaw: euler.yaw,
-      angularVelocity: m.angular_velocity, linearAcceleration: m.linear_acceleration,
-    };
-    latestRef.current = next;
-    throttledSet(next);
+    try {
+      const result = imuMessageSchema.safeParse(msg);
+      if (!result.success) {
+        console.warn('[useImuSubscription] Malformed message:', result.error.issues);
+        return;
+      }
+      const m = result.data;
+      const euler = quaternionToEuler(m.orientation);
+      const next: UseImuReturn = {
+        roll: euler.roll, pitch: euler.pitch, yaw: euler.yaw,
+        angularVelocity: m.angular_velocity, linearAcceleration: m.linear_acceleration,
+      };
+      latestRef.current = next;
+      throttledSet(next);
+    } catch (err) {
+      console.warn('[useImuSubscription] Unexpected error processing message:', err);
+    }
   }, [throttledSet]);
 
   useRosSubscriber(ros, topicName, 'sensor_msgs/msg/Imu', onMessage);

@@ -1,5 +1,5 @@
-import { Camera } from 'lucide-react';
-import { ConditionalRender } from '@/components/ConditionalRender';
+import { CameraEmptyState } from '@/components/CameraEmptyState';
+
 import type { CameraPanelProps } from '@/features/workspace/types/CameraPanel.types';
 
 /** CameraPanel
@@ -9,15 +9,13 @@ import type { CameraPanelProps } from '@/features/workspace/types/CameraPanel.ty
  * @param connected - Whether the robot is currently connected.
  * @param label - Optional topic name to display in the empty state.
  */
-export function CameraPanel({ streamRef, connected, label }: CameraPanelProps) {
+export function CameraPanel({ connected, label, streamRef }: CameraPanelProps) {
   return (
     <div
       className="relative w-full h-full flex items-center justify-center"
       aria-label={streamRef ? 'Camera feed' : 'Camera feed — no stream'}
     >
-      <ConditionalRender
-        shouldRender={!!streamRef}
-        Component={
+      {streamRef ? (
           <video
             ref={streamRef}
             autoPlay
@@ -25,20 +23,12 @@ export function CameraPanel({ streamRef, connected, label }: CameraPanelProps) {
             muted
             className="absolute inset-0 w-full h-full object-contain"
           />
-        }
-      />
-      <ConditionalRender
-        shouldRender={!streamRef}
-        Component={
-          <div className="flex flex-col items-center gap-2">
-            <Camera className="size-8 text-text-muted opacity-30" aria-hidden="true" />
-            <span className="font-mono text-xs text-text-muted">
-              {connected ? 'No stream' : 'Disconnected'}
-            </span>
-            {label ? <span className="font-mono text-xs text-text-secondary">{label}</span> : null}
-          </div>
-        }
-      />
+      ) : (
+          <CameraEmptyState
+            label={label}
+            message={connected ? 'No stream' : 'Disconnected'}
+          />
+      )}
     </div>
   );
 }

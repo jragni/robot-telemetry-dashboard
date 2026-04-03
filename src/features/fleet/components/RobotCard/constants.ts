@@ -2,10 +2,6 @@ import { AlertTriangle, CheckCircle, Loader2, MinusCircle } from 'lucide-react';
 import type { ConnectionStatus, RobotColor } from '@/stores/connection/useConnectionStore.types';
 import type { StatusConfig } from './types/RobotCard.types';
 
-/** STATUS_CONFIG
- * @description Maps each connection status to its display config following
- *  MIL-STD-1472H triple-redundant indicators (color + icon + text label).
- */
 export const STATUS_CONFIG: Record<ConnectionStatus, StatusConfig> = {
   connected: {
     label: 'Nominal',
@@ -33,11 +29,6 @@ export const STATUS_CONFIG: Record<ConnectionStatus, StatusConfig> = {
   },
 };
 
-/** ROBOT_COLOR_CLASSES
- * @description Maps each robot color to its Tailwind utility classes for
- *  border, background, and text. Single source of truth — eliminates
- *  duplicated color maps.
- */
 export const ROBOT_COLOR_CLASSES: Record<RobotColor, { border: string; bg: string; text: string }> =
   {
     blue: { border: 'border-l-robot-blue', bg: 'bg-robot-blue', text: 'text-robot-blue' },
