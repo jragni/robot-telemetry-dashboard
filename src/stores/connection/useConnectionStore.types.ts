@@ -1,3 +1,5 @@
+import type { PanelId } from '@/types/panel.types';
+
 export type ConnectionStatus = 'connected' | 'disconnected' | 'connecting' | 'error';
 
 export type RobotColor =
@@ -12,7 +14,7 @@ export interface RobotConnection {
   readonly lastSeen: number | null;
   readonly lastError: string | null;
   readonly color: RobotColor;
-  readonly selectedTopics: Record<string, string>;
+  readonly selectedTopics: Partial<Record<PanelId, string>>;
 }
 
 export interface ConnectionState {
@@ -25,7 +27,7 @@ export interface ConnectionActions {
   readonly updateRobot: (id: string, patch: Partial<RobotConnection>) => void;
   readonly connectRobot: (id: string) => Promise<void>;
   readonly disconnectRobot: (id: string) => void;
-  readonly setRobotTopic: (id: string, panelId: string, topicName: string) => void;
+  readonly setRobotTopic: (id: string, panelId: PanelId, topicName: string) => void;
 }
 
 export type ConnectionStore = ConnectionState & ConnectionActions;

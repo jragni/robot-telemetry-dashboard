@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { isPanelId } from '@/types/panel.types';
+import type { PanelId } from '@/types/panel.types';
 
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useRobotConnection } from '@/hooks/useRobotConnection';
@@ -54,7 +56,7 @@ export function RobotWorkspace() {
   const isMobile = useIsMobile();
   const controls = useControlPublisher({ ros: isMobile ? undefined : ros, topicName: selectedTopics.controls });
 
-  const setTopic = useCallback((panelId: string, topicName: string) => {
+  const setTopic = useCallback((panelId: PanelId, topicName: string) => {
     if (id) setRobotTopic(id, panelId, topicName);
   }, [id, setRobotTopic]);
 
@@ -81,13 +83,12 @@ export function RobotWorkspace() {
     autoSelectedRef.current = true;
 
     for (const [panelId, topics] of Object.entries(filteredTopics)) {
-      if (topics.length > 0) {
-        const current = selectedTopics[panelId];
-        const currentExists = topics.some((t) => t.name === current);
-        const firstTopic = topics[0];
-        if (!currentExists && firstTopic) {
-          setRobotTopic(id, panelId, firstTopic.name);
-        }
+      if (!isPanelId(panelId) || topics.length === 0) continue;
+      const current = selectedTopics[panelId];
+      const currentExists = topics.some((t) => t.name === current);
+      const firstTopic = topics[0];
+      if (!currentExists && firstTopic) {
+        setRobotTopic(id, panelId, firstTopic.name);
       }
     }
   }, [availableTopics, filteredTopics, id, selectedTopics, setRobotTopic]);
