@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import { useTheme } from '@/hooks/useTheme';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar/Sidebar';
@@ -52,16 +52,13 @@ export function AppShell() {
         <Sidebar collapsed={sidebarCollapsed} onToggleCollapse={toggleCollapse} />
       </div>
 
-      <ConditionalRender
-        shouldRender={drawerOpen}
-        Component={
+      {drawerOpen && (
           <div
             className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
             onClick={closeDrawer}
             aria-hidden="true"
           />
-        }
-      />
+      )}
 
       <div
         className={`shell-drawer fixed top-10 bottom-0 left-0 w-65 z-50 bg-surface-primary border-r border-border transition-transform duration-300 ease-in-out md:hidden ${

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { ConditionalRender } from '@/components/ConditionalRender';
+
 import type { NavItemProps } from '@/types/Sidebar.types';
 import {
   ROBOT_COLOR_DOT,
@@ -30,18 +30,12 @@ export function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
         size={16}
         className={`shrink-0 ${item.robotColor ? ROBOT_COLOR_TEXT[item.robotColor] : active ? 'opacity-100' : 'opacity-70'}`}
       />
-      <ConditionalRender
-        shouldRender={item.robotColor != null && !collapsed}
-        Component={
+      {item.robotColor != null && !collapsed && (
           <span
-            className={`w-1.5 h-1.5 rounded-full shrink-0 ${item.robotColor ? ROBOT_COLOR_DOT[item.robotColor] : ''}`}
+            className={`w-1.5 h-1.5 rounded-full shrink-0 ${ROBOT_COLOR_DOT[item.robotColor]}`}
           />
-        }
-      />
-      <ConditionalRender
-        shouldRender={!collapsed}
-        Component={<span className="overflow-hidden text-ellipsis">{item.label}</span>}
-      />
+      )}
+      {!collapsed && <span className="overflow-hidden text-ellipsis">{item.label}</span>}
     </Button>
   );
 }
