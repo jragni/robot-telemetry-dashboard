@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+
 import { Button } from '@/components/ui/button';
 
 /** LandingCTA
@@ -22,7 +23,7 @@ export function LandingCTA() {
       </p>
       <Button
         onClick={() => {
-          void navigate('/demo');
+          void navigate('/fleet');
         }}
         className="uppercase tracking-wide px-8 py-3 hover:shadow-glow-accent hover:-translate-y-0.5"
       >

@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { ConditionalRender } from '@/components/ConditionalRender';
 import type { HeaderProps } from '@/types/Header.types';
@@ -20,7 +21,6 @@ function getBreadcrumb(pathname: string): string {
     return `Pilot / ${id}`;
   }
   if (pathname === '/pilot') return 'Pilot';
-  if (pathname === '/demo') return 'Demo';
   if (pathname === '/map') return 'Map';
   if (pathname === '/settings') return 'Settings';
   if (pathname === '/dev/components') return 'Dev / Components';

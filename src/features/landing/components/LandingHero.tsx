@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+
 import { Button } from '@/components/ui/button';
 
 /** LandingHero
@@ -42,7 +43,7 @@ export function LandingHero() {
             <Button
               variant="outline"
               onClick={() => {
-                void navigate('/demo');
+                void navigate('/fleet');
               }}
               className="uppercase tracking-wide px-8 py-3 text-accent border-accent hover:bg-accent-subtle hover:-translate-y-0.5"
             >
