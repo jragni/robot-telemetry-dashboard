@@ -33,22 +33,24 @@ For codebase audits, bulk refactors, and housekeeping tickets, use the 5-role ag
 ### Pipeline
 
 ```
-Audit → Consolidate → Execute → Review → Respond → Gate Check → Merge
+Audit → Consolidate → Conflict Detection → Execute → Review → Respond → Gate Check → Merge
 ```
 
 Step 1: Audit — dispatch parallel codebase-auditor agents, each assigned a concern area (architecture, quality, safety, performance, coverage). They return structured findings.
 
 Step 2: Consolidate — orchestrator groups findings into ISSUES.md with raw findings (F-XX by severity), tickets (TICKET-XXX with scope, files, acceptance criteria, conflicts), and an execution plan with wave ordering based on file overlap and dependencies.
 
-Step 3: Execute — dispatch parallel codebase-fixer agents, one per ticket. Each works in an isolated worktree. Wave ordering is respected (sequential between waves, parallel within waves). Each agent creates a branch, implements the fix, runs build, commits, and creates a PR.
+Step 3: Conflict detection — before dispatching fixers, an agent analyzes ticket file lists and flags which tickets share files. Tickets with overlapping files get serialized (one completes before the next starts). Tickets with no overlap run in parallel. This prevents rebase conflicts from parallel PRs touching the same files.
 
-Step 4: Review — dispatch pr-reviewer agents, one per PR. Each checks out the branch, runs the build, reviews against CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md, and posts a comment. Never approves or merges.
+Step 4: Execute — dispatch parallel codebase-fixer agents, one per ticket. Each works on a separate branch (do not use worktree isolation — agents need Bash access which worktrees block). Wave ordering is respected (sequential between waves, parallel within waves). Each agent creates a branch, implements the fix, runs build, commits, and creates a PR. Test one agent first before dispatching the full batch to verify permissions work.
 
-Step 5: Respond — dispatch pr-responder agents for PRs with review feedback. Each reads the comments, fixes the code, amends the commit, force-pushes, and comments confirming changes. If a review item requires a UI change, /frontend-design or ui-ux-pro-max must be consulted first.
+Step 5: Review — dispatch pr-reviewer agents, one per PR. Each checks out the branch, runs the build, reviews against CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md, and posts a comment. Never approves or merges.
 
-Step 6: Gate check — dispatch spec-conformance agents to verify all files in the diff conform to CODE-CONVENTIONS.md. PASS/FAIL per rule per file. Any FAIL blocks merge.
+Step 6: Respond — dispatch pr-responder agents for PRs with review feedback. Each reads the comments, fixes the code, amends the commit, force-pushes, and comments confirming changes. If a review item requires a UI change, /frontend-design or ui-ux-pro-max must be consulted first.
 
-Step 7: Merge — orchestrator cherry-picks or merges PRs in wave order with build gates between waves. Close PRs with references to merged commits. Clean up worktrees.
+Step 7: Gate check — dispatch spec-conformance agents to verify all files in the diff conform to CODE-CONVENTIONS.md. PASS/FAIL per rule per file. Any FAIL blocks merge.
+
+Step 8: Merge — orchestrator cherry-picks or merges PRs in wave order with build gates between waves. Close PRs with references to merged commits.
 
 ### ISSUES.md Format
 
@@ -64,9 +66,15 @@ Within a wave, tickets that share modified files get serialization notes. The or
 
 Titles use T-XXX: description format. Comments are plain text only — no markdown formatting, no bold, no styled bullets. No Co-Authored-By lines in commits. No AI mention anywhere.
 
-### Worktree Management
+### Rules (learned the hard way)
 
-Each fixer agent gets an isolated worktree. Clean up stale worktrees before dispatching new agents (old worktrees lock branches). After merging, prune all agent worktrees.
+1. Establish all conventions before the audit starts. Never add rules mid-execution — it makes every in-flight PR non-compliant.
+2. Do not use worktree isolation for agents that need Bash. Use mode: "auto" without isolation: "worktree".
+3. Test one agent before dispatching the full batch to verify permissions work.
+4. The orchestrator orchestrates. It does not do the agents' work. If something needs fixing, dispatch an agent.
+5. Never merge without review. Review gate is non-negotiable.
+6. Follow the discuss → research → approve → implement → verify pipeline for every code change, including refactors.
+7. Clean up stale worktrees before dispatching new agents (old worktrees hold branch locks).
 
 ### What Agents Must Read
 
