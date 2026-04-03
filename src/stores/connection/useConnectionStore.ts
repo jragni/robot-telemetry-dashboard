@@ -58,7 +58,11 @@ export const useConnectionStore = create<ConnectionStore>()(
       connectRobot: async (id) => {
         const robot = useConnectionStore.getState().robots[id];
         if (!robot) return;
-        await ConnectionManager.connect(id, robot.url);
+        try {
+          await ConnectionManager.connect(id, robot.url);
+        } catch (error) {
+          console.warn(`[ConnectionStore] connect rejected for ${id}:`, error);
+        }
       },
 
       disconnectRobot: (id) => {
