@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
@@ -26,6 +26,10 @@ export function useLidarSubscription(ros: Ros | undefined, topicName: string): U
   const throttledSet = useMemo(() => rafThrottle((p: readonly LidarPoint[]) => {
     setPoints(p);
   }), []);
+
+  useEffect(() => {
+    return () => { throttledSet.cancel(); };
+  }, [throttledSet]);
 
   const onMessage = useMemo(() => (msg: unknown) => {
     try {

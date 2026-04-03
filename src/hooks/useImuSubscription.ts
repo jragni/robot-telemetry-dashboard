@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
@@ -57,6 +57,10 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
   const throttledSet = useMemo(() => rafThrottle((next: UseImuReturn) => {
     setState(next);
   }), []);
+
+  useEffect(() => {
+    return () => { throttledSet.cancel(); };
+  }, [throttledSet]);
 
   const onMessage = useMemo(() => (msg: unknown) => {
     try {

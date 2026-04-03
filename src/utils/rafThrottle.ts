@@ -1,4 +1,10 @@
-export function rafThrottle<T extends (...args: never[]) => void>(callback: T): T {
+export type CancellableThrottled<T extends (...args: never[]) => void> = T & {
+  cancel: () => void;
+};
+
+export function rafThrottle<T extends (...args: never[]) => void>(
+  callback: T,
+): CancellableThrottled<T> {
   let rafId: number | null = null;
   let latestArgs: Parameters<T> | null = null;
 
@@ -14,5 +20,13 @@ export function rafThrottle<T extends (...args: never[]) => void>(callback: T): 
     });
   };
 
-  return throttled as T;
+  throttled.cancel = () => {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    latestArgs = null;
+  };
+
+  return throttled as CancellableThrottled<T>;
 }
