@@ -5,12 +5,12 @@ import {
   HUD_PANEL_BASE,
   MINIMAP_SIZE_MOBILE_MAX,
 } from '../constants';
-import type { PilotHudMobileProps } from '../types/PilotView.types';
 import { GyroInline } from './GyroInline';
 import { PilotCompassMobile } from './PilotCompassMobile';
 import { PilotControls } from './PilotControls/PilotControls';
 import { PilotLidarMinimap } from './PilotLidarMinimap';
 import { StatusDot } from './StatusDot';
+import type { PilotHudMobileProps } from '../types/PilotView.types';
 
 /** PilotHudMobile
  * @description Renders the mobile-optimized HUD overlay for Pilot Mode.
