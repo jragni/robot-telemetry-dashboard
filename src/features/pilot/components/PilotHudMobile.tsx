@@ -1,14 +1,16 @@
 import { getBatteryColor } from '@/utils/getBatteryColor';
 import { normalizeHeading } from '@/utils/normalizeHeading';
-import { formatDegrees } from '@/utils/formatDegrees';
-import { PilotCompassMobile } from './PilotCompassMobile';
-import { PilotLidarMinimap } from './PilotLidarMinimap';
-import { PilotControls } from './PilotControls/PilotControls';
+
 import {
   HUD_PANEL_BASE,
   MINIMAP_SIZE_MOBILE_MAX,
 } from '../constants';
-import type { PilotHudMobileProps, StatusDotProps, GyroInlineProps } from '../types/PilotView.types';
+import { GyroInline } from './GyroInline';
+import { PilotCompassMobile } from './PilotCompassMobile';
+import { PilotControls } from './PilotControls/PilotControls';
+import { PilotLidarMinimap } from './PilotLidarMinimap';
+import { StatusDot } from './StatusDot';
+import type { PilotHudMobileProps } from '../types/PilotView.types';
 
 /** PilotHudMobile
  * @description Renders the mobile-optimized HUD overlay for Pilot Mode.
@@ -47,13 +49,13 @@ export function PilotHudMobile({
       }}
       aria-label="Pilot HUD overlay — mobile"
     >
-      {/* ── Full-width compass strip ─────────────────────────────── */}
+      {/* Full-width compass strip */}
       <div className="absolute top-0 left-0 right-0 pointer-events-auto">
         <div className={`${HUD_PANEL_BASE} rounded-none border-x-0 border-t-0 px-0 py-1`}>
           <PilotCompassMobile heading={headingNormalized} />
         </div>
 
-        {/* ── Status + gyro row ─────────────────────────────────── */}
+        {/* Status + gyro row */}
         <div className={`${HUD_PANEL_BASE} rounded-none border-x-0 border-t-0 flex items-center gap-3 px-3 py-1`}>
           {/* ROS status */}
           <StatusDot connected={rosConnected} label="ROS" />
@@ -78,7 +80,7 @@ export function PilotHudMobile({
         </div>
       </div>
 
-      {/* ── LiDAR minimap — bottom-left ──────────────────────────── */}
+      {/* LiDAR minimap */}
       <div className="absolute bottom-2 left-2">
         <PilotLidarMinimap
           points={telemetry.lidarPoints}
@@ -88,7 +90,7 @@ export function PilotHudMobile({
         />
       </div>
 
-      {/* ── Controls — bottom-right (same column layout as desktop) ── */}
+      {/* Controls */}
       <div className="absolute bottom-2 right-2 w-36 touch-none">
         <PilotControls
           connected={connected}
@@ -102,52 +104,6 @@ export function PilotHudMobile({
           onEmergencyStop={onEmergencyStop}
         />
       </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// Sub-components (private to this file)
-// ═══════════════════════════════════════════════════════════════════════
-
-/** StatusDot
- * @description Renders a colored dot + label for connection status.
- */
-function StatusDot({ connected, label }: StatusDotProps) {
-  return (
-    <div className="flex items-center gap-1">
-      <span
-        className={`size-1.5 rounded-full ${
-          connected
-            ? 'bg-status-nominal motion-safe:animate-pulse'
-            : 'bg-status-critical'
-        }`}
-        aria-hidden="true"
-      />
-      <span className={`font-mono text-xs ${connected ? 'text-status-nominal' : 'text-status-critical'}`}>
-        {label}
-      </span>
-    </div>
-  );
-}
-
-/** GyroInline
- * @description Renders R P Y values in a compact inline row.
- */
-function GyroInline({ roll, pitch, yaw }: GyroInlineProps) {
-  const fmt = (v: number | null) => (v !== null ? formatDegrees(v) : '---');
-
-  return (
-    <div className="flex items-center gap-2" aria-label="Gyro readout">
-      <span className="font-mono text-xs text-text-muted">
-        R:<span className="text-text-primary tabular-nums">{fmt(roll)}</span>
-      </span>
-      <span className="font-mono text-xs text-text-muted">
-        P:<span className="text-text-primary tabular-nums">{fmt(pitch)}</span>
-      </span>
-      <span className="font-mono text-xs text-text-muted">
-        Y:<span className="text-text-primary tabular-nums">{fmt(yaw)}</span>
-      </span>
     </div>
   );
 }
