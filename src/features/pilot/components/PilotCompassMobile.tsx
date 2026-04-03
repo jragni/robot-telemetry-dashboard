@@ -1,18 +1,19 @@
 import { useRef, useEffect, useState } from 'react';
+
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+
 import {
-  COMPASS_TICK_MAJOR_INTERVAL,
-  COMPASS_TICK_MINOR_INTERVAL,
   COMPASS_CARDINALS,
   COMPASS_DEGREES_VISIBLE,
-  COMPASS_TOKEN_MAP,
-  COMPASS_COLOR_FALLBACKS,
   COMPASS_FADE_WIDTH,
+  COMPASS_POINTER_HALF_WIDTH_MOBILE,
+  COMPASS_POINTER_HEIGHT_MOBILE,
   COMPASS_STRIP_HEIGHT_MOBILE,
   COMPASS_TICK_HEIGHT_MAJOR_MOBILE,
   COMPASS_TICK_HEIGHT_MINOR_MOBILE,
-  COMPASS_POINTER_HALF_WIDTH_MOBILE,
-  COMPASS_POINTER_HEIGHT_MOBILE,
+  COMPASS_TICK_MAJOR_INTERVAL,
+  COMPASS_TICK_MINOR_INTERVAL,
+  COMPASS_TOKEN_MAP,
 } from '../constants';
 import type { PilotCompassProps } from '../types/PilotView.types';
 
@@ -27,10 +28,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [width, setWidth] = useState(0);
-  const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
-    COMPASS_COLOR_FALLBACKS,
-    COMPASS_TOKEN_MAP,
-  );
+  const { colors, themeVersion } = useCanvasColors(COMPASS_TOKEN_MAP);
 
   // ── Measure container width via ResizeObserver ─────────────────────
   useEffect(() => {
@@ -56,8 +54,6 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    resolveColors();
-    const colors = colorsRef.current;
     const dpr = window.devicePixelRatio || 1;
     const w = width;
     const h = COMPASS_STRIP_HEIGHT_MOBILE;
@@ -144,7 +140,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     ctx.fillStyle = fadeRight;
     ctx.fillRect(w - fadeW, 0, fadeW, h);
     ctx.globalCompositeOperation = 'source-over';
-  }, [heading, width, themeVersion, resolveColors, colorsRef]);
+  }, [heading, width, themeVersion, colors]);
 
   return (
     <div ref={containerRef} className="w-full" aria-label={`Heading: ${heading.toFixed(0)} degrees`}>

@@ -1,22 +1,23 @@
 import { useRef, useEffect } from 'react';
-import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+
 import {
-  COMPASS_STRIP_WIDTH_MIN,
-  COMPASS_STRIP_WIDTH_MAX,
-  COMPASS_STRIP_VIEWPORT_RATIO,
-  COMPASS_STRIP_HEIGHT,
-  COMPASS_TICK_MAJOR_INTERVAL,
-  COMPASS_TICK_MINOR_INTERVAL,
-  COMPASS_TICK_HEIGHT_MAJOR,
-  COMPASS_TICK_HEIGHT_MINOR,
+  COMPASS_CARDINALS,
+  COMPASS_DEGREES_VISIBLE,
   COMPASS_FADE_WIDTH,
   COMPASS_POINTER_HALF_WIDTH,
   COMPASS_POINTER_HEIGHT,
-  COMPASS_CARDINALS,
-  COMPASS_DEGREES_VISIBLE,
+  COMPASS_STRIP_HEIGHT,
+  COMPASS_STRIP_VIEWPORT_RATIO,
+  COMPASS_STRIP_WIDTH_MAX,
+  COMPASS_STRIP_WIDTH_MIN,
+  COMPASS_TICK_HEIGHT_MAJOR,
+  COMPASS_TICK_HEIGHT_MINOR,
+  COMPASS_TICK_MAJOR_INTERVAL,
+  COMPASS_TICK_MINOR_INTERVAL,
   COMPASS_TOKEN_MAP,
-  COMPASS_COLOR_FALLBACKS,
 } from '../constants';
 import type { PilotCompassProps } from '../types/PilotView.types';
 
@@ -39,19 +40,13 @@ function clampCompassWidth(): number {
 export function PilotCompass({ heading }: PilotCompassProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stripWidth = useResponsiveSize(clampCompassWidth);
-  const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
-    COMPASS_COLOR_FALLBACKS,
-    COMPASS_TOKEN_MAP,
-  );
+  const { colors, themeVersion } = useCanvasColors(COMPASS_TOKEN_MAP);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    resolveColors();
-    const colors = colorsRef.current;
     const dpr = window.devicePixelRatio || 1;
     const w = stripWidth;
     const h = COMPASS_STRIP_HEIGHT;
@@ -124,7 +119,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     ctx.fillRect(w - COMPASS_FADE_WIDTH, 0, COMPASS_FADE_WIDTH, h);
     ctx.globalCompositeOperation = 'source-over';
 
-  }, [heading, stripWidth, themeVersion, resolveColors, colorsRef]);
+  }, [heading, stripWidth, themeVersion, colors]);
 
   const headingNormalized = ((heading % 360) + 360) % 360;
 

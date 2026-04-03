@@ -1,9 +1,11 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
+
+import { useCanvasColors } from '@/hooks/useCanvasColors';
 import { formatDegrees } from '@/utils/formatDegrees';
 import { withAlpha } from '@/utils/withAlpha';
-import { useThemeChange } from '@/hooks/useThemeChange';
 import { PITCH_LADDER_DEGREES } from '@/features/workspace/constants';
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
+
+import { ATTITUDE_CANVAS_TOKEN_MAP } from '../constants';
 import type { AttitudeIndicatorProps } from '@/features/workspace/types/ImuPanel.types';
 
 /** AttitudeIndicator
@@ -15,50 +17,21 @@ import type { AttitudeIndicatorProps } from '@/features/workspace/types/ImuPanel
  */
 export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const colorsRef = useRef({
-    border: CANVAS_FALLBACKS.border,
-    accent: CANVAS_FALLBACKS.accent,
-    skyAlpha: withAlpha(CANVAS_FALLBACKS.imuSky, 0.6),
-    groundAlpha: withAlpha(CANVAS_FALLBACKS.imuGround, 0.8),
-    textPrimary: CANVAS_FALLBACKS.textPrimary,
-    textSecondaryAlpha: withAlpha(CANVAS_FALLBACKS.textSecondary, 0.5),
-  });
-  const colorsResolved = useRef(false);
-
-  const [themeVersion, setThemeVersion] = useState(0);
-
-  useThemeChange(() => {
-    colorsResolved.current = false;
-    setThemeVersion((v) => v + 1);
-  });
-
-  const resolveColors = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || colorsResolved.current) return;
-    const styles = getComputedStyle(canvas);
-    const accent = styles.getPropertyValue('--color-accent') || colorsRef.current.accent;
-    const sky = styles.getPropertyValue('--color-imu-sky') || 'oklch(0.5 0.14 230)';
-    const ground = styles.getPropertyValue('--color-imu-ground') || 'oklch(0.35 0.1 65)';
-    const textSecondary =
-      styles.getPropertyValue('--color-text-secondary') || 'oklch(0.65 0.02 260)';
-    colorsRef.current = {
-      border: styles.getPropertyValue('--color-border') || colorsRef.current.border,
-      accent,
-      skyAlpha: withAlpha(sky, 0.6),
-      groundAlpha: withAlpha(ground, 0.8),
-      textPrimary: styles.getPropertyValue('--color-text-primary') || colorsRef.current.textPrimary,
-      textSecondaryAlpha: withAlpha(textSecondary, 0.5),
-    };
-    colorsResolved.current = true;
-  }, []);
+  const { colors: rawColors } = useCanvasColors(ATTITUDE_CANVAS_TOKEN_MAP);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    resolveColors();
-    const c = colorsRef.current;
+    const c = {
+      accent: rawColors.accent,
+      border: rawColors.border,
+      groundAlpha: withAlpha(rawColors.ground, 0.8),
+      skyAlpha: withAlpha(rawColors.sky, 0.6),
+      textPrimary: rawColors.textPrimary,
+      textSecondaryAlpha: withAlpha(rawColors.textSecondary, 0.5),
+    };
 
     const size = canvas.width;
     const cx = size / 2;
@@ -127,8 +100,7 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
     ctx.closePath();
     ctx.fillStyle = c.accent;
     ctx.fill();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
-  }, [roll, pitch, resolveColors, themeVersion]);
+  }, [roll, pitch, rawColors]);
 
   useEffect(() => {
     draw();

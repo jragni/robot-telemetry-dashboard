@@ -121,6 +121,33 @@ export const TELEMETRY_AXIS_PADDING = 40;
  */
 export const TELEMETRY_BOTTOM_PADDING = 20;
 
+/** LIDAR_CANVAS_TOKEN_MAP
+ * @description Maps local color keys to CSS custom property names for the
+ *  LiDAR canvas panel. Used with the useCanvasColors hook.
+ */
+export const LIDAR_CANVAS_TOKEN_MAP = {
+  accent: '--color-accent',
+  border: '--color-border',
+  caution: '--color-status-caution',
+  critical: '--color-status-critical',
+  nominal: '--color-status-nominal',
+  surfaceBase: '--color-surface-base',
+  textMuted: '--color-text-muted',
+  textPrimary: '--color-text-primary',
+  textSecondary: '--color-text-secondary',
+} as const;
+
+/** TELEMETRY_CANVAS_TOKEN_MAP
+ * @description Maps local color keys to CSS custom property names for the
+ *  telemetry chart canvas. Used with the useCanvasColors hook.
+ */
+export const TELEMETRY_CANVAS_TOKEN_MAP = {
+  border: '--color-border',
+  textMuted: '--color-text-muted',
+  textPrimary: '--color-text-primary',
+  textSecondary: '--color-text-secondary',
+} as const;
+
 /** PANEL_TOPIC_TYPES
  * @description Maps each panel ID to its compatible ROS message types.
  *  Used to filter the topic dropdown per panel.

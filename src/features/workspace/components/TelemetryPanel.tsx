@@ -1,14 +1,16 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { useThemeChange } from '@/hooks/useThemeChange';
+
+import { useCanvasColors } from '@/hooks/useCanvasColors';
+
 import {
+  TELEMETRY_AXIS_PADDING,
+  TELEMETRY_BOTTOM_PADDING,
+  TELEMETRY_CANVAS_TOKEN_MAP,
   TELEMETRY_GRID_LINES_H,
   TELEMETRY_GRID_LINES_V,
   TELEMETRY_LINE_WIDTH,
-  TELEMETRY_AXIS_PADDING,
-  TELEMETRY_BOTTOM_PADDING,
 } from '@/features/workspace/constants';
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import type { TelemetryPanelProps } from '@/features/workspace/types/TelemetryPanel.types';
 
 /** TelemetryPanel
@@ -24,20 +26,7 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasWidth, setCanvasWidth] = useState(400);
   const [canvasHeight, setCanvasHeight] = useState(200);
-  const [themeVersion, setThemeVersion] = useState(0);
-
-  const colorsRef = useRef({
-    textMuted: CANVAS_FALLBACKS.textMuted,
-    textSecondary: CANVAS_FALLBACKS.textSecondary,
-    textPrimary: CANVAS_FALLBACKS.textPrimary,
-    border: CANVAS_FALLBACKS.border,
-  });
-  const colorsResolved = useRef(false);
-
-  useThemeChange(() => {
-    colorsResolved.current = false;
-    setThemeVersion((v) => v + 1);
-  });
+  const { colors } = useCanvasColors(TELEMETRY_CANVAS_TOKEN_MAP);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -54,27 +43,12 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
     };
   }, []);
 
-  const resolveColors = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || colorsResolved.current) return;
-    const styles = getComputedStyle(canvas);
-    colorsRef.current = {
-      textMuted: styles.getPropertyValue('--color-text-muted') || colorsRef.current.textMuted,
-      textSecondary:
-        styles.getPropertyValue('--color-text-secondary') || colorsRef.current.textSecondary,
-      textPrimary: styles.getPropertyValue('--color-text-primary') || colorsRef.current.textPrimary,
-      border: styles.getPropertyValue('--color-border') || colorsRef.current.border,
-    };
-    colorsResolved.current = true;
-  }, []);
-
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    resolveColors();
-    const c = colorsRef.current;
+    const c = colors;
 
     const w = canvas.width;
     const h = canvas.height;
@@ -199,8 +173,7 @@ export function TelemetryPanel({ series, timeWindowMs, connected }: TelemetryPan
       ctx.fillText('No data', left + plotW / 2, plotH / 2);
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
-  }, [series, timeWindowMs, resolveColors, themeVersion]);
+  }, [series, timeWindowMs, colors]);
 
   useEffect(() => {
     draw();

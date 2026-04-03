@@ -1,26 +1,27 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { Plus, Minus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+import { Minus, Plus } from 'lucide-react';
+
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+import { Button } from '@/components/ui/button';
+
 import {
-  LIDAR_POINT_RADIUS,
-  LIDAR_POINT_GLOW,
-  MINIMAP_SIZE_MIN,
-  MINIMAP_SIZE_MAX,
-  MINIMAP_VIEWPORT_RATIO,
-  PILOT_ZOOM_MIN,
-  PILOT_ZOOM_MAX,
-  PILOT_ZOOM_STEP,
   HUD_PANEL_BASE,
-  LIDAR_TOKEN_MAP,
-  LIDAR_COLOR_FALLBACKS,
-  LIDAR_TICK_LENGTH,
   LIDAR_DETAIL_THRESHOLD,
   LIDAR_DISTANCE_RATIO_CAUTION,
   LIDAR_DISTANCE_RATIO_CRITICAL,
-  LIDAR_ROBOT_TRIANGLE_RATIO,
+  LIDAR_POINT_GLOW,
+  LIDAR_POINT_RADIUS,
   LIDAR_ROBOT_TRIANGLE_MIN,
+  LIDAR_ROBOT_TRIANGLE_RATIO,
+  LIDAR_TICK_LENGTH,
+  LIDAR_TOKEN_MAP,
+  MINIMAP_SIZE_MAX,
+  MINIMAP_SIZE_MIN,
+  MINIMAP_VIEWPORT_RATIO,
+  PILOT_ZOOM_MAX,
+  PILOT_ZOOM_MIN,
+  PILOT_ZOOM_STEP,
 } from '../constants';
 import type { PilotLidarMinimapProps } from '../types/PilotView.types';
 
@@ -50,19 +51,13 @@ export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotL
   const [zoom, setZoom] = useState(1);
   const computeSize = useCallback(() => clampSize(maxSize), [maxSize]);
   const size = useResponsiveSize(computeSize);
-  const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
-    LIDAR_COLOR_FALLBACKS,
-    LIDAR_TOKEN_MAP,
-  );
+  const { colors, themeVersion } = useCanvasColors(LIDAR_TOKEN_MAP);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    resolveColors();
-    const colors = colorsRef.current;
     const dpr = window.devicePixelRatio || 1;
     const half = size / 2;
 
@@ -161,7 +156,7 @@ export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotL
 
     ctx.restore();
 
-  }, [points, rangeMax, heading, zoom, size, themeVersion, resolveColors, colorsRef]);
+  }, [points, rangeMax, heading, zoom, size, themeVersion, colors]);
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();

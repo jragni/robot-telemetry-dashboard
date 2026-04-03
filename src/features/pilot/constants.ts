@@ -1,5 +1,3 @@
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
-
 /** MINIMAP_SIZE_MIN
  * @description Minimum pixel size for the responsive LiDAR minimap canvas.
  */
@@ -106,52 +104,29 @@ export const COMPASS_POINTER_HALF_WIDTH = 5;
  */
 export const COMPASS_POINTER_HEIGHT = 6;
 
-/** COMPASS_COLORS
+/** COMPASS_TOKEN_MAP
  * @description Color resolution mapping for compass canvas — maps local keys
  *  to CSS custom property names.
  */
-export const COMPASS_TOKEN_MAP: Record<string, string> = {
+export const COMPASS_TOKEN_MAP = {
   accent: '--color-accent',
   textMuted: '--color-text-muted',
-  tickMinor: '--color-border',
   tickMajor: '--color-text-secondary',
-};
-
-/** COMPASS_COLOR_FALLBACKS
- * @description Initial fallback colors for the compass canvas, keyed by local
- *  name. Used by both desktop and mobile compass components.
- */
-export const COMPASS_COLOR_FALLBACKS = {
-  accent: CANVAS_FALLBACKS.accent,
-  textMuted: CANVAS_FALLBACKS.textMuted,
-  tickMinor: CANVAS_FALLBACKS.border,
-  tickMajor: CANVAS_FALLBACKS.textSecondary,
-};
+  tickMinor: '--color-border',
+} as const;
 
 /** LIDAR_TOKEN_MAP
  * @description Color resolution mapping for LiDAR minimap canvas — maps local
  *  keys to CSS custom property names.
  */
-export const LIDAR_TOKEN_MAP: Record<string, string> = {
+export const LIDAR_TOKEN_MAP = {
   accent: '--color-accent',
-  textMuted: '--color-text-muted',
-  gridLine: '--color-border',
-  nominal: '--color-status-nominal',
   caution: '--color-status-caution',
   critical: '--color-status-critical',
-};
-
-/** LIDAR_COLOR_FALLBACKS
- * @description Initial fallback colors for the LiDAR minimap canvas.
- */
-export const LIDAR_COLOR_FALLBACKS = {
-  accent: CANVAS_FALLBACKS.accent,
-  textMuted: CANVAS_FALLBACKS.textMuted,
-  gridLine: CANVAS_FALLBACKS.border,
-  nominal: CANVAS_FALLBACKS.statusNominal,
-  caution: CANVAS_FALLBACKS.statusCaution,
-  critical: CANVAS_FALLBACKS.statusCritical,
-};
+  gridLine: '--color-border',
+  nominal: '--color-status-nominal',
+  textMuted: '--color-text-muted',
+} as const;
 
 /** LIDAR_TICK_LENGTH
  * @description Length in pixels for radial edge tick marks on the minimap.
