@@ -49,7 +49,7 @@ export const telemetryBatteryMessageSchema = z.object({
 export const telemetryLaserScanMessageSchema = z.object({
   range_min: z.number(),
   range_max: z.number(),
-  ranges: z.array(z.number()),
+  ranges: z.array(z.number().nullable()),
 });
 
 const MAX_POINTS = 600;
@@ -129,7 +129,7 @@ function parseMessage(msg: unknown, messageType: string): Record<string, number>
       let sum = 0;
       let count = 0;
       for (const r of m.ranges) {
-        if (!Number.isFinite(r) || r < m.range_min || r > m.range_max) continue;
+        if (r === null || !Number.isFinite(r) || r < m.range_min || r > m.range_max) continue;
         if (r < min) min = r;
         sum += r;
         count += 1;
