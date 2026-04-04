@@ -84,6 +84,8 @@ Titles use T-XXX: description format. Comments are plain text only — no markdo
 Every agent reads these files before starting:
 - CLAUDE.md — process rules, architecture, references
 - docs/CODE-CONVENTIONS.md — all code rules
-- docs/FOLDER-STRUCTURE.md — file layout, three-tier architecture, import ordering
+- docs/FOLDER-STRUCTURE.md — file layout, three-tier architecture, import ordering, 3+ subcomponents → own folder rule
+
+Reviewer agents must specifically check FOLDER-STRUCTURE.md compliance — the overnight build shipped folder violations because reviewers only checked CODE-CONVENTIONS.md.
 
 Audit agents also read ISSUES.md to avoid reporting already-tracked issues. Fixer agents read their assigned ticket from ISSUES.md.
