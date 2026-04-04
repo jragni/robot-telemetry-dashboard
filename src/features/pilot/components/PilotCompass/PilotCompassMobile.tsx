@@ -13,8 +13,8 @@ import {
   COMPASS_TICK_HEIGHT_MINOR_MOBILE,
   COMPASS_POINTER_HALF_WIDTH_MOBILE,
   COMPASS_POINTER_HEIGHT_MOBILE,
-} from '../constants';
-import type { PilotCompassProps } from '../types/PilotView.types';
+} from '../../constants';
+import type { PilotCompassProps } from '../../types/PilotView.types';
 
 /** PilotCompassMobile
  * @description Renders a full-width ODST-inspired compass heading strip for

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const WORKSPACE_CANVAS_FILES = [
-  'src/features/workspace/components/LidarPanel.tsx',
+  'src/features/workspace/components/LidarPanel/LidarPanel.tsx',
   'src/features/workspace/components/TelemetryPanel.tsx',
   'src/features/workspace/components/ImuPanel/components/CompassHeading.tsx',
   'src/features/workspace/components/ImuPanel/components/WireframeView.tsx',

@@ -17,8 +17,8 @@ import {
   COMPASS_DEGREES_VISIBLE,
   COMPASS_TOKEN_MAP,
   COMPASS_COLOR_FALLBACKS,
-} from '../constants';
-import type { PilotCompassProps } from '../types/PilotView.types';
+} from '../../constants';
+import type { PilotCompassProps } from '../../types/PilotView.types';
 
 /** clampCompassWidth
  * @description Derives compass strip width from viewport width, clamped to min/max.
