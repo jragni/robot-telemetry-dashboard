@@ -169,6 +169,9 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - T-052: MIL-STD-1472H status indicator compliance (visual work)
 - T-053: Performance memoization sweep
 - T-054: Miscellaneous LOW fixes
+- T-055: Reconnection attempts not shown in UI — only first connection attempt displays toast/status, subsequent retries are silent
+- T-056: Mixed content block on HTTPS deployment — ws:// connections blocked from GitHub Pages (HTTPS), need to enforce wss:// or warn user
+- T-057: RESOLVED — ngrok SSL broken, switched to Cloudflare Tunnel (`cloudflared tunnel --url http://127.0.0.1:8000`). Free, no bandwidth limits, no interstitial. Production confirmed working.
 
 ---
 
