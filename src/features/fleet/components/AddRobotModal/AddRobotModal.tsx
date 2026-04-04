@@ -1,6 +1,11 @@
 import { useCallback, useState } from 'react';
 import { Plus, Loader2, AlertCircle } from 'lucide-react';
 
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
+import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
+import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
+import { addRobotSchema } from '@/features/fleet/schemas';
 import {
   Dialog,
   DialogContent,
@@ -11,11 +16,6 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
-import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
-import { addRobotSchema } from '@/features/fleet/schemas';
 import type { AddRobotFormErrors } from './types/AddRobotModal.types';
 import { FIELD_ERROR_IDS } from './constants';
 import { FieldError } from './components/FieldError';
