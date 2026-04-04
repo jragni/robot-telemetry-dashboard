@@ -6,8 +6,8 @@ import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
 
 import { CameraPanel } from './components/CameraPanel';
 import { ImuPanel } from './components/ImuPanel/ImuPanel';
-import { LidarPanel } from './components/LidarPanel';
-import { SystemStatusPanel } from './components/SystemStatusPanel';
+import { LidarPanel } from './components/LidarPanel/LidarPanel';
+import { SystemStatusPanel } from './components/SystemStatusPanel/SystemStatusPanel';
 import { TelemetryPanel } from './components/TelemetryPanel';
 
 import type { MobileDataPanelId, MobileTabId } from './types/RobotWorkspaceMobile.types';

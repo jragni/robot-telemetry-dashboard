@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PilotCompass } from './PilotCompass';
-import { PilotLidarMinimap } from './PilotLidarMinimap';
-import { PilotGyroReadout } from './PilotGyroReadout/PilotGyroReadout';
-import { PilotStatusBar } from './PilotStatusBar/PilotStatusBar';
-import { PilotControls } from './PilotControls/PilotControls';
-import { PilotFullscreenToggle } from './PilotFullscreenToggle';
-import type { PilotHudProps } from '../types/PilotView.types';
+import { PilotCompass } from '../PilotCompass/PilotCompass';
+import { PilotLidarMinimap } from '../PilotLidarMinimap';
+import { PilotGyroReadout } from '../PilotGyroReadout/PilotGyroReadout';
+import { PilotStatusBar } from '../PilotStatusBar/PilotStatusBar';
+import { PilotControls } from '../PilotControls/PilotControls';
+import { PilotFullscreenToggle } from '../PilotFullscreenToggle';
+import type { PilotHudProps } from '../../types/PilotView.types';
 
 /** PilotHud
  * @description Renders the full HUD overlay layer for Pilot Mode. Positions

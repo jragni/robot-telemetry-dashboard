@@ -1,6 +1,6 @@
 import { formatDegrees } from '@/utils/formatDegrees';
 
-import type { GyroInlineProps } from '../types/PilotView.types';
+import type { GyroInlineProps } from '../../types/PilotView.types';
 
 /** GyroInline
  * @description Renders R P Y values in a compact inline row.

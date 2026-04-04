@@ -15,7 +15,7 @@ import {
   WORKSPACE_LIDAR_TOKEN_MAP,
 } from '@/features/workspace/constants';
 import type { LidarPanelProps } from '@/features/workspace/types/LidarPanel.types';
-import { findMinDistance } from '@/features/workspace/components/LidarPanel.helpers';
+import { findMinDistance } from './LidarPanel.helpers';
 
 /** LidarPanel
  * @description Renders a top-down 2D tactical display of LiDAR scan points.

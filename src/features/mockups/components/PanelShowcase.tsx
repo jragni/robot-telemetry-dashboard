@@ -1,4 +1,4 @@
-import { LidarPanel } from '@/features/workspace/components/LidarPanel';
+import { LidarPanel } from '@/features/workspace/components/LidarPanel/LidarPanel';
 import { TelemetryPanel } from '@/features/workspace/components/TelemetryPanel';
 import { CameraPanel } from '@/features/workspace/components/CameraPanel';
 import { ImuPanel } from '@/features/workspace/components/ImuPanel/ImuPanel';
