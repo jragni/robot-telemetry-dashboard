@@ -119,9 +119,33 @@ src/
 - **3+ subcomponents → own folder.** When a component has 3 or more child components, it gets its own directory.
 - **If a child needs a comment to describe what it is, extract it into a named subcomponent.** Self-describing component names replace comments.
 
-### No Barrel Files (ADR-001)
+### Barrel Files (ADR-001 revised)
 
-Import directly from source: `import { RobotCard } from '../fleet/RobotCard/RobotCard'`
+**No feature-level barrels** — don't create `src/features/fleet/index.ts` re-exporting an entire feature. This caused 68% module bloat in v2 with webpack.
+
+**Yes to component-folder barrels** — component folders with subcomponents should have an `index.ts` that exports the main component as default and subcomponents as named exports:
+
+```ts
+// src/features/workspace/components/ControlsPanel/index.ts
+export { ControlsPanel } from './ControlsPanel';
+export { VelocitySlider } from './VelocitySlider';
+```
+
+```ts
+// Consumer:
+import { ControlsPanel } from './components/ControlsPanel';
+// NOT: import { ControlsPanel } from './components/ControlsPanel/ControlsPanel';
+```
+
+**Yes to directory barrels for hooks** — `src/hooks/index.ts` re-exports all shared hooks for clean multi-import:
+
+```ts
+// Consumer:
+import { useImuSubscription, useLidarSubscription, useBatterySubscription } from '@/hooks';
+// NOT: three separate import lines from @/hooks/useImuSubscription, etc.
+```
+
+Vite/Rollup tree-shakes these correctly. The v2 problem was giant feature-level barrels with webpack, not focused component/directory barrels.
 
 ### shadcn-First Rule
 

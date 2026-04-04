@@ -6,7 +6,7 @@ Source of truth for all code rules. Referenced by CLAUDE.md.
 
 - One component per `.tsx` file
 - Types in feature `types/` folder as `{ComponentName}.types.ts` (named after the primary consumer). Never inline in `.tsx` files, never co-located next to components. Shared types (cross-feature) go in `src/types/`.
-- No barrel files (ADR-001) — import directly from source
+- No feature-level barrel files (ADR-001 revised) — component-folder and hooks directory barrels are allowed (see FOLDER-STRUCTURE.md)
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
 - Feature folders: `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types/` for interfaces. Page-level components live at the feature root. Mocks in `mocks/`.

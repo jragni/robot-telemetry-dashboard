@@ -172,6 +172,11 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - T-055: Reconnection attempts not shown in UI — only first connection attempt displays toast/status, subsequent retries are silent
 - T-056: Mixed content block on HTTPS deployment — ws:// connections blocked from GitHub Pages (HTTPS), need to enforce wss:// or warn user
 - T-057: RESOLVED — ngrok SSL broken, switched to Cloudflare Tunnel (`cloudflared tunnel --url http://127.0.0.1:8000`). Free, no bandwidth limits, no interstitial. Production confirmed working.
+- T-058: Responsive breakpoint failures — (1) resizing from desktop to mobile renders blank screen, (2) smaller desktop viewports have panel overflow/clipping, (3) mobile layout not triggering properly on resize. Priority fix.
+- T-059: AddRobotModal retry logic — connection test only shows first attempt, then jumps to failure modal. Should show all retry attempts (attempt 1/3, 2/3, 3/3) with progress before showing failure.
+- T-060: Light mode workspace visual issues — (1) System Status panel missing minimize/maximize icons, (2) panel borders too faint in light mode, (3) telemetry X-axis labels overlapping/clipped, (4) IMU compass scale clipped on right edge, (5) light mode contrast audit needed.
+- T-061: MERGED — Restructure workspace and pilot component folders (PR #48)
+- T-062: Add barrel index.ts files to all component folders and src/hooks/ — clean up duplicate-name imports (ControlsPanel/ControlsPanel → ControlsPanel), consolidate hook imports into single `from '@/hooks'`
 
 ---
 
