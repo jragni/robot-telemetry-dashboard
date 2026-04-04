@@ -178,6 +178,7 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - T-061: MERGED — Restructure workspace and pilot component folders (PR #48)
 - T-062: Add barrel index.ts files to all component folders and src/hooks/ — clean up duplicate-name imports (ControlsPanel/ControlsPanel → ControlsPanel), consolidate hook imports into single `from '@/hooks'`
 - T-063: Co-locate types with components — move all `feature/types/{Component}.types.ts` files into their component folders (`Component/Component.types.ts`). Keep only feature-shared types in `feature/types/`. Move single-consumer shared types from `src/types/` into their component folders.
+- T-064: Full convention sweep — audit every file against current CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md. Combines T-049 (import ordering), T-050 (styled comments), T-051 (alphabetization), T-053 (memoization), T-062 (barrel files), T-063 (type co-location), and any other violations. Single pass, all conventions enforced. Supersedes T-049, T-050, T-051, T-053, T-062, T-063.
 
 ---
 
