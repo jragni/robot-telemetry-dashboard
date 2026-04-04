@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
-
 import { Activity, Camera, Compass, Crosshair, Gamepad2, Radar, Shield } from 'lucide-react';
+
 import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
 
@@ -9,7 +9,6 @@ import { ImuPanel } from './components/ImuPanel/ImuPanel';
 import { LidarPanel } from './components/LidarPanel/LidarPanel';
 import { SystemStatusPanel } from './components/SystemStatusPanel/SystemStatusPanel';
 import { TelemetryPanel } from './components/TelemetryPanel';
-
 import type { MobileDataPanelId, MobileTabId } from './types/RobotWorkspaceMobile.types';
 
 export const IMU_VIZ_OPTIONS: readonly { value: ImuVariant; label: string; shortLabel: string }[] =

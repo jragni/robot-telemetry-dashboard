@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
+import { Button } from '@/components/ui/button';
 import type { HeaderProps } from '@/types/Header.types';
 
 /** getBreadcrumb
@@ -38,9 +38,9 @@ function getBreadcrumb(pathname: string): string {
  */
 export function Header({
   onToggleDrawer,
+  onToggleTheme,
   showHamburger = false,
   theme,
-  onToggleTheme,
 }: HeaderProps) {
   const location = useLocation();
   const breadcrumb = getBreadcrumb(location.pathname);

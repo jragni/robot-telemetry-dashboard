@@ -98,8 +98,6 @@ export const LIDAR_POINT_GLOW = 2;
 
 export const PILOT_FULLSCREEN_Z = 'z-50';
 
-// ── Mobile responsive constants ─────────────────────────────────────
-
 export const MINIMAP_SIZE_MOBILE_MAX = 100;
 
 export const COMPASS_STRIP_HEIGHT_MOBILE = 24;

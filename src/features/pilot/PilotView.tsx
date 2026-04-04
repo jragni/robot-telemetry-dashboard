@@ -1,19 +1,21 @@
 import { useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { useRobotConnection } from '@/hooks/useRobotConnection';
+import { Link, useParams } from 'react-router-dom';
+
+import { useBatterySubscription } from '@/hooks/useBatterySubscription';
 import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
+import { useImuSubscription } from '@/hooks/useImuSubscription';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { useLidarSubscription } from '@/hooks/useLidarSubscription';
+import { useRobotConnection } from '@/hooks/useRobotConnection';
+import { useRosTopics } from '@/hooks/useRosTopics';
+import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { cn } from '@/lib/utils';
+
+import { usePilotFullscreen } from './hooks/usePilotFullscreen';
 import { PilotCamera } from './components/PilotCamera';
 import { PilotHud } from './components/PilotHud/PilotHud';
 import { PilotHudMobile } from './components/PilotHud/PilotHudMobile';
-import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
-import { useRosTopics } from '@/hooks/useRosTopics';
-import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-import { useLidarSubscription } from '@/hooks/useLidarSubscription';
-import { useImuSubscription } from '@/hooks/useImuSubscription';
-import { usePilotFullscreen } from './hooks/usePilotFullscreen';
 import { PILOT_FULLSCREEN_Z } from './constants';
 import type { ProxyStatus } from './types/PilotView.types';
 
@@ -35,7 +37,6 @@ export function PilotView() {
   const { isFullscreen, toggleFullscreen } = usePilotFullscreen();
   const isMobile = useIsMobile();
 
-  // ── ROS subscriptions (shared topics from workspace) ─────────────
   const availableTopics = useRosTopics(ros);
   const lidar = useLidarSubscription(ros, selectedTopics?.lidar ?? '/scan');
   const imu = useImuSubscription(ros, selectedTopics?.imu ?? '/imu/data');
@@ -54,10 +55,10 @@ export function PilotView() {
 
   const telemetry = useMemo(
     () => ({
-      imu: connected ? { roll: imu.roll, pitch: imu.pitch, yaw: imu.yaw } : null,
+      battery: battery ? { percentage: battery.percentage, voltage: battery.voltage } : null,
+      imu: connected ? { pitch: imu.pitch, roll: imu.roll, yaw: imu.yaw } : null,
       lidarPoints: pilotLidarPoints,
       lidarRangeMax: lidar.rangeMax,
-      battery: battery ? { percentage: battery.percentage, voltage: battery.voltage } : null,
       linearSpeed: 0,
       uptimeSeconds: null,
     }),

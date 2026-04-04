@@ -65,7 +65,7 @@ export function RobotWorkspaceMobile({
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
     >
-      {/* ── Panel header ─────────────────────────────────────────── */}
+      {/* Panel header */}
       <header className="flex items-center gap-2 px-3 h-10 shrink-0 border-b border-border bg-surface-primary">
         {ActiveIcon ? (
           <ActiveIcon className="size-3.5 text-text-muted shrink-0" aria-hidden="true" />
@@ -106,7 +106,7 @@ export function RobotWorkspaceMobile({
         />
       </div>
 
-      {/* ── Bottom tab bar ────────────────────────────────────────── */}
+      {/* Bottom tab bar */}
       <nav
         className="flex items-center shrink-0 border-t border-border bg-surface-primary"
         aria-label="Workspace panels"

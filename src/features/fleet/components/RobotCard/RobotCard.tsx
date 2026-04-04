@@ -1,17 +1,17 @@
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { useRobotConnection } from '@/hooks/useRobotConnection';
-import { useRosTopics } from '@/hooks/useRosTopics';
-import { useRosGraph } from '@/hooks/useRosGraph';
 import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-import type { RobotCardProps } from './types/RobotCard.types';
-import { ROBOT_COLOR_CLASSES } from './constants';
-import { RobotCardIdentity } from './components/RobotCardIdentity';
-import { RobotCardConnection } from './components/RobotCardConnection';
-import { RobotCardVitals } from './components/RobotCardVitals';
-import { RobotCardGraph } from './components/RobotCardGraph';
+import { useRobotConnection } from '@/hooks/useRobotConnection';
+import { useRosGraph } from '@/hooks/useRosGraph';
+import { useRosTopics } from '@/hooks/useRosTopics';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+
 import { RobotCardActions } from './components/RobotCardActions';
+import { RobotCardConnection } from './components/RobotCardConnection';
+import { RobotCardGraph } from './components/RobotCardGraph';
+import { RobotCardIdentity } from './components/RobotCardIdentity';
+import { RobotCardVitals } from './components/RobotCardVitals';
+import { ROBOT_COLOR_CLASSES } from './constants';
+import type { RobotCardProps } from './types/RobotCard.types';
 
 /** RobotCard
  * @description Displays a single robot's connection info, system diagnostics,

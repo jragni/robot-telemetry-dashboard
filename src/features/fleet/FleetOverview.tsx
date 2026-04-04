@@ -4,6 +4,7 @@ import { AddRobotModal } from './components/AddRobotModal/AddRobotModal';
 import { FleetEmptyView } from './components/FleetEmptyView';
 import { FleetRobotGrid } from './components/FleetRobotGrid';
 
+
 /** FleetOverview
  * @description Renders the fleet page showing robot cards grid or empty state
  *  with Add Robot modal.

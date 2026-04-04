@@ -2,6 +2,7 @@ import { Camera } from 'lucide-react';
 
 import type { CameraEmptyStateProps } from '@/types/CameraEmptyState.types';
 
+
 /** CameraEmptyState
  * @description Renders a camera placeholder with an icon and status message.
  *  Used by both PilotCamera and CameraPanel when no stream is active.

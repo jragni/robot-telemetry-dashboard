@@ -1,14 +1,15 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 import { useTheme } from '@/hooks/useTheme';
+import { Button } from '@/components/ui/button';
+import { Toaster } from '@/components/ui/sonner';
+import { ConnectionToastProvider } from '@/components/ConnectionToastProvider';
+
 import { Header } from './Header';
 import { Sidebar } from './Sidebar/Sidebar';
 import { StatusBar } from './StatusBar';
-import { Toaster } from '@/components/ui/sonner';
-import { ConnectionToastProvider } from '@/components/ConnectionToastProvider';
 
 /** AppShell
  * @description Renders the top-level shell layout with sidebar, header,
