@@ -77,6 +77,10 @@ import type { WorkspaceProps } from './types/Workspace.types';
 - Only weights 400/600.
 - Canvas text must use design system font sizes.
 
+## ROS 2 Integration
+
+All code interacting with ROS must follow the official ROS 2 interface definitions (`ros2 interface show <type>`). Zod schemas, TypeScript types, and field names must match the actual message spec. Account for rosbridge JSON serialization — JSON has no `NaN`/`Infinity`, so rosbridge sends `null` for those values. Always use `.nullable()` on numeric array fields that could contain invalid readings (e.g., `ranges`, `intensities` in `sensor_msgs/msg/LaserScan`). When in doubt, run `ros2 topic echo <topic>` against a real robot and validate the schema against actual data.
+
 ## Status Indicators
 
 Triple-redundant: color + icon + text label (per MIL-STD-1472H). Terminology: Nominal / Caution / Critical / Offline.
