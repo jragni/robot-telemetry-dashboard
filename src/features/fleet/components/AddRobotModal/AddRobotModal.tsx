@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
 import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
 import { addRobotSchema } from '@/features/fleet/schemas';
-import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { AlertCircle, AlertTriangle, Loader2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
