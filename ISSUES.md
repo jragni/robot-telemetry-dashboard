@@ -161,24 +161,36 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - Acceptance: All code paths covered.
 - Branch: `test/t-048/signaling-client`
 
-### Wave 4 — Mechanical Sweeps (deferred to next session)
+### Wave 4 — Next Milestone
 
-- T-049: Import ordering sweep
-- T-050: Styled comment removal sweep
-- T-051: Object key and props alphabetization sweep
-- T-052: MIL-STD-1472H status indicator compliance (visual work)
-- T-053: Performance memoization sweep
-- T-054: Miscellaneous LOW fixes
-- T-055: Reconnection attempts not shown in UI — only first connection attempt displays toast/status, subsequent retries are silent
-- T-056: Mixed content block on HTTPS deployment — ws:// connections blocked from GitHub Pages (HTTPS), need to enforce wss:// or warn user
-- T-057: RESOLVED — ngrok SSL broken, switched to Cloudflare Tunnel (`cloudflared tunnel --url http://127.0.0.1:8000`). Free, no bandwidth limits, no interstitial. Production confirmed working.
-- T-058: Responsive breakpoint failures — (1) resizing from desktop to mobile renders blank screen, (2) smaller desktop viewports have panel overflow/clipping, (3) mobile layout not triggering properly on resize, (4) mobile workspace camera tab shows blank panel with no content on certain viewport sizes. Priority fix.
-- T-059: AddRobotModal retry logic — connection test only shows first attempt, then jumps to failure modal. Should show all retry attempts (attempt 1/3, 2/3, 3/3) with progress before showing failure.
-- T-060: Light mode workspace visual issues — (1) System Status panel missing minimize/maximize icons, (2) panel borders too faint in light mode, (3) telemetry X-axis labels overlapping/clipped, (4) IMU compass scale clipped on right edge, (5) light mode contrast audit needed.
-- T-061: MERGED — Restructure workspace and pilot component folders (PR #48)
-- T-062: Add barrel index.ts files to all component folders and src/hooks/ — clean up duplicate-name imports (ControlsPanel/ControlsPanel → ControlsPanel), consolidate hook imports into single `from '@/hooks'`
-- T-063: Co-locate types with components — move all `feature/types/{Component}.types.ts` files into their component folders (`Component/Component.types.ts`). Keep only feature-shared types in `feature/types/`. Move single-consumer shared types from `src/types/` into their component folders.
-- T-064: Full convention sweep — audit every file against current CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md. Combines T-049 (import ordering), T-050 (styled comments), T-051 (alphabetization), T-053 (memoization), T-062 (barrel files), T-063 (type co-location), and any other violations. Single pass, all conventions enforced. Supersedes T-049, T-050, T-051, T-053, T-062, T-063.
+#### T-052: MIL-STD-1472H status indicator icons
+- Visual work — requires discuss/research/approve pipeline
+- Add lucide-react icons to all status indicators (ConnectionRow, SystemStatusPanel, ControlsPanel, BatteryRow)
+- Every status indicator must have color + icon + text
+
+#### T-064: Full convention sweep
+- Single-pass audit of every file against CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md
+- Import ordering (3 groups), styled comment removal, object key + props alphabetization, performance memoization
+- Add barrel index.ts to all component folders and src/hooks/
+- Co-locate types with components (move from feature/types/ to component folders)
+- Supersedes T-049, T-050, T-051, T-053, T-062, T-063
+
+#### T-065: Responsive + visual polish
+- Desktop-to-mobile resize renders blank screen
+- Smaller desktop viewports: panel overflow/clipping (telemetry labels, IMU compass)
+- Mobile layout not triggering properly on resize
+- Mobile workspace camera tab blank on certain viewport sizes
+- Light mode: panel borders too faint, System Status missing minimize/maximize icons, light mode contrast audit
+
+#### T-066: Connection UX
+- Reconnection attempts not shown — only first attempt displays toast/status, retries are silent
+- AddRobotModal retry logic — shows first attempt then jumps to failure modal, should show attempt 1/3, 2/3, 3/3
+
+#### T-067: Misc fixes
+- Persisted store loose color assertion (validate against ROBOT_COLORS array)
+- WebRTC connects when robot is disconnected (change enabled to connected status check)
+- Mixed content block on HTTPS deployment (warn user when entering ws:// URL from HTTPS page)
+- usePilotFullscreen missing contentEditable check on F key listener
 
 ---
 
