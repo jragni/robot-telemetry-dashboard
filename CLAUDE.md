@@ -51,7 +51,7 @@ Before writing ANY component file, verify:
 | Folder Structure | [docs/FOLDER-STRUCTURE.md](docs/FOLDER-STRUCTURE.md) | Feature domains, file naming, scoping rules, shadcn-first, constants/helpers conventions               |
 | Testing          | [docs/TESTING.md](docs/TESTING.md)                   | Co-location, unit tests, integration tests, E2E, quality gate                                          |
 | Code Conventions | [docs/CODE-CONVENTIONS.md](docs/CODE-CONVENTIONS.md) | File structure, imports, naming, comments, components, state management, semantic HTML, PR conventions  |
-| Dev Workflow     | [docs/DEVELOPMENT-WORKFLOW.md](docs/DEVELOPMENT-WORKFLOW.md) | Pair programming pipeline, 5-role agent team, audit process, wave ordering, PR conventions       |
+| Dev Workflow     | [docs/DEVELOPMENT-WORKFLOW.md](docs/DEVELOPMENT-WORKFLOW.md) | Pair programming pipeline, 8-role agent team, audit process, wave ordering, PR conventions       |
 
 These docs are the source of truth. CLAUDE.md does not duplicate their content.
 
@@ -66,6 +66,20 @@ Project-level agent definitions live in `.claude/agents/`. These are the team ro
 | PR Reviewer | `.claude/agents/pr-reviewer.md` | First-tier PR review, comments only, never merges |
 | PR Responder | `.claude/agents/pr-responder.md` | Addresses review feedback, never mentions AI |
 | Spec Conformance | `.claude/agents/spec-conformance.md` | Checks code against CODE-CONVENTIONS.md |
+| Branch Guardian | `.claude/agents/branch-guardian.md` | Manages branch lifecycle before/after fixer dispatch |
+| Pre-Merge Gate | `.claude/agents/pre-merge-gate.md` | Verifies all pipeline stages before merge |
+| Research Applicator | `.claude/agents/research-applicator.md` | Diffs code against research findings |
+| Overseer | `.claude/agents/overseer.md` | Monitors agent team performance, produces reports |
+
+## Skills
+
+Project-level skills live in `.claude/skills/`. Invoke with `/skill-name`.
+
+| Skill | File | When to use |
+|-------|------|-------------|
+| /visual-pipeline | `.claude/skills/visual-pipeline.md` | Before any visual .tsx change |
+| /convention-check | `.claude/skills/convention-check.md` | Before committing — scans for convention violations |
+| /ros-validate | `.claude/skills/ros-validate.md` | After modifying ROS Zod schemas |
 
 ## Code Conventions
 

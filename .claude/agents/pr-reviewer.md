@@ -34,6 +34,10 @@ Review checklist — check EVERY item. Previous reviews missed folder violations
 17. No as any, @ts-ignore, or eslint-disable (except documented intentional ones)
 18. Merge conflict warnings — flag if this PR touches files another open PR also touches
 
+**Skill-based checks:**
+19. If the PR diff includes ROS Zod schemas or subscription hooks (*Subscription.ts, ros2-schemas.ts), run /ros-validate checks: .nullable() on numeric arrays, field names match ROS 2 interfaces, schema-to-messageType match
+20. Run /convention-check rules against all changed .ts/.tsx files — report any violations the fixer missed
+
 Output format — plain text only:
 - State what you checked
 - List issues found with file:line references

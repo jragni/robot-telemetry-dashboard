@@ -18,7 +18,7 @@ Visual work executes inline. Never delegate visual components to parallel subage
 
 ## Agent Team (Audits and Housekeeping)
 
-For codebase audits, bulk refactors, and housekeeping tickets, use the 5-role agent team defined in .claude/agents/.
+For codebase audits, bulk refactors, and housekeeping tickets, use the 9-role agent team defined in .claude/agents/.
 
 ### Roles
 
@@ -29,12 +29,24 @@ For codebase audits, bulk refactors, and housekeeping tickets, use the 5-role ag
 | PR Reviewer | pr-reviewer.md | First-tier review with build check and convention audit | Comments only, never approves or merges |
 | PR Responder | pr-responder.md | Addresses review feedback, fixes code | Never mentions AI, /frontend-design for UI changes |
 | Spec Conformance | spec-conformance.md | Gate check against CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md | Read-only, PASS/FAIL per rule per file |
+| Branch Guardian | branch-guardian.md | Manages branch lifecycle before/after fixer dispatch | Runs before and after every fixer agent |
+| Pre-Merge Gate | pre-merge-gate.md | Verifies all pipeline stages before merge | Read-only, MERGE-READY or BLOCKED verdict |
+| Research Applicator | research-applicator.md | Diffs code against research findings post-implementation | Read-only, APPLIED/MISSED per recommendation |
+| Overseer | overseer.md | Monitors agent team performance, produces performance reports | Read-only, dispatched post-cycle |
 
 ### Pipeline
 
 ```
-Audit → Consolidate → Conflict Detection → Execute → Review → Respond → Gate Check → Merge
+Audit → Consolidate → Conflict Detection → Branch Setup → Execute → Review → Respond → Gate Check → Pre-Merge Gate → Merge
 ```
+
+### Skills (invoke before/during work)
+
+| Skill | File | When to use |
+|-------|------|-------------|
+| /visual-pipeline | .claude/skills/visual-pipeline.md | Before any visual .tsx change — enforces 5-step pipeline |
+| /convention-check | .claude/skills/convention-check.md | Before committing — scans changed files for convention violations |
+| /ros-validate | .claude/skills/ros-validate.md | After modifying ROS Zod schemas — validates against interface definitions |
 
 Step 1: Audit — dispatch parallel codebase-auditor agents, each assigned a concern area (architecture, quality, safety, performance, coverage). They return structured findings.
 
@@ -42,7 +54,9 @@ Step 2: Consolidate — orchestrator groups findings into ISSUES.md with raw fin
 
 Step 3: Conflict detection — before dispatching fixers, an agent analyzes ticket file lists and flags which tickets share files. Tickets with overlapping files get serialized (one completes before the next starts). Tickets with no overlap run in parallel. This prevents rebase conflicts from parallel PRs touching the same files.
 
-Step 4: Execute — dispatch parallel codebase-fixer agents, one per ticket. Each works on a separate branch (do not use worktree isolation — agents need Bash access which worktrees block). Wave ordering is respected (sequential between waves, parallel within waves). Each agent creates a branch, implements the fix, runs build, commits, and creates a PR. Test one agent first before dispatching the full batch to verify permissions work.
+Step 3.5: Branch Setup — dispatch branch-guardian agent before each fixer. It cleans stale worktrees/locks, verifies base branch, creates the ticket branch, and confirms checkout. Must complete before the fixer starts.
+
+Step 4: Execute — dispatch codebase-fixer agents sequentially, one per ticket. Each works on a separate branch (do not use worktree isolation — agents need Bash access which worktrees block). Wave ordering is respected. Each agent creates a branch, implements the fix, runs build, commits, and creates a PR. After each fixer completes, dispatch branch-guardian again to validate commits and reset for the next agent. Test one agent first before dispatching the full batch to verify permissions work.
 
 Step 5: Review — dispatch pr-reviewer agents, one per PR. Each checks out the branch, runs the build, reviews against CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md, and posts a comment. Never approves or merges.
 
@@ -50,7 +64,9 @@ Step 6: Respond — dispatch pr-responder agents for PRs with review feedback. E
 
 Step 7: Gate check — dispatch spec-conformance agents to verify all files in the diff conform to CODE-CONVENTIONS.md. PASS/FAIL per rule per file. Any FAIL blocks merge.
 
-Step 8: Merge — orchestrator cherry-picks or merges PRs in wave order with build gates between waves. Close PRs with references to merged commits.
+Step 7.5: Pre-Merge Gate — dispatch pre-merge-gate agent for each PR. It checks 5 gates (build green, review completed, feedback addressed, spec conformance passed, tests exist). All gates must PASS for a MERGE-READY verdict. BLOCKED PRs cannot be merged until the blocking condition is resolved.
+
+Step 8: Merge — orchestrator cherry-picks or merges PRs in wave order with build gates between waves. Close PRs with references to merged commits. Only PRs with MERGE-READY verdict from pre-merge-gate can be merged.
 
 ### ISSUES.md Format
 
