@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { DEFAULT_PANEL_TOPICS } from '@/features/workspace/constants';
 
-import { assignRobotColor, persistedStateSchema, toRobotId } from './useConnectionStore.helpers';
+import { assignRobotColor, isValidRobotColor, persistedStateSchema, toRobotId } from './useConnectionStore.helpers';
 import type { ConnectionStore } from './useConnectionStore.types';
 
 export const useConnectionStore = create<ConnectionStore>()(
@@ -123,8 +123,8 @@ export const useConnectionStore = create<ConnectionStore>()(
               lastSeen: null,
               lastError: null,
               reconnectAttempt: null,
-              color: robot.color
-                ? (robot.color as 'blue')
+              color: robot.color && isValidRobotColor(robot.color)
+                ? robot.color
                 : assignRobotColor(robot.name || key),
               selectedTopics: robot.selectedTopics ?? { ...DEFAULT_PANEL_TOPICS },
             },

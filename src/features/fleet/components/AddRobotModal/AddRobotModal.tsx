@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { Plus, Loader2, AlertCircle } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import { AlertTriangle, Plus, Loader2, AlertCircle } from 'lucide-react';
 
 import {
   Dialog,
@@ -18,6 +18,7 @@ import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
 import { addRobotSchema } from '@/features/fleet/schemas';
 import type { AddRobotFormErrors } from './types/AddRobotModal.types';
 import { FIELD_ERROR_IDS } from './constants';
+import { detectMixedContent } from './helpers';
 import { FieldError } from './components/FieldError';
 import { MobileHeader } from './components/MobileHeader';
 
@@ -52,6 +53,11 @@ export function AddRobotModal() {
   const hasNameError = errors.name != null;
   const hasUrlError = errors.url != null;
   const isSubmitDisabled = isConnecting || name.trim().length === 0 || url.trim().length === 0;
+
+  const hasMixedContentRisk = useMemo(() => {
+    const trimmed = url.trim().toLowerCase();
+    return detectMixedContent(trimmed);
+  }, [url]);
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -219,6 +225,17 @@ export function AddRobotModal() {
               }`}
             />
             <FieldError id={FIELD_ERROR_IDS.url} message={errors.url} />
+            {hasMixedContentRisk && (
+              <div
+                role="alert"
+                className="flex items-start gap-2 rounded-sm border border-status-caution/30 bg-status-caution/10 px-3 py-2"
+              >
+                <AlertTriangle size={14} className="text-status-caution shrink-0 mt-0.5" />
+                <p className="font-sans text-xs text-status-caution">
+                  This page is served over HTTPS. Browsers block insecure ws:// connections from secure pages. Use wss:// or a proxy with TLS.
+                </p>
+              </div>
+            )}
           </div>
 
           {!!errors.form && (

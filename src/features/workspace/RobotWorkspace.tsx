@@ -49,7 +49,7 @@ export function RobotWorkspace() {
   const availableTopics = useRosTopics(ros);
   const battery = useBatterySubscription(ros, availableTopics);
   const uptimeSeconds = useConnectionUptime(id, connected);
-  const { videoRef } = useWebRtcStream({ url: robot?.url ?? '', enabled: connected });
+  const { videoRef } = useWebRtcStream({ connected, enabled: connected, url: robot?.url ?? '' });
 
   const selectedTopics = robot?.selectedTopics ?? DEFAULT_PANEL_TOPICS;
   const setRobotTopic = useConnectionStore((s) => s.setRobotTopic);

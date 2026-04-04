@@ -3,6 +3,7 @@ import type { VideoStreamStatus } from '@/types/streaming.types';
 export interface UseWebRtcStreamOptions {
   readonly url: string;
   readonly enabled: boolean;
+  readonly connected: boolean;
   readonly onStatusChange?: (status: VideoStreamStatus) => void;
 }
 

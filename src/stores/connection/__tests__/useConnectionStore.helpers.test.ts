@@ -3,6 +3,7 @@ import {
   assignRobotColor,
   deriveRosbridgeUrl,
   deriveWebRtcUrl,
+  isValidRobotColor,
   toRobotId,
 } from '../useConnectionStore.helpers';
 
@@ -69,6 +70,20 @@ describe('deriveWebRtcUrl', () => {
 
   it('returns empty string for empty input', () => {
     expect(deriveWebRtcUrl('')).toBe('');
+  });
+});
+
+describe('isValidRobotColor', () => {
+  it('returns true for valid robot colors', () => {
+    expect(isValidRobotColor('blue')).toBe(true);
+    expect(isValidRobotColor('cyan')).toBe(true);
+    expect(isValidRobotColor('rose')).toBe(true);
+  });
+
+  it('returns false for invalid color strings', () => {
+    expect(isValidRobotColor('magenta')).toBe(false);
+    expect(isValidRobotColor('')).toBe(false);
+    expect(isValidRobotColor('BLUE')).toBe(false);
   });
 });
 

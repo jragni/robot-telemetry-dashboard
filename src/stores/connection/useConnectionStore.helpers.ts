@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { RobotColor } from './useConnectionStore.types';
 
-const ROBOT_COLORS: readonly RobotColor[] = [
+export const ROBOT_COLORS: readonly RobotColor[] = [
   'blue',
   'cyan',
   'green',
@@ -49,6 +49,10 @@ export function deriveRosbridgeUrl(baseUrl: string): string {
   if (!baseUrl) return '';
   const clean = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
   return `${clean}/rosbridge`;
+}
+
+export function isValidRobotColor(value: string): value is RobotColor {
+  return (ROBOT_COLORS as readonly string[]).includes(value);
 }
 
 export function assignRobotColor(name: string): RobotColor {
