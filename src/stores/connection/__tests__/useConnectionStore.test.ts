@@ -42,6 +42,7 @@ function createTestStore() {
             status: 'disconnected',
             lastSeen: null,
             lastError: null,
+            reconnectAttempt: null,
             color: assignRobotColor(name),
             selectedTopics: { ...DEFAULT_PANEL_TOPICS },
           },

@@ -27,6 +27,7 @@ export const useConnectionStore = create<ConnectionStore>()(
               status: 'disconnected',
               lastSeen: null,
               lastError: null,
+              reconnectAttempt: null,
               color: assignRobotColor(name),
               selectedTopics: { ...DEFAULT_PANEL_TOPICS },
             },
@@ -100,6 +101,7 @@ export const useConnectionStore = create<ConnectionStore>()(
               status: 'disconnected' as const,
               lastSeen: null,
               lastError: null,
+              reconnectAttempt: null,
               color: robot.color,
               selectedTopics: robot.selectedTopics,
             },
@@ -120,6 +122,7 @@ export const useConnectionStore = create<ConnectionStore>()(
               status: 'disconnected' as const,
               lastSeen: null,
               lastError: null,
+              reconnectAttempt: null,
               color: robot.color
                 ? (robot.color as 'blue')
                 : assignRobotColor(robot.name || key),

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
@@ -31,6 +32,7 @@ export function AddRobotModal() {
   const [url, setUrl] = useState('');
   const [errors, setErrors] = useState<AddRobotFormErrors>({});
   const [isConnecting, setIsConnecting] = useState(false);
+  const [connectAttempt, setConnectAttempt] = useState(0);
   const addRobot = useConnectionStore((s) => s.addRobot);
   const connectRobot = useConnectionStore((s) => s.connectRobot);
 
@@ -38,6 +40,7 @@ export function AddRobotModal() {
     setName('');
     setUrl('');
     setErrors({});
+    setConnectAttempt(0);
     setIsConnecting(false);
   }, []);
 
@@ -75,16 +78,42 @@ export function AddRobotModal() {
       return;
     }
 
-    // Test connection
+    // Test connection with retries
     setIsConnecting(true);
     setErrors((prev) => ({ ...prev, form: undefined }));
 
+    let connected = false;
+    for (let attempt = 1; attempt <= RECONNECT_MAX_ATTEMPTS; attempt++) {
+      setConnectAttempt(attempt);
+      try {
+        await ConnectionManager.testConnection(normalizedUrl);
+        connected = true;
+        break;
+      } catch {
+        if (attempt === RECONNECT_MAX_ATTEMPTS) {
+          setErrors((prev) => ({
+            ...prev,
+            form: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`,
+          }));
+          setIsConnecting(false);
+          setConnectAttempt(0);
+          return;
+        }
+      }
+    }
+
+    if (!connected) {
+      setIsConnecting(false);
+      setConnectAttempt(0);
+      return;
+    }
+
     try {
-      await ConnectionManager.testConnection(normalizedUrl);
       const id = addRobot(validName, normalizedUrl);
       if (id === null) {
         setErrors((prev) => ({ ...prev, name: 'A robot with that name already exists' }));
         setIsConnecting(false);
+        setConnectAttempt(0);
         return;
       }
       await connectRobot(id);
@@ -95,6 +124,7 @@ export function AddRobotModal() {
       setErrors((prev) => ({ ...prev, form: message }));
     } finally {
       setIsConnecting(false);
+      setConnectAttempt(0);
     }
   }
 
@@ -215,7 +245,7 @@ export function AddRobotModal() {
               {isConnecting ? (
                 <>
                   <Loader2 size={14} className="animate-spin" />
-                  Connecting...
+                  {`Connecting... (attempt ${String(connectAttempt)}/${String(RECONNECT_MAX_ATTEMPTS)})`}
                 </>
               ) : (
                 'Add Robot'

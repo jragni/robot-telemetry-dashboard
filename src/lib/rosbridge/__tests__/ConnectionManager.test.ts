@@ -221,6 +221,82 @@ describe('ConnectionManager', () => {
       expect(mockRosInstances.length).toBeGreaterThan(1);
     });
 
+    it('writes reconnectAttempt to the store on each retry', async () => {
+      const { connect } = await importFresh();
+      seedRobot('r1');
+
+      const promise = connect('r1', 'http://robot.local');
+      const ros = latestRos();
+      ros.emit('connection');
+      await promise;
+
+      // Involuntary close triggers reconnect
+      ros.emit('close');
+
+      // First reconnect attempt
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ reconnectAttempt: 1, status: 'connecting' }),
+      );
+
+      // Advance past backoff, fail the attempt
+      await vi.advanceTimersByTimeAsync(3_000);
+      latestRos().emit('error', new Error('refused'));
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Second reconnect attempt
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ reconnectAttempt: 2, status: 'connecting' }),
+      );
+    });
+
+    it('clears reconnectAttempt on successful reconnect', async () => {
+      const { connect } = await importFresh();
+      seedRobot('r1');
+
+      const promise = connect('r1', 'http://robot.local');
+      const ros = latestRos();
+      ros.emit('connection');
+      await promise;
+
+      // Involuntary close
+      ros.emit('close');
+      await vi.advanceTimersByTimeAsync(3_000);
+
+      // Reconnect succeeds
+      latestRos().emit('connection');
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ reconnectAttempt: null, status: 'connected' }),
+      );
+    });
+
+    it('clears reconnectAttempt after max attempts failure', async () => {
+      const { connect } = await importFresh();
+      seedRobot('r1');
+
+      const promise = connect('r1', 'http://robot.local');
+      const ros = latestRos();
+      ros.emit('connection');
+      await promise;
+
+      ros.emit('close');
+
+      for (let i = 0; i < RECONNECT_MAX_ATTEMPTS + 1; i++) {
+        await vi.advanceTimersByTimeAsync(60_000);
+        latestRos().emit('error', new Error('refused'));
+        await vi.advanceTimersByTimeAsync(0);
+      }
+
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ reconnectAttempt: null, status: 'error' }),
+      );
+    });
+
     it('transitions to error after max reconnect attempts', async () => {
       const { connect } = await importFresh();
       seedRobot('r1');
