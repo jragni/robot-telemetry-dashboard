@@ -60,41 +60,46 @@ src/
 │   │   ├── FleetOverview.tsx     # Page component (lives at feature root)
 │   │   ├── helpers.ts            # Feature-scoped helpers (NOT fleet.helpers.ts)
 │   │   ├── constants.ts          # Feature-scoped constants
-│   │   ├── types/                # All feature types — never inline or co-located
-│   │   │   ├── RobotCard.types.ts
-│   │   │   ├── AddRobotModal.types.ts
-│   │   │   ├── RobotDeleteButton.types.ts
-│   │   │   └── RobotStatusBadge.types.ts
-│   │   ├── components/           # UI components (no .types.ts here)
+│   │   ├── types/                # Feature-shared types (used by 2+ components)
+│   │   │   └── FleetOverview.types.ts
+│   │   ├── components/
 │   │   │   ├── FleetEmptyState.tsx
-│   │   │   ├── AddRobotModal.tsx
+│   │   │   ├── AddRobotModal/
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── AddRobotModal.tsx
+│   │   │   │   └── AddRobotModal.types.ts    # co-located with component
 │   │   │   └── RobotCard/
+│   │   │       ├── index.ts
 │   │   │       ├── RobotCard.tsx
+│   │   │       ├── RobotCard.types.ts        # co-located with component
 │   │   │       ├── RobotCard.constants.ts
 │   │   │       ├── RobotStatusBadge.tsx
 │   │   │       └── RobotDeleteButton.tsx
-│   │   └── mocks/                # Dev views and mock components
+│   │   └── mocks/
 │   │       └── FleetDevView.tsx
 │   ├── workspace/                # Robot telemetry workspace
 │   │   ├── RobotWorkspace.tsx    # Page component
 │   │   ├── constants.ts          # Feature-scoped constants
-│   │   ├── types/                # All feature types
-│   │   │   ├── WorkspacePanel.types.ts
-│   │   │   └── WorkspaceGrid.types.ts
-│   │   ├── components/           # UI components (no .types.ts here)
+│   │   ├── types/                # Feature-shared types (e.g., PanelId)
+│   │   │   └── panel.types.ts
+│   │   ├── components/
 │   │   │   ├── WorkspacePanel.tsx
-│   │   │   └── WorkspaceGrid.tsx
-│   │   └── mocks/                # Dev views and mock components
-│   │       ├── MockCamera.tsx
-│   │       ├── MockImu.tsx
-│   │       ├── WorkspaceDevView.tsx
+│   │   │   ├── WorkspacePanel.types.ts       # co-located
+│   │   │   ├── LidarPanel/
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── LidarPanel.tsx
+│   │   │   │   ├── LidarPanel.types.ts       # co-located
+│   │   │   │   └── LidarPanel.helpers.ts
+│   │   │   └── ControlsPanel/
+│   │   │       ├── index.ts
+│   │   │       ├── ControlsPanel.tsx
+│   │   │       └── ControlsPanel.types.ts    # co-located
+│   │   └── mocks/
 │   │       └── ...
 │   ├── landing/                  # Landing page
 │   │   ├── LandingPage.tsx       # Page component
 │   │   ├── constants.ts          # Feature-scoped constants
-│   │   ├── types/                # All feature types
-│   │   │   └── LandingPage.types.ts
-│   │   └── components/           # Subcomponents
+│   │   └── components/
 │   │       ├── LandingHero.tsx
 │   │       ├── LandingHeader.tsx
 │   │       └── ...
@@ -169,7 +174,7 @@ shadcn CLI may write files to a literal `./@/` directory instead of `src/`. Afte
 | Type       | Convention                                                    | Example                                  |
 | ---------- | ------------------------------------------------------------- | ---------------------------------------- |
 | Components | PascalCase `.tsx`                                             | `RobotCard.tsx`                          |
-| Types      | PascalCase `.types.ts` in feature `types/` folder             | `types/RobotCard.types.ts`               |
+| Types      | PascalCase `.types.ts` co-located with component              | `RobotCard/RobotCard.types.ts`           |
 | Helpers    | `helpers.ts` at feature root, or `{Component}.helpers.ts`     | `helpers.ts`, `RobotCard.helpers.ts`     |
 | Hooks      | camelCase `use*.ts`                                           | `useTheme.ts`, `useFleetFilter.ts`       |
 | Tests      | matches source `.test.tsx` / `.test.ts`                       | `RobotCard.test.tsx`                     |
@@ -181,9 +186,9 @@ shadcn CLI may write files to a literal `./@/` directory instead of `src/`. Afte
 
 Helpers, constants, hooks, stores, and types all follow the same scoping pattern:
 
-- **Component-scoped:** `RobotCard/RobotCard.helpers.ts` — only used by that component
-- **Feature-scoped:** `fleet/helpers.ts` or `fleet/constants.ts` — used across the feature (no feature-name prefix)
-- **Shared:** `src/hooks/`, `src/stores/`, `src/lib/`, etc. — used across 2+ features
+- **Component-scoped:** `RobotCard/RobotCard.types.ts`, `RobotCard/RobotCard.helpers.ts` — co-located, only used by that component
+- **Feature-scoped:** `fleet/types/shared.types.ts`, `fleet/helpers.ts`, `fleet/constants.ts` — used by 2+ components within the feature (no feature-name prefix)
+- **Shared:** `src/types/`, `src/hooks/`, `src/stores/`, `src/lib/`, etc. — used across 2+ features
 
 Start local, promote when a second consumer appears. Never prematurely share.
 

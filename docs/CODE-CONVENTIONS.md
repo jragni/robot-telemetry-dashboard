@@ -5,11 +5,11 @@ Source of truth for all code rules. Referenced by CLAUDE.md.
 ## File Structure
 
 - One component per `.tsx` file
-- Types in feature `types/` folder as `{ComponentName}.types.ts` (named after the primary consumer). Never inline in `.tsx` files, never co-located next to components. Shared types (cross-feature) go in `src/types/`.
+- Types co-located with their component as `{ComponentName}.types.ts` in the same folder. Never inline in `.tsx` files. Feature-shared types (used by 2+ components within a feature) go in `feature/types/`. Cross-feature types go in `src/types/`.
 - No feature-level barrel files (ADR-001 revised) — component-folder and hooks directory barrels are allowed (see FOLDER-STRUCTURE.md)
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
-- Feature folders: `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types/` for interfaces. Page-level components live at the feature root. Mocks in `mocks/`.
+- Feature folders: `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`). Page-level components live at the feature root. Mocks in `mocks/`. Feature `types/` folder only for types shared across multiple components within the feature.
 - Hook folders: when a hook grows beyond a single file, give it its own folder: `hooks/{hookName}/` with `{hookName}.ts`, `types.ts`, `constants.ts`, `helpers.ts`.
 - Shared component folders: components in `src/components/` with 2+ files get their own folder. Single-file components stay flat.
 
