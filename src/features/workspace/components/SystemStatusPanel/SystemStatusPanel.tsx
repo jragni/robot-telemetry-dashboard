@@ -15,16 +15,16 @@ import { ExpandableRow } from './ExpandableRow';
  *  reconnect/disconnect button.
  */
 export function SystemStatusPanel({
-  name,
-  url,
-  connected,
-  status,
-  lastSeen,
-  uptimeSeconds,
   battery,
-  rosGraph,
+  connected,
+  lastSeen,
+  name,
   onConnect,
   onDisconnect,
+  rosGraph,
+  status,
+  uptimeSeconds,
+  url,
 }: SystemStatusPanelProps) {
   const isConnecting = status === 'connecting';
   const [expandedSection, setExpandedSection] = useState<string | null>(null);

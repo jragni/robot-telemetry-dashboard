@@ -46,8 +46,8 @@ function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
 
 export function useImuSubscription(ros: Ros | undefined, topicName: string): UseImuReturn {
   const [state, setState] = useState<UseImuReturn>({
-    roll: 0, pitch: 0, yaw: 0,
     angularVelocity: undefined, linearAcceleration: undefined,
+    pitch: 0, roll: 0, yaw: 0,
   });
 
   const latestRef = useRef(state);

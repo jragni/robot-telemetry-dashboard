@@ -42,34 +42,34 @@ export const COMPASS_POINTER_HEIGHT = 6;
 export const COMPASS_TOKEN_MAP: Record<string, string> = {
   accent: '--color-accent',
   textMuted: '--color-text-muted',
-  tickMinor: '--color-border',
   tickMajor: '--color-text-secondary',
+  tickMinor: '--color-border',
 };
 
 export const COMPASS_COLOR_FALLBACKS = {
   accent: CANVAS_FALLBACKS.accent,
   textMuted: CANVAS_FALLBACKS.textMuted,
-  tickMinor: CANVAS_FALLBACKS.border,
   tickMajor: CANVAS_FALLBACKS.textSecondary,
+  tickMinor: CANVAS_FALLBACKS.border,
 };
 
 // Maps local color keys to CSS custom property names for canvas resolution
 export const LIDAR_TOKEN_MAP: Record<string, string> = {
   accent: '--color-accent',
-  textMuted: '--color-text-muted',
-  gridLine: '--color-border',
-  nominal: '--color-status-nominal',
   caution: '--color-status-caution',
   critical: '--color-status-critical',
+  gridLine: '--color-border',
+  nominal: '--color-status-nominal',
+  textMuted: '--color-text-muted',
 };
 
 export const LIDAR_COLOR_FALLBACKS = {
   accent: CANVAS_FALLBACKS.accent,
-  textMuted: CANVAS_FALLBACKS.textMuted,
-  gridLine: CANVAS_FALLBACKS.border,
-  nominal: CANVAS_FALLBACKS.statusNominal,
   caution: CANVAS_FALLBACKS.statusCaution,
   critical: CANVAS_FALLBACKS.statusCritical,
+  gridLine: CANVAS_FALLBACKS.border,
+  nominal: CANVAS_FALLBACKS.statusNominal,
+  textMuted: CANVAS_FALLBACKS.textMuted,
 };
 
 export const LIDAR_TICK_LENGTH = 4;
@@ -84,11 +84,11 @@ export const LIDAR_ROBOT_TRIANGLE_RATIO = 0.035;
 
 export const LIDAR_ROBOT_TRIANGLE_MIN = 5;
 
-export const VIDEO_STATUS_LABELS: Record<'idle' | 'connecting' | 'reconnecting' | 'failed', string> = {
-  idle: 'No video stream',
+export const VIDEO_STATUS_LABELS: Record<'connecting' | 'failed' | 'idle' | 'reconnecting', string> = {
   connecting: 'Connecting...',
-  reconnecting: 'Reconnecting...',
   failed: 'Stream failed',
+  idle: 'No video stream',
+  reconnecting: 'Reconnecting...',
 };
 
 export const HUD_PANEL_BASE =
@@ -111,10 +111,10 @@ export const COMPASS_POINTER_HALF_WIDTH_MOBILE = 4;
 export const COMPASS_POINTER_HEIGHT_MOBILE = 5;
 
 export const PLACEHOLDER_TELEMETRY = {
-  imu: { roll: 0, pitch: 0, yaw: 0 },
+  battery: null,
+  imu: { pitch: 0, roll: 0, yaw: 0 },
   lidarPoints: [],
   lidarRangeMax: 20,
-  battery: null,
   linearSpeed: 0,
   uptimeSeconds: null,
 } as const;

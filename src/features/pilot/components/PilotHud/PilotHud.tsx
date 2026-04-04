@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+
 import { PilotCompass } from '../PilotCompass/PilotCompass';
 import { PilotLidarMinimap } from '../PilotLidarMinimap';
 import { PilotGyroReadout } from '../PilotGyroReadout/PilotGyroReadout';
@@ -23,20 +25,20 @@ import type { PilotHudProps } from '../../types/PilotView.types';
  * @param onToggleFullscreen - Callback to toggle fullscreen.
  */
 export function PilotHud({
+  angularVelocity,
+  connected,
+  isFullscreen,
+  linearVelocity,
+  onAngularVelocityChange,
+  onDirectionEnd,
+  onDirectionStart,
+  onEmergencyStop,
+  onLinearVelocityChange,
+  onToggleFullscreen,
+  robotId,
+  rosbridgeStatus,
   telemetry,
   videoStatus,
-  rosbridgeStatus,
-  isFullscreen,
-  connected,
-  onToggleFullscreen,
-  onDirectionStart,
-  onDirectionEnd,
-  onLinearVelocityChange,
-  onAngularVelocityChange,
-  onEmergencyStop,
-  linearVelocity,
-  angularVelocity,
-  robotId,
 }: PilotHudProps) {
   const heading = telemetry.imu?.yaw ?? 0;
 

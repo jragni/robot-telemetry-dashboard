@@ -4,7 +4,6 @@ import { AlertOctagon, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { ErrorBoundaryProps, ErrorBoundaryState } from '@/types/ErrorBoundary.types';
 
-
 /** ErrorBoundary
  * @description Catches unhandled errors in the React component tree and renders
  *  a full-page fallback with error details and a reload button.
