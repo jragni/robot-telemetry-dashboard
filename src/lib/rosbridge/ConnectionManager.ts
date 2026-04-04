@@ -1,11 +1,12 @@
 import { Ros } from 'roslib';
+
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
 import { deriveRosbridgeUrl } from '@/stores/connection/useConnectionStore.helpers';
 import {
-  RECONNECT_MAX_ATTEMPTS,
   calculateBackoffDelay,
+  RECONNECT_MAX_ATTEMPTS,
 } from '@/constants/reconnection';
+import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
 
 const CONNECTION_TIMEOUT = 10_000;
 const connections = new Map<string, Ros>();
@@ -17,8 +18,6 @@ const connectedAtMap = new Map<string, number>();
 function updateStore(id: string, patch: Partial<Pick<RobotConnection, 'status' | 'lastSeen' | 'lastError'>>) {
   useConnectionStore.getState().updateRobot(id, patch);
 }
-
-// ── Reconnection ─────────────────────────────────────────────────
 
 function clearReconnect(id: string) {
   const timer = reconnectTimers.get(id);
@@ -51,8 +50,6 @@ function scheduleReconnect(id: string, url: string) {
 
   reconnectTimers.set(id, timer);
 }
-
-// ── Public API ───────────────────────────────────────────────────
 
 export async function connect(id: string, url: string): Promise<void> {
   // Clean up existing connection without resetting retry state

@@ -19,17 +19,17 @@ import type { PilotHudMobileProps } from '../../types/PilotView.types';
  *  No fullscreen toggle or back button — navigation via app shell sidebar.
  */
 export function PilotHudMobile({
+  angularVelocity,
+  connected,
+  linearVelocity,
+  onAngularVelocityChange,
+  onDirectionEnd,
+  onDirectionStart,
+  onEmergencyStop,
+  onLinearVelocityChange,
+  rosbridgeStatus,
   telemetry,
   videoStatus,
-  rosbridgeStatus,
-  connected,
-  onDirectionStart,
-  onDirectionEnd,
-  onLinearVelocityChange,
-  onAngularVelocityChange,
-  onEmergencyStop,
-  linearVelocity,
-  angularVelocity,
 }: PilotHudMobileProps) {
   const heading = telemetry.imu?.yaw ?? 0;
   const headingNormalized = normalizeHeading(heading);

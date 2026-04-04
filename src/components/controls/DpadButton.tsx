@@ -18,13 +18,13 @@ import type { DpadButtonProps } from '@/types/DpadButton.types';
  * @param onEnd - Callback when press ends.
  */
 export function DpadButton({
+  activeDirection,
   direction,
+  disabled,
   icon: Icon,
   label,
-  activeDirection,
-  disabled,
-  onStart,
   onEnd,
+  onStart,
 }: DpadButtonProps) {
   const pressedRef = useRef(false);
   const isActive = activeDirection === direction;

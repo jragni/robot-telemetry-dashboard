@@ -1,5 +1,4 @@
 import { CameraEmptyState } from '@/components/CameraEmptyState';
-
 import type { CameraPanelProps } from '@/features/workspace/types/CameraPanel.types';
 
 /** CameraPanel

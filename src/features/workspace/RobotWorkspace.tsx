@@ -1,40 +1,41 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { isPanelId } from '@/types/panel.types';
-import type { PanelId } from '@/types/panel.types';
 
+import { useBatterySubscription } from '@/hooks/useBatterySubscription';
+import { useConnectionUptime } from '@/hooks/useConnectionUptime';
+import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
+import { useImuSubscription } from '@/hooks/useImuSubscription';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useLidarSubscription } from '@/hooks/useLidarSubscription';
 import { useRobotConnection } from '@/hooks/useRobotConnection';
 import { useRosGraph } from '@/hooks/useRosGraph';
 import { useRosTopics } from '@/hooks/useRosTopics';
-import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-import { useConnectionUptime } from '@/hooks/useConnectionUptime';
 import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
-import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { Button } from '@/components/ui/button';
+import { VELOCITY_LIMITS } from '@/constants/controls';
+import { isPanelId } from '@/types/panel.types';
+import type { PanelId } from '@/types/panel.types';
+
 import { useMinimizedPanels } from './hooks/useMinimizedPanels';
-import { useLidarSubscription } from '@/hooks/useLidarSubscription';
-import { useImuSubscription } from '@/hooks/useImuSubscription';
 import { useTelemetrySubscription } from './hooks/useTelemetrySubscription';
-import { WorkspacePanel } from './components/WorkspacePanel';
-import { SystemStatusPanel } from './components/SystemStatusPanel/SystemStatusPanel';
+import { CameraPanel } from './components/CameraPanel';
 import { ControlsPanel } from './components/ControlsPanel/ControlsPanel';
 import { ImuPanel } from './components/ImuPanel/ImuPanel';
 import { LidarPanel } from './components/LidarPanel/LidarPanel';
-import { TelemetryPanel } from './components/TelemetryPanel';
-import { CameraPanel } from './components/CameraPanel';
 import { RobotWorkspaceMobile } from './components/RobotWorkspaceMobile';
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { SystemStatusPanel } from './components/SystemStatusPanel/SystemStatusPanel';
+import { TelemetryPanel } from './components/TelemetryPanel';
+import { WorkspacePanel } from './components/WorkspacePanel';
 import {
-  WORKSPACE_PANEL_META,
-  WORKSPACE_PANEL_IDS,
+  DEFAULT_PANEL_TOPICS,
   GRID_COL_MAP,
   PANEL_TOPIC_TYPES,
-  DEFAULT_PANEL_TOPICS,
   TELEMETRY_TIME_WINDOW_MS,
+  WORKSPACE_PANEL_IDS,
+  WORKSPACE_PANEL_META,
 } from './constants';
-import { VELOCITY_LIMITS } from '@/constants/controls';
 
 /** RobotWorkspace
  * @description Renders the workspace page for a single robot with a 3x2 grid
@@ -50,7 +51,6 @@ export function RobotWorkspace() {
   const uptimeSeconds = useConnectionUptime(id, connected);
   const { videoRef } = useWebRtcStream({ url: robot?.url ?? '', enabled: connected });
 
-  // ── Per-panel selected topics (persisted in store, shared with pilot) ──
   const selectedTopics = robot?.selectedTopics ?? DEFAULT_PANEL_TOPICS;
   const setRobotTopic = useConnectionStore((s) => s.setRobotTopic);
   const isMobile = useIsMobile();
@@ -60,19 +60,17 @@ export function RobotWorkspace() {
     if (id) setRobotTopic(id, panelId, topicName);
   }, [id, setRobotTopic]);
 
-  // ── Subscriptions (use selected topics) ──────────────────────────
   const lidar = useLidarSubscription(ros, selectedTopics.lidar ?? '/scan');
   const imu = useImuSubscription(ros, selectedTopics.imu ?? '/imu/data');
   // Look up the message type for the selected telemetry topic
   const telemetryTopicType = availableTopics.find((t) => t.name === selectedTopics.telemetry)?.type ?? 'nav_msgs/msg/Odometry';
   const telemetrySeries = useTelemetrySubscription(ros, selectedTopics.telemetry ?? '/odom', telemetryTopicType);
 
-  // ── Filtered topic lists per panel (single memo to stabilize hook count) ──
   const filteredTopics = useMemo(() => ({
     camera: availableTopics.filter((t) => PANEL_TOPIC_TYPES.camera?.includes(t.type)),
-    lidar: availableTopics.filter((t) => PANEL_TOPIC_TYPES.lidar?.includes(t.type)),
-    imu: availableTopics.filter((t) => PANEL_TOPIC_TYPES.imu?.includes(t.type)),
     controls: availableTopics.filter((t) => PANEL_TOPIC_TYPES.controls?.includes(t.type)),
+    imu: availableTopics.filter((t) => PANEL_TOPIC_TYPES.imu?.includes(t.type)),
+    lidar: availableTopics.filter((t) => PANEL_TOPIC_TYPES.lidar?.includes(t.type)),
     telemetry: availableTopics.filter((t) => PANEL_TOPIC_TYPES.telemetry?.includes(t.type)),
   }), [availableTopics]);
 
