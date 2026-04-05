@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
@@ -55,10 +55,7 @@ export function AddRobotModal() {
   const hasUrlError = errors.url != null;
   const isSubmitDisabled = isConnecting || name.trim().length === 0 || url.trim().length === 0;
 
-  const hasMixedContentRisk = useMemo(() => {
-    const trimmed = url.trim().toLowerCase();
-    return detectMixedContent(trimmed);
-  }, [url]);
+  const hasMixedContentRisk = detectMixedContent(url.trim().toLowerCase());
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
