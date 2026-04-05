@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
+import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
 import { DEFAULT_PANEL_TOPICS } from '@/features/workspace/constants';
 
 import { assignRobotColor, isValidRobotColor, persistedStateSchema, toRobotId } from './useConnectionStore.helpers';
@@ -37,7 +37,7 @@ export const useConnectionStore = create<ConnectionStore>()(
       },
 
       removeRobot: (id) => {
-        ConnectionManager.disconnect(id);
+        connectionManager.disconnect(id);
         set((state) => {
           const { [id]: _removed, ...rest } = state.robots;
           void _removed;
@@ -62,14 +62,14 @@ export const useConnectionStore = create<ConnectionStore>()(
         const robot = useConnectionStore.getState().robots[id];
         if (!robot) return;
         try {
-          await ConnectionManager.connect(id, robot.url);
+          await connectionManager.connect(id, robot.url);
         } catch (error) {
           console.warn(`[ConnectionStore] connect rejected for ${id}:`, error);
         }
       },
 
       disconnectRobot: (id) => {
-        ConnectionManager.disconnect(id);
+        connectionManager.disconnect(id);
       },
 
       setRobotTopic: (id, panelId, topicName) => {
