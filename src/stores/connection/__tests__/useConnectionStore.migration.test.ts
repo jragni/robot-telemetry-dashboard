@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ROBOT_COLORS, persistedStateSchema } from '../useConnectionStore.helpers';
+import { persistedStateSchema } from '../useConnectionStore.helpers';
 
 describe('persistedStateSchema (migration validation)', () => {
   it('parses valid persisted state', () => {
@@ -65,26 +65,6 @@ describe('persistedStateSchema (migration validation)', () => {
   it('rejects state with non-object robots', () => {
     const result = persistedStateSchema.safeParse({ robots: 'not-an-object' });
     expect(result.success).toBe(false);
-  });
-
-  it('passes through valid color strings for downstream validation', () => {
-    const input = {
-      robots: {
-        'atlas-01': {
-          id: 'atlas-01',
-          name: 'Atlas 01',
-          url: 'ws://localhost:9090',
-          color: 'magenta',
-        },
-      },
-    };
-    const result = persistedStateSchema.safeParse(input);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      const color = result.data.robots['atlas-01']?.color;
-      expect(color).toBe('magenta');
-      expect((ROBOT_COLORS as readonly string[]).includes(color ?? '')).toBe(false);
-    }
   });
 
   it('handles multiple robots', () => {

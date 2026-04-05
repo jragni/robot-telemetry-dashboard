@@ -1,22 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Ros } from 'roslib';
 import type { RosGraph } from '@/types/ros-graph.types';
 
 export function useRosGraph(ros: Ros | undefined): RosGraph | null {
   const [graph, setGraph] = useState<RosGraph | null>(null);
 
-  const abortedRef = useRef(false);
-
   const fetchGraph = useCallback((instance: Ros) => {
     const result: {
-      actions: string[]; nodes: string[]; services: string[]; topics: string[];
-    } = { actions: [], nodes: [], services: [], topics: [] };
+      nodes: string[]; topics: string[]; services: string[]; actions: string[];
+    } = { nodes: [], topics: [], services: [], actions: [] };
     let pending = 4;
 
     function maybeDone() {
       pending -= 1;
       if (pending === 0) {
-        if (abortedRef.current) return;
         setGraph((prev) => {
           // Bail out if counts haven't changed to avoid unnecessary re-renders
           const nodeCount = new Set(result.nodes).size;
@@ -37,14 +34,14 @@ export function useRosGraph(ros: Ros | undefined): RosGraph | null {
           const actionNames = [...new Set(result.actions)].sort();
 
           return {
-            actionNames,
-            actions: actionNames.length,
-            nodeNames,
             nodes: nodeNames.length,
-            serviceNames,
-            services: serviceNames.length,
-            topicNames,
+            nodeNames,
             topics: topicNames.length,
+            topicNames,
+            services: serviceNames.length,
+            serviceNames,
+            actions: actionNames.length,
+            actionNames,
           };
         });
       }
@@ -74,12 +71,10 @@ export function useRosGraph(ros: Ros | undefined): RosGraph | null {
   useEffect(() => {
     if (!ros) return;
 
-    abortedRef.current = false;
     fetchGraph(ros);
     const interval = setInterval(() => { fetchGraph(ros); }, 10_000);
 
     return () => {
-      abortedRef.current = true;
       clearInterval(interval);
       setGraph(null);
     };

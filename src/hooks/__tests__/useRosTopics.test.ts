@@ -57,31 +57,4 @@ describe('useRosTopics', () => {
     expect(result.current).not.toBe(firstRef);
     expect(result.current).toHaveLength(2);
   });
-
-  it('does not call setTopics after unmount when callback fires late', () => {
-    let capturedSuccess: ((result: { topics: string[]; types: string[] }) => void) | null = null;
-
-    const ros = {
-      getTopics: vi.fn((success: (result: { topics: string[]; types: string[] }) => void) => {
-        capturedSuccess = success;
-      }),
-    } as unknown as Ros;
-
-    const { unmount } = renderHook(() => useRosTopics(ros));
-
-    // Unmount before the async callback resolves
-    unmount();
-
-    // Simulate the late callback firing after unmount
-    act(() => {
-      capturedSuccess?.({
-        topics: ['/late_topic'],
-        types: ['std_msgs/msg/String'],
-      });
-    });
-
-    // If setTopics were called after unmount, React would warn.
-    // The guard prevents it — no error means the test passes.
-    expect(capturedSuccess).not.toBeNull();
-  });
 });

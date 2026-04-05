@@ -5,9 +5,6 @@ import { assignRobotColor, toRobotId, persistedStateSchema } from './useConnecti
 import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { DEFAULT_PANEL_TOPICS } from '@/constants/panelTopics';
 
-import { assignRobotColor, isValidRobotColor, persistedStateSchema, toRobotId } from './useConnectionStore.helpers';
-import type { ConnectionStore } from './useConnectionStore.types';
-
 export const useConnectionStore = create<ConnectionStore>()(
   persist(
     (set) => ({
@@ -22,15 +19,14 @@ export const useConnectionStore = create<ConnectionStore>()(
           robots: {
             ...state.robots,
             [id]: {
-              color: assignRobotColor(name),
               id,
-              lastError: null,
-              lastSeen: null,
               name,
-              reconnectAttempt: null,
-              selectedTopics: { ...DEFAULT_PANEL_TOPICS },
-              status: 'disconnected',
               url,
+              status: 'disconnected',
+              lastSeen: null,
+              lastError: null,
+              color: assignRobotColor(name),
+              selectedTopics: { ...DEFAULT_PANEL_TOPICS },
             },
           },
         }));
@@ -38,7 +34,7 @@ export const useConnectionStore = create<ConnectionStore>()(
       },
 
       removeRobot: (id) => {
-        connectionManager.disconnect(id);
+        ConnectionManager.disconnect(id);
         set((state) => {
           const { [id]: _removed, ...rest } = state.robots;
           void _removed;
@@ -62,15 +58,11 @@ export const useConnectionStore = create<ConnectionStore>()(
       connectRobot: async (id) => {
         const robot = useConnectionStore.getState().robots[id];
         if (!robot) return;
-        try {
-          await connectionManager.connect(id, robot.url);
-        } catch (error) {
-          console.warn(`[ConnectionStore] connect rejected for ${id}:`, error);
-        }
+        await ConnectionManager.connect(id, robot.url);
       },
 
       disconnectRobot: (id) => {
-        connectionManager.disconnect(id);
+        ConnectionManager.disconnect(id);
       },
 
       setRobotTopic: (id, panelId, topicName) => {
@@ -96,15 +88,14 @@ export const useConnectionStore = create<ConnectionStore>()(
           Object.entries(state.robots).map(([key, robot]) => [
             key,
             {
-              color: robot.color,
               id: robot.id,
-              lastError: null,
-              lastSeen: null,
               name: robot.name,
-              reconnectAttempt: null,
-              selectedTopics: robot.selectedTopics,
-              status: 'disconnected' as const,
               url: robot.url,
+              status: 'disconnected' as const,
+              lastSeen: null,
+              lastError: null,
+              color: robot.color,
+              selectedTopics: robot.selectedTopics,
             },
           ]),
         ),
@@ -117,17 +108,16 @@ export const useConnectionStore = create<ConnectionStore>()(
           Object.entries(parsed.data.robots).map(([key, robot]) => [
             key,
             {
-              color: robot.color && isValidRobotColor(robot.color)
-                ? robot.color
-                : assignRobotColor(robot.name || key),
               id: robot.id || key,
-              lastError: null,
-              lastSeen: null,
               name: robot.name || key,
-              reconnectAttempt: null,
-              selectedTopics: robot.selectedTopics ?? { ...DEFAULT_PANEL_TOPICS },
-              status: 'disconnected' as const,
               url: robot.url || '',
+              status: 'disconnected' as const,
+              lastSeen: null,
+              lastError: null,
+              color: robot.color
+                ? (robot.color as 'blue')
+                : assignRobotColor(robot.name || key),
+              selectedTopics: robot.selectedTopics ?? { ...DEFAULT_PANEL_TOPICS },
             },
           ]),
         );
