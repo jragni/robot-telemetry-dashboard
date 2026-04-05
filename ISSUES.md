@@ -199,6 +199,15 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - Fix: create sensorVector3Schema variant with z.number().nullable() per axis. Use it in sensor-data schemas (IMU, odometry). Post-parse, substitute 0 or skip null axis values.
 - Acceptance: telemetryImuMessageSchema and imuMessageSchema use sensorVector3Schema. Tests verify null axis values are handled gracefully.
 
+#### T-069: JSDoc sweep — add descriptions and @param tags to exported functions
+- Severity: LOW
+- Scope: All exported functions in .ts and .tsx files across src/
+- Add JSDoc with @description and @param tags where functions are non-obvious, have complex logic, or undescriptive names
+- Skip self-descriptive short functions (under ~5 lines with obvious signatures)
+- Follow updated Docstrings convention in CODE-CONVENTIONS.md
+- No behavior changes — documentation only, no tests needed
+- Branch: chore/t-069/jsdoc-sweep
+
 ---
 
 ## Execution Plan

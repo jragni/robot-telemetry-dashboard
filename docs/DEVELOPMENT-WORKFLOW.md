@@ -50,11 +50,11 @@ Audit → Consolidate → Conflict Detection → Branch Setup → Execute → Re
 
 Step 1: Audit — dispatch parallel codebase-auditor agents, each assigned a concern area (architecture, quality, safety, performance, coverage). They return structured findings.
 
-Step 2: Consolidate — orchestrator groups findings into ISSUES.md with raw findings (F-XX by severity), tickets (TICKET-XXX with scope, files, acceptance criteria, conflicts), and an execution plan with wave ordering based on file overlap and dependencies.
+Step 2: Consolidate — orchestrator groups findings into ISSUES.md with raw findings (F-XX by severity), tickets (TICKET-XXX with scope, files, acceptance criteria, conflicts), and an execution plan with wave ordering based on file overlap and dependencies. **Ticket scoping rule: no two tickets in the same wave may modify the same file.** If multiple findings target the same file, they must be grouped into a single ticket or placed in sequential waves. The orchestrator must build a file-to-ticket matrix and verify zero overlap within each wave before finalizing the execution plan.
 
-Step 3: Conflict detection — before dispatching fixers, an agent analyzes ticket file lists and flags which tickets share files. Tickets with overlapping files get serialized (one completes before the next starts). Tickets with no overlap run in parallel. This prevents rebase conflicts from parallel PRs touching the same files.
+Step 3: Conflict detection — dispatch branch-guardian agent in Phase 0 (pre-wave) mode. It reads the ticket file lists, builds the overlap matrix, checks open PRs for file conflicts, and outputs a serialization order. If overlap is found within a wave, the orchestrator must re-scope tickets (merge overlapping tickets or move one to a later wave) before proceeding.
 
-Step 3.5: Branch Setup — dispatch branch-guardian agent before each fixer. It cleans stale worktrees/locks, verifies base branch, creates the ticket branch, and confirms checkout. Must complete before the fixer starts.
+Step 3.5: Branch Setup — dispatch branch-guardian agent in Phase 1 (pre-dispatch) mode before each fixer. It cleans stale worktrees/locks, verifies base branch, checks for open PR file conflicts, creates the ticket branch, and confirms checkout. Must complete before the fixer starts. If a file-lock conflict is found, dispatch is BLOCKED.
 
 Step 4: Execute — dispatch codebase-fixer agents sequentially, one per ticket. Each works on a separate branch (do not use worktree isolation — agents need Bash access which worktrees block). Wave ordering is respected. Each agent creates a branch, implements the fix, runs build, commits, and creates a PR. After each fixer completes, dispatch branch-guardian again to validate commits and reset for the next agent. Test one agent first before dispatching the full batch to verify permissions work.
 

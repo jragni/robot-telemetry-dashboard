@@ -88,16 +88,31 @@ Triple-redundant: color + icon + text label (per MIL-STD-1472H). Terminology: No
 
 ## Docstrings
 
-All exported `.tsx` components and functions must have JSDoc docstrings following [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html). Format:
+JSDoc is required on all exported functions in `.tsx` and `.ts` files — components, hooks, helpers, store actions, utilities. Skip JSDoc only when the function is short, self-descriptive, and has no non-obvious parameters (e.g., `formatDegrees(deg: number): string` needs no comment).
+
+When JSDoc is needed, use this format:
 
 ```ts
-/** MyComponent
- * @description Renders the widget with configuration options.
- * @param label - The display label for the widget.
+/** FunctionName
+ * @description What it does and why — not just restating the name.
+ * @param paramName - What this param represents or controls.
+ * @param options - Configuration object for connection behavior.
+ * @returns Description of return value if non-obvious.
  */
 ```
 
-`@param` and `@returns` required where applicable. Lines wrap at 100 characters.
+Rules:
+- First line: function/component name
+- `@description`: required. Explain purpose and behavior, not just "renders X" or "returns Y"
+- `@param`: required for every parameter. Describe what it represents, not its type (TypeScript handles that)
+- `@returns`: required when the return value is non-obvious (skip for void, skip for components returning JSX)
+- Lines wrap at 100 characters
+- Follow [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html)
+
+When to skip JSDoc:
+- Function is under ~5 lines and the name fully describes its behavior
+- Pure one-liner utilities with obvious signatures (e.g., `clamp`, `capitalize`)
+- Private/unexported helper functions that are only called once nearby
 
 ## PR Conventions
 

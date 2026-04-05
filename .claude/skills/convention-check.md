@@ -81,12 +81,14 @@ No `createContext` or `useContext` usage. Zustand only.
 
 ### 7. Missing JSDoc on Exports
 
-Exported `.tsx` components must have JSDoc.
+Exported functions in `.tsx` and `.ts` files must have JSDoc with `@description` and `@param` tags — unless the function is short (under ~5 lines) and self-descriptive.
 
-**How to check (`.tsx` files only):**
-- Find `export (default )?function` or `export const \w+ =` patterns
+**How to check:**
+- Find `export (default )?function` or `export const \w+ =` patterns in `.ts` and `.tsx` files
 - Check that the line immediately above (or within 2 lines above) contains `/**`
-- Missing JSDoc on an exported component is a FAIL
+- If JSDoc exists, verify it has `@description` and `@param` for each parameter
+- Skip functions under ~5 lines with obvious names and signatures
+- Missing or incomplete JSDoc on a non-trivial exported function is a FAIL
 
 ### 8. No Hardcoded Colors
 
