@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
-
 import type { NavItemProps } from '@/types/Sidebar.types';
+
 import {
+  NAV_ITEM_ACTIVE,
+  NAV_ITEM_BASE,
+  NAV_ITEM_INACTIVE,
   ROBOT_COLOR_DOT,
   ROBOT_COLOR_TEXT,
-  NAV_ITEM_BASE,
-  NAV_ITEM_ACTIVE,
-  NAV_ITEM_INACTIVE,
 } from './constants';
 
 /** NavItem

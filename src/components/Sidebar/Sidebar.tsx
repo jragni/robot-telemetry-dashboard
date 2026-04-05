@@ -1,11 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bot, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
-import type { SidebarProps, NavItemData } from '@/types/Sidebar.types';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { SYSTEM_ITEMS } from './constants';
+import { Button } from '@/components/ui/button';
+import type { NavItemData, SidebarProps } from '@/types/Sidebar.types';
+
 import { NavItem } from './NavItem';
+import { SYSTEM_ITEMS } from './constants';
 
 /** Sidebar
  * @description Renders the left sidebar with fleet robot list and system navigation.

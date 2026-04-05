@@ -4,9 +4,8 @@ import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
 import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
+import { sensorVector3Schema, vector3Schema } from '@/types/ros2-schemas';
 import type { TelemetrySeries, PlotDataPoint } from '../types/TelemetryPanel.types';
-
-const vector3Schema = z.object({ x: z.number(), y: z.number(), z: z.number() });
 
 /** odometryMessageSchema
  * @description Zod schema for consumed fields of nav_msgs/msg/Odometry.
@@ -32,8 +31,8 @@ export const twistMessageSchema = z.object({
  * @description Zod schema for consumed IMU fields in the telemetry context.
  */
 export const telemetryImuMessageSchema = z.object({
-  angular_velocity: vector3Schema,
-  linear_acceleration: vector3Schema,
+  angular_velocity: sensorVector3Schema,
+  linear_acceleration: sensorVector3Schema,
 });
 
 /** telemetryBatteryMessageSchema
@@ -50,7 +49,7 @@ export const telemetryBatteryMessageSchema = z.object({
 export const telemetryLaserScanMessageSchema = z.object({
   range_min: z.number(),
   range_max: z.number(),
-  ranges: z.array(z.number()),
+  ranges: z.array(z.number().nullable()),
 });
 
 const MAX_POINTS = 600;
@@ -130,7 +129,7 @@ function parseMessage(msg: unknown, messageType: string): Record<string, number>
       let sum = 0;
       let count = 0;
       for (const r of m.ranges) {
-        if (!Number.isFinite(r) || r < m.range_min || r > m.range_max) continue;
+        if (r === null || !Number.isFinite(r) || r < m.range_min || r > m.range_max) continue;
         if (r < min) min = r;
         sum += r;
         count += 1;
@@ -165,6 +164,10 @@ export function useTelemetrySubscription(
   const throttledSet = useMemo(() => rafThrottle((s: readonly TelemetrySeries[]) => {
     setSeries(s);
   }), []);
+
+  useEffect(() => {
+    return () => { throttledSet.cancel(); };
+  }, [throttledSet]);
 
   const onMessage = useCallback((msg: unknown) => {
     try {

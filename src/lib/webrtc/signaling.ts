@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-const offerResponseSchema = z.object({
+export const offerResponseSchema = z.object({
   sdp: z.string(),
-  type: z.string(),
+  type: z.enum(['offer', 'answer', 'pranswer', 'rollback']),
 });
 
 export class SignalingClient {
@@ -31,7 +31,7 @@ export class SignalingClient {
       if (!result.success) {
         throw new Error(`Signaling response malformed: ${JSON.stringify(result.error.issues)}`);
       }
-      return { type: result.data.type as RTCSdpType, sdp: result.data.sdp };
+      return { sdp: result.data.sdp, type: result.data.type };
     } catch (err) {
       if (err instanceof Error && err.message.startsWith('Signaling')) throw err;
       throw new Error(`Signaling response parsing failed: ${String(err)}`);

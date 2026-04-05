@@ -1,20 +1,22 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { COMPASS_CARDINALS } from '@/constants/canvas';
+
 import {
-  COMPASS_TICK_MAJOR_INTERVAL,
-  COMPASS_TICK_MINOR_INTERVAL,
-  COMPASS_CARDINALS,
-  COMPASS_DEGREES_VISIBLE,
-  COMPASS_TOKEN_MAP,
   COMPASS_COLOR_FALLBACKS,
+  COMPASS_DEGREES_VISIBLE,
   COMPASS_FADE_WIDTH,
+  COMPASS_POINTER_HALF_WIDTH_MOBILE,
+  COMPASS_POINTER_HEIGHT_MOBILE,
   COMPASS_STRIP_HEIGHT_MOBILE,
   COMPASS_TICK_HEIGHT_MAJOR_MOBILE,
   COMPASS_TICK_HEIGHT_MINOR_MOBILE,
-  COMPASS_POINTER_HALF_WIDTH_MOBILE,
-  COMPASS_POINTER_HEIGHT_MOBILE,
-} from '../constants';
-import type { PilotCompassProps } from '../types/PilotView.types';
+  COMPASS_TICK_MAJOR_INTERVAL,
+  COMPASS_TICK_MINOR_INTERVAL,
+  COMPASS_TOKEN_MAP,
+} from '../../constants';
+import type { PilotCompassProps } from '../../types/PilotView.types';
 
 /** PilotCompassMobile
  * @description Renders a full-width ODST-inspired compass heading strip for
@@ -32,7 +34,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     COMPASS_TOKEN_MAP,
   );
 
-  // ── Measure container width via ResizeObserver ─────────────────────
+  // Measure container width via ResizeObserver
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -47,7 +49,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     return () => { observer.disconnect(); };
   }, []);
 
-  // ── Draw compass ──────────────────────────────────────────────────
+  // Draw compass
   // CSS width stays 100% — only the backing-store pixel dimensions
   // change, so this does not trigger a ResizeObserver loop (ISS-008).
   useEffect(() => {
@@ -74,7 +76,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     const pxPerDeg = w / COMPASS_DEGREES_VISIBLE;
     const cardinalSet = new Map(COMPASS_CARDINALS.map((c) => [c.deg, c.label]));
 
-    // ── Ticks + labels (ODST style: inline at same vertical center) ──
+    // Ticks and labels (inline at same vertical center)
     for (let deg = 0; deg < 360; deg += COMPASS_TICK_MINOR_INTERVAL) {
       let offset = deg - heading;
       if (offset > 180) offset -= 360;
@@ -111,7 +113,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
       }
     }
 
-    // ── Center pointer triangle (top-down) ──────────────────────────
+    // Center pointer triangle (top-down)
     ctx.beginPath();
     ctx.fillStyle = colors.accent;
     ctx.moveTo(centerX - COMPASS_POINTER_HALF_WIDTH_MOBILE, 0);
@@ -120,7 +122,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     ctx.closePath();
     ctx.fill();
 
-    // ── Bottom pointer triangle (mirror) ────────────────────────────
+    // Bottom pointer triangle (mirror)
     ctx.beginPath();
     ctx.fillStyle = colors.accent;
     ctx.moveTo(centerX - COMPASS_POINTER_HALF_WIDTH_MOBILE, h);
@@ -129,7 +131,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     ctx.closePath();
     ctx.fill();
 
-    // ── Fade edges ──────────────────────────────────────────────────
+    // Fade edges
     const fadeW = Math.min(COMPASS_FADE_WIDTH, w * 0.15);
     const fadeLeft = ctx.createLinearGradient(0, 0, fadeW, 0);
     fadeLeft.addColorStop(0, 'rgba(0,0,0,1)');

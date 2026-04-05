@@ -1,17 +1,18 @@
 # Code Conventions
 
-Source of truth for all code rules. Referenced by CLAUDE.md.
+Source of truth for all code rules.
 
 ## File Structure
 
 - One component per `.tsx` file
-- Types in feature `types/` folder as `{ComponentName}.types.ts` (named after the primary consumer). Never inline in `.tsx` files, never co-located next to components. Shared types (cross-feature) go in `src/types/`.
-- No barrel files (ADR-001) — import directly from source
+- Types co-located with their component as `{ComponentName}.types.ts` in the same folder. Never inline in `.tsx` files. Feature-shared types (used by 2+ components within a feature) go in `feature/types/`. Cross-feature types go in `src/types/`.
+- No feature-level barrel files (ADR-001 revised) — component-folder and hooks directory barrels are allowed (see FOLDER-STRUCTURE.md)
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
-- Feature folders: `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types/` for interfaces. Page-level components live at the feature root. Mocks in `mocks/`.
+- Feature folders: `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`). Page-level components live at the feature root. Mocks in `mocks/`. Feature `types/` folder only for types shared across multiple components within the feature.
 - Hook folders: when a hook grows beyond a single file, give it its own folder: `hooks/{hookName}/` with `{hookName}.ts`, `types.ts`, `constants.ts`, `helpers.ts`.
 - Shared component folders: components in `src/components/` with 2+ files get their own folder. Single-file components stay flat.
+- Test file placement: co-locate test files next to source by default (`RobotCard.test.tsx` beside `RobotCard.tsx`). When a folder accumulates 3+ test files, move them to a `__tests__/` subfolder within that folder. The `__tests__/` folder lives inside the directory it tests — never at a higher level. Already in use: `src/hooks/__tests__/`, `src/stores/connection/__tests__/`, `src/lib/rosbridge/__tests__/`.
 
 ## Imports
 
@@ -77,22 +78,41 @@ import type { WorkspaceProps } from './types/Workspace.types';
 - Only weights 400/600.
 - Canvas text must use design system font sizes.
 
+## ROS 2 Integration
+
+All code interacting with ROS must follow the official ROS 2 interface definitions (`ros2 interface show <type>`). Zod schemas, TypeScript types, and field names must match the actual message spec. Account for rosbridge JSON serialization — JSON has no `NaN`/`Infinity`, so rosbridge sends `null` for those values. Always use `.nullable()` on numeric array fields that could contain invalid readings (e.g., `ranges`, `intensities` in `sensor_msgs/msg/LaserScan`). When in doubt, run `ros2 topic echo <topic>` against a real robot and validate the schema against actual data.
+
 ## Status Indicators
 
 Triple-redundant: color + icon + text label (per MIL-STD-1472H). Terminology: Nominal / Caution / Critical / Offline.
 
 ## Docstrings
 
-All exported `.tsx` components and functions must have JSDoc docstrings following [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html). Format:
+JSDoc is required on all exported functions in `.tsx` and `.ts` files — components, hooks, helpers, store actions, utilities. Skip JSDoc only when the function is short, self-descriptive, and has no non-obvious parameters (e.g., `formatDegrees(deg: number): string` needs no comment).
+
+When JSDoc is needed, use this format:
 
 ```ts
-/** MyComponent
- * @description Renders the widget with configuration options.
- * @param label - The display label for the widget.
+/** FunctionName
+ * @description What it does and why — not just restating the name.
+ * @param paramName - What this param represents or controls.
+ * @param options - Configuration object for connection behavior.
+ * @returns Description of return value if non-obvious.
  */
 ```
 
-`@param` and `@returns` required where applicable. Lines wrap at 100 characters.
+Rules:
+- First line: function/component name
+- `@description`: required. Explain purpose and behavior, not just "renders X" or "returns Y"
+- `@param`: required for every parameter. Describe what it represents, not its type (TypeScript handles that)
+- `@returns`: required when the return value is non-obvious (skip for void, skip for components returning JSX)
+- Lines wrap at 100 characters
+- Follow [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html)
+
+When to skip JSDoc:
+- Function is under ~5 lines and the name fully describes its behavior
+- Pure one-liner utilities with obvious signatures (e.g., `clamp`, `capitalize`)
+- Private/unexported helper functions that are only called once nearby
 
 ## PR Conventions
 
@@ -100,3 +120,4 @@ All exported `.tsx` components and functions must have JSDoc docstrings followin
 - Comments: plain text only. No markdown formatting, no bold headers, no styled bullets. State what was done.
 - No Co-Authored-By lines in commits
 - No AI mention in commits or PR comments
+- Every PR must include tests for the changes. No code-only PRs — if you change behavior, add or update tests covering that behavior. Test-only PRs (backfilling coverage) are fine standalone.

@@ -1,8 +1,10 @@
-import { LidarPanel } from '@/features/workspace/components/LidarPanel';
+import { LidarPanel } from '@/features/workspace/components/LidarPanel/LidarPanel';
 import { TelemetryPanel } from '@/features/workspace/components/TelemetryPanel';
 import { CameraPanel } from '@/features/workspace/components/CameraPanel';
 import { ImuPanel } from '@/features/workspace/components/ImuPanel/ImuPanel';
+
 import { useMockTelemetry } from '../hooks/useMockTelemetry';
+import type { MockDpadBtnProps, MockStatusRowProps, PanelFrameProps } from './PanelShowcase.types';
 
 /** PanelShowcase
  * @description Renders all six workspace panels with mock data in fixed-size
@@ -104,12 +106,9 @@ export function PanelShowcase() {
  * @param children - The panel content.
  */
 function PanelFrame({
-  label,
   children,
-}: {
-  readonly label: string;
-  readonly children: React.ReactNode;
-}) {
+  label,
+}: PanelFrameProps) {
   return (
     <div className="flex flex-col gap-2">
       <span className="font-mono text-xs text-text-muted">{label}</span>
@@ -128,10 +127,7 @@ function PanelFrame({
 function MockStatusRow({
   label,
   value,
-}: {
-  readonly label: string;
-  readonly value: string;
-}) {
+}: MockStatusRowProps) {
   return (
     <div className="flex items-center justify-between">
       <span className="font-sans text-xs text-text-muted">{label}</span>
@@ -144,7 +140,7 @@ function MockStatusRow({
  * @description Renders a simplified D-pad button for the ControlsPanel recreation.
  * @param text - The button label text.
  */
-function MockDpadBtn({ text }: { readonly text: string }) {
+function MockDpadBtn({ text }: MockDpadBtnProps) {
   return (
     <div className="size-8 rounded-sm bg-surface-tertiary border border-border flex items-center justify-center">
       <span className="font-mono text-xs text-text-primary">{text}</span>
