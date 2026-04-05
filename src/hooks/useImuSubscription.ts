@@ -3,7 +3,7 @@ import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
-import { vector3Schema } from '@/types/ros2-schemas';
+import { sensorVector3Schema } from '@/types/ros2-schemas';
 import type { Vector3 } from '@/types/ros2-primitives.types';
 
 const quaternionSchema = z.object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() });
@@ -13,8 +13,8 @@ const quaternionSchema = z.object({ x: z.number(), y: z.number(), z: z.number(),
  */
 export const imuMessageSchema = z.object({
   orientation: quaternionSchema,
-  angular_velocity: vector3Schema.optional(),
-  linear_acceleration: vector3Schema.optional(),
+  angular_velocity: sensorVector3Schema.optional(),
+  linear_acceleration: sensorVector3Schema.optional(),
 });
 
 interface UseImuReturn {

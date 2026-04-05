@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { useBatterySubscription } from '@/hooks/useBatterySubscription';
 import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
@@ -16,6 +16,7 @@ import { usePilotFullscreen } from './hooks/usePilotFullscreen';
 import { PilotCamera } from './components/PilotCamera';
 import { PilotHud } from './components/PilotHud/PilotHud';
 import { PilotHudMobile } from './components/PilotHud/PilotHudMobile';
+import { PilotNotFound } from './components/PilotNotFound';
 import { PILOT_FULLSCREEN_Z } from './constants';
 import type { ProxyStatus } from './types/PilotView.types';
 
@@ -67,17 +68,7 @@ export function PilotView() {
   );
 
   if (!robot) {
-    return (
-      <section
-        aria-label="Robot not found"
-        className="flex flex-col items-center justify-center h-full gap-4"
-      >
-        <p className="font-mono text-xs text-text-muted">Robot not found: {id}</p>
-        <Link to="/fleet" className="font-mono text-xs text-accent hover:underline">
-          Back to Fleet
-        </Link>
-      </section>
-    );
+    return <PilotNotFound robotId={id} />;
   }
 
   const rosbridgeStatus: ProxyStatus = connected ? 'connected' : 'disconnected';
