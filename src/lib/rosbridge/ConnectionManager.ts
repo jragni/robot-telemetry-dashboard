@@ -74,7 +74,7 @@ export class ConnectionManager {
     this.intentionalDisconnects.delete(id);
 
     if (!this.reconnectAttempts.has(id)) {
-      this.reconnectAttempts.set(id, 1);
+      this.reconnectAttempts.set(id, 0);
     }
 
     const rosbridgeUrl = deriveRosbridgeUrl(url);
