@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
@@ -8,10 +8,10 @@ import type { LidarPoint } from '@/types/lidar.types';
 export const laserScanMessageSchema = z.object({
   angle_increment: z.number(),
   angle_min: z.number(),
-  intensities: z.array(z.number().nullable()).optional().default([]),
+  intensities: z.array(z.number()).optional().default([]),
   range_max: z.number(),
   range_min: z.number(),
-  ranges: z.array(z.number().nullable()),
+  ranges: z.array(z.number()),
 });
 const LIDAR_DISPLAY_RANGE = 15;
 
@@ -27,10 +27,6 @@ export function useLidarSubscription(ros: Ros | undefined, topicName: string): U
     setPoints(p);
   }), []);
 
-  useEffect(() => {
-    return () => { throttledSet.cancel(); };
-  }, [throttledSet]);
-
   const onMessage = useMemo(() => (msg: unknown) => {
     try {
       const result = laserScanMessageSchema.safeParse(msg);
@@ -42,7 +38,7 @@ export function useLidarSubscription(ros: Ros | undefined, topicName: string): U
       const parsed: LidarPoint[] = [];
       for (let i = 0; i < m.ranges.length; i++) {
         const range = m.ranges[i];
-        if (range === null || range === undefined || !Number.isFinite(range) || range < m.range_min || range > m.range_max) continue;
+        if (range === undefined || !Number.isFinite(range) || range < m.range_min || range > m.range_max) continue;
         parsed.push({
           angle: m.angle_min + i * m.angle_increment,
           distance: range,

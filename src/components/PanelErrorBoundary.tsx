@@ -1,8 +1,14 @@
-import { Component, type ErrorInfo } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AlertTriangle, RotateCcw } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
-import type { PanelErrorBoundaryProps, PanelErrorBoundaryState } from '@/types/PanelErrorBoundary.types';
+
+interface PanelErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface PanelErrorBoundaryState {
+  hasError: boolean;
+}
 
 /** PanelErrorBoundary
  * @description Catches errors within a workspace panel and renders a compact
