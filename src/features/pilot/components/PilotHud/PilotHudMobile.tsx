@@ -42,12 +42,14 @@ export function PilotHudMobile({
     <div
       className="absolute inset-0 pointer-events-none select-none"
       style={{
+        touchAction: 'manipulation',
         paddingTop: 'env(safe-area-inset-top, 0px)',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         paddingLeft: 'env(safe-area-inset-left, 0px)',
         paddingRight: 'env(safe-area-inset-right, 0px)',
       }}
       aria-label="Pilot HUD overlay — mobile"
+      onContextMenu={(e) => { e.preventDefault(); }}
     >
       {/* Full-width compass strip */}
       <div className="absolute top-0 left-0 right-0 pointer-events-auto">
