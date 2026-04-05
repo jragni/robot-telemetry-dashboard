@@ -319,6 +319,29 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - Acceptance: each hook with 2+ files has its own folder, all imports resolve, build passes
 - Branch: refactor/t-075/hooks-restructure
 
+#### T-085: Add body-frame axes to WireframeView 3D visualization
+- Severity: LOW
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: `src/features/workspace/components/ImuPanel/components/WireframeView.tsx`, `src/features/workspace/constants.ts`
+- Problem: The 3D wireframe cube rotates with IMU orientation but has no reference axes, making it impossible to read which direction the body frame is oriented
+- Fix: After drawing cube edges, draw 3 body-frame axis lines from origin using the existing `project()` function:
+  - X axis (forward) — red/warm color, line from `(0,0,0)` to `(1.5,0,0)`
+  - Y axis (left) — green color, line from `(0,0,0)` to `(0,1.5,0)`
+  - Z axis (up) — blue color, line from `(0,0,0)` to `(0,0,1.5)`
+  - Small axis labels (X/Y/Z) at each endpoint
+  - Axes extend slightly beyond cube edges (1.5 vs 1.0) for visibility
+- Add axis colors to `WIREFRAME_COLOR_FALLBACKS` and `WIREFRAME_TOKEN_MAP` in `src/features/workspace/constants.ts`
+- Acceptance: 3 colored axis lines visible on wireframe, rotate with cube, labels readable at all orientations, colors resolve from theme tokens, build passes
+- Branch: feat/t-085/wireframe-body-axes
+
+#### T-086: Reconnect toast skips attempt 1, starts at 2
+- Severity: MEDIUM
+- Scope: `src/lib/rosbridge/ConnectionManager.ts`
+- Problem: When a connection fails and reconnection begins, the toast shows "Attempt 2/3" first — attempt 1 is never displayed. Root cause: `connect()` sets `reconnectAttempts.set(id, 1)` internally (line 71) but does not include `reconnectAttempt: 1` in the store update (line 77). When `scheduleReconnect` runs, it reads `attempts = 1`, computes `nextAttempt = 2`, and that's the first value the UI sees.
+- Fix: Either (a) include `reconnectAttempt: 1` in the `updateStore` call at line 77, or (b) initialize `reconnectAttempts` to `0` instead of `1` at line 71 so `scheduleReconnect` computes `nextAttempt = 1` on the first retry.
+- Acceptance: Reconnect toast shows "Attempt 1/3" on first retry, "Attempt 2/3" on second, "Attempt 3/3" on third. Test verifies store receives `reconnectAttempt: 1` on first reconnection.
+- Branch: fix/t-086/reconnect-attempt-off-by-one
+
 #### T-074: Lint error sweep
 - Severity: MEDIUM
 - Scope: 23 lint errors across ~44 files in src/

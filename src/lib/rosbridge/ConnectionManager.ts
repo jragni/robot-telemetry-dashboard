@@ -2,10 +2,7 @@ import { Ros } from 'roslib';
 
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { deriveRosbridgeUrl } from '@/stores/connection/useConnectionStore.helpers';
-import {
-  calculateBackoffDelay,
-  RECONNECT_MAX_ATTEMPTS,
-} from '@/constants/reconnection';
+import { calculateBackoffDelay, RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
 import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
 
 const CONNECTION_TIMEOUT = 10_000;
@@ -15,7 +12,10 @@ const reconnectAttempts = new Map<string, number>();
 const intentionalDisconnects = new Set<string>();
 const connectedAtMap = new Map<string, number>();
 
-function updateStore(id: string, patch: Partial<Pick<RobotConnection, 'lastError' | 'lastSeen' | 'reconnectAttempt' | 'status'>>) {
+function updateStore(
+  id: string,
+  patch: Partial<Pick<RobotConnection, 'lastError' | 'lastSeen' | 'reconnectAttempt' | 'status'>>,
+) {
   useConnectionStore.getState().updateRobot(id, patch);
 }
 
@@ -33,7 +33,11 @@ function scheduleReconnect(id: string, url: string) {
 
   const attempts = reconnectAttempts.get(id) ?? 0;
   if (attempts >= RECONNECT_MAX_ATTEMPTS) {
-    updateStore(id, { lastError: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`, reconnectAttempt: null, status: 'error' });
+    updateStore(id, {
+      lastError: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`,
+      reconnectAttempt: null,
+      status: 'error',
+    });
     reconnectAttempts.delete(id);
     return;
   }
@@ -96,7 +100,12 @@ export async function connect(id: string, url: string): Promise<void> {
       clearTimeout(timeout);
       reconnectAttempts.delete(id);
       connectedAtMap.set(id, Date.now());
-      updateStore(id, { lastError: null, lastSeen: Date.now(), reconnectAttempt: null, status: 'connected' });
+      updateStore(id, {
+        lastError: null,
+        lastSeen: Date.now(),
+        reconnectAttempt: null,
+        status: 'connected',
+      });
       resolve();
     });
 

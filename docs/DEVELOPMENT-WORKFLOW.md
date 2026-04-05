@@ -67,7 +67,7 @@ Step 6: Respond — dispatch pr-responder agents for PRs with review feedback. E
 
 Step 7: Gate check — dispatch spec-conformance agents to verify all files in the diff conform to CODE-CONVENTIONS.md. PASS/FAIL per rule per file. Any FAIL blocks merge.
 
-Step 7.5: Pre-Merge Gate — dispatch pre-merge-gate agent for each PR. It checks 5 gates (build green, review completed, feedback addressed, spec conformance passed, tests exist). All gates must PASS for a MERGE-READY verdict. BLOCKED PRs cannot be merged until the blocking condition is resolved.
+Step 7.5: Pre-Merge Gate — dispatch pre-merge-gate agent for each PR. It checks 5 gates (build green, review completed, feedback addressed, spec conformance passed, tests exist). All gates must PASS for a MERGE-READY verdict. BLOCKED PRs cannot be merged until the blocking condition is resolved. This step is NOT optional — no PR merges without a MERGE-READY verdict, even if the orchestrator believes it is trivial.
 
 Step 8: Merge — orchestrator cherry-picks or merges PRs in wave order with build gates between waves. Close PRs with references to merged commits. Only PRs with MERGE-READY verdict from pre-merge-gate can be merged.
 
