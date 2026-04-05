@@ -1,6 +1,6 @@
 # Code Conventions
 
-Source of truth for all code rules. Referenced by CLAUDE.md.
+Source of truth for all code rules.
 
 ## File Structure
 
