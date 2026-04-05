@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
+import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
 
 export function useConnectionUptime(robotId: string | undefined, connected: boolean): number | null {
   const [uptimeSeconds, setUptimeSeconds] = useState<number | null>(null);
 
   const tick = useCallback(() => {
     if (!robotId) return;
-    const connectedAt = ConnectionManager.getConnectedAt(robotId);
+    const connectedAt = connectionManager.getConnectedAt(robotId);
     if (connectedAt) {
       setUptimeSeconds(Math.floor((Date.now() - connectedAt) / 1000));
     }

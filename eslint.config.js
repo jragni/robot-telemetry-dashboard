@@ -40,6 +40,7 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      '@typescript-eslint/no-confusing-void-expression': 'off',
     },
   },
   // Accessibility enforcement — catches <div onClick>, missing aria-labels, heading order

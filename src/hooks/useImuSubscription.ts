@@ -1,11 +1,10 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
+import { sensorVector3Schema } from '@/types/ros2-schemas';
 import type { Vector3 } from '@/types/ros2-primitives.types';
-
-const vector3Schema = z.object({ x: z.number(), y: z.number(), z: z.number() });
 
 const quaternionSchema = z.object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() });
 
@@ -14,8 +13,8 @@ const quaternionSchema = z.object({ x: z.number(), y: z.number(), z: z.number(),
  */
 export const imuMessageSchema = z.object({
   orientation: quaternionSchema,
-  angular_velocity: vector3Schema.optional(),
-  linear_acceleration: vector3Schema.optional(),
+  angular_velocity: sensorVector3Schema.optional(),
+  linear_acceleration: sensorVector3Schema.optional(),
 });
 
 interface UseImuReturn {
@@ -47,8 +46,8 @@ function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
 
 export function useImuSubscription(ros: Ros | undefined, topicName: string): UseImuReturn {
   const [state, setState] = useState<UseImuReturn>({
-    roll: 0, pitch: 0, yaw: 0,
     angularVelocity: undefined, linearAcceleration: undefined,
+    pitch: 0, roll: 0, yaw: 0,
   });
 
   const latestRef = useRef(state);
@@ -57,6 +56,10 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
   const throttledSet = useMemo(() => rafThrottle((next: UseImuReturn) => {
     setState(next);
   }), []);
+
+  useEffect(() => {
+    return () => { throttledSet.cancel(); };
+  }, [throttledSet]);
 
   const onMessage = useMemo(() => (msg: unknown) => {
     try {

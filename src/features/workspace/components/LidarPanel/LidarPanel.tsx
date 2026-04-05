@@ -2,18 +2,20 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useThemeChange } from '@/hooks/useThemeChange';
+import { useCanvasColors } from '@/hooks/useCanvasColors';
 import { useZoom } from '@/hooks/useZoom';
+import { LIDAR_POINT_RADIUS } from '@/constants/canvas';
 import {
   LIDAR_ZOOM_MIN,
   LIDAR_ZOOM_MAX,
   LIDAR_ZOOM_STEP,
   LIDAR_GRID_LINE_COUNT,
-  LIDAR_POINT_RADIUS,
   LIDAR_ROBOT_SIZE,
+  WORKSPACE_LIDAR_COLOR_FALLBACKS,
+  WORKSPACE_LIDAR_TOKEN_MAP,
 } from '@/features/workspace/constants';
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import type { LidarPanelProps } from '@/features/workspace/types/LidarPanel.types';
+import { findMinDistance } from './LidarPanel.helpers';
 
 /** LidarPanel
  * @description Renders a top-down 2D tactical display of LiDAR scan points.
@@ -33,25 +35,11 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     step: LIDAR_ZOOM_STEP,
   });
   const [canvasSize, setCanvasSize] = useState(300);
-  const [themeVersion, setThemeVersion] = useState(0);
 
-  const colorsRef = useRef({
-    border: CANVAS_FALLBACKS.border,
-    textPrimary: CANVAS_FALLBACKS.textPrimary,
-    textSecondary: CANVAS_FALLBACKS.textSecondary,
-    textMuted: CANVAS_FALLBACKS.textMuted,
-    accent: CANVAS_FALLBACKS.accent,
-    critical: CANVAS_FALLBACKS.statusCritical,
-    caution: CANVAS_FALLBACKS.statusCaution,
-    nominal: CANVAS_FALLBACKS.statusNominal,
-    surfaceBase: CANVAS_FALLBACKS.surfaceBase,
-  });
-  const colorsResolved = useRef(false);
-
-  useThemeChange(() => {
-    colorsResolved.current = false;
-    setThemeVersion((v) => v + 1);
-  });
+  const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
+    WORKSPACE_LIDAR_COLOR_FALLBACKS,
+    WORKSPACE_LIDAR_TOKEN_MAP,
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -68,25 +56,6 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     return () => {
       observer.disconnect();
     };
-  }, []);
-
-  const resolveColors = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || colorsResolved.current) return;
-    const styles = getComputedStyle(canvas);
-    colorsRef.current = {
-      border: styles.getPropertyValue('--color-border') || colorsRef.current.border,
-      textPrimary: styles.getPropertyValue('--color-text-primary') || colorsRef.current.textPrimary,
-      textSecondary:
-        styles.getPropertyValue('--color-text-secondary') || colorsRef.current.textSecondary,
-      textMuted: styles.getPropertyValue('--color-text-muted') || colorsRef.current.textMuted,
-      accent: styles.getPropertyValue('--color-accent') || colorsRef.current.accent,
-      critical: styles.getPropertyValue('--color-status-critical') || colorsRef.current.critical,
-      caution: styles.getPropertyValue('--color-status-caution') || colorsRef.current.caution,
-      nominal: styles.getPropertyValue('--color-status-nominal') || colorsRef.current.nominal,
-      surfaceBase: styles.getPropertyValue('--color-surface-base') || colorsRef.current.surfaceBase,
-    };
-    colorsResolved.current = true;
   }, []);
 
   const draw = useCallback(() => {
@@ -218,14 +187,14 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     ctx.lineTo(cx + robotSize * 0.7, cy + robotSize * 0.5);
     ctx.closePath();
     ctx.fill();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
-  }, [points, rangeMax, connected, zoom, resolveColors, themeVersion]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
+  }, [points, rangeMax, connected, zoom, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {
     draw();
   }, [draw, canvasSize]);
 
-  const closestPoint = points.length > 0 ? Math.min(...points.map((p) => p.distance)) : null;
+  const closestPoint = points.length > 0 ? findMinDistance(points) : null;
 
   return (
     <div

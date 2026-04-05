@@ -182,25 +182,54 @@ Your robot is now accessible at:
 - Rosbridge: `ws://<robot-ip>:8000/rosbridge`
 - WebRTC: `http://<robot-ip>:8000/webrtc/`
 
-### 4. Remote Access with ngrok (optional)
+### 4. Remote Access (optional)
 
-For accessing the robot over the internet:
+For accessing the robot over the internet. Two options:
+
+#### Cloudflare Tunnel (recommended)
+
+Free, no bandwidth limits, reliable TLS, no account needed for quick tunnels.
+
+```bash
+# Install cloudflared
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb
+sudo dpkg -i cloudflared-linux-arm64.deb
+
+# Start a quick tunnel (URL changes on restart)
+cloudflared tunnel --url http://127.0.0.1:8000
+```
+
+Use the Cloudflare URL in the dashboard:
+```
+cloudflared gives:  https://random-words.trycloudflare.com
+dashboard:          https://random-words.trycloudflare.com
+```
+
+For a stable URL that persists across restarts, set up a [named tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/) with a Cloudflare account (free).
+
+Each robot runs its own `cloudflared` process independently. Quick tunnels require no login and have no limit on concurrent tunnels.
+
+#### ngrok (alternative)
+
 ```bash
 sudo apt install ngrok
 ngrok config add-authtoken YOUR_AUTHTOKEN
 ngrok http 8000
 ```
 
-Use the ngrok URL in the dashboard — replace `https://` with `wss://`:
+Use the ngrok URL in the dashboard:
 ```
 ngrok gives:  https://abc123.ngrok-free.app
 dashboard:    wss://abc123.ngrok-free.app
 ```
 
+**Note:** ngrok `.dev` subdomains may have TLS issues due to HSTS preloading. If you encounter `ERR_SSL_PROTOCOL_ERROR`, switch to Cloudflare Tunnel.
+
 ## Connection Format
 
 Enter the base URL only — the dashboard appends `/rosbridge` and `/webrtc` automatically:
 - **Local:** `ws://192.168.1.100:8000`
+- **Cloudflare:** `https://random-words.trycloudflare.com`
 - **ngrok:** `wss://abc123.ngrok-free.app`
 
 ## Supported ROS Message Types

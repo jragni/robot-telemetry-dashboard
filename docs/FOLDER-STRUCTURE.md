@@ -2,6 +2,28 @@
 
 Organized by **feature domain**, not by file type. Enforced by `eslint-plugin-boundaries`.
 
+## Project-Level Directories
+
+```
+.planning/                        # Agent workspace — agents write here, humans read
+├── performance-reports/          # overseer output (one file per cycle)
+├── ticket-reviews/               # ticket-reviewer output (one file per wave)
+├── audit-reports/                # codebase-auditor raw findings
+├── archive/                      # old GSD phases, research, roadmap (historical)
+└── ISSUES.md                     # active tickets
+
+docs/                             # Human-facing documentation — agents read, humans edit
+├── research/                     # research findings (bandwidth, WebRTC, etc.)
+├── CODE-CONVENTIONS.md
+├── DESIGN-SYSTEM.md
+├── DEVELOPMENT-WORKFLOW.md
+├── FOLDER-STRUCTURE.md
+├── TESTING.md
+└── LESSONS-LEARNED.md
+```
+
+**Rule:** Agents read from `docs/` for conventions and rules. Agents write to `.planning/` for reports and reviews. Never the reverse.
+
 ## Three-Tier Architecture
 
 ```
@@ -45,7 +67,11 @@ src/
 │       ├── input.tsx
 │       └── select.tsx
 ├── hooks/                        # Shared hooks
-│   └── useTheme.ts
+│   ├── useTheme.ts
+│   ├── useBatterySubscription.ts
+│   └── __tests__/                # 3+ test files → subfolder
+│       ├── useBatterySubscription.schemas.test.ts
+│       └── useImuSubscription.schemas.test.ts
 ├── stores/                       # Shared Zustand stores
 │   └── connection/
 │       ├── useConnectionStore.ts
@@ -60,41 +86,46 @@ src/
 │   │   ├── FleetOverview.tsx     # Page component (lives at feature root)
 │   │   ├── helpers.ts            # Feature-scoped helpers (NOT fleet.helpers.ts)
 │   │   ├── constants.ts          # Feature-scoped constants
-│   │   ├── types/                # All feature types — never inline or co-located
-│   │   │   ├── RobotCard.types.ts
-│   │   │   ├── AddRobotModal.types.ts
-│   │   │   ├── RobotDeleteButton.types.ts
-│   │   │   └── RobotStatusBadge.types.ts
-│   │   ├── components/           # UI components (no .types.ts here)
+│   │   ├── types/                # Feature-shared types (used by 2+ components)
+│   │   │   └── FleetOverview.types.ts
+│   │   ├── components/
 │   │   │   ├── FleetEmptyState.tsx
-│   │   │   ├── AddRobotModal.tsx
+│   │   │   ├── AddRobotModal/
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── AddRobotModal.tsx
+│   │   │   │   └── AddRobotModal.types.ts    # co-located with component
 │   │   │   └── RobotCard/
+│   │   │       ├── index.ts
 │   │   │       ├── RobotCard.tsx
+│   │   │       ├── RobotCard.types.ts        # co-located with component
 │   │   │       ├── RobotCard.constants.ts
 │   │   │       ├── RobotStatusBadge.tsx
 │   │   │       └── RobotDeleteButton.tsx
-│   │   └── mocks/                # Dev views and mock components
+│   │   └── mocks/
 │   │       └── FleetDevView.tsx
 │   ├── workspace/                # Robot telemetry workspace
 │   │   ├── RobotWorkspace.tsx    # Page component
 │   │   ├── constants.ts          # Feature-scoped constants
-│   │   ├── types/                # All feature types
-│   │   │   ├── WorkspacePanel.types.ts
-│   │   │   └── WorkspaceGrid.types.ts
-│   │   ├── components/           # UI components (no .types.ts here)
+│   │   ├── types/                # Feature-shared types (e.g., PanelId)
+│   │   │   └── panel.types.ts
+│   │   ├── components/
 │   │   │   ├── WorkspacePanel.tsx
-│   │   │   └── WorkspaceGrid.tsx
-│   │   └── mocks/                # Dev views and mock components
-│   │       ├── MockCamera.tsx
-│   │       ├── MockImu.tsx
-│   │       ├── WorkspaceDevView.tsx
+│   │   │   ├── WorkspacePanel.types.ts       # co-located
+│   │   │   ├── LidarPanel/
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── LidarPanel.tsx
+│   │   │   │   ├── LidarPanel.types.ts       # co-located
+│   │   │   │   └── LidarPanel.helpers.ts
+│   │   │   └── ControlsPanel/
+│   │   │       ├── index.ts
+│   │   │       ├── ControlsPanel.tsx
+│   │   │       └── ControlsPanel.types.ts    # co-located
+│   │   └── mocks/
 │   │       └── ...
 │   ├── landing/                  # Landing page
 │   │   ├── LandingPage.tsx       # Page component
 │   │   ├── constants.ts          # Feature-scoped constants
-│   │   ├── types/                # All feature types
-│   │   │   └── LandingPage.types.ts
-│   │   └── components/           # Subcomponents
+│   │   └── components/
 │   │       ├── LandingHero.tsx
 │   │       ├── LandingHeader.tsx
 │   │       └── ...
@@ -119,9 +150,40 @@ src/
 - **3+ subcomponents → own folder.** When a component has 3 or more child components, it gets its own directory.
 - **If a child needs a comment to describe what it is, extract it into a named subcomponent.** Self-describing component names replace comments.
 
-### No Barrel Files (ADR-001)
+### Barrel Files (ADR-001 revised)
 
-Import directly from source: `import { RobotCard } from '../fleet/RobotCard/RobotCard'`
+**No feature-level barrels** — don't create `src/features/fleet/index.ts` re-exporting an entire feature. This caused 68% module bloat in v2 with webpack.
+
+**Yes to component-folder barrels** — component folders with subcomponents should have an `index.ts` that exports the main component as default and subcomponents as named exports:
+
+```ts
+// src/features/workspace/components/ControlsPanel/index.ts
+export { ControlsPanel } from './ControlsPanel';
+export { VelocitySlider } from './VelocitySlider';
+```
+
+```ts
+// Consumer:
+import { ControlsPanel } from './components/ControlsPanel';
+// NOT: import { ControlsPanel } from './components/ControlsPanel/ControlsPanel';
+```
+
+**Yes to directory barrels for hooks** — `src/hooks/index.ts` re-exports all shared hooks for clean multi-import:
+
+```ts
+// Consumer:
+import { useImuSubscription, useLidarSubscription, useBatterySubscription } from '@/hooks';
+// NOT: three separate import lines from @/hooks/useImuSubscription, etc.
+```
+
+Vite/Rollup tree-shakes these correctly. The v2 problem was giant feature-level barrels with webpack, not focused component/directory barrels.
+
+### Test Co-Location
+
+- Tests live next to their source file by default (e.g., `RobotCard.test.tsx` beside `RobotCard.tsx`)
+- When a directory accumulates 3+ test files, migrate them to a `__tests__/` subfolder to reduce visual clutter
+- The `__tests__/` folder lives inside the directory it tests — never at a higher level
+- Import paths in tests use `../` to reach the source (e.g., `import { schema } from '../useLidarSubscription'`)
 
 ### shadcn-First Rule
 
@@ -145,10 +207,11 @@ shadcn CLI may write files to a literal `./@/` directory instead of `src/`. Afte
 | Type       | Convention                                                    | Example                                  |
 | ---------- | ------------------------------------------------------------- | ---------------------------------------- |
 | Components | PascalCase `.tsx`                                             | `RobotCard.tsx`                          |
-| Types      | PascalCase `.types.ts` in feature `types/` folder             | `types/RobotCard.types.ts`               |
+| Types      | PascalCase `.types.ts` co-located with component              | `RobotCard/RobotCard.types.ts`           |
 | Helpers    | `helpers.ts` at feature root, or `{Component}.helpers.ts`     | `helpers.ts`, `RobotCard.helpers.ts`     |
 | Hooks      | camelCase `use*.ts`                                           | `useTheme.ts`, `useFleetFilter.ts`       |
 | Tests      | matches source `.test.tsx` / `.test.ts`                       | `RobotCard.test.tsx`                     |
+| Tests (__tests__) | `__tests__/{SourceName}.test.ts(x)` in parent folder   | `hooks/__tests__/useImuSubscription.schemas.test.ts` |
 | Stores     | camelCase `use*Store.ts`                                      | `useConnectionStore.ts`                  |
 | Constants  | `constants.ts` at feature root, or `{Component}.constants.ts` | `constants.ts`, `RobotCard.constants.ts` |
 | Utilities  | camelCase `.ts`                                               | `quaternion.ts`                          |
@@ -157,9 +220,9 @@ shadcn CLI may write files to a literal `./@/` directory instead of `src/`. Afte
 
 Helpers, constants, hooks, stores, and types all follow the same scoping pattern:
 
-- **Component-scoped:** `RobotCard/RobotCard.helpers.ts` — only used by that component
-- **Feature-scoped:** `fleet/helpers.ts` or `fleet/constants.ts` — used across the feature (no feature-name prefix)
-- **Shared:** `src/hooks/`, `src/stores/`, `src/lib/`, etc. — used across 2+ features
+- **Component-scoped:** `RobotCard/RobotCard.types.ts`, `RobotCard/RobotCard.helpers.ts` — co-located, only used by that component
+- **Feature-scoped:** `fleet/types/shared.types.ts`, `fleet/helpers.ts`, `fleet/constants.ts` — used by 2+ components within the feature (no feature-name prefix)
+- **Shared:** `src/types/`, `src/hooks/`, `src/stores/`, `src/lib/`, etc. — used across 2+ features
 
 Start local, promote when a second consumer appears. Never prematurely share.
 
