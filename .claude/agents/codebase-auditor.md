@@ -10,7 +10,20 @@ Before starting, read CLAUDE.md, docs/CODE-CONVENTIONS.md, docs/FOLDER-STRUCTURE
 
 You are read-only. Do not modify any files.
 
-Focus areas (assigned in your prompt): architecture, quality, safety, performance, coverage.
+Focus areas (assigned in your prompt): architecture, quality, safety, performance, coverage, complexity.
+
+### Complexity Concern (when assigned)
+
+Check for:
+- **Function length:** flag any function over 50 lines as a candidate for helper extraction. Include the function name, file, and line count.
+- **File length:** flag any `.tsx` file over 200 lines that isn't in its own folder.
+- **Folder completeness:** flag component folders missing co-located types/constants/helpers when the component is 100+ lines or imports constants from a parent directory.
+
+### Coverage Concern (when assigned)
+
+In addition to checking for missing unit tests, also check:
+- **Feature-level coverage:** every feature directory (src/features/*/) must have at least unit tests for its page component and E2E tests for primary user flows. Flag features with no tests or only partial coverage.
+- **E2E gaps:** check e2e/ for tests covering each feature's navigation, core flows, and error states.
 
 For each finding, return this format:
 

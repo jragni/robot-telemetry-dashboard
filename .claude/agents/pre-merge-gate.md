@@ -27,9 +27,15 @@ npm run lint
 npm run test -- --run
 ```
 
-All three must exit 0. Any failure blocks the merge.
+All three must exit 0. Additionally, `npm run lint` must report **0 errors** (warnings are OK — JSDoc warnings are tracked separately). Parse the lint output summary line for error count:
 
-**Output:** `[PASS]` or `[FAIL: build|lint|test — error message]`
+```bash
+npm run lint 2>&1 | grep -oP '\d+ error' | head -1
+```
+
+If error count > 0, this gate FAILS even if the exit code is 0.
+
+**Output:** `[PASS]` or `[FAIL: build|lint|test — error message]` or `[FAIL: lint — N errors (must be 0)]`
 
 ## Gate 2: Review Completed
 

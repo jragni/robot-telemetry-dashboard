@@ -10,9 +10,25 @@ Before starting, read CLAUDE.md, docs/DEVELOPMENT-WORKFLOW.md, and all agent def
 
 ## When to Run
 
-- **Post-cycle:** After a wave or overnight batch completes. Full performance report.
+- **Pre-cycle:** Snapshot current agent/skill definitions before work begins.
+- **Post-cycle:** After a wave or overnight batch completes. Full performance report with deltas from previous cycle.
 - **Mid-cycle:** During execution to catch issues early. Quick assessment.
 - **Post-retro:** After the user reviews work. Incorporate their feedback into recommendations.
+
+## Phase 0: Pre-Cycle Snapshot
+
+Before any work begins in a cycle, snapshot the current state of all agents and skills:
+
+```bash
+# Create snapshot directory
+mkdir -p .planning/agent-snapshots/YYYY-MM-DD
+
+# Copy all agent and skill definitions
+cp .claude/agents/*.md .planning/agent-snapshots/YYYY-MM-DD/
+cp .claude/skills/*.md .planning/agent-snapshots/YYYY-MM-DD/
+```
+
+This snapshot is used post-cycle to correlate agent/skill changes with metric changes. Without it, you can see metrics improve but can't attribute why.
 
 ## What to Monitor
 
@@ -117,9 +133,17 @@ npm run lint 2>&1 | tail -5
 # Compare violation count before and after the cycle
 ```
 
-## Output: performance reports
+## Output Files
 
-Write reports to `.planning/performance-reports/YYYY-MM-DD-cycle-name.md`. One file per cycle, never overwrite. Structure:
+Three output locations:
+
+1. **Performance reports** — `.planning/performance-reports/YYYY-MM-DD-cycle-name.md` — one per cycle, never overwrite
+2. **Agent snapshots** — `.planning/agent-snapshots/YYYY-MM-DD/` — pre-cycle copies of all agent/skill definitions
+3. **Baseline** — `.planning/performance-baseline.md` — running best/worst/average across all cycles, updated after each report
+
+## Performance Report Structure
+
+Write reports to `.planning/performance-reports/YYYY-MM-DD-cycle-name.md`. Structure:
 
 ```markdown
 # Performance Report — [Cycle Name]
@@ -128,18 +152,23 @@ Date: YYYY-MM-DD
 Scope: [What was executed — e.g., "Wave 4, tickets T-064 through T-067"]
 Branch: [Branch name]
 
+Previous report: [link to previous report or "none (first cycle)"]
+Snapshot: .planning/agent-snapshots/YYYY-MM-DD/
+
 ## Scorecard
 
-| Metric | Value | Trend |
-|--------|-------|-------|
-| PRs created | N | |
-| PRs merged | N | |
-| First-pass review rate | N% | up/down/stable |
-| Agent failure rate | N% | up/down/stable |
-| Convention violations caught by skills | N | |
-| Escaped defects | N | |
-| Tests added | N | |
-| Total test count | N | |
+| Metric | Previous | Current | Delta | Trend |
+|--------|----------|---------|-------|-------|
+| PRs created | N | N | +/-N | |
+| PRs merged | N | N | +/-N | |
+| First-pass review rate | N% | N% | +/-N% | up/down/stable |
+| Agent failure rate | N% | N% | +/-N% | up/down/stable |
+| Convention violations caught by skills | N | N | +/-N | |
+| Escaped defects | N | N | +/-N | |
+| Tests added | N | N | +/-N | |
+| Total test count | N | N | +/-N | |
+| Lint errors | N | N | +/-N | |
+| Folder structure violations | N | N | +/-N | |
 
 ## Agent Performance
 
@@ -176,10 +205,48 @@ Branch: [Branch name]
 ### New Rules
 - [Convention or rule to add based on patterns observed]
 
+## Change Correlation
+
+Diff the current agent/skill definitions against the pre-cycle snapshot:
+```bash
+diff .planning/agent-snapshots/PREVIOUS/ .planning/agent-snapshots/CURRENT/
+```
+
+For each metric that changed, attribute it to a specific agent/skill change:
+- [Metric]: [direction] — caused by [specific change to agent/skill] — evidence: [data]
+
+Example:
+- Barrel import violations: 20 → 0 ↓ — caused by adding barrel bypass check to /convention-check (check #9) — evidence: 0 FolderName/FolderName patterns in codebase
+- File overlap merge conflicts: 2 → 0 ↓ — caused by adding Phase 0 to branch-guardian — evidence: T-066/T-067 overlap caught pre-dispatch
+
+If a metric changed but no agent/skill change explains it, note that too — it may indicate an external factor.
+
 ## Raw Data
 
 [PR numbers, commit hashes, test counts — for traceability]
 ```
+
+## Post-Report: Update Baseline
+
+After writing the report, update `.planning/performance-baseline.md`:
+
+```markdown
+# Performance Baseline
+
+Last updated: YYYY-MM-DD (cycle: [name])
+Reports analyzed: N
+
+| Metric | Best | Worst | Average | Current |
+|--------|------|-------|---------|---------|
+| First-pass review rate | N% (date) | N% (date) | N% | N% |
+| Agent failure rate | N% (date) | N% (date) | N% | N% |
+| Escaped defects | N (date) | N (date) | N | N |
+| Convention violations | N (date) | N (date) | N | N |
+| Lint errors | N (date) | N (date) | N | N |
+| Total test count | N (date) | N (date) | N | N |
+```
+
+If this is the first cycle, create the baseline from this report's values (best = worst = average = current).
 
 ## Recommendation Quality
 
@@ -191,8 +258,10 @@ Recommendations must be:
 
 ## Rules
 
-- Read-only. Do not modify agent definitions, skills, or workflow docs. Only produce the report.
+- Read-only. Do not modify agent definitions, skills, or workflow docs. Only produce reports, snapshots, and the baseline.
 - Be honest about failures — do not minimize issues or inflate success rates.
-- Compare against previous reports if they exist (check .planning/ for prior reports).
+- Always read the previous report and baseline before writing a new report. Every metric must show its delta.
+- Always diff agent snapshots. If no snapshot exists for the previous cycle, note it and create one for this cycle.
+- Correlate every significant metric change to a specific agent/skill change. If no correlation exists, say so.
 - If this is a mid-cycle check, focus on issues that can still be corrected before the cycle ends.
-- Track trends across cycles — is the team getting better or worse?
+- Update the baseline after every post-cycle report. Never skip this step.

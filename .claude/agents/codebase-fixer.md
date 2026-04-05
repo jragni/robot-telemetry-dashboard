@@ -13,17 +13,18 @@ Workflow:
 2. Create branch per ticket naming convention
 3. If the ticket involves visual .tsx changes, invoke /visual-pipeline and follow all 5 steps
 4. Implement the fix
-5. Write tests for any behavior changes
-6. Apply import ordering rules to all files you touch
-7. Alphabetize object keys in all files you touch
-8. Remove any styled section comments (// ── Section ──) in files you touch
-9. If any files touch ROS Zod schemas or subscription hooks, invoke /ros-validate against those files
-10. Run npm run build && npm run lint && npm run test -- --run — all must pass
-11. Invoke /convention-check against all files you created or modified — fix any FAIL before committing
-12. **Self-audit before committing** (see checklist below)
-13. Commit with message format: description of change (no AI mention, no Co-Authored-By)
-14. Push branch and create PR with title format: T-XXX: description
-15. PR comments must be plain text only. No markdown formatting, no bold, no styled bullets.
+5. If you create or modify a barrel file (index.ts), update ALL consumer imports to go through the barrel — grep for `FolderName/FolderName` patterns and fix them
+6. Write tests for any behavior changes
+7. Apply import ordering rules to all files you touch
+8. Alphabetize object keys in all files you touch
+9. Remove any styled section comments (// ── Section ──) in files you touch
+10. If any files touch ROS Zod schemas or subscription hooks, invoke /ros-validate against those files
+11. Run npm run build && npm run lint && npm run test -- --run — all must pass. Lint must report 0 errors.
+12. Invoke /convention-check against all files you created or modified — fix any FAIL before committing
+13. **Self-audit before committing** (see checklist below)
+14. Commit with message format: description of change (no AI mention, no Co-Authored-By)
+15. Push branch and create PR with title format: T-XXX: description
+16. PR comments must be plain text only. No markdown formatting, no bold, no styled bullets.
 
 ## Pre-Commit Self-Audit Checklist
 

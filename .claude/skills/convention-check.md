@@ -99,22 +99,51 @@ No hardcoded OKLCH/hex/RGB values in `.tsx` files.
 - Exclude: comments, string literals used for non-color purposes
 - Any hardcoded color value is a FAIL — use Tailwind utility classes
 
+### 9. Barrel Bypass Detection
+
+Imports must go through barrel files (index.ts), not directly to the file inside the folder.
+
+**How to check:**
+- Grep for import paths matching `FolderName/FolderName` pattern (e.g., `from './components/SystemStatusPanel/SystemStatusPanel'`)
+- The correct import is `from './components/SystemStatusPanel'` (resolves through index.ts)
+- Any `FolderName/FolderName` import where an index.ts barrel exists in that folder is a FAIL
+
+### 10. Folder Completeness
+
+Components over 100 lines or with canvas/draw logic should have their own folder with co-located files.
+
+**How to check:**
+- If a `.tsx` file is over 100 lines and is a flat file (not in its own folder), flag it
+- If a component imports constants from a parent `constants.ts` (e.g., `from '../constants'`), those constants should be co-located in the component's folder
+- If a component folder exists but is missing `.types.ts` when the component has props, flag it
+
+### 11. Function Length
+
+Functions over 50 lines are candidates for extraction into helpers.
+
+**How to check:**
+- Count lines between function opening `{` and closing `}`
+- Flag any function over 50 lines as WARN (not FAIL — use judgment for canvas draw functions that are inherently sequential)
+
 ## Output Format
 
 ```
-PASS: src/features/fleet/components/RobotCard/RobotCard.tsx (8/8 checks)
+PASS: src/features/fleet/components/RobotCard/RobotCard.tsx (11/11 checks)
 
-FAIL: src/hooks/useImuSubscription.ts (6/8 checks)
+FAIL: src/hooks/useImuSubscription.ts (8/11 checks)
   [FAIL] Import ordering: React import not first (line 3)
   [FAIL] Object keys: imuMessageSchema keys not alphabetized (line 14)
+  [FAIL] Barrel bypass: importing from useControlPublisher/useControlPublisher (line 5)
   [PASS] No styled comments
   [PASS] No inline types
   [PASS] Props alphabetized
   [PASS] No React Context
   [PASS] JSDoc present
   [PASS] No hardcoded colors
+  [PASS] Folder completeness
+  [PASS] Function length
 
-SUMMARY: 1 PASS, 1 FAIL (2 violations in 1 file)
+SUMMARY: 1 PASS, 1 FAIL (3 violations in 1 file)
 ```
 
 ## Integration Points

@@ -208,6 +208,130 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - No behavior changes — documentation only, no tests needed
 - Branch: chore/t-069/jsdoc-sweep
 
+#### T-084: Refactor ConnectionManager from module singleton to class
+- Severity: LOW
+- Scope: src/lib/rosbridge/ConnectionManager.ts
+- Problem: module-scoped Maps/Sets as global state cannot be reset between tests. Each test shares state from previous tests, requiring workarounds.
+- Fix: convert to a class with state on `this`. Export a singleton instance (`export const connectionManager = new ConnectionManager()`). Add a `reset()` method for tests. Update all consumers (`* as ConnectionManager` → `connectionManager` instance imports).
+- Consumers to update: useConnectionStore.ts, AddRobotModal helpers, any direct ConnectionManager callers
+- Tests benefit: fresh instance per test, no shared state leakage
+- Acceptance: class-based ConnectionManager, singleton export, reset() for tests, all consumers updated, build + tests pass
+- Branch: refactor/t-084/connection-manager-class
+
+#### T-083: Extract TelemetryPanel draw logic into helpers
+- Severity: MEDIUM
+- Scope: src/features/workspace/components/TelemetryPanel.tsx
+- Problem: the draw() callback is 130 lines with 5 inline concerns — grid drawing, value range computation, time axis labels, value axis labels, series line rendering. All canvas logic is in one function.
+- Fix: create TelemetryPanel/ folder with helpers.ts extracting:
+  - drawGrid(ctx, plotW, plotH, left, colors) — horizontal + vertical grid lines
+  - computeValueRange(series, tMin, now) — min/max with padding and edge cases
+  - drawTimeAxis(ctx, plotW, plotH, left, timeWindowMs, colors) — time labels
+  - drawValueAxis(ctx, plotH, left, vMin, vMax, colors) — value labels with auto decimals
+  - drawSeriesLines(ctx, series, plotW, plotH, left, tMin, now, vMin, vMax) — polyline rendering
+- The component's draw() becomes an orchestrator calling these in sequence — same pattern as the AddRobotModal handleSubmit extraction
+- Each helper is independently testable with a mock canvas context
+- Acceptance: TelemetryPanel has own folder, draw() under 30 lines, helpers tested, build passes
+- Branch: refactor/t-083/telemetry-helpers
+
+#### T-082: RobotWorkspaceMobile convention violations
+- Severity: MEDIUM
+- Scope: src/features/workspace/components/RobotWorkspaceMobile.tsx
+- Violations:
+  - Props not alphabetized (lines 19-42)
+  - JSX comments describing children ({/* Panel header */}, {/* Bottom tab bar */}) — extract to named subcomponents instead
+  - Bottom tab bar .map() block (lines 114-134, 20 lines) — extract to MobileTabBar.tsx
+  - Header block (lines 68-85) — extract to MobilePanelHeader.tsx
+  - Single flat file at 138 lines with multiple sections — should have own folder (RobotWorkspaceMobile/) with subcomponents, types already in types/RobotWorkspaceMobile.types.ts
+- Fix: create folder, extract MobileTabBar and MobilePanelHeader subcomponents, alphabetize props, remove JSX comments
+- Acceptance: own folder with index.ts, subcomponents extracted, props alphabetized, no JSX comments, build passes
+- Branch: refactor/t-082/workspace-mobile-structure
+
+#### T-081: Extract PilotNotFound from PilotView
+- Severity: LOW
+- Scope: src/features/pilot/PilotView.tsx lines 69-81
+- The `if (!robot)` early return renders a 10-line JSX block inline — extract to a PilotNotFound.tsx component in src/features/pilot/components/
+- Props: robotId (string | undefined)
+- Acceptance: one component per file, PilotView imports PilotNotFound, build passes
+- Branch: refactor/t-081/pilot-not-found
+
+#### T-080: PilotLidarMinimap folder structure violation
+- Severity: MEDIUM
+- Scope: src/features/pilot/components/PilotLidarMinimap.tsx (single file, 210 lines)
+- Violations:
+  - No folder — 210-line canvas component should have its own directory
+  - No co-located types — props likely inline
+  - No co-located constants — MINIMAP_SIZE_MIN, MINIMAP_SIZE_MAX, MINIMAP_VIEWPORT_RATIO, PILOT_ZOOM_*, HUD_PANEL_BASE, LIDAR_TOKEN_MAP, LIDAR_COLOR_FALLBACKS, LIDAR_TICK_LENGTH, LIDAR_DETAIL_THRESHOLD all imported from pilot/constants.ts
+  - Canvas draw logic inline — should extract to helpers.ts
+- Fix: create PilotLidarMinimap/ folder with index.ts, types.ts, constants.ts, helpers.ts. Move minimap-specific constants from pilot/constants.ts. Extract canvas draw function.
+- Acceptance: PilotLidarMinimap has own folder, co-located types/constants/helpers, no minimap constants in pilot/constants.ts, build passes
+- Branch: refactor/t-080/pilot-lidar-minimap-structure
+
+#### T-079: PilotHud folder structure violation
+- Severity: MEDIUM
+- Scope: src/features/pilot/components/PilotHud/
+- Violations:
+  - No co-located types — PilotHudProps and PilotHudMobileProps imported from ../../types/PilotView.types. Move to PilotHud.types.ts
+  - Imports bypass barrel files — PilotCompass/PilotCompass, PilotGyroReadout/PilotGyroReadout, PilotStatusBar/PilotStatusBar, PilotControls/PilotControls should import from folder (through index.ts)
+  - No constants file — if any magic values exist inline, extract to PilotHud.constants.ts
+- Fix: co-locate types, fix barrel imports, verify folder is self-contained per FOLDER-STRUCTURE.md
+- Acceptance: types in PilotHud.types.ts, all imports go through barrels, build passes
+- Branch: refactor/t-079/pilot-hud-structure
+
+#### T-078: PilotCompass folder structure violation
+- Severity: MEDIUM
+- Scope: src/features/pilot/components/PilotCompass/
+- Violations:
+  - No types file — PilotCompassProps should be in PilotCompass.types.ts
+  - No co-located constants — compass constants (COMPASS_STRIP_HEIGHT, COMPASS_TICK_*, COMPASS_POINTER_*, COMPASS_FADE_*, COMPASS_DEGREES_VISIBLE, COMPASS_TOKEN_MAP, COMPASS_COLOR_FALLBACKS) live in src/features/pilot/constants.ts instead of PilotCompass/constants.ts
+  - Desktop and mobile variants share significant canvas drawing logic — extract shared draw helpers to PilotCompass.helpers.ts
+  - clampCompassWidth helper function defined inline in PilotCompass.tsx (line 26) — move to helpers
+- Fix: co-locate types, constants, and helpers per FOLDER-STRUCTURE.md. Leave only the compass-specific constants; pilot/constants.ts keeps non-compass constants.
+- Acceptance: PilotCompass folder has types.ts, constants.ts, helpers.ts. No compass constants in pilot/constants.ts. Build passes.
+- Branch: refactor/t-078/pilot-compass-structure
+
+#### T-077: Fix barrel file imports — stop bypassing index.ts
+- Severity: MEDIUM
+- Scope: All consumer imports across src/ that bypass barrel files
+- Problem: barrel index.ts files exist but consumers import directly (e.g., `SystemStatusPanel/SystemStatusPanel` instead of `SystemStatusPanel`). Names repeat in import paths.
+- Fix: update all imports to go through the barrel (import from the folder, not the file inside it)
+- ~20 imports across RobotWorkspace.tsx, PilotView.tsx, FleetOverview.tsx, workspace/constants.ts, PanelShowcase.tsx, PilotControls.tsx
+- Also verify each barrel re-exports all subcomponents consumers need
+- Acceptance: no import path contains `FolderName/FolderName` pattern, all resolve through index.ts, build passes
+- Branch: refactor/t-077/barrel-imports
+
+#### T-076: Extract PilotModeCta from ControlsPanel
+- Severity: LOW
+- Scope: src/features/workspace/components/ControlsPanel/
+- Extract the Pilot Mode CTA block (line 235-249 — hr divider + navigate button) into a PilotModeCta.tsx subcomponent
+- Props: robotId (string)
+- Acceptance: one component per file, ControlsPanel imports PilotModeCta, build passes
+- Branch: refactor/t-076/pilot-mode-cta
+
+#### T-075: Restructure shared hooks into own folders
+- Severity: LOW
+- Scope: src/hooks/ — move each hook into its own folder following the convention in FOLDER-STRUCTURE.md
+- For each hook with 2+ files (hook + test, hook + types, etc.), create a folder: hooks/{hookName}/{hookName}.ts, plus co-located test, types, constants, helpers as applicable
+- Hooks that are a single file with no test or supporting files can stay flat
+- Update the hooks/index.ts barrel to re-export from the new paths
+- Update all consumer imports (use @/ alias)
+- Existing folders (useControlPublisher, useWebRtcStream) stay as-is
+- Move __tests__/ contents into the appropriate hook folders
+- Acceptance: each hook with 2+ files has its own folder, all imports resolve, build passes
+- Branch: refactor/t-075/hooks-restructure
+
+#### T-074: Lint error sweep
+- Severity: MEDIUM
+- Scope: 23 lint errors across ~44 files in src/
+- Fix all errors (not warnings — T-069 covers JSDoc warnings):
+  - no-empty-function: replace empty arrow callbacks with proper no-ops or vi.fn() in tests
+  - consistent-type-definitions: change `type` to `interface` where flagged (src/types/panel.types.ts)
+  - no-non-null-assertion: replace `!` assertion with proper null check
+  - no-unnecessary-condition: remove redundant `??` on non-nullable values
+  - boundaries legacy selector: update eslint-plugin-boundaries config syntax
+- Also run `npm run lint --fix` for the 2 auto-fixable errors
+- Acceptance: `npm run lint` reports 0 errors (warnings OK — T-069 handles those)
+- Branch: fix/t-074/lint-sweep
+
 #### T-070: Fleet feature testing (unit + E2E)
 - Severity: MEDIUM
 - Scope: src/features/fleet/ — FleetOverview, AddRobotModal, RobotCard, helpers, schemas, connection flow
