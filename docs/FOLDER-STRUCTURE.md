@@ -2,6 +2,28 @@
 
 Organized by **feature domain**, not by file type. Enforced by `eslint-plugin-boundaries`.
 
+## Project-Level Directories
+
+```
+.planning/                        # Agent workspace — agents write here, humans read
+├── performance-reports/          # overseer output (one file per cycle)
+├── ticket-reviews/               # ticket-reviewer output (one file per wave)
+├── audit-reports/                # codebase-auditor raw findings
+├── archive/                      # old GSD phases, research, roadmap (historical)
+└── ISSUES.md                     # active tickets
+
+docs/                             # Human-facing documentation — agents read, humans edit
+├── research/                     # research findings (bandwidth, WebRTC, etc.)
+├── CODE-CONVENTIONS.md
+├── DESIGN-SYSTEM.md
+├── DEVELOPMENT-WORKFLOW.md
+├── FOLDER-STRUCTURE.md
+├── TESTING.md
+└── LESSONS-LEARNED.md
+```
+
+**Rule:** Agents read from `docs/` for conventions and rules. Agents write to `.planning/` for reports and reviews. Never the reverse.
+
 ## Three-Tier Architecture
 
 ```

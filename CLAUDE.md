@@ -70,6 +70,7 @@ Project-level agent definitions live in `.claude/agents/`. These are the team ro
 | Pre-Merge Gate | `.claude/agents/pre-merge-gate.md` | Verifies all pipeline stages before merge |
 | Research Applicator | `.claude/agents/research-applicator.md` | Diffs code against research findings |
 | Overseer | `.claude/agents/overseer.md` | Monitors agent team performance, produces reports |
+| Ticket Reviewer | `.claude/agents/ticket-reviewer.md` | Reviews tickets for conflicts, sizing, scope before dispatch |
 
 ## Skills
 

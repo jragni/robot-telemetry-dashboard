@@ -208,6 +208,38 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - No behavior changes — documentation only, no tests needed
 - Branch: chore/t-069/jsdoc-sweep
 
+#### T-070: Fleet feature testing (unit + E2E)
+- Severity: MEDIUM
+- Scope: src/features/fleet/ — FleetOverview, AddRobotModal, RobotCard, helpers, schemas, connection flow
+- Unit tests: component rendering, form validation, error states, empty states, robot add/remove flows, schema edge cases
+- E2E (Playwright): navigate to fleet, add robot via modal, verify card appears, remove robot, empty state renders, field validation errors display
+- E2E responsive: drag-resize from desktop to mobile and back — verify cards reflow, modal switches to full-screen overlay, no truncation. Tag drag-resize tests with @dev-only so CI skips them; CI tests use fixed viewports (1280, 768, 375)
+- Branch: test/t-070/fleet-testing
+
+#### T-071: Landing page testing (unit + E2E)
+- Severity: LOW
+- Scope: src/features/landing/ — LandingPage, hero, features section, CTA, footer, navigation
+- Unit tests: all sections render, links point to correct routes, CTA button present
+- E2E (Playwright): navigate to /, verify hero renders, scroll to features section, click CTA navigates to fleet, footer links work
+- E2E responsive: drag-resize — verify hero text doesn't overflow, feature cards stack on mobile, no horizontal scroll. Tag drag-resize tests @dev-only
+- Branch: test/t-071/landing-testing
+
+#### T-072: Pilot feature testing (unit + E2E)
+- Severity: MEDIUM
+- Scope: src/features/pilot/ — PilotView, PilotHud, PilotHudMobile, PilotCompass, PilotStatusBar, fullscreen toggle, D-pad controls
+- Unit tests: component rendering in connected/disconnected states, fullscreen toggle (F key, Escape, input exclusion), velocity slider values, status bar battery colors, compass heading display
+- E2E (Playwright): navigate to pilot view, verify HUD renders, test keyboard shortcuts (F for fullscreen, Escape to exit), verify disconnected state shows appropriate UI
+- E2E responsive: drag-resize — verify desktop HUD swaps to mobile HUD, controls remain usable, compass doesn't clip. Tag drag-resize tests @dev-only
+- Branch: test/t-072/pilot-testing
+
+#### T-073: Workspace feature testing (unit + E2E)
+- Severity: MEDIUM
+- Scope: src/features/workspace/ — RobotWorkspace, all 6 panels (SystemStatus, Controls, IMU, LiDAR, Telemetry, Camera), minimize/maximize, panel topic selection, mobile workspace
+- Unit tests: panel rendering in connected/disconnected states, minimize/maximize/restore, topic selector, D-pad press-and-hold, velocity slider, IMU variant switching, canvas panels render without errors
+- E2E (Playwright): navigate to workspace, verify 3x2 grid renders, minimize a panel and verify grid reflow, maximize a panel and verify others hide, restore all, switch IMU variant, verify disconnected overlay
+- E2E responsive: drag-resize — verify grid collapses to fewer columns, mobile workspace tab bar appears, switching tabs shows correct panel, no panel overflow/clipping. Tag drag-resize tests @dev-only
+- Branch: test/t-073/workspace-testing
+
 ---
 
 ## Execution Plan

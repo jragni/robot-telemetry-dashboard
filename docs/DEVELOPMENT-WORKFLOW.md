@@ -18,7 +18,7 @@ Visual work executes inline. Never delegate visual components to parallel subage
 
 ## Agent Team (Audits and Housekeeping)
 
-For codebase audits, bulk refactors, and housekeeping tickets, use the 9-role agent team defined in .claude/agents/.
+For codebase audits, bulk refactors, and housekeeping tickets, use the 10-role agent team defined in .claude/agents/.
 
 ### Roles
 
@@ -33,11 +33,12 @@ For codebase audits, bulk refactors, and housekeeping tickets, use the 9-role ag
 | Pre-Merge Gate | pre-merge-gate.md | Verifies all pipeline stages before merge | Read-only, MERGE-READY or BLOCKED verdict |
 | Research Applicator | research-applicator.md | Diffs code against research findings post-implementation | Read-only, APPLIED/MISSED per recommendation |
 | Overseer | overseer.md | Monitors agent team performance, produces performance reports | Read-only, dispatched post-cycle |
+| Ticket Reviewer | ticket-reviewer.md | Reviews tickets for conflicts, sizing, and scope before dispatch | Read-only, splits/merges/rescopes |
 
 ### Pipeline
 
 ```
-Audit → Consolidate → Conflict Detection → Branch Setup → Execute → Review → Respond → Gate Check → Pre-Merge Gate → Merge
+Audit → Consolidate → Ticket Review → Conflict Detection → Branch Setup → Execute → Review → Respond → Gate Check → Pre-Merge Gate → Merge
 ```
 
 ### Skills (invoke before/during work)
@@ -51,6 +52,8 @@ Audit → Consolidate → Conflict Detection → Branch Setup → Execute → Re
 Step 1: Audit — dispatch parallel codebase-auditor agents, each assigned a concern area (architecture, quality, safety, performance, coverage). They return structured findings.
 
 Step 2: Consolidate — orchestrator groups findings into ISSUES.md with raw findings (F-XX by severity), tickets (TICKET-XXX with scope, files, acceptance criteria, conflicts), and an execution plan with wave ordering based on file overlap and dependencies. **Ticket scoping rule: no two tickets in the same wave may modify the same file.** If multiple findings target the same file, they must be grouped into a single ticket or placed in sequential waves. The orchestrator must build a file-to-ticket matrix and verify zero overlap within each wave before finalizing the execution plan.
+
+Step 2.5: Ticket review — dispatch ticket-reviewer agent against all tickets in the wave. It checks file overlap, ticket sizing (splits oversized tickets), merge candidates, scope validation (vague → explicit files), and dependency ordering. The orchestrator applies its recommendations to ISSUES.md before proceeding. No tickets dispatch until the reviewer returns READY for every ticket in the wave.
 
 Step 3: Conflict detection — dispatch branch-guardian agent in Phase 0 (pre-wave) mode. It reads the ticket file lists, builds the overlap matrix, checks open PRs for file conflicts, and outputs a serialization order. If overlap is found within a wave, the orchestrator must re-scope tickets (merge overlapping tickets or move one to a later wave) before proceeding.
 

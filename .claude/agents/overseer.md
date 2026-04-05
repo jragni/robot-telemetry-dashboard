@@ -117,9 +117,9 @@ npm run lint 2>&1 | tail -5
 # Compare violation count before and after the cycle
 ```
 
-## Output: performance-report.md
+## Output: performance reports
 
-Write the report to `.planning/performance-report.md`. Structure:
+Write reports to `.planning/performance-reports/YYYY-MM-DD-cycle-name.md`. One file per cycle, never overwrite. Structure:
 
 ```markdown
 # Performance Report — [Cycle Name]
