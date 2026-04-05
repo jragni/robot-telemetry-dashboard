@@ -18,36 +18,28 @@ Visual work executes inline. Never delegate visual components to parallel subage
 
 ## Agent Team (Audits and Housekeeping)
 
-For codebase audits, bulk refactors, and housekeeping tickets, use the 10-role agent team defined in .claude/agents/.
+For codebase audits, bulk refactors, and housekeeping tickets, use the 10-role agent team.
 
 ### Roles
 
-| Role | Agent File | What it does | Constraints |
-|------|-----------|-------------|-------------|
-| Codebase Auditor | codebase-auditor.md | Scans codebase for issues in a specific concern area | Read-only, structured findings output |
-| Codebase Fixer | codebase-fixer.md | Implements one ticket per worktree, creates PR | Must pass build, follow CODE-CONVENTIONS.md |
-| PR Reviewer | pr-reviewer.md | First-tier review with build check and convention audit | Comments only, never approves or merges |
-| PR Responder | pr-responder.md | Addresses review feedback, fixes code | Never mentions AI, /frontend-design for UI changes |
-| Spec Conformance | spec-conformance.md | Gate check against CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md | Read-only, PASS/FAIL per rule per file |
-| Branch Guardian | branch-guardian.md | Manages branch lifecycle before/after fixer dispatch | Runs before and after every fixer agent |
-| Pre-Merge Gate | pre-merge-gate.md | Verifies all pipeline stages before merge | Read-only, MERGE-READY or BLOCKED verdict |
-| Research Applicator | research-applicator.md | Diffs code against research findings post-implementation | Read-only, APPLIED/MISSED per recommendation |
-| Overseer | overseer.md | Monitors agent team performance, produces performance reports | Read-only, dispatched post-cycle |
-| Ticket Reviewer | ticket-reviewer.md | Reviews tickets for conflicts, sizing, and scope before dispatch | Read-only, splits/merges/rescopes |
+| Role | What it does | Constraints |
+|------|-------------|-------------|
+| Codebase Auditor | Scans codebase for issues in a specific concern area | Read-only, structured findings output |
+| Codebase Fixer | Implements one ticket per worktree, creates PR | Must pass build, follow CODE-CONVENTIONS.md |
+| PR Reviewer | First-tier review with build check and convention audit | Comments only, never approves or merges |
+| PR Responder | Addresses review feedback, fixes code | Never mentions AI |
+| Spec Conformance | Gate check against CODE-CONVENTIONS.md and FOLDER-STRUCTURE.md | Read-only, PASS/FAIL per rule per file |
+| Branch Guardian | Manages branch lifecycle before/after fixer dispatch | Runs before and after every fixer agent |
+| Pre-Merge Gate | Verifies all pipeline stages before merge | Read-only, MERGE-READY or BLOCKED verdict |
+| Research Applicator | Diffs code against research findings post-implementation | Read-only, APPLIED/MISSED per recommendation |
+| Overseer | Monitors agent team performance, produces performance reports | Read-only, dispatched post-cycle |
+| Ticket Reviewer | Reviews tickets for conflicts, sizing, and scope before dispatch | Read-only, splits/merges/rescopes |
 
 ### Pipeline
 
 ```
 Audit → Consolidate → Ticket Review → Conflict Detection → Branch Setup → Execute → Review → Respond → Gate Check → Pre-Merge Gate → Merge
 ```
-
-### Skills (invoke before/during work)
-
-| Skill | File | When to use |
-|-------|------|-------------|
-| /visual-pipeline | .claude/skills/visual-pipeline.md | Before any visual .tsx change — enforces 5-step pipeline |
-| /convention-check | .claude/skills/convention-check.md | Before committing — scans changed files for convention violations |
-| /ros-validate | .claude/skills/ros-validate.md | After modifying ROS Zod schemas — validates against interface definitions |
 
 Step 1: Audit — dispatch parallel codebase-auditor agents, each assigned a concern area (architecture, quality, safety, performance, coverage). They return structured findings.
 
@@ -67,9 +59,42 @@ Step 6: Respond — dispatch pr-responder agents for PRs with review feedback. E
 
 Step 7: Gate check — dispatch spec-conformance agents to verify all files in the diff conform to CODE-CONVENTIONS.md. PASS/FAIL per rule per file. Any FAIL blocks merge.
 
-Step 7.5: Pre-Merge Gate — dispatch pre-merge-gate agent for each PR. It checks 5 gates (build green, review completed, feedback addressed, spec conformance passed, tests exist). All gates must PASS for a MERGE-READY verdict. BLOCKED PRs cannot be merged until the blocking condition is resolved.
+Step 7.5: Pre-Merge Gate — dispatch pre-merge-gate agent for each PR. It checks 5 gates (build green, review completed, feedback addressed, spec conformance passed, tests exist). All gates must PASS for a MERGE-READY verdict. BLOCKED PRs cannot be merged until the blocking condition is resolved. This step is NOT optional — no PR merges without a MERGE-READY verdict, even if the orchestrator believes it is trivial.
 
 Step 8: Merge — orchestrator cherry-picks or merges PRs in wave order with build gates between waves. Close PRs with references to merged commits. Only PRs with MERGE-READY verdict from pre-merge-gate can be merged.
+
+### Dispatch Log
+
+The orchestrator maintains an append-only dispatch log at `.planning/dispatch-log.md` during every cycle. This log is the overseer's primary data source for benchmarking pipeline completeness.
+
+**Format — one line per event:**
+
+```
+| Timestamp | Ticket | Agent | Event | Notes |
+|-----------|--------|-------|-------|-------|
+| 2026-04-04 14:32 | T-066 | codebase-fixer | dispatched | |
+| 2026-04-04 14:45 | T-066 | codebase-fixer | completed | PR #50 |
+| 2026-04-04 14:46 | T-066 | pr-reviewer | dispatched | PR #50 |
+| 2026-04-04 14:50 | T-066 | pr-reviewer | completed | 2 issues found |
+| 2026-04-04 14:51 | T-066 | spec-conformance | skipped | reason: time constraint |
+| 2026-04-04 14:52 | T-066 | pre-merge-gate | skipped | reason: not yet created |
+| 2026-04-04 14:53 | T-066 | — | merged | PR #50 → main |
+```
+
+**Rules:**
+- Every agent dispatch gets a `dispatched` entry. Every completion gets a `completed` entry.
+- If a pipeline step is intentionally skipped, log it as `skipped` with a reason.
+- If an agent fails (timeout, permissions, wrong branch), log as `failed` with details.
+- The overseer diffs this log against the expected pipeline (Steps 2.5 through 8) to flag missing steps.
+- The log is per-cycle. Start a new file for each wave: `.planning/dispatch-log-wave-N.md`.
+
+**Expected steps per ticket (minimum):**
+
+```
+ticket-reviewer → branch-guardian (setup) → codebase-fixer → branch-guardian (validate) → pr-reviewer → spec-conformance → pre-merge-gate → merge
+```
+
+Any ticket missing a step in the log is flagged by the overseer as a pipeline gap.
 
 ### ISSUES.md Format
 
@@ -101,7 +126,6 @@ Titles use T-XXX: description format. Comments are plain text only — no markdo
 ### What Agents Must Read
 
 Every agent reads these files before starting:
-- CLAUDE.md — process rules, architecture, references
 - docs/CODE-CONVENTIONS.md — all code rules
 - docs/FOLDER-STRUCTURE.md — file layout, three-tier architecture, import ordering, 3+ subcomponents → own folder rule
 
