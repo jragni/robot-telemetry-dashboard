@@ -31,8 +31,9 @@ export function PilotView() {
   const selectedTopics = robot?.selectedTopics;
   const controls = useControlPublisher({ ros, topicName: selectedTopics?.controls });
   const { status: videoStatus, videoRef } = useWebRtcStream({
-    url: robot?.url ?? '',
+    connected,
     enabled: !!robot,
+    url: robot?.url ?? '',
   });
   const { isFullscreen, toggleFullscreen } = usePilotFullscreen();
   const isMobile = useIsMobile();

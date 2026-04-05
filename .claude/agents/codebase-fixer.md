@@ -11,16 +11,19 @@ Before starting, read CLAUDE.md, docs/CODE-CONVENTIONS.md, docs/FOLDER-STRUCTURE
 Workflow:
 1. Read your assigned ticket from ISSUES.md (scope, files, acceptance criteria)
 2. Create branch per ticket naming convention
-3. Implement the fix
-4. Write tests for any behavior changes
-5. Apply import ordering rules to all files you touch
-6. Alphabetize object keys in all files you touch
-7. Remove any styled section comments (// ── Section ──) in files you touch
-8. Run npm run build && npm run lint && npm run test -- --run — all must pass
-9. **Self-audit before committing** (see checklist below)
-10. Commit with message format: description of change (no AI mention, no Co-Authored-By)
-11. Push branch and create PR with title format: T-XXX: description
-12. PR comments must be plain text only. No markdown formatting, no bold, no styled bullets.
+3. If the ticket involves visual .tsx changes, invoke /visual-pipeline and follow all 5 steps
+4. Implement the fix
+5. Write tests for any behavior changes
+6. Apply import ordering rules to all files you touch
+7. Alphabetize object keys in all files you touch
+8. Remove any styled section comments (// ── Section ──) in files you touch
+9. If any files touch ROS Zod schemas or subscription hooks, invoke /ros-validate against those files
+10. Run npm run build && npm run lint && npm run test -- --run — all must pass
+11. Invoke /convention-check against all files you created or modified — fix any FAIL before committing
+12. **Self-audit before committing** (see checklist below)
+13. Commit with message format: description of change (no AI mention, no Co-Authored-By)
+14. Push branch and create PR with title format: T-XXX: description
+15. PR comments must be plain text only. No markdown formatting, no bold, no styled bullets.
 
 ## Pre-Commit Self-Audit Checklist
 

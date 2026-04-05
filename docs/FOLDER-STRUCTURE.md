@@ -45,7 +45,11 @@ src/
 │       ├── input.tsx
 │       └── select.tsx
 ├── hooks/                        # Shared hooks
-│   └── useTheme.ts
+│   ├── useTheme.ts
+│   ├── useBatterySubscription.ts
+│   └── __tests__/                # 3+ test files → subfolder
+│       ├── useBatterySubscription.schemas.test.ts
+│       └── useImuSubscription.schemas.test.ts
 ├── stores/                       # Shared Zustand stores
 │   └── connection/
 │       ├── useConnectionStore.ts
@@ -152,6 +156,13 @@ import { useImuSubscription, useLidarSubscription, useBatterySubscription } from
 
 Vite/Rollup tree-shakes these correctly. The v2 problem was giant feature-level barrels with webpack, not focused component/directory barrels.
 
+### Test Co-Location
+
+- Tests live next to their source file by default (e.g., `RobotCard.test.tsx` beside `RobotCard.tsx`)
+- When a directory accumulates 3+ test files, migrate them to a `__tests__/` subfolder to reduce visual clutter
+- The `__tests__/` folder lives inside the directory it tests — never at a higher level
+- Import paths in tests use `../` to reach the source (e.g., `import { schema } from '../useLidarSubscription'`)
+
 ### shadcn-First Rule
 
 Use shadcn/ui components before building custom ones. Check if shadcn has a component that fits before writing from scratch. Custom components only when shadcn doesn't cover the use case.
@@ -178,6 +189,7 @@ shadcn CLI may write files to a literal `./@/` directory instead of `src/`. Afte
 | Helpers    | `helpers.ts` at feature root, or `{Component}.helpers.ts`     | `helpers.ts`, `RobotCard.helpers.ts`     |
 | Hooks      | camelCase `use*.ts`                                           | `useTheme.ts`, `useFleetFilter.ts`       |
 | Tests      | matches source `.test.tsx` / `.test.ts`                       | `RobotCard.test.tsx`                     |
+| Tests (__tests__) | `__tests__/{SourceName}.test.ts(x)` in parent folder   | `hooks/__tests__/useImuSubscription.schemas.test.ts` |
 | Stores     | camelCase `use*Store.ts`                                      | `useConnectionStore.ts`                  |
 | Constants  | `constants.ts` at feature root, or `{Component}.constants.ts` | `constants.ts`, `RobotCard.constants.ts` |
 | Utilities  | camelCase `.ts`                                               | `quaternion.ts`                          |

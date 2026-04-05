@@ -192,6 +192,13 @@ Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-00
 - Mixed content block on HTTPS deployment (warn user when entering ws:// URL from HTTPS page)
 - usePilotFullscreen missing contentEditable check on F key listener
 
+#### T-068: Create sensorVector3Schema with nullable axes
+- Severity: MEDIUM
+- File: src/types/ros2-schemas.ts, src/features/workspace/hooks/useTelemetrySubscription.ts, src/hooks/useImuSubscription.ts
+- Found by /ros-validate audit: telemetryImuMessageSchema uses vector3Schema with strict z.number() on x/y/z. If a sensor fault causes rosbridge to serialize a Vector3 axis as null, the parse silently drops the message and telemetry chart shows no data.
+- Fix: create sensorVector3Schema variant with z.number().nullable() per axis. Use it in sensor-data schemas (IMU, odometry). Post-parse, substitute 0 or skip null axis values.
+- Acceptance: telemetryImuMessageSchema and imuMessageSchema use sensorVector3Schema. Tests verify null axis values are handled gracefully.
+
 ---
 
 ## Execution Plan

@@ -12,6 +12,7 @@ Source of truth for all code rules. Referenced by CLAUDE.md.
 - Feature folders: `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`). Page-level components live at the feature root. Mocks in `mocks/`. Feature `types/` folder only for types shared across multiple components within the feature.
 - Hook folders: when a hook grows beyond a single file, give it its own folder: `hooks/{hookName}/` with `{hookName}.ts`, `types.ts`, `constants.ts`, `helpers.ts`.
 - Shared component folders: components in `src/components/` with 2+ files get their own folder. Single-file components stay flat.
+- Test file placement: co-locate test files next to source by default (`RobotCard.test.tsx` beside `RobotCard.tsx`). When a folder accumulates 3+ test files, move them to a `__tests__/` subfolder within that folder. The `__tests__/` folder lives inside the directory it tests — never at a higher level. Already in use: `src/hooks/__tests__/`, `src/stores/connection/__tests__/`, `src/lib/rosbridge/__tests__/`.
 
 ## Imports
 

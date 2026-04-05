@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_input.file_path // \"\"' | grep -q '\\.tsx$' || exit 0; jq -r '.tool_input.file_path' | grep -qE '(components/ui/|mocks/|\\.types\\.|\\.constants\\.)' && exit 0; echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"STOP: This is a visual .tsx file edit. You MUST have completed /visual-pipeline before proceeding. If all 5 steps (discuss, research, approve, implement, verify) are done for this change, proceed. If not, invoke /visual-pipeline now. Refactors, docstrings, and import fixes are exempt.\"}}'",
+            "statusMessage": "Checking design process..."
+          }
+        ]
+      }
+    ]
+  }
+}
