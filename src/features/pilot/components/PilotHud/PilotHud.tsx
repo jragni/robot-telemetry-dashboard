@@ -9,7 +9,7 @@ import { PilotGyroReadout } from '../PilotGyroReadout/PilotGyroReadout';
 import { PilotStatusBar } from '../PilotStatusBar/PilotStatusBar';
 import { PilotControls } from '../PilotControls/PilotControls';
 import { PilotFullscreenToggle } from '../PilotFullscreenToggle';
-import type { PilotHudProps } from '../../types/PilotView.types';
+import type { PilotHudProps } from './PilotHud.types';
 
 /** PilotHud
  * @description Renders the full HUD overlay layer for Pilot Mode. Positions

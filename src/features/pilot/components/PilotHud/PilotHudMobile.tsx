@@ -10,7 +10,7 @@ import { PilotCompassMobile } from '../PilotCompass/PilotCompassMobile';
 import { PilotControls } from '../PilotControls/PilotControls';
 import { PilotLidarMinimap } from '../PilotLidarMinimap';
 import { StatusDot } from './StatusDot';
-import type { PilotHudMobileProps } from '../../types/PilotView.types';
+import type { PilotHudMobileProps } from './PilotHud.types';
 
 /** PilotHudMobile
  * @description Renders the mobile-optimized HUD overlay for Pilot Mode.
