@@ -142,6 +142,16 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Extract Pilot Mode CTA block into PilotModeCta.tsx. Run after T-052 (both touch ControlsPanel).
 - Branch: refactor/t-076/pilot-mode-cta
 
+### Bugs
+
+#### T-090: Disable text selection and context menu on mobile pilot mode
+- Severity: MEDIUM
+- Scope: src/features/pilot/components/PilotHud/PilotHudMobile.tsx
+- Problem: long press on mobile triggers text selection, copy/paste popover, or context menu over the HUD controls, interfering with D-pad and slider interaction.
+- Fix: add `user-select-none` (Tailwind), `touch-action: manipulation` on the HUD container, and `onContextMenu={(e) => e.preventDefault()}` to suppress the native context menu on long press.
+- Acceptance: long press anywhere on the mobile pilot HUD does not trigger text selection or context menu. D-pad and sliders remain fully functional.
+- Branch: fix/t-090/mobile-pilot-text-selection
+
 ### Testing (run after all restructures)
 
 #### T-070: Fleet feature testing (unit + E2E)
