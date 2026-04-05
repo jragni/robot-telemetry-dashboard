@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
-import { AlertCircle, AlertTriangle, Loader2, Plus } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,8 +16,10 @@ import { Input } from '@/components/ui/input';
 import type { AddRobotFormErrors } from './types/AddRobotModal.types';
 
 import { FIELD_ERROR_IDS } from './constants';
+import { FormError } from './components/FormError';
 import { detectMixedContent, testConnectionWithRetries, validateRobotForm } from './helpers';
 import { FieldError } from './components/FieldError';
+import { MixedContentWarning } from './components/MixedContentWarning';
 import { MobileHeader } from './components/MobileHeader';
 
 /** AddRobotModal
@@ -188,33 +190,10 @@ export function AddRobotModal() {
               }`}
             />
             <FieldError id={FIELD_ERROR_IDS.url} message={errors.url} />
-            {hasMixedContentRisk && (
-              <div
-                role="alert"
-                className="flex items-start gap-2 rounded-sm border border-status-caution/30 bg-status-caution/10 px-3 py-2"
-              >
-                <AlertTriangle size={14} className="text-status-caution shrink-0 mt-0.5" />
-                <p className="font-sans text-xs text-status-caution">
-                  This page is served over HTTPS. Browsers block insecure ws:// connections from secure pages. Use wss:// or a proxy with TLS.
-                </p>
-              </div>
-            )}
+            {hasMixedContentRisk && <MixedContentWarning />}
           </div>
 
-          {!!errors.form && (
-              <div
-                role="alert"
-                className="flex items-start gap-2 rounded-sm border border-status-critical/30 bg-status-critical/10 px-3 py-2"
-              >
-                <AlertCircle size={14} className="text-status-critical shrink-0 mt-0.5" />
-                <div className="flex flex-col gap-0.5">
-                  <p className="font-mono text-xs text-status-critical">{errors.form}</p>
-                  <p className="font-sans text-xs text-text-muted">
-                    Check the URL and ensure the robot is powered on.
-                  </p>
-                </div>
-              </div>
-          )}
+          {!!errors.form && <FormError message={errors.form} />}
 
           <div className="max-sm:mt-auto max-sm:pb-6 sm:mt-2">
             <Button
