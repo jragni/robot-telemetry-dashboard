@@ -43,12 +43,8 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
         <RobotCardConnection url={robot.url} lastSeen={robot.lastSeen} />
         <hr className="border-border border-dashed" />
 
-        {isConnected && (
-            <>
-              <RobotCardVitals battery={battery} />
-              <hr className="border-border border-dashed" />
-            </>
-        )}
+        <RobotCardVitals battery={battery} />
+        <hr className="border-border border-dashed" />
 
         <RobotCardGraph graph={rosGraph} isConnected={isConnected} />
       </CardContent>
