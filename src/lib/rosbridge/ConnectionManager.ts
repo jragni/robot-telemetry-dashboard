@@ -15,7 +15,7 @@ const reconnectAttempts = new Map<string, number>();
 const intentionalDisconnects = new Set<string>();
 const connectedAtMap = new Map<string, number>();
 
-function updateStore(id: string, patch: Partial<Pick<RobotConnection, 'status' | 'lastSeen' | 'lastError'>>) {
+function updateStore(id: string, patch: Partial<Pick<RobotConnection, 'lastError' | 'lastSeen' | 'reconnectAttempt' | 'status'>>) {
   useConnectionStore.getState().updateRobot(id, patch);
 }
 
@@ -33,13 +33,14 @@ function scheduleReconnect(id: string, url: string) {
 
   const attempts = reconnectAttempts.get(id) ?? 0;
   if (attempts >= RECONNECT_MAX_ATTEMPTS) {
-    updateStore(id, { status: 'error', lastError: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts` });
+    updateStore(id, { lastError: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`, reconnectAttempt: null, status: 'error' });
     reconnectAttempts.delete(id);
     return;
   }
 
-  updateStore(id, { status: 'connecting' });
-  reconnectAttempts.set(id, attempts + 1);
+  const nextAttempt = attempts + 1;
+  reconnectAttempts.set(id, nextAttempt);
+  updateStore(id, { reconnectAttempt: nextAttempt, status: 'connecting' });
 
   const delay = calculateBackoffDelay(attempts);
 
@@ -69,7 +70,7 @@ export async function connect(id: string, url: string): Promise<void> {
   const rosbridgeUrl = deriveRosbridgeUrl(url);
   if (!rosbridgeUrl) throw new Error('Invalid robot URL');
 
-  updateStore(id, { status: 'connecting', lastError: null });
+  updateStore(id, { lastError: null, status: 'connecting' });
 
   return new Promise<void>((resolve, reject) => {
     const ros = new Ros({ url: rosbridgeUrl });
@@ -83,7 +84,7 @@ export async function connect(id: string, url: string): Promise<void> {
       settled = true;
       ros.close();
       connections.delete(id);
-      updateStore(id, { status: 'error', lastError: 'Connection timed out' });
+      updateStore(id, { lastError: 'Connection timed out', status: 'error' });
       scheduleReconnect(id, url);
       reject(new Error('Connection timed out'));
     }, CONNECTION_TIMEOUT);
@@ -95,7 +96,7 @@ export async function connect(id: string, url: string): Promise<void> {
       clearTimeout(timeout);
       reconnectAttempts.delete(id);
       connectedAtMap.set(id, Date.now());
-      updateStore(id, { status: 'connected', lastSeen: Date.now(), lastError: null });
+      updateStore(id, { lastError: null, lastSeen: Date.now(), reconnectAttempt: null, status: 'connected' });
       resolve();
     });
 
@@ -105,7 +106,7 @@ export async function connect(id: string, url: string): Promise<void> {
       clearTimeout(timeout);
       connections.delete(id);
       const message = err instanceof Error ? err.message : 'Connection error';
-      updateStore(id, { status: 'error', lastError: message });
+      updateStore(id, { lastError: message, status: 'error' });
       scheduleReconnect(id, url);
       reject(new Error(message));
     });
@@ -149,7 +150,7 @@ export function disconnect(id: string): void {
     connections.delete(id);
   }
 
-  updateStore(id, { status: 'disconnected', lastError: null });
+  updateStore(id, { lastError: null, reconnectAttempt: null, status: 'disconnected' });
 }
 
 export async function testConnection(url: string, timeoutMs = CONNECTION_TIMEOUT): Promise<void> {

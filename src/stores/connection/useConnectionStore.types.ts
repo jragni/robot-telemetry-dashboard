@@ -13,6 +13,7 @@ export interface RobotConnection {
   readonly status: ConnectionStatus;
   readonly lastSeen: number | null;
   readonly lastError: string | null;
+  readonly reconnectAttempt: number | null;
   readonly color: RobotColor;
   readonly selectedTopics: Partial<Record<PanelId, string>>;
 }

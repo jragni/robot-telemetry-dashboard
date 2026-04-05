@@ -1,6 +1,9 @@
 import { useCallback, useState } from 'react';
-import { Plus, Loader2, AlertCircle } from 'lucide-react';
 
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
+import { AlertCircle, AlertTriangle, Loader2, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,14 +12,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
-import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
-import { addRobotSchema } from '@/features/fleet/schemas';
 import type { AddRobotFormErrors } from './types/AddRobotModal.types';
+
 import { FIELD_ERROR_IDS } from './constants';
+import { detectMixedContent, testConnectionWithRetries, validateRobotForm } from './helpers';
 import { FieldError } from './components/FieldError';
 import { MobileHeader } from './components/MobileHeader';
 
@@ -31,6 +31,7 @@ export function AddRobotModal() {
   const [url, setUrl] = useState('');
   const [errors, setErrors] = useState<AddRobotFormErrors>({});
   const [isConnecting, setIsConnecting] = useState(false);
+  const [connectAttempt, setConnectAttempt] = useState(0);
   const addRobot = useConnectionStore((s) => s.addRobot);
   const connectRobot = useConnectionStore((s) => s.connectRobot);
 
@@ -38,6 +39,7 @@ export function AddRobotModal() {
     setName('');
     setUrl('');
     setErrors({});
+    setConnectAttempt(0);
     setIsConnecting(false);
   }, []);
 
@@ -50,41 +52,37 @@ export function AddRobotModal() {
   const hasUrlError = errors.url != null;
   const isSubmitDisabled = isConnecting || name.trim().length === 0 || url.trim().length === 0;
 
+  const hasMixedContentRisk = detectMixedContent(url.trim().toLowerCase());
+
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Validate with Zod
-    const result = addRobotSchema.safeParse({ name, url });
-    if (!result.success) {
-      const issues = result.error.issues;
-      const nameIssue = issues.find((i) => i.path[0] === 'name');
-      const urlIssue = issues.find((i) => i.path[0] === 'url');
-      setErrors({
-        name: nameIssue?.message,
-        url: urlIssue?.message,
-      });
+    const validation = validateRobotForm(name, url);
+    if (!validation.ok) {
+      setErrors(validation.errors);
       return;
     }
 
-    const { name: validName, url: validUrl } = result.data;
-
-    // Normalize URL
-    const normalizedUrl = normalizeRosbridgeUrl(validUrl);
-    if (!normalizedUrl) {
-      setErrors((prev) => ({ ...prev, url: 'Invalid URL — enter an IP, hostname, or WebSocket URL' }));
-      return;
-    }
-
-    // Test connection
     setIsConnecting(true);
     setErrors((prev) => ({ ...prev, form: undefined }));
 
+    const connection = await testConnectionWithRetries(
+      validation.url,
+      (attempt) => { setConnectAttempt(attempt); },
+    );
+    if (!connection.connected) {
+      setErrors((prev) => ({ ...prev, form: connection.error }));
+      setIsConnecting(false);
+      setConnectAttempt(0);
+      return;
+    }
+
     try {
-      await ConnectionManager.testConnection(normalizedUrl);
-      const id = addRobot(validName, normalizedUrl);
+      const id = addRobot(validation.name, validation.url);
       if (id === null) {
         setErrors((prev) => ({ ...prev, name: 'A robot with that name already exists' }));
         setIsConnecting(false);
+        setConnectAttempt(0);
         return;
       }
       await connectRobot(id);
@@ -95,6 +93,7 @@ export function AddRobotModal() {
       setErrors((prev) => ({ ...prev, form: message }));
     } finally {
       setIsConnecting(false);
+      setConnectAttempt(0);
     }
   }
 
@@ -189,6 +188,17 @@ export function AddRobotModal() {
               }`}
             />
             <FieldError id={FIELD_ERROR_IDS.url} message={errors.url} />
+            {hasMixedContentRisk && (
+              <div
+                role="alert"
+                className="flex items-start gap-2 rounded-sm border border-status-caution/30 bg-status-caution/10 px-3 py-2"
+              >
+                <AlertTriangle size={14} className="text-status-caution shrink-0 mt-0.5" />
+                <p className="font-sans text-xs text-status-caution">
+                  This page is served over HTTPS. Browsers block insecure ws:// connections from secure pages. Use wss:// or a proxy with TLS.
+                </p>
+              </div>
+            )}
           </div>
 
           {!!errors.form && (
@@ -215,7 +225,7 @@ export function AddRobotModal() {
               {isConnecting ? (
                 <>
                   <Loader2 size={14} className="animate-spin" />
-                  Connecting...
+                  {`Connecting... (attempt ${String(connectAttempt)}/${String(RECONNECT_MAX_ATTEMPTS)})`}
                 </>
               ) : (
                 'Add Robot'

@@ -12,7 +12,7 @@ import { ICE_GATHERING_TIMEOUT, PEER_CONNECTION_CONFIG } from './constants';
 import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
 
 export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStreamReturn {
-  const { url, enabled, onStatusChange } = options;
+  const { connected, enabled, onStatusChange, url } = options;
 
   const [status, setStatus] = useState<VideoStreamStatus>('idle');
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -165,7 +165,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
   }, [stream]);
 
   useEffect(() => {
-    if (enabled && url) {
+    if (enabled && connected && url) {
       void connect();
     } else {
       shouldConnectRef.current = false;
@@ -180,7 +180,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       teardown();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, url]);
+  }, [connected, enabled, url]);
 
   return { status, stream, videoRef, error, retry };
 }

@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { DEFAULT_PANEL_TOPICS } from '@/features/workspace/constants';
 
-import { assignRobotColor, persistedStateSchema, toRobotId } from './useConnectionStore.helpers';
+import { assignRobotColor, isValidRobotColor, persistedStateSchema, toRobotId } from './useConnectionStore.helpers';
 import type { ConnectionStore } from './useConnectionStore.types';
 
 export const useConnectionStore = create<ConnectionStore>()(
@@ -21,14 +21,15 @@ export const useConnectionStore = create<ConnectionStore>()(
           robots: {
             ...state.robots,
             [id]: {
-              id,
-              name,
-              url,
-              status: 'disconnected',
-              lastSeen: null,
-              lastError: null,
               color: assignRobotColor(name),
+              id,
+              lastError: null,
+              lastSeen: null,
+              name,
+              reconnectAttempt: null,
               selectedTopics: { ...DEFAULT_PANEL_TOPICS },
+              status: 'disconnected',
+              url,
             },
           },
         }));
@@ -94,14 +95,15 @@ export const useConnectionStore = create<ConnectionStore>()(
           Object.entries(state.robots).map(([key, robot]) => [
             key,
             {
-              id: robot.id,
-              name: robot.name,
-              url: robot.url,
-              status: 'disconnected' as const,
-              lastSeen: null,
-              lastError: null,
               color: robot.color,
+              id: robot.id,
+              lastError: null,
+              lastSeen: null,
+              name: robot.name,
+              reconnectAttempt: null,
               selectedTopics: robot.selectedTopics,
+              status: 'disconnected' as const,
+              url: robot.url,
             },
           ]),
         ),
@@ -114,16 +116,17 @@ export const useConnectionStore = create<ConnectionStore>()(
           Object.entries(parsed.data.robots).map(([key, robot]) => [
             key,
             {
-              id: robot.id || key,
-              name: robot.name || key,
-              url: robot.url || '',
-              status: 'disconnected' as const,
-              lastSeen: null,
-              lastError: null,
-              color: robot.color
-                ? (robot.color as 'blue')
+              color: robot.color && isValidRobotColor(robot.color)
+                ? robot.color
                 : assignRobotColor(robot.name || key),
+              id: robot.id || key,
+              lastError: null,
+              lastSeen: null,
+              name: robot.name || key,
+              reconnectAttempt: null,
               selectedTopics: robot.selectedTopics ?? { ...DEFAULT_PANEL_TOPICS },
+              status: 'disconnected' as const,
+              url: robot.url || '',
             },
           ]),
         );
