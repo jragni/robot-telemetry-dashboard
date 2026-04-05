@@ -6,210 +6,231 @@ import { calculateBackoffDelay, RECONNECT_MAX_ATTEMPTS } from '@/constants/recon
 import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
 
 const CONNECTION_TIMEOUT = 10_000;
-const connections = new Map<string, Ros>();
-const reconnectTimers = new Map<string, number>();
-const reconnectAttempts = new Map<string, number>();
-const intentionalDisconnects = new Set<string>();
-const connectedAtMap = new Map<string, number>();
 
-function updateStore(
-  id: string,
-  patch: Partial<Pick<RobotConnection, 'lastError' | 'lastSeen' | 'reconnectAttempt' | 'status'>>,
-) {
-  useConnectionStore.getState().updateRobot(id, patch);
-}
+/** ConnectionManager
+ * @description Manages rosbridge WebSocket connections, reconnection logic, and
+ *  connection state. Exported as a singleton instance. Call reset() in tests to
+ *  clear all state between test cases.
+ */
+export class ConnectionManager {
+  private connections = new Map<string, Ros>();
+  private reconnectTimers = new Map<string, number>();
+  private reconnectAttempts = new Map<string, number>();
+  private intentionalDisconnects = new Set<string>();
+  private connectedAtMap = new Map<string, number>();
 
-function clearReconnect(id: string) {
-  const timer = reconnectTimers.get(id);
-  if (timer) {
-    clearTimeout(timer);
-    reconnectTimers.delete(id);
-  }
-}
-
-function scheduleReconnect(id: string, url: string) {
-  const robot = useConnectionStore.getState().robots[id];
-  if (!robot) return;
-
-  const attempts = reconnectAttempts.get(id) ?? 0;
-  if (attempts >= RECONNECT_MAX_ATTEMPTS) {
-    updateStore(id, {
-      lastError: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`,
-      reconnectAttempt: null,
-      status: 'error',
-    });
-    reconnectAttempts.delete(id);
-    return;
+  private updateStore(
+    id: string,
+    patch: Partial<Pick<RobotConnection, 'lastError' | 'lastSeen' | 'reconnectAttempt' | 'status'>>,
+  ) {
+    useConnectionStore.getState().updateRobot(id, patch);
   }
 
-  const nextAttempt = attempts + 1;
-  reconnectAttempts.set(id, nextAttempt);
-  updateStore(id, { reconnectAttempt: nextAttempt, status: 'connecting' });
-
-  const delay = calculateBackoffDelay(attempts);
-
-  const timer = window.setTimeout(() => {
-    reconnectTimers.delete(id);
-    void connect(id, url);
-  }, delay);
-
-  reconnectTimers.set(id, timer);
-}
-
-export async function connect(id: string, url: string): Promise<void> {
-  // Clean up existing connection without resetting retry state
-  clearReconnect(id);
-  const existing = connections.get(id);
-  if (existing) {
-    existing.close();
-    connections.delete(id);
-  }
-  intentionalDisconnects.delete(id);
-
-  // Count this as an attempt if not already tracking (initial connect)
-  if (!reconnectAttempts.has(id)) {
-    reconnectAttempts.set(id, 1);
+  private clearReconnect(id: string) {
+    const timer = this.reconnectTimers.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      this.reconnectTimers.delete(id);
+    }
   }
 
-  const rosbridgeUrl = deriveRosbridgeUrl(url);
-  if (!rosbridgeUrl) throw new Error('Invalid robot URL');
+  private scheduleReconnect(id: string, url: string) {
+    const robot = useConnectionStore.getState().robots[id];
+    if (!robot) return;
 
-  updateStore(id, { lastError: null, status: 'connecting' });
-
-  return new Promise<void>((resolve, reject) => {
-    const ros = new Ros({ url: rosbridgeUrl });
-    connections.set(id, ros);
-
-    let settled = false;
-    let wasConnected = false;
-
-    const timeout = setTimeout(() => {
-      if (settled) return;
-      settled = true;
-      ros.close();
-      connections.delete(id);
-      updateStore(id, { lastError: 'Connection timed out', status: 'error' });
-      scheduleReconnect(id, url);
-      reject(new Error('Connection timed out'));
-    }, CONNECTION_TIMEOUT);
-
-    ros.on('connection', () => {
-      if (settled) return;
-      settled = true;
-      wasConnected = true;
-      clearTimeout(timeout);
-      reconnectAttempts.delete(id);
-      connectedAtMap.set(id, Date.now());
-      updateStore(id, {
-        lastError: null,
-        lastSeen: Date.now(),
+    const attempts = this.reconnectAttempts.get(id) ?? 0;
+    if (attempts >= RECONNECT_MAX_ATTEMPTS) {
+      this.updateStore(id, {
+        lastError: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`,
         reconnectAttempt: null,
-        status: 'connected',
+        status: 'error',
       });
-      resolve();
-    });
+      this.reconnectAttempts.delete(id);
+      return;
+    }
 
-    ros.on('error', (err: unknown) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      connections.delete(id);
-      const message = err instanceof Error ? err.message : 'Connection error';
-      updateStore(id, { lastError: message, status: 'error' });
-      scheduleReconnect(id, url);
-      reject(new Error(message));
-    });
+    const nextAttempt = attempts + 1;
+    this.reconnectAttempts.set(id, nextAttempt);
+    this.updateStore(id, { reconnectAttempt: nextAttempt, status: 'connecting' });
 
-    ros.on('close', () => {
-      if (!settled) {
+    const delay = calculateBackoffDelay(attempts);
+
+    const timer = window.setTimeout(() => {
+      this.reconnectTimers.delete(id);
+      void this.connect(id, url);
+    }, delay);
+
+    this.reconnectTimers.set(id, timer);
+  }
+
+  async connect(id: string, url: string): Promise<void> {
+    this.clearReconnect(id);
+    const existing = this.connections.get(id);
+    if (existing) {
+      existing.close();
+      this.connections.delete(id);
+    }
+    this.intentionalDisconnects.delete(id);
+
+    if (!this.reconnectAttempts.has(id)) {
+      this.reconnectAttempts.set(id, 1);
+    }
+
+    const rosbridgeUrl = deriveRosbridgeUrl(url);
+    if (!rosbridgeUrl) throw new Error('Invalid robot URL');
+
+    this.updateStore(id, { lastError: null, status: 'connecting' });
+
+    return new Promise<void>((resolve, reject) => {
+      const ros = new Ros({ url: rosbridgeUrl });
+      this.connections.set(id, ros);
+
+      let settled = false;
+      let wasConnected = false;
+
+      const timeout = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        ros.close();
+        this.connections.delete(id);
+        this.updateStore(id, { lastError: 'Connection timed out', status: 'error' });
+        this.scheduleReconnect(id, url);
+        reject(new Error('Connection timed out'));
+      }, CONNECTION_TIMEOUT);
+
+      ros.on('connection', () => {
+        if (settled) return;
+        settled = true;
+        wasConnected = true;
+        clearTimeout(timeout);
+        this.reconnectAttempts.delete(id);
+        this.connectedAtMap.set(id, Date.now());
+        this.updateStore(id, {
+          lastError: null,
+          lastSeen: Date.now(),
+          reconnectAttempt: null,
+          status: 'connected',
+        });
+        resolve();
+      });
+
+      ros.on('error', (err: unknown) => {
+        if (settled) return;
         settled = true;
         clearTimeout(timeout);
-        connections.delete(id);
-        updateStore(id, { status: 'disconnected' });
-        reject(new Error('Connection closed'));
-        return;
-      }
+        this.connections.delete(id);
+        const message = err instanceof Error ? err.message : 'Connection error';
+        this.updateStore(id, { lastError: message, status: 'error' });
+        this.scheduleReconnect(id, url);
+        reject(new Error(message));
+      });
 
-      connections.delete(id);
+      ros.on('close', () => {
+        if (!settled) {
+          settled = true;
+          clearTimeout(timeout);
+          this.connections.delete(id);
+          this.updateStore(id, { status: 'disconnected' });
+          reject(new Error('Connection closed'));
+          return;
+        }
 
-      // Only auto-reconnect if we were previously connected (involuntary drop)
-      // Don't reconnect from a failed initial connection attempt
-      if (!wasConnected) return;
-      if (intentionalDisconnects.has(id)) {
-        intentionalDisconnects.delete(id);
-        return;
-      }
-      const robot = useConnectionStore.getState().robots[id];
-      if (robot) {
-        scheduleReconnect(id, url);
-      }
+        this.connections.delete(id);
+
+        if (!wasConnected) return;
+        if (this.intentionalDisconnects.has(id)) {
+          this.intentionalDisconnects.delete(id);
+          return;
+        }
+        const robot = useConnectionStore.getState().robots[id];
+        if (robot) {
+          this.scheduleReconnect(id, url);
+        }
+      });
     });
-  });
-}
-
-export function disconnect(id: string): void {
-  clearReconnect(id);
-  reconnectAttempts.delete(id);
-  connectedAtMap.delete(id);
-  intentionalDisconnects.add(id);
-
-  const ros = connections.get(id);
-  if (ros) {
-    ros.close();
-    connections.delete(id);
   }
 
-  updateStore(id, { lastError: null, reconnectAttempt: null, status: 'disconnected' });
-}
+  disconnect(id: string): void {
+    this.clearReconnect(id);
+    this.reconnectAttempts.delete(id);
+    this.connectedAtMap.delete(id);
+    this.intentionalDisconnects.add(id);
 
-export async function testConnection(url: string, timeoutMs = CONNECTION_TIMEOUT): Promise<void> {
-  const rosbridgeUrl = deriveRosbridgeUrl(url);
-  if (!rosbridgeUrl) throw new Error('Invalid robot URL');
-
-  return new Promise<void>((resolve, reject) => {
-    const ros = new Ros({ url: rosbridgeUrl });
-    let settled = false;
-
-    const cleanup = () => {
+    const ros = this.connections.get(id);
+    if (ros) {
       ros.close();
-    };
+      this.connections.delete(id);
+    }
 
-    const timeout = setTimeout(() => {
-      if (settled) return;
-      settled = true;
-      cleanup();
-      reject(new Error('Connection timed out — check the URL and ensure the robot is powered on'));
-    }, timeoutMs);
+    this.updateStore(id, { lastError: null, reconnectAttempt: null, status: 'disconnected' });
+  }
 
-    ros.on('connection', () => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      cleanup();
-      resolve();
+  async testConnection(url: string, timeoutMs = CONNECTION_TIMEOUT): Promise<void> {
+    const rosbridgeUrl = deriveRosbridgeUrl(url);
+    if (!rosbridgeUrl) throw new Error('Invalid robot URL');
+
+    return new Promise<void>((resolve, reject) => {
+      const ros = new Ros({ url: rosbridgeUrl });
+      let settled = false;
+
+      const cleanup = () => {
+        ros.close();
+      };
+
+      const timeout = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(new Error('Connection timed out — check the URL and ensure the robot is powered on'));
+      }, timeoutMs);
+
+      ros.on('connection', () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        cleanup();
+        resolve();
+      });
+
+      ros.on('error', (err: unknown) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        cleanup();
+        reject(err instanceof Error ? err : new Error('Connection error'));
+      });
+
+      ros.on('close', () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        reject(new Error('Connection closed unexpectedly'));
+      });
     });
+  }
 
-    ros.on('error', (err: unknown) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      cleanup();
-      reject(err instanceof Error ? err : new Error('Connection error'));
-    });
+  getConnection(id: string): Ros | undefined {
+    return this.connections.get(id);
+  }
 
-    ros.on('close', () => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      reject(new Error('Connection closed unexpectedly'));
-    });
-  });
+  getConnectedAt(id: string): number | null {
+    return this.connectedAtMap.get(id) ?? null;
+  }
+
+  /** reset — clears all internal state. Use in tests only. */
+  reset(): void {
+    for (const timer of this.reconnectTimers.values()) {
+      clearTimeout(timer);
+    }
+    for (const ros of this.connections.values()) {
+      ros.close();
+    }
+    this.connections.clear();
+    this.reconnectTimers.clear();
+    this.reconnectAttempts.clear();
+    this.intentionalDisconnects.clear();
+    this.connectedAtMap.clear();
+  }
 }
 
-export function getConnection(id: string): Ros | undefined {
-  return connections.get(id);
-}
-
-export function getConnectedAt(id: string): number | null {
-  return connectedAtMap.get(id) ?? null;
-}
+export const connectionManager = new ConnectionManager();
