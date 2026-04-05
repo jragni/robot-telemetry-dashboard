@@ -1,9 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { ConnectionStore } from './useConnectionStore.types';
-import { assignRobotColor, toRobotId, persistedStateSchema } from './useConnectionStore.helpers';
-import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
+import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
 import { DEFAULT_PANEL_TOPICS } from '@/constants/panelTopics';
+
+import {
+  assignRobotColor,
+  isValidRobotColor,
+  persistedStateSchema,
+  toRobotId,
+} from './useConnectionStore.helpers';
+import type { ConnectionStore } from './useConnectionStore.types';
 
 export const useConnectionStore = create<ConnectionStore>()(
   persist(
@@ -108,6 +114,10 @@ export const useConnectionStore = create<ConnectionStore>()(
           Object.entries(parsed.data.robots).map(([key, robot]) => [
             key,
             {
+              color:
+                robot.color && isValidRobotColor(robot.color)
+                  ? robot.color
+                  : assignRobotColor(robot.name || key),
               id: robot.id || key,
               name: robot.name || key,
               url: robot.url || '',
