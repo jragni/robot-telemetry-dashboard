@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useResponsiveSize } from '@/hooks/useResponsiveSize';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
 import { useZoom } from '@/hooks/useZoom';
-import { LIDAR_POINT_RADIUS } from '@/constants/canvas';
 import {
+  LIDAR_POINT_RADIUS,
   LIDAR_POINT_GLOW,
   MINIMAP_SIZE_MIN,
   MINIMAP_SIZE_MAX,

@@ -1,18 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-import { deriveWebRtcUrl } from '@/stores/connection/useConnectionStore.helpers';
 import { SignalingClient } from '@/lib/webrtc/signaling';
+import { deriveWebRtcUrl } from '@/stores/connection/useConnectionStore.helpers';
 import {
-  calculateBackoffDelay,
   RECONNECT_MAX_ATTEMPTS,
+  calculateBackoffDelay,
 } from '@/constants/reconnection';
-import type { VideoStreamStatus } from '@/types/streaming.types';
-
 import { ICE_GATHERING_TIMEOUT, PEER_CONNECTION_CONFIG } from './constants';
 import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
+import type { VideoStreamStatus } from '@/types/streaming.types';
 
 export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStreamReturn {
-  const { connected, enabled, onStatusChange, url } = options;
+  const { url, enabled, onStatusChange } = options;
 
   const [status, setStatus] = useState<VideoStreamStatus>('idle');
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -24,6 +22,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
   const attemptsRef = useRef(0);
   const shouldConnectRef = useRef(false);
 
+  // ── Status helper ────────────────────────────────────────────────
   const transition = useCallback(
     (next: VideoStreamStatus) => {
       setStatus(next);
@@ -32,6 +31,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     [onStatusChange],
   );
 
+  // ── Cleanup ──────────────────────────────────────────────────────
   const teardown = useCallback(() => {
     if (reconnectTimerRef.current) {
       clearTimeout(reconnectTimerRef.current);
@@ -44,6 +44,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     setStream(null);
   }, []);
 
+  // ── Reconnect with exponential backoff ───────────────────────────
   const scheduleReconnect = useCallback(() => {
     if (!shouldConnectRef.current) return;
     if (attemptsRef.current >= RECONNECT_MAX_ATTEMPTS) {
@@ -63,6 +64,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transition]);
 
+  // ── Connect ──────────────────────────────────────────────────────
   const connect = useCallback(async () => {
     const signalingUrl = deriveWebRtcUrl(url);
     if (!signalingUrl) return;
@@ -145,11 +147,13 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     }
   }, [url, teardown, transition, scheduleReconnect]);
 
+  // ── Manual retry ─────────────────────────────────────────────────
   const retry = useCallback(() => {
     attemptsRef.current = 0;
     void connect();
   }, [connect]);
 
+  // ── Attach stream to video element ───────────────────────────────
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !stream) return;
@@ -164,8 +168,9 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     };
   }, [stream]);
 
+  // ── Lifecycle: connect/disconnect based on enabled flag ──────────
   useEffect(() => {
-    if (enabled && connected && url) {
+    if (enabled && url) {
       void connect();
     } else {
       shouldConnectRef.current = false;
@@ -180,7 +185,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       teardown();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connected, enabled, url]);
+  }, [enabled, url]);
 
   return { status, stream, videoRef, error, retry };
 }

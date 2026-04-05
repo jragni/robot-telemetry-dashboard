@@ -1,6 +1,8 @@
 import type { Direction } from '@/types/control.types';
 import type { VideoStreamStatus } from '@/types/streaming.types';
 
+export type { VideoStreamStatus };
+
 export interface LidarPoint {
   readonly x: number;
   readonly y: number;

@@ -1,11 +1,7 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import { normalizeHeading } from '@/utils/normalizeHeading';
-import { useCanvasColors } from '@/hooks/useCanvasColors';
-import { COMPASS_CARDINALS } from '@/constants/canvas';
-import {
-  COMPASS_HEADING_COLOR_FALLBACKS,
-  COMPASS_HEADING_TOKEN_MAP,
-} from '@/features/workspace/constants';
+import { useThemeChange } from '@/hooks/useThemeChange';
+import { COMPASS_CARDINALS } from '@/features/workspace/constants';
 import type { CompassHeadingProps } from '@/features/workspace/types/ImuPanel.types';
 
 /** CompassHeading
@@ -16,11 +12,33 @@ import type { CompassHeadingProps } from '@/features/workspace/types/ImuPanel.ty
  */
 export function CompassHeading({ yaw }: CompassHeadingProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const colorsRef = useRef({
+    accent: 'oklch(0.70 0.20 230)',
+    border: 'rgba(255,255,255,0.15)',
+    muted: 'oklch(0.57 0.02 260)',
+    primary: 'oklch(0.93 0.01 260)',
+  });
+  const colorsResolved = useRef(false);
 
-  const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
-    COMPASS_HEADING_COLOR_FALLBACKS,
-    COMPASS_HEADING_TOKEN_MAP,
-  );
+  const [themeVersion, setThemeVersion] = useState(0);
+
+  useThemeChange(() => {
+    colorsResolved.current = false;
+    setThemeVersion((v) => v + 1);
+  });
+
+  const resolveColors = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || colorsResolved.current) return;
+    const styles = getComputedStyle(canvas);
+    colorsRef.current = {
+      accent: styles.getPropertyValue('--color-accent') || colorsRef.current.accent,
+      border: styles.getPropertyValue('--color-border') || colorsRef.current.border,
+      muted: styles.getPropertyValue('--color-text-muted') || colorsRef.current.muted,
+      primary: styles.getPropertyValue('--color-text-primary') || colorsRef.current.primary,
+    };
+    colorsResolved.current = true;
+  }, []);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -86,8 +104,8 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`${headingNormalized.toFixed(0)}°`, cx, cy);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
-  }, [yaw, resolveColors, themeVersion, colorsRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
+  }, [yaw, resolveColors, themeVersion]);
 
   useEffect(() => {
     draw();

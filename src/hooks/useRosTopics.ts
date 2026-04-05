@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Ros } from 'roslib';
 
 export interface RosTopic {
@@ -8,12 +8,10 @@ export interface RosTopic {
 
 export function useRosTopics(ros: Ros | undefined): readonly RosTopic[] {
   const [topics, setTopics] = useState<readonly RosTopic[]>([]);
-  const abortedRef = useRef(false);
 
   const fetchTopics = useCallback((instance: Ros) => {
     instance.getTopics(
       (result) => {
-        if (abortedRef.current) return;
         const discovered = result.topics.map((name, i) => ({
           name,
           type: result.types[i] ?? 'unknown',
@@ -33,12 +31,10 @@ export function useRosTopics(ros: Ros | undefined): readonly RosTopic[] {
   useEffect(() => {
     if (!ros) return;
 
-    abortedRef.current = false;
     fetchTopics(ros);
     const interval = setInterval(() => { fetchTopics(ros); }, 10_000);
 
     return () => {
-      abortedRef.current = true;
       clearInterval(interval);
       setTopics([]);
     };
