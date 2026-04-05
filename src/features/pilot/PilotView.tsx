@@ -14,9 +14,9 @@ import { cn } from '@/lib/utils';
 
 import { usePilotFullscreen } from './hooks/usePilotFullscreen';
 import { PilotCamera } from './components/PilotCamera';
-import { PilotNotFound } from './components/PilotNotFound';
 import { PilotHud } from './components/PilotHud/PilotHud';
 import { PilotHudMobile } from './components/PilotHud/PilotHudMobile';
+import { PilotNotFound } from './components/PilotNotFound';
 import { PILOT_FULLSCREEN_Z } from './constants';
 import type { ProxyStatus } from './types/PilotView.types';
 
