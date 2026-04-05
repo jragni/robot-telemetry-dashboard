@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
 import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
-import { vector3Schema } from '@/types/ros2-schemas';
+import { sensorVector3Schema, vector3Schema } from '@/types/ros2-schemas';
 import type { TelemetrySeries, PlotDataPoint } from '../types/TelemetryPanel.types';
 
 /** odometryMessageSchema
@@ -31,8 +31,8 @@ export const twistMessageSchema = z.object({
  * @description Zod schema for consumed IMU fields in the telemetry context.
  */
 export const telemetryImuMessageSchema = z.object({
-  angular_velocity: vector3Schema,
-  linear_acceleration: vector3Schema,
+  angular_velocity: sensorVector3Schema,
+  linear_acceleration: sensorVector3Schema,
 });
 
 /** telemetryBatteryMessageSchema
