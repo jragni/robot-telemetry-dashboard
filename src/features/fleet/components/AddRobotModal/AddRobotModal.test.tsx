@@ -8,7 +8,9 @@ const mockAddRobot = vi.fn();
 const mockConnectRobot = vi.fn();
 
 vi.mock('@/lib/rosbridge/ConnectionManager', () => ({
-  testConnection: () => mockTestConnection(),
+  connectionManager: {
+    testConnection: () => mockTestConnection(),
+  },
 }));
 
 vi.mock('@/stores/connection/useConnectionStore', () => ({
