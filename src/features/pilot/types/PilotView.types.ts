@@ -18,23 +18,6 @@ export interface PilotTelemetry {
 
 export type ProxyStatus = 'connected' | 'disconnected';
 
-export interface PilotHudProps {
-  readonly telemetry: PilotTelemetry;
-  readonly videoStatus: VideoStreamStatus;
-  readonly rosbridgeStatus: ProxyStatus;
-  readonly isFullscreen: boolean;
-  readonly connected: boolean;
-  readonly onToggleFullscreen: () => void;
-  readonly onDirectionStart: (direction: Direction) => void;
-  readonly onDirectionEnd: () => void;
-  readonly onLinearVelocityChange: (value: number) => void;
-  readonly onAngularVelocityChange: (value: number) => void;
-  readonly onEmergencyStop: () => void;
-  readonly linearVelocity: number;
-  readonly angularVelocity: number;
-  readonly robotId?: string;
-}
-
 export interface PilotCameraProps {
   readonly videoStatus: VideoStreamStatus;
   readonly videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -57,20 +40,6 @@ export interface PilotStatusBarProps {
   readonly battery: { percentage: number; voltage: number } | null;
   readonly rosbridgeStatus: ProxyStatus;
   readonly videoStatus: VideoStreamStatus;
-}
-
-export interface PilotHudMobileProps {
-  readonly telemetry: PilotTelemetry;
-  readonly videoStatus: VideoStreamStatus;
-  readonly rosbridgeStatus: ProxyStatus;
-  readonly connected: boolean;
-  readonly onDirectionStart: (direction: Direction) => void;
-  readonly onDirectionEnd: () => void;
-  readonly onLinearVelocityChange: (value: number) => void;
-  readonly onAngularVelocityChange: (value: number) => void;
-  readonly onEmergencyStop: () => void;
-  readonly linearVelocity: number;
-  readonly angularVelocity: number;
 }
 
 export interface StatusDotProps {
