@@ -1,10 +1,8 @@
 import { getBatteryColor } from '@/utils/getBatteryColor';
 import { normalizeHeading } from '@/utils/normalizeHeading';
 
-import {
-  HUD_PANEL_BASE,
-  MINIMAP_SIZE_MOBILE_MAX,
-} from '../../constants';
+import { HUD_PANEL_BASE } from '../../constants';
+import { MINIMAP_SIZE_MOBILE_MAX } from '../PilotLidarMinimap/constants';
 import { GyroInline } from './GyroInline';
 import { PilotCompassMobile } from '../PilotCompass/PilotCompassMobile';
 import { PilotControls } from '../PilotControls/PilotControls';
