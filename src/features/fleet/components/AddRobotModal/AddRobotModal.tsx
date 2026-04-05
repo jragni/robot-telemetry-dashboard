@@ -1,10 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
 import { RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
-import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
-import { addRobotSchema } from '@/features/fleet/schemas';
 import { AlertCircle, AlertTriangle, Loader2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import type { AddRobotFormErrors } from './types/AddRobotModal.types';
 
 import { FIELD_ERROR_IDS } from './constants';
-import { detectMixedContent } from './helpers';
+import { detectMixedContent, testConnectionWithRetries, validateRobotForm } from './helpers';
 import { FieldError } from './components/FieldError';
 import { MobileHeader } from './components/MobileHeader';
 
@@ -60,60 +57,28 @@ export function AddRobotModal() {
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Validate with Zod
-    const result = addRobotSchema.safeParse({ name, url });
-    if (!result.success) {
-      const issues = result.error.issues;
-      const nameIssue = issues.find((i) => i.path[0] === 'name');
-      const urlIssue = issues.find((i) => i.path[0] === 'url');
-      setErrors({
-        name: nameIssue?.message,
-        url: urlIssue?.message,
-      });
+    const validation = validateRobotForm(name, url);
+    if (!validation.ok) {
+      setErrors(validation.errors);
       return;
     }
 
-    const { name: validName, url: validUrl } = result.data;
-
-    // Normalize URL
-    const normalizedUrl = normalizeRosbridgeUrl(validUrl);
-    if (!normalizedUrl) {
-      setErrors((prev) => ({ ...prev, url: 'Invalid URL — enter an IP, hostname, or WebSocket URL' }));
-      return;
-    }
-
-    // Test connection with retries
     setIsConnecting(true);
     setErrors((prev) => ({ ...prev, form: undefined }));
 
-    let connected = false;
-    for (let attempt = 1; attempt <= RECONNECT_MAX_ATTEMPTS; attempt++) {
-      setConnectAttempt(attempt);
-      try {
-        await ConnectionManager.testConnection(normalizedUrl);
-        connected = true;
-        break;
-      } catch {
-        if (attempt === RECONNECT_MAX_ATTEMPTS) {
-          setErrors((prev) => ({
-            ...prev,
-            form: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`,
-          }));
-          setIsConnecting(false);
-          setConnectAttempt(0);
-          return;
-        }
-      }
-    }
-
-    if (!connected) {
+    const connection = await testConnectionWithRetries(
+      validation.url,
+      (attempt) => { setConnectAttempt(attempt); },
+    );
+    if (!connection.connected) {
+      setErrors((prev) => ({ ...prev, form: connection.error }));
       setIsConnecting(false);
       setConnectAttempt(0);
       return;
     }
 
     try {
-      const id = addRobot(validName, normalizedUrl);
+      const id = addRobot(validation.name, validation.url);
       if (id === null) {
         setErrors((prev) => ({ ...prev, name: 'A robot with that name already exists' }));
         setIsConnecting(false);
