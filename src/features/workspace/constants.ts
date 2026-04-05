@@ -85,13 +85,7 @@ export const PANEL_TOPIC_TYPES: Record<string, readonly string[]> = {
   ],
 };
 
-export const DEFAULT_PANEL_TOPICS: Record<string, string> = {
-  camera: '/camera/image_raw',
-  controls: '/cmd_vel',
-  imu: '/imu/data',
-  lidar: '/scan',
-  telemetry: '/odom',
-};
+export { DEFAULT_PANEL_TOPICS } from '@/constants/panelTopics';
 
 export const MOBILE_PANEL_COMPONENTS: Record<MobileDataPanelId, ComponentType<object>> = {
   camera: CameraPanel as ComponentType<object>,

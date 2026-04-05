@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
-import { DEFAULT_PANEL_TOPICS } from '@/features/workspace/constants';
+import type { ConnectionStore } from './useConnectionStore.types';
+import { assignRobotColor, toRobotId, persistedStateSchema } from './useConnectionStore.helpers';
+import * as ConnectionManager from '@/lib/rosbridge/ConnectionManager';
+import { DEFAULT_PANEL_TOPICS } from '@/constants/panelTopics';
 
 import { assignRobotColor, isValidRobotColor, persistedStateSchema, toRobotId } from './useConnectionStore.helpers';
 import type { ConnectionStore } from './useConnectionStore.types';

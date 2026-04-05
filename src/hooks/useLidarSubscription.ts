@@ -3,7 +3,7 @@ import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
-import type { LidarPoint } from '@/features/workspace/types/LidarPanel.types';
+import type { LidarPoint } from '@/types/lidar.types';
 
 export const laserScanMessageSchema = z.object({
   angle_increment: z.number(),

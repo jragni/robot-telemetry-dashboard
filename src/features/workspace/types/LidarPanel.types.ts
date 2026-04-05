@@ -1,8 +1,6 @@
-export interface LidarPoint {
-  readonly angle: number;
-  readonly distance: number;
-  readonly intensity?: number;
-}
+import type { LidarPoint } from '@/types/lidar.types';
+
+export type { LidarPoint };
 
 export interface LidarPanelProps {
   readonly points: readonly LidarPoint[];
