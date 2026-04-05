@@ -65,6 +65,22 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Create folder with index.ts, types.ts, constants.ts, helpers.ts. Move minimap constants from pilot/constants.ts.
 - Branch: refactor/t-080/pilot-lidar-minimap-structure
 
+#### T-088: RobotWorkspace god component refactor
+- Severity: HIGH
+- Scope: src/features/workspace/RobotWorkspace.tsx (305 lines, 14 hooks, 7 concerns)
+- Problem: single component owns all subscriptions, topic auto-selection, grid layout, mobile routing, 6 panel blocks, and minimized bar. Too many responsibilities.
+- Fix:
+  - Extract `useWorkspaceSubscriptions` hook — consolidates the 8 data hooks (battery, uptime, lidar, imu, telemetry, webrtc, controls, rosGraph) into one return object
+  - Extract `useAutoTopicSelection` hook — moves the auto-select effect + ref + filteredTopics memo
+  - Extract `WorkspaceNotFound` component — same pattern as PilotNotFound (T-081)
+  - Extract `WorkspaceGrid` component — receives panel data, renders the 6 WorkspacePanel blocks and grid layout
+  - Extract `MinimizedPanelBar` component — the restore nav at the bottom
+  - RobotWorkspace becomes an orchestrator: get robot, call hooks, route mobile vs desktop, render WorkspaceGrid
+  - Target: RobotWorkspace under 80 lines
+- Dependencies: run after T-082 (RobotWorkspaceMobile restructure) to avoid file conflicts
+- Acceptance: RobotWorkspace under 80 lines, each extracted piece tested, build passes
+- Branch: refactor/t-088/workspace-god-component
+
 #### T-082: RobotWorkspaceMobile convention violations
 - Severity: MEDIUM
 - Scope: src/features/workspace/components/RobotWorkspaceMobile.tsx
@@ -89,6 +105,20 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Severity: MEDIUM
 - Scope: 23 lint errors across src/. Run after T-084 (rewrites ConnectionManager.test.ts).
 - Branch: fix/t-074/lint-sweep
+
+#### T-087: Rename feature entry components to Page convention
+- Severity: LOW
+- Scope: 3 features + ~23 consumer files
+- Rename main feature components to use Page suffix:
+  - `src/features/fleet/FleetOverview.tsx` → `FleetPage.tsx` (component: FleetOverview → FleetPage)
+  - `src/features/pilot/PilotView.tsx` → `PilotPage.tsx` (component: PilotView → PilotPage)
+  - `src/features/workspace/RobotWorkspace.tsx` → `WorkspacePage.tsx` (component: RobotWorkspace → WorkspacePage)
+- LandingPage.tsx and MockupsPage.tsx already follow the convention
+- Update all imports across src/ (~23 files reference these names)
+- Update App.tsx route lazy imports
+- Update route-code-splitting.test.ts
+- Acceptance: all feature entry components named *Page, all imports updated, build + tests pass
+- Branch: refactor/t-087/page-naming-convention
 
 ### Visual (requires /visual-pipeline)
 
