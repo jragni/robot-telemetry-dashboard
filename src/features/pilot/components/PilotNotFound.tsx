@@ -1,12 +1,11 @@
 import { Link } from 'react-router-dom';
 
-interface PilotNotFoundProps {
-  readonly robotId: string | undefined;
-}
+import type { PilotNotFoundProps } from './PilotNotFound.types';
 
 /** PilotNotFound
  * @description Empty state shown when the pilot view is opened for a robot ID
  *  that doesn't exist in the connection store.
+ * @param robotId - The robot ID from the URL, or undefined if missing.
  */
 export function PilotNotFound({ robotId }: PilotNotFoundProps) {
   return (
