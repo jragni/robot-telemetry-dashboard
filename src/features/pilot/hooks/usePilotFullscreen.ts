@@ -16,6 +16,8 @@ export function usePilotFullscreen(): UsePilotFullscreenReturn {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'f' || e.key === 'F') {
         if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+        const el = e.target instanceof HTMLElement ? e.target : null;
+        if (el?.getAttribute('contenteditable') === 'true') return;
         e.preventDefault();
         setIsFullscreen((prev) => !prev);
       }

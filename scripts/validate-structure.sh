@@ -1,5 +1,5 @@
 #!/bin/bash
-# Validate folder/file conventions per CLAUDE.md and FOLDER-STRUCTURE.md
+# Validate folder/file conventions per FOLDER-STRUCTURE.md
 # Currently warnings — will be promoted to pre-commit blocks once stable.
 
 ERRORS=0

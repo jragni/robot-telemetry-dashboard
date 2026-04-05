@@ -25,6 +25,7 @@ playwright-report/
 # tools & config
 CLAUDE.md
 .claude/
+.planning/
 .serena/
 .superpowers/
 .mcp.json
