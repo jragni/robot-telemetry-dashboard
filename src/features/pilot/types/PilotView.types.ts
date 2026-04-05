@@ -40,10 +40,6 @@ export interface PilotCameraProps {
   readonly videoRef: React.RefObject<HTMLVideoElement | null>;
 }
 
-export interface PilotCompassProps {
-  readonly heading: number;
-}
-
 export interface PilotLidarMinimapProps {
   readonly points: readonly LidarPoint[];
   readonly rangeMax: number;

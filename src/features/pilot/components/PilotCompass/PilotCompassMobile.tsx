@@ -15,8 +15,8 @@ import {
   COMPASS_TICK_MAJOR_INTERVAL,
   COMPASS_TICK_MINOR_INTERVAL,
   COMPASS_TOKEN_MAP,
-} from '../../constants';
-import type { PilotCompassProps } from '../../types/PilotView.types';
+} from './constants';
+import type { PilotCompassProps } from './PilotCompass.types';
 
 /** PilotCompassMobile
  * @description Renders a full-width ODST-inspired compass heading strip for
