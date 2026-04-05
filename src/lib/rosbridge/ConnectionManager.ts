@@ -63,6 +63,7 @@ export class ConnectionManager {
     this.reconnectTimers.set(id, timer);
   }
 
+  /** @description Connect to a robot's rosbridge WebSocket. Manages reconnection on failure. */
   async connect(id: string, url: string): Promise<void> {
     this.clearReconnect(id);
     const existing = this.connections.get(id);
@@ -150,6 +151,7 @@ export class ConnectionManager {
     });
   }
 
+  /** @description Intentionally disconnect a robot and prevent auto-reconnect. */
   disconnect(id: string): void {
     this.clearReconnect(id);
     this.reconnectAttempts.delete(id);
@@ -165,6 +167,7 @@ export class ConnectionManager {
     this.updateStore(id, { lastError: null, reconnectAttempt: null, status: 'disconnected' });
   }
 
+  /** @description Test if a rosbridge URL is reachable without persisting the connection. */
   async testConnection(url: string, timeoutMs = CONNECTION_TIMEOUT): Promise<void> {
     const rosbridgeUrl = deriveRosbridgeUrl(url);
     if (!rosbridgeUrl) throw new Error('Invalid robot URL');
@@ -209,10 +212,12 @@ export class ConnectionManager {
     });
   }
 
+  /** @description Get the active Ros instance for a robot, if connected. */
   getConnection(id: string): Ros | undefined {
     return this.connections.get(id);
   }
 
+  /** @description Get the timestamp when a robot connected, or null if not connected. */
   getConnectedAt(id: string): number | null {
     return this.connectedAtMap.get(id) ?? null;
   }

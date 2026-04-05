@@ -36,7 +36,7 @@ export function validateRobotForm(
 export async function testConnectionWithRetries(
   url: string,
   onAttempt: (attempt: number) => void,
-  tester: (url: string) => Promise<void> = (url) => connectionManager.testConnection(url),
+  tester: (url: string) => Promise<void> = (u) => connectionManager.testConnection(u),
 ): Promise<{ connected: true } | { connected: false; error: string }> {
   for (let attempt = 1; attempt <= RECONNECT_MAX_ATTEMPTS; attempt++) {
     onAttempt(attempt);
