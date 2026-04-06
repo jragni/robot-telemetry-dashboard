@@ -15,5 +15,4 @@ export interface TelemetryPanelProps {
   readonly connected: boolean;
   readonly ros: Ros | undefined;
   readonly topicName: string;
-  readonly topicType: string;
 }

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 
-import { useCanvasColors } from '@/hooks';
+import { useCanvasColors, useRosTopics } from '@/hooks';
 import { useTelemetrySubscription } from '@/features/workspace/hooks/useTelemetrySubscription';
 import { cn } from '@/lib/utils';
 import {
@@ -28,9 +28,13 @@ import {
  * @prop connected - Whether the robot is currently connected.
  * @prop ros - Active roslib connection, or undefined when disconnected.
  * @prop topicName - The ROS topic name to subscribe to.
- * @prop topicType - The ROS message type string.
  */
-export function TelemetryPanel({ connected, ros, topicName, topicType }: TelemetryPanelProps) {
+export function TelemetryPanel({ connected, ros, topicName }: TelemetryPanelProps) {
+  const availableTopics = useRosTopics(ros);
+  const topicType = useMemo(
+    () => availableTopics.find((t) => t.name === topicName)?.type ?? 'nav_msgs/msg/Odometry',
+    [availableTopics, topicName],
+  );
   const series = useTelemetrySubscription(ros, topicName, topicType);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
