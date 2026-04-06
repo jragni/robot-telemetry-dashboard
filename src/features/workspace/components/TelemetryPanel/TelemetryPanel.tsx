@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { useCanvasColors } from '@/hooks';
 import { useTelemetrySubscription } from '@/features/workspace/hooks/useTelemetrySubscription';
 import { cn } from '@/lib/utils';
 import {
