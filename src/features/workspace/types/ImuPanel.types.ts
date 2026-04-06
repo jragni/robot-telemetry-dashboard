@@ -1,4 +1,4 @@
-import type { Vector3 } from '@/types/ros2-primitives.types';
+import type { Ros } from 'roslib';
 
 export type ImuVariant = 'attitude-compass' | 'numbers' | 'attitude' | '3d';
 
@@ -32,8 +32,8 @@ export interface ImuVizSelectProps {
   readonly onChange: (v: ImuVariant) => void;
 }
 
-export interface ImuPanelProps extends ImuOrientation {
+export interface ImuPanelProps {
   readonly connected: boolean;
-  readonly angularVelocity?: Vector3;
-  readonly linearAcceleration?: Vector3;
+  readonly ros: Ros | undefined;
+  readonly topicName: string;
 }
