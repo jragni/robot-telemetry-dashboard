@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Loader2, PlugZap, Unplug } from 'lucide-react';
 
 import { useBatterySubscription, useConnectionUptime, useRosGraph, useRosTopics } from '@/hooks';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { formatLastSeen } from '@/utils/formatLastSeen';
 import { formatUptime } from '@/utils/formatUptime';
 import { getBatteryColor } from '@/utils/getBatteryColor';
 
+import { CONNECTION_BUTTON, STATUS_DISPLAY } from './SystemStatusPanel.constants';
 import { ExpandableRow } from './ExpandableRow';
 import { StatusRow } from './StatusRow';
 import type { SystemStatusPanelProps } from './SystemStatusPanel.types';
@@ -30,13 +30,17 @@ export function SystemStatusPanel({
   ros,
 }: SystemStatusPanelProps) {
   const { lastSeen, name, status, url } = robot;
+  const currentStatus = status;
+  const { dotClass, label: statusLabel, textClass } = STATUS_DISPLAY[currentStatus];
+  const { icon: ButtonIcon, label: buttonLabel } = CONNECTION_BUTTON[currentStatus];
+  const isConnecting = currentStatus === 'connecting';
+  const buttonIconClass = isConnecting ? 'animate-spin' : undefined;
 
   const availableTopics = useRosTopics(ros);
   const battery = useBatterySubscription(ros, availableTopics);
   const rosGraph = useRosGraph(ros);
   const uptimeSeconds = useConnectionUptime(robot.id, connected);
 
-  const isConnecting = status === 'connecting';
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   function toggleSection(section: string) {
@@ -48,21 +52,8 @@ export function SystemStatusPanel({
       <div className="flex items-center justify-between">
         <span className="font-sans text-xs font-semibold text-text-primary">{name}</span>
         <div className="flex items-center gap-1.5" aria-live="polite">
-          <span
-            className={`size-2 rounded-full ${
-              connected
-                ? 'bg-status-nominal motion-safe:animate-pulse'
-                : isConnecting
-                  ? 'bg-status-caution motion-safe:animate-pulse'
-                  : 'bg-status-critical'
-            }`}
-            aria-hidden="true"
-          />
-          <span
-            className={`font-mono text-xs ${connected ? 'text-status-nominal' : 'text-status-offline'}`}
-          >
-            {connected ? 'NOMINAL' : isConnecting ? 'CAUTION' : 'OFFLINE'}
-          </span>
+          <span className={`size-2 rounded-full ${dotClass}`} aria-hidden="true" />
+          <span className={`font-mono text-xs ${textClass}`}>{statusLabel}</span>
         </div>
       </div>
 
@@ -77,19 +68,7 @@ export function SystemStatusPanel({
           className="w-full font-sans text-xs uppercase tracking-widest cursor-pointer transition"
           aria-label={connected ? 'Disconnect from robot' : 'Connect to robot'}
         >
-          {isConnecting ? (
-            <>
-              <Loader2 size={12} className="animate-spin" /> Connecting
-            </>
-          ) : connected ? (
-            <>
-              <Unplug size={12} /> Disconnect
-            </>
-          ) : (
-            <>
-              <PlugZap size={12} /> Connect
-            </>
-          )}
+          <ButtonIcon size={12} className={buttonIconClass} /> {buttonLabel}
         </Button>
       )}
 
