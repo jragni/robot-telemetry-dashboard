@@ -1,4 +1,4 @@
-import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
+import { useWebRtcStream } from '@/hooks';
 import { CameraEmptyState } from '@/components/CameraEmptyState';
 
 import type { CameraPanelProps } from './CameraPanel.types';
