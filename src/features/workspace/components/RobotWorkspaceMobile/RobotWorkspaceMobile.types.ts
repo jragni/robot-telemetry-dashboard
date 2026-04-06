@@ -5,8 +5,11 @@ import type { RosTopic } from '@/hooks';
 import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
 import type { PanelId } from '@/types/panel.types';
 
-import type { MobileDataPanelId, MobileTabId } from '../../types/RobotWorkspaceMobile.types';
-import type { FilteredTopics } from '../../hooks/useTopicManager.types';
+import type {
+  MobileDataPanelId,
+  MobileTabId,
+} from '@/features/workspace/types/RobotWorkspaceMobile.types';
+import type { FilteredTopics } from '@/features/workspace/hooks/useTopicManager.types';
 
 export interface RobotWorkspaceMobileProps {
   readonly connected: boolean;

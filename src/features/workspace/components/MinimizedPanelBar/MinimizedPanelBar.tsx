@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 
-import { WORKSPACE_PANEL_META } from '../../constants';
+import { WORKSPACE_PANEL_META } from '@/features/workspace/constants';
 import type { MinimizedPanelBarProps } from './MinimizedPanelBar.types';
 
 /** MinimizedPanelBar

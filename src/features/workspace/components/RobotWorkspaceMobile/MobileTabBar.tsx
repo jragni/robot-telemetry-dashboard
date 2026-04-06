@@ -1,4 +1,4 @@
-import { MOBILE_TAB_META } from '../../constants';
+import { MOBILE_TAB_META } from '@/features/workspace/constants';
 import type { MobileTabBarProps } from './RobotWorkspaceMobile.types';
 
 /** MobileTabBar

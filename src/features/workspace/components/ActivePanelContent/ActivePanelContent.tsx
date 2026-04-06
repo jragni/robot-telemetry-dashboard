@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-import type { MobileDataPanelId } from '../../types/RobotWorkspaceMobile.types';
+import type { MobileDataPanelId } from '@/features/workspace/types/RobotWorkspaceMobile.types';
 import { CameraPanel } from '../CameraPanel';
 import { ImuPanel } from '../ImuPanel';
 import { LidarPanel } from '../LidarPanel';

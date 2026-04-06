@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { WORKSPACE_PANEL_META } from '../../constants';
-import type { MobileDataPanelId, MobileTabId } from '../../types/RobotWorkspaceMobile.types';
+import { WORKSPACE_PANEL_META } from '@/features/workspace/constants';
+import type {
+  MobileDataPanelId,
+  MobileTabId,
+} from '@/features/workspace/types/RobotWorkspaceMobile.types';
 
 import { ActivePanelContent } from '../ActivePanelContent';
 import { MobilePanelHeader } from './MobilePanelHeader';
