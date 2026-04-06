@@ -10,6 +10,7 @@ export { useRobotConnection } from './useRobotConnection';
 export { useRosGraph } from './useRosGraph';
 export { useRosSubscriber } from './useRosSubscriber';
 export { useRosTopics } from './useRosTopics';
+export type { RosTopic } from './useRosTopics';
 export { useTheme } from './useTheme';
 export { useThemeChange } from './useThemeChange';
 export { useWebRtcStream } from './useWebRtcStream/useWebRtcStream';
