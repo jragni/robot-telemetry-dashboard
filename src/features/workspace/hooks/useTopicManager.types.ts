@@ -6,6 +6,7 @@ export interface FilteredTopics {
   readonly controls: readonly RosTopic[];
   readonly imu: readonly RosTopic[];
   readonly lidar: readonly RosTopic[];
+  readonly status: readonly RosTopic[];
   readonly telemetry: readonly RosTopic[];
 }
 

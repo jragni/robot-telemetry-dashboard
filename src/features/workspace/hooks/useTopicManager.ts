@@ -3,8 +3,7 @@ import type { Ros } from 'roslib';
 
 import { useRosTopics } from '@/hooks';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { isPanelId } from '@/types/panel.types';
-import type { PanelId } from '@/types/panel.types';
+import { isPanelId, type PanelId } from '@/types/panel.types';
 
 import { DEFAULT_PANEL_TOPICS, PANEL_TOPIC_TYPES } from '../constants';
 import type { UseTopicManagerReturn } from './useTopicManager.types';
@@ -40,6 +39,7 @@ export function useTopicManager(
       controls: availableTopics.filter((t) => PANEL_TOPIC_TYPES.controls?.includes(t.type)),
       imu: availableTopics.filter((t) => PANEL_TOPIC_TYPES.imu?.includes(t.type)),
       lidar: availableTopics.filter((t) => PANEL_TOPIC_TYPES.lidar?.includes(t.type)),
+      status: [],
       telemetry: availableTopics.filter((t) => PANEL_TOPIC_TYPES.telemetry?.includes(t.type)),
     }),
     [availableTopics],

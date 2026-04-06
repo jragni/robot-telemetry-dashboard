@@ -38,8 +38,7 @@ export function RobotWorkspaceMobile({
 
   const activeMeta = WORKSPACE_PANEL_META.find((p) => p.id === activePanel);
   const activeTopicName = selectedTopics[activePanel];
-  const activeFilteredTopics =
-    (filteredTopics as Record<string, readonly import('@/hooks').RosTopic[]>)[activePanel] ?? [];
+  const activeFilteredTopics = filteredTopics[activePanel];
   const showTopicSelector = activePanel !== 'camera' && activePanel !== 'status';
 
   function handleTabPress(tabId: MobileTabId) {
