@@ -12,7 +12,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import type { Direction } from '@/types/control.types';
-import type { ControlsPanelProps } from '@/features/workspace/types/ControlsPanel.types';
+import type { ControlsPanelProps } from './ControlsPanel.types';
 import { KEY_TO_DIRECTION } from '@/constants/controls';
 import { DpadButton } from '@/components/controls/DpadButton';
 import { VelocitySlider } from '@/components/controls/VelocitySlider';

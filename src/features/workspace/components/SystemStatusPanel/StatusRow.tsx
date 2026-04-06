@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import type { StatusRowProps } from '@/features/workspace/types/SystemStatusPanel.types';
+import type { StatusRowProps } from './SystemStatusPanel.types';
 
 /** StatusRow
  * @description Renders a single key-value data row for the system status panel.

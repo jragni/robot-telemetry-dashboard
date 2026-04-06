@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
-import type { ExpandableRowProps } from '@/features/workspace/types/SystemStatusPanel.types';
+import type { ExpandableRowProps } from './SystemStatusPanel.types';
 
 import { ExpandableRowList } from './ExpandableRowList';
 
