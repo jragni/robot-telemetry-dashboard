@@ -1,4 +1,4 @@
-import type { LidarPoint } from '@/features/workspace/types/LidarPanel.types';
+import type { LidarPoint } from './LidarPanel.types';
 
 /** Finds the minimum distance in a LiDAR points array without spreading. */
 export function findMinDistance(points: readonly LidarPoint[]): number {

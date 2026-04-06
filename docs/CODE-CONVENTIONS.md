@@ -18,6 +18,8 @@ Source of truth for all code rules.
 
 **Aliases:** Use `@/` for any import outside the current feature directory. Relative imports (`./`, `../`) only for siblings within the same feature folder. Never use `../../` or deeper.
 
+**Barrel imports:** When a barrel file (`index.ts`) exists, always import from it — never bypass with deep paths. Multiple imports from the same module must be consolidated into a single import statement.
+
 **Ordering:** Three groups separated by blank lines. Within each group: hooks, then 3rd party components, then `@/` components, then types. Alphabetize by import name within each sub-group. React is always the first import.
 
 ```ts
@@ -28,7 +30,7 @@ import { z } from 'zod';
 import type { Ros } from 'roslib';
 
 // Aliased — hooks → 3rd party components → @/ components → types
-import { useBatterySubscription } from '@/hooks/useBatterySubscription';
+import { useBatterySubscription, useConnectionUptime } from '@/hooks';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { Activity, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -55,7 +57,8 @@ import type { WorkspaceProps } from './types/Workspace.types';
 
 - Extract inline JSX blocks over ~5 lines into named components. If a conditional branch contains a multi-line JSX subtree, it should be its own component.
 - Assign complex boolean conditions to named variables before using in JSX (e.g., `const canMinimize = !!onMinimize && !maximized`).
-- Conditional rendering: `&&` or ternaries. No wrapper components.
+- Conditional rendering: `&&` or single ternaries. No wrapper components.
+- No chained ternaries (`a ? x : b ? y : z`). Use lookup objects keyed by status/enum, or if/else blocks. Chained ternaries are unreadable.
 - shadcn-first: always check if shadcn can handle it before building custom.
 - Mobile-only components must be clearly identified. File name should include `Mobile` (e.g., `RobotWorkspaceMobile.tsx`, `PilotHudMobile.tsx`). JSDoc `@description` must state it is mobile-only and name its parent consumer.
 

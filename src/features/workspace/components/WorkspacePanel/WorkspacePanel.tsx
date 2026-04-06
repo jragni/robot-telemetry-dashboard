@@ -1,34 +1,36 @@
 import { Maximize2, Minimize2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PanelErrorBoundary } from '@/components/PanelErrorBoundary';
-import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
-import { TopicSelector } from './TopicSelector';
+import type { WorkspacePanelProps } from './WorkspacePanel.types';
+import { TopicSelector } from '../TopicSelector';
 
 /** WorkspacePanel
  * @description Renders a reusable panel container with header controls
- *  and content area. Supports minimize and maximize actions.
+ *  and content area. Accepts a component and its props to render inside
+ *  the panel body. Supports minimize and maximize actions.
  * @prop label - Panel title displayed in the header.
  * @prop icon - Lucide icon component for the header.
+ * @prop Component - The panel content component to render.
+ * @prop componentProps - Props to pass to the panel content component.
  * @prop topicName - Optional ROS topic name shown in the header.
- * @prop headerActions - Optional additional header controls.
  * @prop onMinimize - Optional callback to minimize the panel.
  * @prop onMaximize - Optional callback to maximize the panel.
  * @prop onRestoreAll - Optional callback to restore all panels from maximized state.
  * @prop maximized - Whether this panel is currently maximized.
- * @prop children - Panel content.
  */
 export function WorkspacePanel({
-  label,
-  icon: Icon,
-  topicName,
   availableTopics,
-  onTopicChange,
+  Component,
+  componentProps,
   headerActions,
-  onMinimize,
-  onMaximize,
-  onRestoreAll,
+  icon: Icon,
+  label,
   maximized,
-  children,
+  onMaximize,
+  onMinimize,
+  onRestoreAll,
+  onTopicChange,
+  topicName,
 }: WorkspacePanelProps) {
   const canMinimize = !!onMinimize && !maximized;
 
@@ -87,7 +89,9 @@ export function WorkspacePanel({
         </div>
       </header>
       <div className="flex-1 flex items-center justify-center p-4 min-h-0 overflow-hidden">
-        <PanelErrorBoundary>{children}</PanelErrorBoundary>
+        <PanelErrorBoundary>
+          <Component {...componentProps} />
+        </PanelErrorBoundary>
       </div>
     </article>
   );

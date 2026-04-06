@@ -1,15 +1,13 @@
-import type { ReactNode } from 'react';
-import type { RosTopic } from '@/hooks/useRosTopics';
+import type { ComponentType, ReactNode } from 'react';
 
-export interface TopicSelectorProps {
-  readonly topicName: string;
-  readonly availableTopics?: readonly RosTopic[];
-  readonly onTopicChange?: (topicName: string) => void;
-}
+import type { RosTopic } from '@/hooks';
 
 export interface WorkspacePanelProps {
   readonly label: string;
-  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly icon: ComponentType<{ className?: string }>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- panels have different prop shapes, type safety is at the call site
+  readonly Component: ComponentType<any>;
+  readonly componentProps: Record<string, unknown>;
   readonly topicName?: string;
   readonly availableTopics?: readonly RosTopic[];
   readonly onTopicChange?: (topicName: string) => void;
@@ -18,5 +16,4 @@ export interface WorkspacePanelProps {
   readonly onMaximize?: () => void;
   readonly onRestoreAll?: () => void;
   readonly maximized?: boolean;
-  readonly children: ReactNode;
 }

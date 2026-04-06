@@ -1,5 +1,14 @@
-import type { BatteryStatus } from '@/types/battery.types';
-import type { RosGraph } from '@/types/ros-graph.types';
+import type { Ros } from 'roslib';
+
+import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
+
+export interface SystemStatusPanelProps {
+  readonly connected: boolean;
+  readonly onConnect?: () => void;
+  readonly onDisconnect?: () => void;
+  readonly robot: RobotConnection;
+  readonly ros: Ros | undefined;
+}
 
 export interface StatusRowProps {
   readonly label: string;
@@ -17,17 +26,4 @@ export interface ExpandableRowProps {
 
 export interface ExpandableRowListProps {
   readonly names: readonly string[];
-}
-
-export interface SystemStatusPanelProps {
-  readonly name: string;
-  readonly url: string;
-  readonly connected: boolean;
-  readonly status?: 'connected' | 'disconnected' | 'connecting' | 'error';
-  readonly lastSeen: number | null;
-  readonly uptimeSeconds: number | null;
-  readonly battery: BatteryStatus | null;
-  readonly rosGraph: RosGraph | null;
-  readonly onConnect?: () => void;
-  readonly onDisconnect?: () => void;
 }

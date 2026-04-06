@@ -1,4 +1,4 @@
-import { formatDegrees } from '@/utils/formatDegrees';
+import { formatDegrees } from '@/utils';
 import type { AttitudeViewProps } from '@/features/workspace/types/ImuPanel.types';
 import { AttitudeIndicator } from './AttitudeIndicator';
 

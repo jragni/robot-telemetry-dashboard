@@ -1,15 +1,9 @@
-import type { ComponentType } from 'react';
 import { Activity, Camera, Compass, Crosshair, Gamepad2, Radar, Shield } from 'lucide-react';
 
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
+import { CANVAS_FALLBACKS } from '@/utils';
 import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
 
-import { CameraPanel } from './components/CameraPanel';
-import { ImuPanel } from './components/ImuPanel/ImuPanel';
-import { LidarPanel } from './components/LidarPanel/LidarPanel';
-import { SystemStatusPanel } from './components/SystemStatusPanel/SystemStatusPanel';
-import { TelemetryPanel } from './components/TelemetryPanel';
-import type { MobileDataPanelId, MobileTabId } from './types/RobotWorkspaceMobile.types';
+import type { MobileTabId } from './types/RobotWorkspaceMobile.types';
 
 export const IMU_VIZ_OPTIONS: readonly { label: string; shortLabel: string; value: ImuVariant }[] =
   [
@@ -86,14 +80,6 @@ export const PANEL_TOPIC_TYPES: Record<string, readonly string[]> = {
 };
 
 export { DEFAULT_PANEL_TOPICS } from '@/constants/panelTopics';
-
-export const MOBILE_PANEL_COMPONENTS: Record<MobileDataPanelId, ComponentType<object>> = {
-  camera: CameraPanel as ComponentType<object>,
-  imu: ImuPanel as ComponentType<object>,
-  lidar: LidarPanel as ComponentType<object>,
-  status: SystemStatusPanel as ComponentType<object>,
-  telemetry: TelemetryPanel as ComponentType<object>,
-};
 
 export const TELEMETRY_TOKEN_MAP: Record<string, string> = {
   border: '--color-border',
