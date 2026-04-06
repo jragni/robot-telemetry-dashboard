@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { Ros } from 'roslib';
 
-import { useRosTopics } from '@/hooks/useRosTopics';
+import { useRosTopics } from '@/hooks';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { isPanelId } from '@/types/panel.types';
 import type { PanelId } from '@/types/panel.types';

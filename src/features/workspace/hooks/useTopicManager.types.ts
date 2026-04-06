@@ -1,4 +1,4 @@
-import type { RosTopic } from '@/hooks/useRosTopics';
+import type { RosTopic } from '@/hooks';
 import type { PanelId } from '@/types/panel.types';
 
 export interface FilteredTopics {
