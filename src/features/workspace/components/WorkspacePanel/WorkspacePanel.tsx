@@ -1,8 +1,8 @@
 import { Maximize2, Minimize2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PanelErrorBoundary } from '@/components/PanelErrorBoundary';
-import type { WorkspacePanelProps } from '../types/WorkspacePanel.types';
-import { TopicSelector } from './TopicSelector';
+import type { WorkspacePanelProps } from './WorkspacePanel.types';
+import { TopicSelector } from '../TopicSelector';
 
 /** WorkspacePanel
  * @description Renders a reusable panel container with header controls
@@ -10,7 +10,7 @@ import { TopicSelector } from './TopicSelector';
  *  the panel body. Supports minimize and maximize actions.
  * @prop label - Panel title displayed in the header.
  * @prop icon - Lucide icon component for the header.
- * @prop component - The panel content component to render.
+ * @prop Component - The panel content component to render.
  * @prop componentProps - Props to pass to the panel content component.
  * @prop topicName - Optional ROS topic name shown in the header.
  * @prop onMinimize - Optional callback to minimize the panel.
@@ -20,7 +20,7 @@ import { TopicSelector } from './TopicSelector';
  */
 export function WorkspacePanel({
   availableTopics,
-  component: Component,
+  Component,
   componentProps,
   headerActions,
   icon: Icon,

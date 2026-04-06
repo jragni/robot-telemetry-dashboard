@@ -3,18 +3,19 @@ import { Activity, Camera, Compass, Gamepad2, Radar, Shield } from 'lucide-react
 
 import { useIsMobile, useRobotConnection } from '@/hooks';
 
-import { useMinimizedPanels } from './hooks/useMinimizedPanels';
-import { useTopicManager } from './hooks/useTopicManager';
-import { CameraPanel } from './components/CameraPanel';
-import { ControlsPanel } from './components/ControlsPanel/ControlsPanel';
-import { ImuPanel } from './components/ImuPanel/ImuPanel';
-import { LidarPanel } from './components/LidarPanel/LidarPanel';
-import { MinimizedPanelBar } from './components/MinimizedPanelBar';
-import { RobotWorkspaceMobile } from './components/RobotWorkspaceMobile';
-import { SystemStatusPanel } from './components/SystemStatusPanel/SystemStatusPanel';
-import { TelemetryPanel } from './components/TelemetryPanel';
-import { WorkspaceNotFound } from './components/WorkspaceNotFound';
-import { WorkspacePanel } from './components/WorkspacePanel';
+import { useMinimizedPanels, useTopicManager } from './hooks';
+import {
+  CameraPanel,
+  ControlsPanel,
+  ImuPanel,
+  LidarPanel,
+  MinimizedPanelBar,
+  RobotWorkspaceMobile,
+  SystemStatusPanel,
+  TelemetryPanel,
+  WorkspaceNotFound,
+  WorkspacePanel,
+} from './components';
 import { GRID_COL_MAP, WORKSPACE_PANEL_IDS } from './constants';
 
 /** RobotWorkspace
@@ -68,7 +69,7 @@ export function RobotWorkspace() {
           <WorkspacePanel
             label="Camera"
             icon={Camera}
-            component={CameraPanel}
+            Component={CameraPanel}
             componentProps={{ connected, robotUrl: robot.url }}
             onMinimize={() => {
               minimize('camera');
@@ -85,7 +86,7 @@ export function RobotWorkspace() {
           <WorkspacePanel
             label="LiDAR"
             icon={Radar}
-            component={LidarPanel}
+            Component={LidarPanel}
             componentProps={{ connected, ros, topicName: selectedTopics.lidar ?? '/scan' }}
             topicName={selectedTopics.lidar}
             availableTopics={filteredTopics.lidar}
@@ -107,7 +108,7 @@ export function RobotWorkspace() {
           <WorkspacePanel
             label="System Status"
             icon={Shield}
-            component={SystemStatusPanel}
+            Component={SystemStatusPanel}
             componentProps={{ connected, onConnect: connect, onDisconnect: disconnect, robot, ros }}
             onMinimize={() => {
               minimize('status');
@@ -124,7 +125,7 @@ export function RobotWorkspace() {
           <WorkspacePanel
             label="IMU Attitude"
             icon={Compass}
-            component={ImuPanel}
+            Component={ImuPanel}
             componentProps={{ connected, ros, topicName: selectedTopics.imu ?? '/imu/data' }}
             topicName={selectedTopics.imu}
             availableTopics={filteredTopics.imu}
@@ -146,7 +147,7 @@ export function RobotWorkspace() {
           <WorkspacePanel
             label="Controls"
             icon={Gamepad2}
-            component={ControlsPanel}
+            Component={ControlsPanel}
             componentProps={{
               connected,
               robotId: id,
@@ -173,7 +174,7 @@ export function RobotWorkspace() {
           <WorkspacePanel
             label="Telemetry"
             icon={Activity}
-            component={TelemetryPanel}
+            Component={TelemetryPanel}
             componentProps={{ connected, ros, topicName: selectedTopics.telemetry ?? '/odom' }}
             topicName={selectedTopics.telemetry}
             availableTopics={filteredTopics.telemetry}

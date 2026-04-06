@@ -15,7 +15,7 @@ import {
   WORKSPACE_LIDAR_COLOR_FALLBACKS,
   WORKSPACE_LIDAR_TOKEN_MAP,
 } from '@/features/workspace/constants';
-import type { LidarPanelProps } from '@/features/workspace/types/LidarPanel.types';
+import type { LidarPanelProps } from './LidarPanel.types';
 
 import { findMinDistance } from './LidarPanel.helpers';
 

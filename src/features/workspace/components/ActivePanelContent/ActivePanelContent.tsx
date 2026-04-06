@@ -1,12 +1,13 @@
 import type { ComponentType } from 'react';
 
-import { CameraPanel } from './CameraPanel';
-import { ImuPanel } from './ImuPanel/ImuPanel';
-import { LidarPanel } from './LidarPanel/LidarPanel';
-import { SystemStatusPanel } from './SystemStatusPanel/SystemStatusPanel';
-import { TelemetryPanel } from './TelemetryPanel';
+import type { MobileDataPanelId } from '../../types/RobotWorkspaceMobile.types';
+
+import { CameraPanel } from '../CameraPanel';
+import { ImuPanel } from '../ImuPanel';
+import { LidarPanel } from '../LidarPanel';
+import { SystemStatusPanel } from '../SystemStatusPanel';
+import { TelemetryPanel } from '../TelemetryPanel';
 import type { ActivePanelContentProps } from './ActivePanelContent.types';
-import type { MobileDataPanelId } from '../types/RobotWorkspaceMobile.types';
 
 const MOBILE_PANEL_MAP: Record<MobileDataPanelId, ComponentType<Record<string, unknown>>> = {
   camera: CameraPanel as ComponentType<Record<string, unknown>>,
