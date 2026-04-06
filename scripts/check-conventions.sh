@@ -44,7 +44,25 @@ for file in "$@"; do
     fi
   fi
 
-  # 4. Missing JSDoc on exported functions
+  # 4. Deep hook imports — must use @/hooks barrel
+  DEEP_HOOKS=$(grep -n "from '@/hooks/[a-zA-Z]" "$file" 2>/dev/null | grep -v "from '@/hooks'")
+  if [[ -n "$DEEP_HOOKS" ]]; then
+    echo "CONVENTION: deep hook import — use barrel import from '@/hooks'"
+    echo "  $file"
+    echo "$DEEP_HOOKS" | sed 's/^/    /'
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  # 5. Duplicate imports from same module
+  DUPE_MODULES=$(grep -o "from '[^']*'" "$file" 2>/dev/null | sort | uniq -d)
+  if [[ -n "$DUPE_MODULES" ]]; then
+    echo "CONVENTION: duplicate imports from same module — consolidate into single import"
+    echo "  $file"
+    echo "$DUPE_MODULES" | sed 's/^/    /'
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  # 6. Missing JSDoc on exported functions (renumbered from 4)
   if [[ "$file" == *.ts ]] || [[ "$file" == *.tsx ]]; then
     # Find exported functions without a preceding JSDoc block
     # Look for 'export function' or 'export async function' not preceded by '*/'
