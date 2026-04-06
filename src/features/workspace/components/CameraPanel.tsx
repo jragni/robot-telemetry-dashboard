@@ -1,30 +1,32 @@
+import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
 import { CameraEmptyState } from '@/components/CameraEmptyState';
+
 import type { CameraPanelProps } from './CameraPanel.types';
 
 /** CameraPanel
- * @description Renders a camera feed panel. Displays live video via WebRTC
- *  when a stream ref is provided, otherwise shows the empty state.
- * @prop streamRef - Ref to attach the video MediaStream to.
+ * @description Renders a camera feed panel with self-managed WebRTC stream.
+ *  Calls useWebRtcStream internally to own its video connection lifecycle.
+ *  Shows the video element when connected, otherwise displays the empty state.
  * @prop connected - Whether the robot is currently connected.
+ * @prop robotUrl - Base URL of the robot for WebRTC signaling.
  * @prop label - Optional topic name to display in the empty state.
  */
-export function CameraPanel({ connected, label, streamRef }: CameraPanelProps) {
+export function CameraPanel({ connected, label, robotUrl }: CameraPanelProps) {
+  const { videoRef } = useWebRtcStream({ connected, enabled: connected, url: robotUrl });
+
   return (
     <div
       className="relative w-full h-full flex items-center justify-center"
-      aria-label={streamRef ? 'Camera feed' : 'Camera feed — no stream'}
+      aria-label={connected ? 'Camera feed' : 'Camera feed — no stream'}
     >
-      {streamRef ? (
-        <video
-          ref={streamRef}
-          autoPlay
-          playsInline
-          muted
-          className="absolute inset-0 w-full h-full object-contain"
-        />
-      ) : (
-        <CameraEmptyState label={label} message={connected ? 'No stream' : 'Disconnected'} />
-      )}
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        className="absolute inset-0 w-full h-full object-contain"
+      />
+      {!connected && <CameraEmptyState label={label} message="Disconnected" />}
     </div>
   );
 }
