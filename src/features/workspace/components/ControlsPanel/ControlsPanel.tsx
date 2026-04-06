@@ -13,8 +13,7 @@ import {
 import { useControlPublisher } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { DpadButton } from '@/components/controls';
-import { VelocitySlider } from '@/components/controls';
+import { DpadButton, VelocitySlider } from '@/components/controls';
 import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls';
 import type { Direction } from '@/types/control.types';
 
