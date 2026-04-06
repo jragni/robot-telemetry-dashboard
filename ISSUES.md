@@ -69,7 +69,60 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: RobotWorkspace under 80 lines, each extracted piece tested, build passes
 - Branch: refactor/t-088/workspace-god-component
 
-- Branch: refactor/t-083/telemetry-helpers
+#### T-095: Pilot feature folder conventions
+- Priority: HIGH
+- Scope: src/features/pilot/
+- Problem: pilot feature has types scattered in pilot/types/ that belong with their components, tests mixed into component folders without __tests__/ subfolders, and PilotNotFound as loose files instead of a folder.
+- Fix:
+  - **PilotHud/** — move GyroInline.test.tsx, PilotHudMobile.test.tsx, StatusDot.test.tsx into PilotHud/__tests__/
+  - **PilotCompass/** — move helpers.test.ts into PilotCompass/__tests__/
+  - **PilotNotFound/** — create folder, move PilotNotFound.tsx, PilotNotFound.types.ts, PilotNotFound.test.tsx into it with index.ts
+  - **Co-locate types from pilot/types/ to component folders:**
+    - BatteryRow.types.ts → PilotStatusBar/PilotStatusBar.types.ts (merge if exists)
+    - PilotGyroReadout.types.ts → PilotGyroReadout/PilotGyroReadout.types.ts
+    - PilotControls.types.ts → PilotControls/PilotControls.types.ts
+    - PilotFullscreenToggle.types.ts → stays flat (single file component)
+    - PilotStatusBar.types.ts → PilotStatusBar/PilotStatusBar.types.ts
+    - usePilotFullscreen.types.ts → pilot/hooks/usePilotFullscreen.types.ts
+    - PilotView.types.ts → stays in pilot/types/ (cross-component shared types: PilotTelemetry, ProxyStatus, LidarPoint, PilotCameraProps)
+  - Update all consumer imports
+- Acceptance: no types in pilot/types/ that belong with a single component, 3+ test files in __tests__/ subfolders, PilotNotFound has own folder, build passes
+- Branch: refactor/t-095/pilot-folder-conventions
+
+#### T-096: Fleet feature folder conventions
+- Priority: HIGH
+- Scope: src/features/fleet/
+- Problem: fleet is mostly well-structured but has minor gaps.
+- Fix:
+  - **FleetEmptyView.tsx** and **FleetRobotGrid.tsx** — single flat files in components/, fine as-is
+  - **fleet/types/FleetOverview.types.ts** — check if types are only used by FleetOverview. If so, co-locate. If shared across components, stays.
+  - **helpers.test.ts + schemas.test.ts** at feature root — 2 files, under threshold, fine flat. If more tests added, move to __tests__/
+  - **AddRobotModal/** — has types/ subfolder already. Verify AddRobotModal.test.tsx + helpers.test.ts should be in __tests__/ (2 files, borderline)
+- Acceptance: all types co-located with their single consumer, build passes
+- Branch: refactor/t-096/fleet-folder-conventions
+
+#### T-097: Workspace feature folder conventions
+- Priority: HIGH
+- Scope: src/features/workspace/
+- Problem: workspace/types/ has 11 type files that belong with their components instead of in a shared types/ folder.
+- Fix:
+  - **Co-locate types from workspace/types/ to component folders:**
+    - ActivePanelContent.types.ts → co-locate with ActivePanelContent.tsx (create folder or keep flat)
+    - CameraPanel.types.ts → co-locate with CameraPanel.tsx
+    - ControlsPanel.types.ts → ControlsPanel/ControlsPanel.types.ts
+    - ImuPanel.types.ts → ImuPanel/ImuPanel.types.ts
+    - LidarPanel.types.ts → LidarPanel/LidarPanel.types.ts
+    - RobotWorkspaceMobile.types.ts → already in RobotWorkspaceMobile/ (verify no duplicate in types/)
+    - SystemStatusPanel.types.ts → SystemStatusPanel/SystemStatusPanel.types.ts
+    - TelemetryPanel.types.ts → TelemetryPanel/TelemetryPanel.types.ts
+    - WorkspacePanel.types.ts → co-locate with WorkspacePanel.tsx
+    - MockEnvironment.types.ts, MockImu.types.ts, MockSystemStatus.types.ts → if only used by mocks, co-locate there
+  - **TelemetryPanel/** — move helpers.test.ts into __tests__/ (currently 1 test, will grow)
+  - **RobotWorkspaceMobile/** — move MobilePanelHeader.test.tsx + MobileTabBar.test.tsx into __tests__/ (2 files, borderline but consistent)
+  - **LidarPanel/** — move LidarPanel.test.ts into __tests__/
+  - Update all consumer imports
+- Acceptance: workspace/types/ only contains cross-component shared types (if any remain), all single-consumer types co-located, build passes
+- Branch: refactor/t-097/workspace-folder-conventions
 
 ### Cross-cutting Sweeps (run after folder restructures)
 
@@ -119,6 +172,16 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Severity: LOW
 - Extract Pilot Mode CTA block into PilotModeCta.tsx. Run after T-052 (both touch ControlsPanel).
 - Branch: refactor/t-076/pilot-mode-cta
+
+#### T-098: Add reconnect button to PilotStatusBar
+- Severity: MEDIUM
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: src/features/pilot/components/PilotStatusBar/PilotStatusBar.tsx, PilotHud.tsx, PilotHudMobile.tsx, PilotView.tsx
+- Problem: when rosbridge disconnects in pilot mode, there's no way to reconnect without navigating back to fleet. The status bar shows connection state but has no action.
+- Fix: add a small reconnect button (shadcn Button, ghost variant) below or next to the ROS connection row. Only visible when disconnected. Wire onConnect/onDisconnect callbacks through PilotHud → PilotStatusBar.
+- Props to add: onConnect, onDisconnect to PilotStatusBarProps. Show reconnect button when rosbridgeStatus is 'disconnected' or 'error'.
+- Acceptance: reconnect button visible when disconnected, triggers connection attempt, hidden when connected, works on both desktop and mobile HUD, build passes
+- Branch: feat/t-098/pilot-reconnect-button
 
 ### Bugs
 
