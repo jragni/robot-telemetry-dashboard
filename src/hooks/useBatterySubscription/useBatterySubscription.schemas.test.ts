@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { batteryStateMessageSchema } from '../useBatterySubscription';
+import { batteryStateMessageSchema } from './useBatterySubscription';
 
 describe('batteryStateMessageSchema', () => {
   it('parses a valid BatteryState message', () => {

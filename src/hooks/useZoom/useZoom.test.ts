@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useZoom } from '../useZoom';
+import { useZoom } from './useZoom';
 
 const DEFAULT_CONFIG = { min: 0.5, max: 4, step: 0.2 };
 

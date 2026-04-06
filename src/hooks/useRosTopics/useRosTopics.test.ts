@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useRosTopics } from '../useRosTopics';
+import { useRosTopics } from './useRosTopics';
 import type { Ros } from 'roslib';
 
 function createMockRos(topics: string[], types: string[]): Ros {
