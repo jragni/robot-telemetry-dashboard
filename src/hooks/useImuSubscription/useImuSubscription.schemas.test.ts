@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { imuMessageSchema } from '../useImuSubscription';
+import { imuMessageSchema } from './useImuSubscription';
 
 describe('imuMessageSchema', () => {
   it('parses a valid full IMU message', () => {
