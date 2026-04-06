@@ -21,16 +21,16 @@ import { VelocitySlider } from '@/components/controls/VelocitySlider';
  * @description Renders robot directional controls with E-STOP, D-pad for
  *  press-and-hold movement, velocity sliders, and live readouts. Supports
  *  keyboard navigation: arrow keys for direction, Escape for E-STOP.
- * @param linearVelocity - Current linear velocity magnitude in m/s.
- * @param angularVelocity - Current angular velocity magnitude in rad/s.
- * @param linearLimits - Min/max/default for linear velocity slider.
- * @param angularLimits - Min/max/default for angular velocity slider.
- * @param isActive - Whether controls are currently sending commands.
- * @param onDirectionStart - Callback when a direction press begins.
- * @param onDirectionEnd - Callback when a direction press ends (sends zero).
- * @param onLinearVelocityChange - Callback when linear slider changes.
- * @param onAngularVelocityChange - Callback when angular slider changes.
- * @param onEmergencyStop - Callback for emergency stop.
+ * @prop linearVelocity - Current linear velocity magnitude in m/s.
+ * @prop angularVelocity - Current angular velocity magnitude in rad/s.
+ * @prop linearLimits - Min/max/default for linear velocity slider.
+ * @prop angularLimits - Min/max/default for angular velocity slider.
+ * @prop isActive - Whether controls are currently sending commands.
+ * @prop onDirectionStart - Callback when a direction press begins.
+ * @prop onDirectionEnd - Callback when a direction press ends (sends zero).
+ * @prop onLinearVelocityChange - Callback when linear slider changes.
+ * @prop onAngularVelocityChange - Callback when angular slider changes.
+ * @prop onEmergencyStop - Callback for emergency stop.
  */
 export function ControlsPanel({
   linearVelocity,

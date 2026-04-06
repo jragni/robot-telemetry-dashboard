@@ -3,14 +3,14 @@ import type { VelocitySliderProps } from '@/types/VelocitySlider.types';
 
 /** VelocitySlider
  * @description Renders a labeled velocity slider with current value readout.
- * @param label - Display label (e.g., "LINEAR").
- * @param value - Current velocity value.
- * @param min - Minimum slider value.
- * @param max - Maximum slider value.
- * @param step - Slider step increment.
- * @param unit - Unit suffix for the readout.
- * @param disabled - Whether the slider is disabled.
- * @param onChange - Callback when slider value changes.
+ * @prop label - Display label (e.g., "LINEAR").
+ * @prop value - Current velocity value.
+ * @prop min - Minimum slider value.
+ * @prop max - Maximum slider value.
+ * @prop step - Slider step increment.
+ * @prop unit - Unit suffix for the readout.
+ * @prop disabled - Whether the slider is disabled.
+ * @prop onChange - Callback when slider value changes.
  */
 export function VelocitySlider({
   label,

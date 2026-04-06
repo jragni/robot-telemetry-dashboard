@@ -23,7 +23,7 @@ import type { PilotCompassProps } from './PilotCompass.types';
  *  mobile. Ticks and degree labels share the same vertical center line.
  *  Cardinals (N/E/S/W) rendered in accent color at their tick positions.
  *  Fills 100% of the container width via ResizeObserver.
- * @param heading - Current heading in degrees (0-360).
+ * @prop heading - Current heading in degrees (0-360).
  */
 export function PilotCompassMobile({ heading }: PilotCompassProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,9 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
       }
     });
     observer.observe(el);
-    return () => { observer.disconnect(); };
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   // Draw compass
@@ -149,7 +151,11 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
   }, [heading, width, themeVersion, resolveColors, colorsRef]);
 
   return (
-    <div ref={containerRef} className="w-full" aria-label={`Heading: ${heading.toFixed(0)} degrees`}>
+    <div
+      ref={containerRef}
+      className="w-full"
+      aria-label={`Heading: ${heading.toFixed(0)} degrees`}
+    >
       <canvas
         ref={canvasRef}
         style={{ width: '100%', height: COMPASS_STRIP_HEIGHT_MOBILE, display: 'block' }}

@@ -8,8 +8,8 @@ import type { PilotCameraProps } from '../types/PilotView.types';
  *  Displays a video element when streaming, or an empty state with status
  *  text when idle/connecting/failed. The video fills the entire container
  *  with object-cover sizing.
- * @param videoStatus - Current WebRTC stream connection status.
- * @param videoRef - Ref to attach the MediaStream to the video element.
+ * @prop videoStatus - Current WebRTC stream connection status.
+ * @prop videoRef - Ref to attach the MediaStream to the video element.
  */
 export function PilotCamera({ videoRef, videoStatus }: PilotCameraProps) {
   const isStreaming = videoStatus === 'streaming';
@@ -17,20 +17,17 @@ export function PilotCamera({ videoRef, videoStatus }: PilotCameraProps) {
   return (
     <div className="absolute inset-0" aria-label="Camera feed">
       {isStreaming ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className="absolute inset-0 w-full h-full object-cover"
+        />
       ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-surface-base">
-            <CameraEmptyState
-              message={VIDEO_STATUS_LABELS[videoStatus]}
-              variant="hero"
-            />
-          </div>
+        <div className="absolute inset-0 flex items-center justify-center bg-surface-base">
+          <CameraEmptyState message={VIDEO_STATUS_LABELS[videoStatus]} variant="hero" />
+        </div>
       )}
     </div>
   );

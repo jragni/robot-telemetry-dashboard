@@ -5,8 +5,8 @@ import type { MobileTabBarProps } from './RobotWorkspaceMobile.types';
  * @description Renders the bottom navigation tab bar for mobile workspace.
  *  Displays icons and labels for each data panel plus a Pilot Mode action tab.
  *  Highlights the active panel and applies caution styling to the Pilot tab.
- * @param activePanel - Currently active data panel identifier.
- * @param onTabPress - Callback fired when a tab is pressed.
+ * @prop activePanel - Currently active data panel identifier.
+ * @prop onTabPress - Callback fired when a tab is pressed.
  */
 export function MobileTabBar({ activePanel, onTabPress }: MobileTabBarProps) {
   return (
@@ -22,7 +22,9 @@ export function MobileTabBar({ activePanel, onTabPress }: MobileTabBarProps) {
           <button
             key={tab.id}
             type="button"
-            onClick={() => { onTabPress(tab.id); }}
+            onClick={() => {
+              onTabPress(tab.id);
+            }}
             className={`flex-1 flex flex-col items-center gap-0.5 py-2 cursor-pointer transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none
               ${isActive ? 'text-accent border-t-2 border-accent' : 'text-text-muted border-t-2 border-transparent'}
               ${isPilot && !isActive ? 'text-status-caution' : ''}

@@ -7,15 +7,15 @@ import { TopicSelector } from './TopicSelector';
 /** WorkspacePanel
  * @description Renders a reusable panel container with header controls
  *  and content area. Supports minimize and maximize actions.
- * @param label - Panel title displayed in the header.
- * @param icon - Lucide icon component for the header.
- * @param topicName - Optional ROS topic name shown in the header.
- * @param headerActions - Optional additional header controls.
- * @param onMinimize - Optional callback to minimize the panel.
- * @param onMaximize - Optional callback to maximize the panel.
- * @param onRestoreAll - Optional callback to restore all panels from maximized state.
- * @param maximized - Whether this panel is currently maximized.
- * @param children - Panel content.
+ * @prop label - Panel title displayed in the header.
+ * @prop icon - Lucide icon component for the header.
+ * @prop topicName - Optional ROS topic name shown in the header.
+ * @prop headerActions - Optional additional header controls.
+ * @prop onMinimize - Optional callback to minimize the panel.
+ * @prop onMaximize - Optional callback to maximize the panel.
+ * @prop onRestoreAll - Optional callback to restore all panels from maximized state.
+ * @prop maximized - Whether this panel is currently maximized.
+ * @prop children - Panel content.
  */
 export function WorkspacePanel({
   label,
@@ -41,7 +41,11 @@ export function WorkspacePanel({
         </span>
         {topicName ? (
           <div className="min-w-0 shrink" title={topicName}>
-            <TopicSelector topicName={topicName} availableTopics={availableTopics} onTopicChange={onTopicChange} />
+            <TopicSelector
+              topicName={topicName}
+              availableTopics={availableTopics}
+              onTopicChange={onTopicChange}
+            />
           </div>
         ) : (
           <span className="ml-1" />
@@ -49,15 +53,15 @@ export function WorkspacePanel({
         <div className="ml-auto flex items-center gap-1 shrink-0">
           {headerActions}
           {canMinimize && (
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={onMinimize}
-                aria-label="Minimize panel"
-                className="text-text-muted hover:text-text-primary hover:bg-surface-tertiary"
-              >
-                <Minus className="size-3" />
-              </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={onMinimize}
+              aria-label="Minimize panel"
+              className="text-text-muted hover:text-text-primary hover:bg-surface-tertiary"
+            >
+              <Minus className="size-3" />
+            </Button>
           )}
           {maximized ? (
             <Button
@@ -83,9 +87,7 @@ export function WorkspacePanel({
         </div>
       </header>
       <div className="flex-1 flex items-center justify-center p-4 min-h-0 overflow-hidden">
-        <PanelErrorBoundary>
-          {children}
-        </PanelErrorBoundary>
+        <PanelErrorBoundary>{children}</PanelErrorBoundary>
       </div>
     </article>
   );

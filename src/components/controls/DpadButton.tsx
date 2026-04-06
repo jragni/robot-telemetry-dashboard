@@ -9,13 +9,13 @@ import type { DpadButtonProps } from '@/types/DpadButton.types';
  *  behavior. Fires onStart on pointerdown and onEnd on pointerup/pointerleave.
  *  Only fires onEnd if this button is currently pressed, preventing spurious
  *  zero-velocity publishes on casual hover.
- * @param direction - The direction this button represents.
- * @param icon - The Lucide icon component to render.
- * @param label - Accessible aria-label for the button.
- * @param activeDirection - Currently active direction for highlight state.
- * @param disabled - Whether the button is disabled (robot disconnected).
- * @param onStart - Callback when press begins.
- * @param onEnd - Callback when press ends.
+ * @prop direction - The direction this button represents.
+ * @prop icon - The Lucide icon component to render.
+ * @prop label - Accessible aria-label for the button.
+ * @prop activeDirection - Currently active direction for highlight state.
+ * @prop disabled - Whether the button is disabled (robot disconnected).
+ * @prop onStart - Callback when press begins.
+ * @prop onEnd - Callback when press ends.
  */
 export function DpadButton({
   activeDirection,

@@ -87,7 +87,13 @@ export function PanelShowcase() {
 
       <PanelFrame label="TelemetryPanel">
         <TelemetryPanel
-          series={telemetry.telemetrySeries as { label: string; color: string; data: { timestamp: number; value: number }[] }[]}
+          series={
+            telemetry.telemetrySeries as {
+              label: string;
+              color: string;
+              data: { timestamp: number; value: number }[];
+            }[]
+          }
           timeWindowMs={10000}
           connected
         />
@@ -102,13 +108,10 @@ export function PanelShowcase() {
 
 /** PanelFrame
  * @description Wraps a panel demo in a fixed-height container with a label.
- * @param label - The panel name to display.
- * @param children - The panel content.
+ * @prop label - The panel name to display.
+ * @prop children - The panel content.
  */
-function PanelFrame({
-  children,
-  label,
-}: PanelFrameProps) {
+function PanelFrame({ children, label }: PanelFrameProps) {
   return (
     <div className="flex flex-col gap-2">
       <span className="font-mono text-xs text-text-muted">{label}</span>
@@ -121,13 +124,10 @@ function PanelFrame({
 
 /** MockStatusRow
  * @description Renders a simplified status row for the SystemStatusPanel recreation.
- * @param label - The row label.
- * @param value - The row value.
+ * @prop label - The row label.
+ * @prop value - The row value.
  */
-function MockStatusRow({
-  label,
-  value,
-}: MockStatusRowProps) {
+function MockStatusRow({ label, value }: MockStatusRowProps) {
   return (
     <div className="flex items-center justify-between">
       <span className="font-sans text-xs text-text-muted">{label}</span>
@@ -138,7 +138,7 @@ function MockStatusRow({
 
 /** MockDpadBtn
  * @description Renders a simplified D-pad button for the ControlsPanel recreation.
- * @param text - The button label text.
+ * @prop text - The button label text.
  */
 function MockDpadBtn({ text }: MockDpadBtnProps) {
   return (

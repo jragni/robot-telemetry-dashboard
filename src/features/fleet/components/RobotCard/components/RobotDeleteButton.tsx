@@ -20,13 +20,10 @@ import type { RobotDeleteButtonProps } from '../types/RobotDeleteButton.types';
 /** RobotDeleteButton
  * @description Renders a trash icon that opens an AlertDialog confirmation
  *  before removing a robot.
- * @param robotName - Robot name displayed in the confirmation dialog.
- * @param onRemove - Callback invoked when the user confirms removal.
+ * @prop robotName - Robot name displayed in the confirmation dialog.
+ * @prop onRemove - Callback invoked when the user confirms removal.
  */
-export function RobotDeleteButton({
-  robotName,
-  onRemove,
-}: RobotDeleteButtonProps) {
+export function RobotDeleteButton({ robotName, onRemove }: RobotDeleteButtonProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -45,8 +42,8 @@ export function RobotDeleteButton({
             Remove {robotName}?
           </AlertDialogTitle>
           <AlertDialogDescription className="font-sans text-sm text-text-muted">
-            This will remove the robot from your fleet. You can add it back
-            later with the same connection details.
+            This will remove the robot from your fleet. You can add it back later with the same
+            connection details.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

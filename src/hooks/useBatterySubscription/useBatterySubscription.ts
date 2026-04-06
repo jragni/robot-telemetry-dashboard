@@ -14,6 +14,12 @@ export const batteryStateMessageSchema = z.object({
 // sensor_msgs/msg/BatteryState power_supply_status value for charging
 const POWER_SUPPLY_CHARGING = 1;
 
+/** useBatterySubscription
+ * @description Subscribes to the first sensor_msgs/msg/BatteryState topic discovered
+ *  and returns parsed battery status (percentage, voltage, charging state).
+ * @param ros - Active roslib connection, or undefined when disconnected.
+ * @param availableTopics - List of discovered ROS topics to search for battery state.
+ */
 export function useBatterySubscription(
   ros: Ros | undefined,
   availableTopics: readonly RosTopic[],
@@ -45,12 +51,7 @@ export function useBatterySubscription(
     }
   }, []);
 
-  useRosSubscriber(
-    ros,
-    batteryTopic,
-    'sensor_msgs/msg/BatteryState',
-    onMessage,
-  );
+  useRosSubscriber(ros, batteryTopic, 'sensor_msgs/msg/BatteryState', onMessage);
 
   return battery;
 }

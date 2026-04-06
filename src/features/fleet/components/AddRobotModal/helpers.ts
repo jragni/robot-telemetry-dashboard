@@ -3,16 +3,10 @@ import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
 import { addRobotSchema } from '@/features/fleet/schemas';
 import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
 
-import type { AddRobotFormErrors } from './types/AddRobotModal.types';
-
-type ValidateSuccess = { ok: true; name: string; url: string };
-type ValidateFailure = { ok: false; errors: AddRobotFormErrors };
+import type { ValidateFailure, ValidateSuccess } from './types/AddRobotModal.types';
 
 /** Validate name + url with Zod, then normalize the URL. */
-export function validateRobotForm(
-  name: string,
-  url: string,
-): ValidateSuccess | ValidateFailure {
+export function validateRobotForm(name: string, url: string): ValidateSuccess | ValidateFailure {
   const result = addRobotSchema.safeParse({ name, url });
   if (!result.success) {
     const issues = result.error.issues;
@@ -55,6 +49,10 @@ export async function testConnectionWithRetries(
   return { connected: false, error: 'Connection failed' };
 }
 
+/** detectMixedContent
+ * @description Checks whether a WebSocket URL would trigger a mixed-content block on HTTPS pages.
+ * @param url - The WebSocket URL to check.
+ */
 export function detectMixedContent(url: string): boolean {
   if (typeof window === 'undefined') return false;
   const isHttps = window.location.protocol === 'https:';

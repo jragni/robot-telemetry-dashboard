@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
+import type { RosTopic } from './useRosTopics.types';
 
-export interface RosTopic {
-  readonly name: string;
-  readonly type: string;
-}
-
+/** useRosTopics
+ * @description Polls available ROS topics every 10 seconds and returns a stable list
+ *  of topic name/type pairs.
+ * @param ros - Active roslib connection, or undefined when disconnected.
+ */
 export function useRosTopics(ros: Ros | undefined): readonly RosTopic[] {
   const [topics, setTopics] = useState<readonly RosTopic[]>([]);
   const abortedRef = useRef(false);
@@ -19,7 +20,8 @@ export function useRosTopics(ros: Ros | undefined): readonly RosTopic[] {
           type: result.types[i] ?? 'unknown',
         }));
         setTopics((prev) => {
-          const isSame = prev.length === discovered.length &&
+          const isSame =
+            prev.length === discovered.length &&
             prev.every((t, i) => t.name === discovered[i]?.name && t.type === discovered[i].type);
           return isSame ? prev : discovered;
         });
@@ -35,7 +37,9 @@ export function useRosTopics(ros: Ros | undefined): readonly RosTopic[] {
 
     abortedRef.current = false;
     fetchTopics(ros);
-    const interval = setInterval(() => { fetchTopics(ros); }, 10_000);
+    const interval = setInterval(() => {
+      fetchTopics(ros);
+    }, 10_000);
 
     return () => {
       abortedRef.current = true;

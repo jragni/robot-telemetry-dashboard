@@ -144,6 +144,13 @@ function parseMessage(msg: unknown, messageType: string): Record<string, number>
   }
 }
 
+/** useTelemetrySubscription
+ * @description Subscribes to a ROS topic, extracts numeric fields into time-series buffers,
+ *  and returns plottable series data throttled to animation frame rate.
+ * @param ros - Active roslib connection, or undefined when disconnected.
+ * @param topicName - The ROS topic name to subscribe to.
+ * @param messageType - The ROS message type string.
+ */
 export function useTelemetrySubscription(
   ros: Ros | undefined,
   topicName: string,
@@ -161,46 +168,55 @@ export function useTelemetrySubscription(
   }, [topicName, messageType]);
 
   // Throttle series state updates to RAF cadence
-  const throttledSet = useMemo(() => rafThrottle((s: readonly TelemetrySeries[]) => {
-    setSeries(s);
-  }), []);
+  const throttledSet = useMemo(
+    () =>
+      rafThrottle((s: readonly TelemetrySeries[]) => {
+        setSeries(s);
+      }),
+    [],
+  );
 
   useEffect(() => {
-    return () => { throttledSet.cancel(); };
+    return () => {
+      throttledSet.cancel();
+    };
   }, [throttledSet]);
 
-  const onMessage = useCallback((msg: unknown) => {
-    try {
-      const values = parseMessage(msg, messageType);
-      if (!values) return;
-      const now = Date.now();
-      const buffers = buffersRef.current;
+  const onMessage = useCallback(
+    (msg: unknown) => {
+      try {
+        const values = parseMessage(msg, messageType);
+        if (!values) return;
+        const now = Date.now();
+        const buffers = buffersRef.current;
 
-      const newSeries: TelemetrySeries[] = [];
-      let colorIdx = 0;
+        const newSeries: TelemetrySeries[] = [];
+        let colorIdx = 0;
 
-      for (const [label, value] of Object.entries(values)) {
-        let buf = buffers.get(label);
-        if (!buf) {
-          buf = [];
-          buffers.set(label, buf);
+        for (const [label, value] of Object.entries(values)) {
+          let buf = buffers.get(label);
+          if (!buf) {
+            buf = [];
+            buffers.set(label, buf);
+          }
+          buf.push({ timestamp: now, value });
+          if (buf.length > MAX_POINTS) buf.shift();
+
+          newSeries.push({
+            label,
+            color: SERIES_COLORS[colorIdx % SERIES_COLORS.length] ?? CANVAS_FALLBACKS.accent,
+            data: [...buf],
+          });
+          colorIdx += 1;
         }
-        buf.push({ timestamp: now, value });
-        if (buf.length > MAX_POINTS) buf.shift();
 
-        newSeries.push({
-          label,
-          color: SERIES_COLORS[colorIdx % SERIES_COLORS.length] ?? CANVAS_FALLBACKS.accent,
-          data: [...buf],
-        });
-        colorIdx += 1;
+        throttledSet(newSeries);
+      } catch (err) {
+        console.warn('[useTelemetrySubscription] Unexpected error processing message:', err);
       }
-
-      throttledSet(newSeries);
-    } catch (err) {
-      console.warn('[useTelemetrySubscription] Unexpected error processing message:', err);
-    }
-  }, [messageType, throttledSet]);
+    },
+    [messageType, throttledSet],
+  );
 
   useRosSubscriber(ros, topicName, messageType, onMessage);
 

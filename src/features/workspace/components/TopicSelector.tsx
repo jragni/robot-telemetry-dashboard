@@ -13,9 +13,9 @@ import type { TopicSelectorProps } from '../types/WorkspacePanel.types';
 /** TopicSelector
  * @description Renders a topic dropdown that shows the current topic and lets
  *  users pick from available topics discovered on the robot.
- * @param topicName - The currently selected ROS topic name.
- * @param availableTopics - List of discovered topics from the robot.
- * @param onTopicChange - Callback when user selects a different topic.
+ * @prop topicName - The currently selected ROS topic name.
+ * @prop availableTopics - List of discovered topics from the robot.
+ * @prop onTopicChange - Callback when user selects a different topic.
  */
 export function TopicSelector({ topicName, availableTopics, onTopicChange }: TopicSelectorProps) {
   const hasTopics = availableTopics && availableTopics.length > 0;
@@ -42,7 +42,9 @@ export function TopicSelector({ topicName, availableTopics, onTopicChange }: Top
         {availableTopics.map((topic) => (
           <DropdownMenuItem
             key={topic.name}
-            onClick={() => { onTopicChange(topic.name); }}
+            onClick={() => {
+              onTopicChange(topic.name);
+            }}
             className={`font-mono text-xs cursor-pointer ${
               topic.name === topicName ? 'text-accent' : 'text-text-secondary'
             }`}

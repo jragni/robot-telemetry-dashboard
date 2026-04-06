@@ -3,9 +3,9 @@ import type { StatusRowProps } from './SystemStatusPanel.types';
 
 /** StatusRow
  * @description Renders a single key-value data row for the system status panel.
- * @param label - The data label.
- * @param value - The data value.
- * @param valueClass - Optional additional classes for the value element.
+ * @prop label - The data label.
+ * @prop value - The data value.
+ * @prop valueClass - Optional additional classes for the value element.
  */
 export function StatusRow({ label, value, valueClass }: StatusRowProps) {
   return (

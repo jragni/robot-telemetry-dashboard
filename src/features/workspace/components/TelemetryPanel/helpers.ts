@@ -5,10 +5,7 @@ import {
 } from '@/features/workspace/constants';
 import type { TelemetrySeries } from '@/features/workspace/types/TelemetryPanel.types';
 
-interface CanvasColors {
-  readonly border: string;
-  readonly textMuted: string;
-}
+import type { CanvasColors, ValueRange } from './helpers.types';
 
 /** drawGrid
  * @description Draws horizontal and vertical grid lines on the canvas plot area.
@@ -45,11 +42,6 @@ export function drawGrid(
     ctx.lineTo(x, plotH);
     ctx.stroke();
   }
-}
-
-interface ValueRange {
-  readonly vMin: number;
-  readonly vMax: number;
 }
 
 /** computeValueRange

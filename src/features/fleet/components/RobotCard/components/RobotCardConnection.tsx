@@ -5,13 +5,10 @@ import { RobotCardDataRow } from './RobotCardDataRow';
 /** RobotCardConnection
  * @description Renders connection info rows: rosbridge URL and
  *  last seen timestamp.
- * @param url - Rosbridge WebSocket URL.
- * @param lastSeen - Timestamp of last rosbridge message, or null.
+ * @prop url - Rosbridge WebSocket URL.
+ * @prop lastSeen - Timestamp of last rosbridge message, or null.
  */
-export function RobotCardConnection({
-  url,
-  lastSeen,
-}: RobotCardConnectionProps) {
+export function RobotCardConnection({ url, lastSeen }: RobotCardConnectionProps) {
   return (
     <dl className="flex flex-col gap-2">
       <RobotCardDataRow

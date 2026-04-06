@@ -7,11 +7,11 @@ import { ExpandableRowList } from './ExpandableRowList';
 /** ExpandableRow
  * @description Renders a status row that expands to show a list of names
  *  when toggled. Controlled by parent for accordion behavior.
- * @param label - The row label (e.g., "NODES").
- * @param count - The numeric count to display.
- * @param names - The list of names revealed on expand.
- * @param expanded - Whether this row is currently expanded.
- * @param onToggle - Callback to toggle expand/collapse.
+ * @prop label - The row label (e.g., "NODES").
+ * @prop count - The numeric count to display.
+ * @prop names - The list of names revealed on expand.
+ * @prop expanded - Whether this row is currently expanded.
+ * @prop onToggle - Callback to toggle expand/collapse.
  */
 export function ExpandableRow({ count, expanded, label, names, onToggle }: ExpandableRowProps) {
   const hasNames = names.length > 0;
@@ -26,7 +26,9 @@ export function ExpandableRow({ count, expanded, label, names, onToggle }: Expan
         aria-expanded={expanded}
         disabled={!hasNames}
       >
-        <span className="font-sans text-xs text-text-secondary uppercase tracking-wide">{label}</span>
+        <span className="font-sans text-xs text-text-secondary uppercase tracking-wide">
+          {label}
+        </span>
         <span className="flex items-center gap-1 font-mono text-xs text-text-primary tabular-nums">
           {String(count)}
           {hasNames && <Chevron className="size-3 text-text-primary" />}

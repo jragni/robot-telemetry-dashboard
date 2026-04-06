@@ -1,3 +1,7 @@
+/** normalizeRosbridgeUrl
+ * @description Converts HTTP/HTTPS/bare hostnames into WebSocket URLs for rosbridge.
+ * @param input - User-provided URL or hostname string.
+ */
 export function normalizeRosbridgeUrl(input: string): string {
   const trimmed = input.trim();
   if (!trimmed) return '';

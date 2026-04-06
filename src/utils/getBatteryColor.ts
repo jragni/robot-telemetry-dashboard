@@ -3,6 +3,10 @@ const BATTERY_THRESHOLDS = {
   caution: 30,
 } as const;
 
+/** getBatteryColor
+ * @description Returns a Tailwind text color class based on battery percentage thresholds.
+ * @param percentage - Battery level 0-100, or null.
+ */
 export function getBatteryColor(percentage: number | null): string {
   if (percentage === null || Number.isNaN(percentage)) return 'text-text-muted';
   if (percentage <= BATTERY_THRESHOLDS.critical) return 'text-status-critical';
