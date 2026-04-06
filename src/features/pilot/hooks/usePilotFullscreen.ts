@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { UsePilotFullscreenReturn } from '../types/usePilotFullscreen.types';
+import type { UsePilotFullscreenReturn } from './usePilotFullscreen.types';
 
 export function usePilotFullscreen(): UsePilotFullscreenReturn {
   const [isFullscreen, setIsFullscreen] = useState(false);

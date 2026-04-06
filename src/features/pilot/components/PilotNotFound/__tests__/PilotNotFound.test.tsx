@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
 
-import { PilotNotFound } from './PilotNotFound';
+import { PilotNotFound } from '../PilotNotFound';
 
 describe('PilotNotFound', () => {
   it('renders robot ID in message', () => {

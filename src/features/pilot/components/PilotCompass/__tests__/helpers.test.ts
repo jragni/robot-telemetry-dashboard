@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 
-import { clampCompassWidth } from './helpers';
+import { clampCompassWidth } from '../helpers';
 
 describe('clampCompassWidth', () => {
   it('returns min when viewport is small', () => {

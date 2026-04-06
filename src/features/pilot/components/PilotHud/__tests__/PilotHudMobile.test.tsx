@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { PilotHudMobile } from './PilotHudMobile';
-import type { PilotHudMobileProps } from './PilotHud.types';
+import { PilotHudMobile } from '../PilotHudMobile';
+import type { PilotHudMobileProps } from '../PilotHud.types';
 
 beforeAll(() => {
   global.ResizeObserver = class {
