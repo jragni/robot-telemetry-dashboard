@@ -1,8 +1,6 @@
 import { AlertCircle } from 'lucide-react';
 
-interface FormErrorProps {
-  readonly message: string;
-}
+import type { FormErrorProps } from '../types/FormError.types';
 
 /** FormError
  * @description Renders a form-level error alert with troubleshooting hint.

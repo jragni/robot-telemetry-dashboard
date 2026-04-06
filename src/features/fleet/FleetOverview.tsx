@@ -1,6 +1,6 @@
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 
-import { AddRobotModal } from './components/AddRobotModal/AddRobotModal';
+import { AddRobotModal } from './components/AddRobotModal';
 import { FleetEmptyView } from './components/FleetEmptyView';
 import { FleetRobotGrid } from './components/FleetRobotGrid';
 
