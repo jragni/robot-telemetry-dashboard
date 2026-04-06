@@ -88,7 +88,7 @@ export function WorkspacePanel({
           )}
         </div>
       </header>
-      <div className="flex-1 flex items-center justify-center p-4 min-h-0 overflow-hidden">
+      <div className="flex-1 p-4 min-h-0 overflow-auto">
         <PanelErrorBoundary>
           <Component {...componentProps} />
         </PanelErrorBoundary>
