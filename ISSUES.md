@@ -33,11 +33,17 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-064: Full convention sweep — PR #49
 - T-066: Connection UX — PR #50
 - T-067: Misc fixes — PR #51
-- T-068: sensorVector3Schema nullable axes — 49de4d5 (pending PR)
-- T-081: Extract PilotNotFound from PilotView — 4249ebc (pending PR)
-- T-084: ConnectionManager class refactor — a4dadc5 (pending PR)
-- T-086: Reconnect toast off-by-one — fce1c81 (pending PR)
-- T-071: Landing page unit tests — c296d63 (pending PR)
+- T-068: sensorVector3Schema nullable axes — PR #52
+- T-071: Landing page unit tests — PR #56
+- T-078: PilotCompass folder structure — PR #65
+- T-079: PilotHud types co-location — PR #66
+- T-080: PilotLidarMinimap folder structure — PR #67
+- T-081: Extract PilotNotFound from PilotView — PR #53
+- T-082: RobotWorkspaceMobile restructure — PR #64
+- T-083: TelemetryPanel draw helpers — PR #63
+- T-084: ConnectionManager class refactor — PR #54
+- T-086: Reconnect toast off-by-one — PR #61
+- T-090: Disable text selection on mobile pilot — PR #62
 
 ## In Progress
 
@@ -45,25 +51,7 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 
 ## Backlog
 
-### Folder Restructure (serialize: T-078 → T-079 → T-080)
-
-#### T-078: PilotCompass folder structure
-- Severity: MEDIUM
-- Scope: src/features/pilot/components/PilotCompass/
-- Co-locate types, constants, helpers per FOLDER-STRUCTURE.md. Move compass constants from pilot/constants.ts.
-- Branch: refactor/t-078/pilot-compass-structure
-
-#### T-079: PilotHud folder structure (types co-location only — barrel imports handled by T-077)
-- Severity: MEDIUM
-- Scope: src/features/pilot/components/PilotHud/
-- Move PilotHudProps/PilotHudMobileProps to PilotHud.types.ts from PilotView.types.ts.
-- Branch: refactor/t-079/pilot-hud-structure
-
-#### T-080: PilotLidarMinimap folder structure
-- Severity: MEDIUM
-- Scope: src/features/pilot/components/PilotLidarMinimap.tsx (210 lines)
-- Create folder with index.ts, types.ts, constants.ts, helpers.ts. Move minimap constants from pilot/constants.ts.
-- Branch: refactor/t-080/pilot-lidar-minimap-structure
+### Refactors
 
 #### T-088: RobotWorkspace god component refactor
 - Severity: HIGH
@@ -81,16 +69,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: RobotWorkspace under 80 lines, each extracted piece tested, build passes
 - Branch: refactor/t-088/workspace-god-component
 
-#### T-082: RobotWorkspaceMobile convention violations
-- Severity: MEDIUM
-- Scope: src/features/workspace/components/RobotWorkspaceMobile.tsx
-- Create folder, extract MobileTabBar and MobilePanelHeader, alphabetize props, remove JSX comments.
-- Branch: refactor/t-082/workspace-mobile-structure
-
-#### T-083: TelemetryPanel draw logic helpers
-- Severity: MEDIUM
-- Scope: src/features/workspace/components/TelemetryPanel.tsx
-- Create folder, extract 5 draw helpers, orchestrator pattern. draw() under 30 lines.
 - Branch: refactor/t-083/telemetry-helpers
 
 ### Cross-cutting Sweeps (run after folder restructures)
@@ -144,13 +122,41 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 
 ### Bugs
 
-#### T-090: Disable text selection and context menu on mobile pilot mode
+#### T-091: Mobile LiDAR minimap visual alignment with workspace
+- Severity: LOW
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: src/features/pilot/components/PilotLidarMinimap.tsx, pilot/constants.ts
+- Problem: mobile pilot LiDAR minimap uses different color scheme than the workspace LidarPanel, and point dots are too large for small viewports making the scan hard to read.
+- Fix: match point colors and background to workspace LidarPanel token scheme. Reduce point radius for mobile (use smaller pixel size for minimap context). May need separate mobile constants or responsive size logic.
+- Acceptance: mobile minimap visually consistent with workspace LidarPanel colors, dots smaller and scan readable on 375px viewport, build passes.
+- Branch: fix/t-091/mobile-lidar-visual
+
+### Portfolio Polish (anti-slop evidence)
+
+#### T-092: README overhaul — screenshot, design decisions, known limitations
+- Severity: HIGH
+- Scope: README.md
+- Add dashboard screenshot/GIF with live data to README header
+- Add "Design Decisions" section: Canvas over SVG for LiDAR (SVG re-renders full subtree at 10-20Hz), Zustand over Redux/Context, class singleton for ConnectionManager, rosbridge + RxJS data layer, OKLCH color system
+- Add "Known Limitations" section: WebRTC latency constraints, rosbridge JSON bandwidth inflation, single-robot pilot mode, no multi-echo LiDAR support
+- Add deployed site link in README header
+- Acceptance: README has visual proof, technical depth, and honest limitations. No generic "getting started" filler.
+- Branch: docs/t-092/readme-overhaul
+
+#### T-093: Clean dead code, TODO comments, and commented-out blocks
+- Severity: HIGH
+- Scope: all src/ files
+- Audit for: `// TODO:` comments without context, commented-out code blocks, unused imports, dead functions, placeholder text ("Dashboard screenshot — pending")
+- Remove or resolve each one. If a TODO is real, convert to a ticket and remove the comment.
+- Acceptance: zero `// TODO` comments in src/ (except intentional documented ones), zero commented-out code blocks, build passes
+- Branch: chore/t-093/dead-code-sweep
+
+#### T-094: GitHub repo metadata
 - Severity: MEDIUM
-- Scope: src/features/pilot/components/PilotHud/PilotHudMobile.tsx
-- Problem: long press on mobile triggers text selection, copy/paste popover, or context menu over the HUD controls, interfering with D-pad and slider interaction.
-- Fix: add `user-select-none` (Tailwind), `touch-action: manipulation` on the HUD container, and `onContextMenu={(e) => e.preventDefault()}` to suppress the native context menu on long press.
-- Acceptance: long press anywhere on the mobile pilot HUD does not trigger text selection or context menu. D-pad and sliders remain fully functional.
-- Branch: fix/t-090/mobile-pilot-text-selection
+- Scope: GitHub settings (not code)
+- Add repo description, website URL (deployed site), and topics: ros2, webrtc, telemetry, react, typescript, robotics, zustand, tailwindcss
+- Can be done via `gh repo edit` CLI
+- Branch: n/a (GitHub settings only)
 
 ### Testing (run after all restructures)
 
