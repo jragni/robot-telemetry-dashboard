@@ -66,12 +66,25 @@ src/
 │       ├── dialog.tsx
 │       ├── input.tsx
 │       └── select.tsx
-├── hooks/                        # Shared hooks
-│   ├── useTheme.ts
-│   ├── useBatterySubscription.ts
-│   └── __tests__/                # 3+ test files → subfolder
-│       ├── useBatterySubscription.schemas.test.ts
-│       └── useImuSubscription.schemas.test.ts
+├── hooks/                        # Shared hooks — every hook in its own folder
+│   ├── index.ts                  # Barrel re-exports all hooks
+│   ├── useTheme/
+│   │   ├── useTheme.ts
+│   │   └── index.ts
+│   ├── useBatterySubscription/
+│   │   ├── useBatterySubscription.ts
+│   │   ├── useBatterySubscription.test.ts
+│   │   ├── useBatterySubscription.schemas.test.ts
+│   │   └── index.ts
+│   ├── useControlPublisher/
+│   │   ├── useControlPublisher.ts
+│   │   ├── useControlPublisher.test.ts
+│   │   ├── helpers.ts
+│   │   ├── helpers.test.ts
+│   │   ├── types.ts
+│   │   ├── constants.ts
+│   │   └── index.ts
+│   └── ...
 ├── stores/                       # Shared Zustand stores
 │   └── connection/
 │       ├── useConnectionStore.ts

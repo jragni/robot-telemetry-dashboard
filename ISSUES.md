@@ -50,7 +50,7 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 
 ## In Progress
 
-(none)
+- T-075: Hooks restructure
 
 ## Backlog
 
@@ -200,9 +200,17 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Scope: All exported functions in .ts and .tsx files across src/.
 - Branch: chore/t-069/jsdoc-sweep
 
-### Deferred
-
-#### T-075: Restructure shared hooks into own folders
-- Severity: LOW
-- Deferred: most hooks have only 2 files, high-churn/low-value. Revisit when hooks grow.
+#### T-075: Restructure all shared hooks into own folders
+- Priority: HIGH
+- Scope: src/hooks/ — every hook gets its own folder
+- Create folder for each hook: `{hookName}/{hookName}.ts` + `index.ts`
+- Move all tests from `src/hooks/__tests__/` into their hook's folder (co-located)
+- Move flat `.test.ts` files into their hook's folder
+- Delete `src/hooks/__tests__/` entirely
+- Update `src/hooks/index.ts` barrel to re-export from new paths
+- Update all consumer imports
+- Hooks already in folders (useControlPublisher, useWebRtcStream) stay as-is
+- 13 new folders: useBatterySubscription, useCanvasColors, useConnectionUptime, useImuSubscription, useIsMobile, useLidarSubscription, useResponsiveSize, useRobotConnection, useRosGraph, useRosSubscriber, useRosTopics, useTheme, useThemeChange
+- Also move useZoom into its own folder
+- Acceptance: no flat hook files in src/hooks/, no __tests__/ folder, all tests co-located, barrel updated, all imports resolve, build passes
 - Branch: refactor/t-075/hooks-restructure
