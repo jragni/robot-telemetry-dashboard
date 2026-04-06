@@ -1,15 +1,6 @@
 import { useState, useCallback } from 'react';
 
-interface UseMinimizedPanelsReturn {
-  readonly isMinimized: (id: string) => boolean;
-  readonly isMaximized: (id: string) => boolean;
-  readonly minimize: (id: string) => void;
-  readonly restore: (id: string) => void;
-  readonly maximize: (id: string) => void;
-  readonly restoreAll: () => void;
-  readonly minimizedIds: ReadonlySet<string>;
-  readonly maximizedId: string | null;
-}
+import type { UseMinimizedPanelsReturn } from './useMinimizedPanels.types';
 
 /** useMinimizedPanels
  * @description Manages minimize/maximize state for workspace panels.

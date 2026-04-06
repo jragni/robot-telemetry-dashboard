@@ -3,17 +3,7 @@ import { normalizeRosbridgeUrl } from '@/features/fleet/helpers';
 import { addRobotSchema } from '@/features/fleet/schemas';
 import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
 
-import type { AddRobotFormErrors } from './types/AddRobotModal.types';
-
-interface ValidateSuccess {
-  ok: true;
-  name: string;
-  url: string;
-}
-interface ValidateFailure {
-  ok: false;
-  errors: AddRobotFormErrors;
-}
+import type { ValidateFailure, ValidateSuccess } from './types/AddRobotModal.types';
 
 /** Validate name + url with Zod, then normalize the URL. */
 export function validateRobotForm(name: string, url: string): ValidateSuccess | ValidateFailure {
