@@ -44,6 +44,9 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-084: ConnectionManager class refactor — PR #54
 - T-086: Reconnect toast off-by-one — PR #61
 - T-090: Disable text selection on mobile pilot — PR #62
+- T-095: Pilot feature folder conventions — PR #70
+- T-096: Fleet feature folder conventions — PR #68
+- T-097: Workspace feature folder conventions — PR #69
 
 ## In Progress
 
@@ -69,62 +72,7 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: RobotWorkspace under 80 lines, each extracted piece tested, build passes
 - Branch: refactor/t-088/workspace-god-component
 
-#### T-095: Pilot feature folder conventions
-- Priority: HIGH
-- Scope: src/features/pilot/
-- Problem: pilot feature has types scattered in pilot/types/ that belong with their components, tests mixed into component folders without __tests__/ subfolders, and PilotNotFound as loose files instead of a folder.
-- Fix:
-  - **PilotHud/** — move GyroInline.test.tsx, PilotHudMobile.test.tsx, StatusDot.test.tsx into PilotHud/__tests__/
-  - **PilotCompass/** — move helpers.test.ts into PilotCompass/__tests__/
-  - **PilotNotFound/** — create folder, move PilotNotFound.tsx, PilotNotFound.types.ts, PilotNotFound.test.tsx into it with index.ts
-  - **Co-locate types from pilot/types/ to component folders:**
-    - BatteryRow.types.ts → PilotStatusBar/PilotStatusBar.types.ts (merge if exists)
-    - PilotGyroReadout.types.ts → PilotGyroReadout/PilotGyroReadout.types.ts
-    - PilotControls.types.ts → PilotControls/PilotControls.types.ts
-    - PilotFullscreenToggle.types.ts → stays flat (single file component)
-    - PilotStatusBar.types.ts → PilotStatusBar/PilotStatusBar.types.ts
-    - usePilotFullscreen.types.ts → pilot/hooks/usePilotFullscreen.types.ts
-    - PilotView.types.ts → stays in pilot/types/ (cross-component shared types: PilotTelemetry, ProxyStatus, LidarPoint, PilotCameraProps)
-  - Update all consumer imports
-- Acceptance: no types in pilot/types/ that belong with a single component, 3+ test files in __tests__/ subfolders, PilotNotFound has own folder, build passes
-- Branch: refactor/t-095/pilot-folder-conventions
-
-#### T-096: Fleet feature folder conventions
-- Priority: HIGH
-- Scope: src/features/fleet/
-- Problem: fleet is mostly well-structured but has minor gaps.
-- Fix:
-  - **FleetEmptyView.tsx** and **FleetRobotGrid.tsx** — single flat files in components/, fine as-is
-  - **fleet/types/FleetOverview.types.ts** — check if types are only used by FleetOverview. If so, co-locate. If shared across components, stays.
-  - **helpers.test.ts + schemas.test.ts** at feature root — 2 files, under threshold, fine flat. If more tests added, move to __tests__/
-  - **AddRobotModal/** — has types/ subfolder already. Verify AddRobotModal.test.tsx + helpers.test.ts should be in __tests__/ (2 files, borderline)
-- Acceptance: all types co-located with their single consumer, build passes
-- Branch: refactor/t-096/fleet-folder-conventions
-
-#### T-097: Workspace feature folder conventions
-- Priority: HIGH
-- Scope: src/features/workspace/
-- Problem: workspace/types/ has 11 type files that belong with their components instead of in a shared types/ folder.
-- Fix:
-  - **Co-locate types from workspace/types/ to component folders:**
-    - ActivePanelContent.types.ts → co-locate with ActivePanelContent.tsx (create folder or keep flat)
-    - CameraPanel.types.ts → co-locate with CameraPanel.tsx
-    - ControlsPanel.types.ts → ControlsPanel/ControlsPanel.types.ts
-    - ImuPanel.types.ts → ImuPanel/ImuPanel.types.ts
-    - LidarPanel.types.ts → LidarPanel/LidarPanel.types.ts
-    - RobotWorkspaceMobile.types.ts → already in RobotWorkspaceMobile/ (verify no duplicate in types/)
-    - SystemStatusPanel.types.ts → SystemStatusPanel/SystemStatusPanel.types.ts
-    - TelemetryPanel.types.ts → TelemetryPanel/TelemetryPanel.types.ts
-    - WorkspacePanel.types.ts → co-locate with WorkspacePanel.tsx
-    - MockEnvironment.types.ts, MockImu.types.ts, MockSystemStatus.types.ts → if only used by mocks, co-locate there
-  - **TelemetryPanel/** — move helpers.test.ts into __tests__/ (currently 1 test, will grow)
-  - **RobotWorkspaceMobile/** — move MobilePanelHeader.test.tsx + MobileTabBar.test.tsx into __tests__/ (2 files, borderline but consistent)
-  - **LidarPanel/** — move LidarPanel.test.ts into __tests__/
-  - Update all consumer imports
-- Acceptance: workspace/types/ only contains cross-component shared types (if any remain), all single-consumer types co-located, build passes
-- Branch: refactor/t-097/workspace-folder-conventions
-
-### Cross-cutting Sweeps (run after folder restructures)
+### Cross-cutting Sweeps
 
 #### T-077: Fix barrel file imports
 - Severity: MEDIUM
