@@ -90,26 +90,44 @@ Triple-redundant: color + icon + text label (per MIL-STD-1472H). Terminology: No
 
 JSDoc is required on all exported functions in `.tsx` and `.ts` files — components, hooks, helpers, store actions, utilities. Skip JSDoc only when the function is short, self-descriptive, and has no non-obvious parameters (e.g., `formatDegrees(deg: number): string` needs no comment).
 
-When JSDoc is needed, use this format:
+### Hooks and utility functions — use `@param`
+
+Hooks and utilities take actual function parameters. Document them with `@param`:
 
 ```ts
-/** FunctionName
- * @description What it does and why — not just restating the name.
- * @param paramName - What this param represents or controls.
- * @param options - Configuration object for connection behavior.
- * @returns Description of return value if non-obvious.
+/** useZoom
+ * @description Manages zoom state with clamped min/max and keyboard support.
+ * @param config - Zoom configuration with min, max, step, and optional initial value.
+ * @returns Zoom state and handler functions.
  */
+export function useZoom(config: ZoomConfig) {
 ```
 
-Rules:
+### React components — use `@prop`, not `@param`
+
+Components receive a props object, not individual parameters. Use `@prop` to document props:
+
+```ts
+/** PilotCompass
+ * @description Renders a horizontal compass heading strip using Canvas 2D.
+ *  Tick marks slide horizontally based on IMU yaw angle.
+ * @prop heading - Current heading in degrees (0-360).
+ */
+export function PilotCompass({ heading }: PilotCompassProps) {
+```
+
+Keep `.types.ts` files clean — just the interface with types, no inline JSDoc comments. The component's JSDoc is the single source of truth for what each prop means.
+
+### General rules
+
 - First line: function/component name
 - `@description`: required. Explain purpose and behavior, not just "renders X" or "returns Y"
-- `@param`: required for every parameter. Describe what it represents, not its type (TypeScript handles that)
+- `@param`: only on hooks, utilities, and non-component functions. Never on React component props.
 - `@returns`: required when the return value is non-obvious (skip for void, skip for components returning JSX)
 - Lines wrap at 100 characters
-- Follow [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html)
 
-When to skip JSDoc:
+### When to skip JSDoc entirely
+
 - Function is under ~5 lines and the name fully describes its behavior
 - Pure one-liner utilities with obvious signatures (e.g., `clamp`, `capitalize`)
 - Private/unexported helper functions that are only called once nearby

@@ -72,6 +72,13 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: RobotWorkspace under 80 lines, each extracted piece tested, build passes
 - Branch: refactor/t-088/workspace-god-component
 
+#### T-099: JSDoc sweep — convert @param to @prop on components, add prop docs
+- Severity: MEDIUM
+- Scope: all .tsx component files in src/
+- Fix: replace `@param` with `@prop` on all React component JSDoc. Add `@prop` entries for undocumented props. Keep `@param` on hooks and utility functions. Remove any inline JSDoc comments from `.types.ts` files that duplicate component-level `@prop` docs.
+- Can be merged with T-069 (JSDoc sweep) — same pass, different concern.
+- Branch: chore/t-099/jsdoc-prop-convention
+
 ### Cross-cutting Sweeps
 
 #### T-077: Fix barrel file imports
