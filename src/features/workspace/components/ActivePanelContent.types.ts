@@ -1,16 +1,15 @@
-import type { ImuPanelProps } from '@/features/workspace/types/ImuPanel.types';
-import type { LidarPanelProps } from '@/features/workspace/types/LidarPanel.types';
-import type { TelemetryPanelProps } from '@/features/workspace/types/TelemetryPanel.types';
-import type { MobileDataPanelId } from '@/features/workspace/types/RobotWorkspaceMobile.types';
+import type { Ros } from 'roslib';
 
-import type { CameraPanelProps } from './CameraPanel.types';
-import type { SystemStatusPanelProps } from './SystemStatusPanel/SystemStatusPanel.types';
+import type { RobotConnection } from '@/stores/connection/useConnectionStore.types';
+import type { PanelId } from '@/types/panel.types';
+import type { MobileDataPanelId } from '@/features/workspace/types/RobotWorkspaceMobile.types';
 
 export interface ActivePanelContentProps {
   readonly activePanel: MobileDataPanelId;
-  readonly cameraProps: CameraPanelProps;
-  readonly imuProps: ImuPanelProps;
-  readonly lidarProps: LidarPanelProps;
-  readonly statusProps: SystemStatusPanelProps;
-  readonly telemetryProps: TelemetryPanelProps;
+  readonly connected: boolean;
+  readonly onConnect: () => void;
+  readonly onDisconnect: () => void;
+  readonly robot: RobotConnection;
+  readonly ros: Ros | undefined;
+  readonly selectedTopics: Partial<Record<PanelId, string>>;
 }
