@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
-import { useRosSubscriber } from '@/hooks/useRosSubscriber';
+import { useRosSubscriber } from '@/hooks';
 import { rafThrottle } from '@/utils/rafThrottle';
 import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
 import { sensorVector3Schema, vector3Schema } from '@/types/ros2-schemas';
