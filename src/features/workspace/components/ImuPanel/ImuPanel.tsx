@@ -8,10 +8,10 @@ import { ImuVizSelect } from './components/ImuVizSelect';
  * @description Renders the IMU attitude display in one of four visualization
  *  modes. Owns its variant state and renders the mode selector internally.
  *  Always visible — disconnected state renders at muted opacity.
- * @param roll - Roll angle in degrees.
- * @param pitch - Pitch angle in degrees.
- * @param yaw - Yaw heading in degrees.
- * @param connected - Whether the robot is currently connected.
+ * @prop roll - Roll angle in degrees.
+ * @prop pitch - Pitch angle in degrees.
+ * @prop yaw - Yaw heading in degrees.
+ * @prop connected - Whether the robot is currently connected.
  */
 export function ImuPanel({ roll, pitch, yaw, connected }: ImuPanelProps) {
   const [variant, setVariant] = useState<ImuVariant>('attitude-compass');

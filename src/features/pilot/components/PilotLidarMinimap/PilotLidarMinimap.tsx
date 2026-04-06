@@ -31,10 +31,10 @@ import type { PilotLidarMinimapProps } from './PilotLidarMinimap.types';
  *  radial edge ticks, robot triangle at center, and distance-colored scan
  *  points with radar phosphor glow. Supports zoom via mouse wheel and
  *  +/- buttons. Size scales with viewport height.
- * @param points - Array of LiDAR scan points in Cartesian coordinates.
- * @param rangeMax - Maximum display range in meters.
- * @param heading - Current heading in degrees for robot triangle orientation.
- * @param maxSize - Optional maximum pixel size override for mobile contexts.
+ * @prop points - Array of LiDAR scan points in Cartesian coordinates.
+ * @prop rangeMax - Maximum display range in meters.
+ * @prop heading - Current heading in degrees for robot triangle orientation.
+ * @prop maxSize - Optional maximum pixel size override for mobile contexts.
  */
 export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotLidarMinimapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -100,7 +100,7 @@ export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotL
     ctx.stroke();
 
     // Distance labels along horizontal axis
-    const scale = (half - 6) / rangeMax * zoom;
+    const scale = ((half - 6) / rangeMax) * zoom;
     const showAllLabels = size >= LIDAR_DETAIL_THRESHOLD;
     const labelSteps = showAllLabels ? [0.25, 0.5, 0.75, 1.0] : [0.5, 1.0];
 
@@ -110,10 +110,10 @@ export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotL
     ctx.textBaseline = 'bottom';
 
     for (const ratio of labelSteps) {
-      const dist = rangeMax * ratio / zoom;
+      const dist = (rangeMax * ratio) / zoom;
       const labelX = half + dist * scale;
       if (labelX > size - 12) continue;
-      const label = `${String(Math.round(rangeMax * ratio / zoom))}m`;
+      const label = `${String(Math.round((rangeMax * ratio) / zoom))}m`;
       ctx.fillText(label, labelX + 2, half - 2);
     }
 
@@ -155,7 +155,6 @@ export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotL
     ctx.restore();
 
     ctx.restore();
-
   }, [points, rangeMax, heading, zoom, size, themeVersion, resolveColors, colorsRef]);
 
   return (

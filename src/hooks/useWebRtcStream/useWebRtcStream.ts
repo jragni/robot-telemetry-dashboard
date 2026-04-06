@@ -2,15 +2,17 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { deriveWebRtcUrl } from '@/stores/connection/useConnectionStore.helpers';
 import { SignalingClient } from '@/lib/webrtc/signaling';
-import {
-  calculateBackoffDelay,
-  RECONNECT_MAX_ATTEMPTS,
-} from '@/constants/reconnection';
+import { calculateBackoffDelay, RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
 import type { VideoStreamStatus } from '@/types/streaming.types';
 
 import { ICE_GATHERING_TIMEOUT, PEER_CONNECTION_CONFIG } from './constants';
 import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
 
+/** useWebRtcStream
+ * @description Manages a WebRTC video stream connection with automatic reconnection.
+ *  Handles SDP negotiation, ICE gathering, and connection state transitions.
+ * @param options - Stream configuration including URL, enabled state, and callbacks.
+ */
 export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStreamReturn {
   const { connected, enabled, onStatusChange, url } = options;
 
@@ -60,7 +62,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     reconnectTimerRef.current = window.setTimeout(() => {
       void connect();
     }, delay);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transition]);
 
   const connect = useCallback(async () => {
@@ -179,7 +181,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       shouldConnectRef.current = false;
       teardown();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected, enabled, url]);
 
   return { status, stream, videoRef, error, retry };

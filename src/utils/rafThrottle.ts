@@ -2,6 +2,11 @@ export type CancellableThrottled<T extends (...args: never[]) => void> = T & {
   cancel: () => void;
 };
 
+/** rafThrottle
+ * @description Throttles a callback to fire at most once per requestAnimationFrame.
+ *  Returns a cancellable wrapper that coalesces rapid calls.
+ * @param callback - The function to throttle.
+ */
 export function rafThrottle<T extends (...args: never[]) => void>(
   callback: T,
 ): CancellableThrottled<T> {

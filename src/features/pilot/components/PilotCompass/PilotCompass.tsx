@@ -26,7 +26,7 @@ import type { PilotCompassProps } from './PilotCompass.types';
  *  30 degrees, minor every 10. Cardinal labels (N/E/S/W) rendered inline.
  *  Gradient fade at left/right edges. No background — ticks float over
  *  the camera feed.
- * @param heading - Current heading in degrees (0-360).
+ * @prop heading - Current heading in degrees (0-360).
  */
 export function PilotCompass({ heading }: PilotCompassProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -115,7 +115,6 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     ctx.fillStyle = fadeRight;
     ctx.fillRect(w - COMPASS_FADE_WIDTH, 0, COMPASS_FADE_WIDTH, h);
     ctx.globalCompositeOperation = 'source-over';
-
   }, [heading, stripWidth, themeVersion, resolveColors, colorsRef]);
 
   const headingNormalized = ((heading % 360) + 360) % 360;

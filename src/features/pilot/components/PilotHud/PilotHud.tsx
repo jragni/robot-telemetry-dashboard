@@ -17,12 +17,12 @@ import type { PilotHudProps } from './PilotHud.types';
  *  container. Each child panel re-enables pointer events individually.
  *  Layout: LiDAR top-left, compass top-center, status top-right, gyro
  *  bottom-left, fullscreen toggle bottom-left, controls bottom-right.
- * @param telemetry - Aggregated telemetry state.
- * @param videoStatus - WebRTC video stream status.
- * @param rosbridgeStatus - Rosbridge connection status.
- * @param isFullscreen - Whether Pilot Mode is fullscreen.
- * @param connected - Whether the robot is connected.
- * @param onToggleFullscreen - Callback to toggle fullscreen.
+ * @prop telemetry - Aggregated telemetry state.
+ * @prop videoStatus - WebRTC video stream status.
+ * @prop rosbridgeStatus - Rosbridge connection status.
+ * @prop isFullscreen - Whether Pilot Mode is fullscreen.
+ * @prop connected - Whether the robot is connected.
+ * @prop onToggleFullscreen - Callback to toggle fullscreen.
  */
 export function PilotHud({
   angularVelocity,

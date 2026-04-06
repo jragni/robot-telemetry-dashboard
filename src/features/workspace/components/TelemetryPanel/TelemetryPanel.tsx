@@ -22,9 +22,9 @@ import {
  * @description Renders a Canvas 2D time-series line chart for telemetry data.
  *  Accepts N data series, draws polylines with per-series colors, auto-scaled
  *  value axis, relative time axis. Empty state shows grid with "No data" text.
- * @param series - Array of data series to plot.
- * @param timeWindowMs - Time window in milliseconds to display.
- * @param connected - Whether the robot is currently connected.
+ * @prop series - Array of data series to plot.
+ * @prop timeWindowMs - Time window in milliseconds to display.
+ * @prop connected - Whether the robot is currently connected.
  */
 export function TelemetryPanel({ connected, series, timeWindowMs }: TelemetryPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -78,7 +78,7 @@ export function TelemetryPanel({ connected, series, timeWindowMs }: TelemetryPan
     drawValueAxis(ctx, plotH, left, vMin, vMax, c);
     drawSeriesLines(ctx, series, plotW, plotH, left, tMin, now, vMin, vMax, c);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [series, timeWindowMs, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {

@@ -1,18 +1,5 @@
 import { useState, useCallback } from 'react';
-
-interface UseZoomConfig {
-  min: number;
-  max: number;
-  step: number;
-  initial?: number;
-}
-
-interface UseZoomReturn {
-  zoom: number;
-  zoomIn: () => void;
-  zoomOut: () => void;
-  handleWheel: (e: React.WheelEvent) => void;
-}
+import type { UseZoomConfig, UseZoomReturn } from './useZoom.types';
 
 /** useZoom
  * @description Manages a clamped zoom level with mouse-wheel support. Provides zoomIn,
@@ -34,9 +21,7 @@ export function useZoom({ min, max, step, initial = 1 }: UseZoomConfig): UseZoom
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
       e.preventDefault();
-      setZoom((prev) =>
-        Math.min(max, Math.max(min, prev + (e.deltaY > 0 ? -step : step))),
-      );
+      setZoom((prev) => Math.min(max, Math.max(min, prev + (e.deltaY > 0 ? -step : step))));
     },
     [min, max, step],
   );

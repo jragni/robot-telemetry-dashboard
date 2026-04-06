@@ -14,15 +14,15 @@ import { EStopButton } from './EStopButton';
  *  components with the useControlPublisher hook. Keyboard handling is scoped
  *  to the panel ref. Escape priority: fullscreen exit takes precedence over
  *  E-STOP when in fullscreen mode.
- * @param connected - Whether the robot is connected.
- * @param linearVelocity - Current linear velocity in m/s.
- * @param angularVelocity - Current angular velocity in rad/s.
- * @param isFullscreen - Whether Pilot Mode is in fullscreen (affects Escape handling).
- * @param onDirectionStart - Callback when a direction press begins.
- * @param onDirectionEnd - Callback when a direction press ends.
- * @param onLinearVelocityChange - Callback when linear slider changes.
- * @param onAngularVelocityChange - Callback when angular slider changes.
- * @param onEmergencyStop - Callback for emergency stop.
+ * @prop connected - Whether the robot is connected.
+ * @prop linearVelocity - Current linear velocity in m/s.
+ * @prop angularVelocity - Current angular velocity in rad/s.
+ * @prop isFullscreen - Whether Pilot Mode is in fullscreen (affects Escape handling).
+ * @prop onDirectionStart - Callback when a direction press begins.
+ * @prop onDirectionEnd - Callback when a direction press ends.
+ * @prop onLinearVelocityChange - Callback when linear slider changes.
+ * @prop onAngularVelocityChange - Callback when angular slider changes.
+ * @prop onEmergencyStop - Callback for emergency stop.
  */
 export function PilotControls({
   connected,
@@ -115,19 +115,77 @@ export function PilotControls({
         aria-label="Directional controls"
       >
         <div />
-        <DpadButton direction="forward" icon={ChevronUp} label="Move forward" activeDirection={activeDirection} disabled={disabled} onStart={handleStart} onEnd={handleEnd} />
+        <DpadButton
+          direction="forward"
+          icon={ChevronUp}
+          label="Move forward"
+          activeDirection={activeDirection}
+          disabled={disabled}
+          onStart={handleStart}
+          onEnd={handleEnd}
+        />
         <div />
-        <DpadButton direction="left" icon={ChevronLeft} label="Turn left" activeDirection={activeDirection} disabled={disabled} onStart={handleStart} onEnd={handleEnd} />
-        <DpadButton direction="stop" icon={Square} label="Stop" activeDirection={null} disabled={disabled} onStart={handleStart} onEnd={handleEnd} />
-        <DpadButton direction="right" icon={ChevronRight} label="Turn right" activeDirection={activeDirection} disabled={disabled} onStart={handleStart} onEnd={handleEnd} />
+        <DpadButton
+          direction="left"
+          icon={ChevronLeft}
+          label="Turn left"
+          activeDirection={activeDirection}
+          disabled={disabled}
+          onStart={handleStart}
+          onEnd={handleEnd}
+        />
+        <DpadButton
+          direction="stop"
+          icon={Square}
+          label="Stop"
+          activeDirection={null}
+          disabled={disabled}
+          onStart={handleStart}
+          onEnd={handleEnd}
+        />
+        <DpadButton
+          direction="right"
+          icon={ChevronRight}
+          label="Turn right"
+          activeDirection={activeDirection}
+          disabled={disabled}
+          onStart={handleStart}
+          onEnd={handleEnd}
+        />
         <div />
-        <DpadButton direction="backward" icon={ChevronDown} label="Move backward" activeDirection={activeDirection} disabled={disabled} onStart={handleStart} onEnd={handleEnd} />
+        <DpadButton
+          direction="backward"
+          icon={ChevronDown}
+          label="Move backward"
+          activeDirection={activeDirection}
+          disabled={disabled}
+          onStart={handleStart}
+          onEnd={handleEnd}
+        />
         <div />
       </div>
 
       <div className="flex flex-col gap-2">
-        <VelocitySlider label="LIN" value={linearVelocity} min={VELOCITY_LIMITS.linear.min} max={VELOCITY_LIMITS.linear.max} step={0.01} unit="m/s" disabled={disabled} onChange={onLinearVelocityChange} />
-        <VelocitySlider label="ANG" value={angularVelocity} min={VELOCITY_LIMITS.angular.min} max={VELOCITY_LIMITS.angular.max} step={0.01} unit="rad/s" disabled={disabled} onChange={onAngularVelocityChange} />
+        <VelocitySlider
+          label="LIN"
+          value={linearVelocity}
+          min={VELOCITY_LIMITS.linear.min}
+          max={VELOCITY_LIMITS.linear.max}
+          step={0.01}
+          unit="m/s"
+          disabled={disabled}
+          onChange={onLinearVelocityChange}
+        />
+        <VelocitySlider
+          label="ANG"
+          value={angularVelocity}
+          min={VELOCITY_LIMITS.angular.min}
+          max={VELOCITY_LIMITS.angular.max}
+          step={0.01}
+          unit="rad/s"
+          disabled={disabled}
+          onChange={onAngularVelocityChange}
+        />
       </div>
     </div>
   );

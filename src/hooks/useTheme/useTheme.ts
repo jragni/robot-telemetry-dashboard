@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-
-type Theme = 'dark' | 'light';
+import type { Theme } from './useTheme.types';
 
 function getInitialTheme(): Theme {
   const stored = localStorage.getItem('theme');
@@ -9,6 +8,10 @@ function getInitialTheme(): Theme {
   return 'dark';
 }
 
+/** useTheme
+ * @description Manages dark/light theme state via data-theme attribute and localStorage.
+ *  Syncs with system preference when no stored preference exists.
+ */
 export function useTheme() {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 

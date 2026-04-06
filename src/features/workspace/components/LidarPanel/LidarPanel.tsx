@@ -22,9 +22,9 @@ import { findMinDistance } from './LidarPanel.helpers';
  *  Points colored by distance (close=critical, mid=caution, far=nominal).
  *  Robot shown as a centered triangle. Cartesian grid with crosshair and
  *  range circles for spatial reference. Supports zoom via mouse wheel.
- * @param points - Array of LiDAR scan points in polar coordinates.
- * @param rangeMax - Maximum sensor range in meters.
- * @param connected - Whether the robot is currently connected.
+ * @prop points - Array of LiDAR scan points in polar coordinates.
+ * @prop rangeMax - Maximum sensor range in meters.
+ * @prop connected - Whether the robot is currently connected.
  */
 export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -103,7 +103,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     const metersPerGrid = rangeMax / (LIDAR_GRID_LINE_COUNT / 2) / zoom;
     for (let i = 1; i < LIDAR_GRID_LINE_COUNT; i++) {
       const pos = i * gridSpacing;
-      const distFromCenter = ((i - LIDAR_GRID_LINE_COUNT / 2) * metersPerGrid);
+      const distFromCenter = (i - LIDAR_GRID_LINE_COUNT / 2) * metersPerGrid;
       const labelVal = Math.abs(distFromCenter);
       if (labelVal < 0.01) continue;
       const label = labelVal >= 1 ? `${labelVal.toFixed(0)}m` : `${labelVal.toFixed(1)}m`;
@@ -187,7 +187,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     ctx.lineTo(cx + robotSize * 0.7, cy + robotSize * 0.5);
     ctx.closePath();
     ctx.fill();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [points, rangeMax, connected, zoom, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {
@@ -200,7 +200,10 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     <div
       className={cn('flex flex-col items-center gap-2 w-full h-full', !connected && 'opacity-50')}
     >
-      <div ref={containerRef} className="flex-1 flex items-center justify-center w-full min-h-0 aspect-square max-h-full">
+      <div
+        ref={containerRef}
+        className="flex-1 flex items-center justify-center w-full min-h-0 aspect-square max-h-full"
+      >
         <canvas
           ref={canvasRef}
           width={canvasSize}

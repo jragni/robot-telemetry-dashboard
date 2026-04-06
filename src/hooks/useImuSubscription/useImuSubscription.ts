@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks/useRosSubscriber';
 import { rafThrottle } from '@/utils/rafThrottle';
 import { sensorVector3Schema } from '@/types/ros2-schemas';
-import type { Vector3 } from '@/types/ros2-primitives.types';
+import type { UseImuReturn } from './useImuSubscription.types';
 
 const quaternionSchema = z.object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() });
 
@@ -16,14 +16,6 @@ export const imuMessageSchema = z.object({
   angular_velocity: sensorVector3Schema.optional(),
   linear_acceleration: sensorVector3Schema.optional(),
 });
-
-interface UseImuReturn {
-  readonly roll: number;
-  readonly pitch: number;
-  readonly yaw: number;
-  readonly angularVelocity: Vector3 | undefined;
-  readonly linearAcceleration: Vector3 | undefined;
-}
 
 /** quaternionToEuler
  * @description Converts a quaternion to Euler angles in degrees.
@@ -44,42 +36,63 @@ function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
   return { roll: roll * toDeg, pitch: pitch * toDeg, yaw: yaw * toDeg };
 }
 
+/** useImuSubscription
+ * @description Subscribes to a sensor_msgs/msg/Imu topic, converts quaternion orientation
+ *  to Euler angles, and throttles updates to animation frame rate.
+ * @param ros - Active roslib connection, or undefined when disconnected.
+ * @param topicName - The IMU topic name to subscribe to.
+ */
 export function useImuSubscription(ros: Ros | undefined, topicName: string): UseImuReturn {
   const [state, setState] = useState<UseImuReturn>({
-    angularVelocity: undefined, linearAcceleration: undefined,
-    pitch: 0, roll: 0, yaw: 0,
+    angularVelocity: undefined,
+    linearAcceleration: undefined,
+    pitch: 0,
+    roll: 0,
+    yaw: 0,
   });
 
   const latestRef = useRef(state);
 
   // Throttle setState to animation frame rate
-  const throttledSet = useMemo(() => rafThrottle((next: UseImuReturn) => {
-    setState(next);
-  }), []);
+  const throttledSet = useMemo(
+    () =>
+      rafThrottle((next: UseImuReturn) => {
+        setState(next);
+      }),
+    [],
+  );
 
   useEffect(() => {
-    return () => { throttledSet.cancel(); };
+    return () => {
+      throttledSet.cancel();
+    };
   }, [throttledSet]);
 
-  const onMessage = useMemo(() => (msg: unknown) => {
-    try {
-      const result = imuMessageSchema.safeParse(msg);
-      if (!result.success) {
-        console.warn('[useImuSubscription] Malformed message:', result.error.issues);
-        return;
+  const onMessage = useMemo(
+    () => (msg: unknown) => {
+      try {
+        const result = imuMessageSchema.safeParse(msg);
+        if (!result.success) {
+          console.warn('[useImuSubscription] Malformed message:', result.error.issues);
+          return;
+        }
+        const m = result.data;
+        const euler = quaternionToEuler(m.orientation);
+        const next: UseImuReturn = {
+          roll: euler.roll,
+          pitch: euler.pitch,
+          yaw: euler.yaw,
+          angularVelocity: m.angular_velocity,
+          linearAcceleration: m.linear_acceleration,
+        };
+        latestRef.current = next;
+        throttledSet(next);
+      } catch (err) {
+        console.warn('[useImuSubscription] Unexpected error processing message:', err);
       }
-      const m = result.data;
-      const euler = quaternionToEuler(m.orientation);
-      const next: UseImuReturn = {
-        roll: euler.roll, pitch: euler.pitch, yaw: euler.yaw,
-        angularVelocity: m.angular_velocity, linearAcceleration: m.linear_acceleration,
-      };
-      latestRef.current = next;
-      throttledSet(next);
-    } catch (err) {
-      console.warn('[useImuSubscription] Unexpected error processing message:', err);
-    }
-  }, [throttledSet]);
+    },
+    [throttledSet],
+  );
 
   useRosSubscriber(ros, topicName, 'sensor_msgs/msg/Imu', onMessage);
 

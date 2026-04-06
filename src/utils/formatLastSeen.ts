@@ -1,3 +1,7 @@
+/** formatLastSeen
+ * @description Formats a timestamp into a human-readable relative time string (e.g., "just now", "5s ago").
+ * @param timestamp - Unix timestamp in milliseconds, or null.
+ */
 export function formatLastSeen(timestamp: number | null): string {
   if (timestamp == null) return '—';
   const delta = Date.now() - timestamp;

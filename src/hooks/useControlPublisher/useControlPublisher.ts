@@ -8,6 +8,11 @@ import { DEFAULT_PUBLISH_RATE, ZERO_TWIST } from './constants';
 import { buildTwist } from './helpers';
 import type { UseControlPublisherOptions, UseControlPublisherReturn } from './types';
 
+/** useControlPublisher
+ * @description Publishes geometry_msgs/msg/Twist commands to a ROS topic at a fixed rate.
+ *  Manages velocity state, interval-based publishing, and emergency stop.
+ * @param options - Publisher configuration including ros instance, topic, and publish rate.
+ */
 export function useControlPublisher(
   options: UseControlPublisherOptions = {},
 ): UseControlPublisherReturn {

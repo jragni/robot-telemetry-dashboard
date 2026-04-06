@@ -12,6 +12,9 @@ function createInitialSeries(): { label: string; color: string; data: TelemetryD
   ];
 }
 
+/** useMockTelemetry
+ * @description Generates simulated telemetry data for the mockups page demo panels.
+ */
 export function useMockTelemetry(): MockTelemetryData {
   const [batteryLevel, setBatteryLevel] = useState(78);
   const [uptimeSeconds, setUptimeSeconds] = useState(3742);

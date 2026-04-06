@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
 
-export function useConnectionUptime(robotId: string | undefined, connected: boolean): number | null {
+/** useConnectionUptime
+ * @description Tracks seconds elapsed since a robot connection was established.
+ *  Ticks every second while connected, resets on disconnect.
+ * @param robotId - The robot identifier to track.
+ * @param connected - Whether the robot is currently connected.
+ */
+export function useConnectionUptime(
+  robotId: string | undefined,
+  connected: boolean,
+): number | null {
   const [uptimeSeconds, setUptimeSeconds] = useState<number | null>(null);
 
   const tick = useCallback(() => {

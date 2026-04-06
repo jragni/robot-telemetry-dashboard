@@ -11,10 +11,10 @@ import {
 
 /** NavItem
  * @description Renders a single navigation item with icon, label, and active state.
- * @param item - Navigation item data (icon, label, path).
- * @param active - Whether the item is currently active.
- * @param collapsed - Whether the sidebar is in collapsed mode.
- * @param onClick - Callback invoked when the item is clicked.
+ * @prop item - Navigation item data (icon, label, path).
+ * @prop active - Whether the item is currently active.
+ * @prop collapsed - Whether the sidebar is in collapsed mode.
+ * @prop onClick - Callback invoked when the item is clicked.
  */
 export function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
   return (
@@ -31,9 +31,7 @@ export function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
         className={`shrink-0 ${item.robotColor ? ROBOT_COLOR_TEXT[item.robotColor] : active ? 'opacity-100' : 'opacity-70'}`}
       />
       {item.robotColor != null && !collapsed && (
-          <span
-            className={`w-1.5 h-1.5 rounded-full shrink-0 ${ROBOT_COLOR_DOT[item.robotColor]}`}
-          />
+        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ROBOT_COLOR_DOT[item.robotColor]}`} />
       )}
       {!collapsed && <span className="overflow-hidden text-ellipsis">{item.label}</span>}
     </Button>

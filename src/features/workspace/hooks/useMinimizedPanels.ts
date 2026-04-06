@@ -11,6 +11,11 @@ interface UseMinimizedPanelsReturn {
   readonly maximizedId: string | null;
 }
 
+/** useMinimizedPanels
+ * @description Manages minimize/maximize state for workspace panels.
+ *  Supports individual minimize, single-panel maximize, and restore-all.
+ * @param allIds - All panel IDs in the workspace grid.
+ */
 export function useMinimizedPanels(allIds: readonly string[]): UseMinimizedPanelsReturn {
   const [minimized, setMinimized] = useState(new Set<string>());
   const [maximizedId, setMaximizedId] = useState<string | null>(null);

@@ -4,8 +4,8 @@ import type { GyroRowProps } from './PilotGyroReadout.types';
 /** GyroRow
  * @description Renders a single row in the gyro readout with label and
  *  formatted degree value.
- * @param label - Short axis label (e.g., "PITCH").
- * @param value - Angle in degrees, or null for no data.
+ * @prop label - Short axis label (e.g., "PITCH").
+ * @prop value - Angle in degrees, or null for no data.
  */
 export function GyroRow({ label, value }: GyroRowProps) {
   return (

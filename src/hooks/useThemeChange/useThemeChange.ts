@@ -1,5 +1,10 @@
 import { useEffect, useRef } from 'react';
 
+/** useThemeChange
+ * @description Invokes a callback whenever the data-theme attribute changes on the document element.
+ *  Uses MutationObserver for efficient detection.
+ * @param onThemeChange - Callback fired on theme change.
+ */
 export function useThemeChange(onThemeChange: () => void) {
   const callbackRef = useRef(onThemeChange);
 

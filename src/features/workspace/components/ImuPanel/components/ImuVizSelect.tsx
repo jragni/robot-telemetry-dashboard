@@ -11,8 +11,8 @@ import type { ImuVariant, ImuVizSelectProps } from '@/features/workspace/types/I
 /** ImuVizSelect
  * @description Renders an IMU variant selector dropdown with abbreviated
  *  trigger labels for compact panel footer display.
- * @param value - Currently selected variant.
- * @param onChange - Callback when selection changes.
+ * @prop value - Currently selected variant.
+ * @prop onChange - Callback when selection changes.
  */
 export function ImuVizSelect({ value, onChange }: ImuVizSelectProps) {
   const current = IMU_VIZ_OPTIONS.find((opt) => opt.value === value);
