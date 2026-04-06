@@ -1,11 +1,11 @@
 export { ActivePanelContent } from './ActivePanelContent';
 export { CameraPanel } from './CameraPanel';
-export { ControlsPanel } from './ControlsPanel/ControlsPanel';
-export { ImuPanel } from './ImuPanel/ImuPanel';
-export { LidarPanel } from './LidarPanel/LidarPanel';
+export { ControlsPanel } from './ControlsPanel';
+export { ImuPanel } from './ImuPanel';
+export { LidarPanel } from './LidarPanel';
 export { MinimizedPanelBar } from './MinimizedPanelBar';
 export { RobotWorkspaceMobile } from './RobotWorkspaceMobile';
-export { SystemStatusPanel } from './SystemStatusPanel/SystemStatusPanel';
+export { SystemStatusPanel } from './SystemStatusPanel';
 export { TelemetryPanel } from './TelemetryPanel';
 export { TopicSelector } from './TopicSelector';
 export { WorkspaceNotFound } from './WorkspaceNotFound';

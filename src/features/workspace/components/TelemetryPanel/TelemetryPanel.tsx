@@ -1,8 +1,9 @@
 import { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useCanvasColors, useRosTopics } from '@/hooks';
-import { useTelemetrySubscription } from '@/features/workspace/hooks/useTelemetrySubscription';
 import { cn } from '@/lib/utils';
+
+import { useTelemetrySubscription } from '../../hooks';
 import {
   TELEMETRY_AXIS_PADDING,
   TELEMETRY_BOTTOM_PADDING,

@@ -1,6 +1,6 @@
 import { CameraPanel } from '@/features/workspace/components/CameraPanel';
-import { ImuPanel } from '@/features/workspace/components/ImuPanel/ImuPanel';
-import { LidarPanel } from '@/features/workspace/components/LidarPanel/LidarPanel';
+import { ImuPanel } from '@/features/workspace/components/ImuPanel';
+import { LidarPanel } from '@/features/workspace/components/LidarPanel';
 import { TelemetryPanel } from '@/features/workspace/components/TelemetryPanel';
 
 import { useMockTelemetry } from '../hooks/useMockTelemetry';
