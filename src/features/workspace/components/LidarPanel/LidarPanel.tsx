@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { useCanvasColors } from '@/hooks';
 import { useLidarSubscription } from '@/hooks';
-import { useZoom } from '@/hooks/useZoom';
+import { useZoom } from '@/hooks';
 import { Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
