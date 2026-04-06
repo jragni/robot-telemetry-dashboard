@@ -1,6 +1,5 @@
-import type { FleetRobotGridProps } from '@/features/fleet/types/FleetOverview.types';
-
-import { RobotCard } from './RobotCard/RobotCard';
+import { RobotCard } from './RobotCard';
+import type { FleetRobotGridProps } from './FleetRobotGrid.types';
 
 /** FleetRobotGrid
  * @description Renders the robot cards in a responsive grid layout.
