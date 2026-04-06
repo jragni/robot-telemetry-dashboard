@@ -1,6 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react';
-import { formatDegrees } from '@/utils/formatDegrees';
-import { normalizeHeading } from '@/utils/normalizeHeading';
+import { formatDegrees, normalizeHeading } from '@/utils';
 import { useCanvasColors } from '@/hooks';
 import { WIREFRAME_COLOR_FALLBACKS, WIREFRAME_TOKEN_MAP } from '@/features/workspace/constants';
 import type { WireframeViewProps } from '@/features/workspace/types/ImuPanel.types';

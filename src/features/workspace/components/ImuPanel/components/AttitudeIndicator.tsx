@@ -1,6 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react';
-import { formatDegrees } from '@/utils/formatDegrees';
-import { withAlpha } from '@/utils/withAlpha';
+import { formatDegrees, withAlpha } from '@/utils';
 import { useCanvasColors } from '@/hooks';
 import {
   PITCH_LADDER_DEGREES,

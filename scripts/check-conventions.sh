@@ -44,12 +44,12 @@ for file in "$@"; do
     fi
   fi
 
-  # 4. Deep hook imports — must use @/hooks barrel
-  DEEP_HOOKS=$(grep -n "from '@/hooks/[a-zA-Z]" "$file" 2>/dev/null | grep -v "from '@/hooks'")
-  if [[ -n "$DEEP_HOOKS" ]]; then
-    echo "CONVENTION: deep hook import — use barrel import from '@/hooks'"
+  # 4. Deep barrel imports — must use @/hooks and @/utils barrels
+  DEEP_BARRELS=$(grep -n "from '@/hooks/[a-zA-Z]\|from '@/utils/[a-zA-Z]" "$file" 2>/dev/null | grep -v "from '@/hooks'" | grep -v "from '@/utils'")
+  if [[ -n "$DEEP_BARRELS" ]]; then
+    echo "CONVENTION: deep import — use barrel import from '@/hooks' or '@/utils'"
     echo "  $file"
-    echo "$DEEP_HOOKS" | sed 's/^/    /'
+    echo "$DEEP_BARRELS" | sed 's/^/    /'
     ERRORS=$((ERRORS + 1))
   fi
 

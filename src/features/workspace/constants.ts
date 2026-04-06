@@ -1,6 +1,6 @@
 import { Activity, Camera, Compass, Crosshair, Gamepad2, Radar, Shield } from 'lucide-react';
 
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
+import { CANVAS_FALLBACKS } from '@/utils';
 import type { ImuVariant } from '@/features/workspace/types/ImuPanel.types';
 
 import type { MobileTabId } from './types/RobotWorkspaceMobile.types';

@@ -2,9 +2,7 @@ import { useState } from 'react';
 
 import { useBatterySubscription, useConnectionUptime, useRosGraph, useRosTopics } from '@/hooks';
 import { Button } from '@/components/ui/button';
-import { formatLastSeen } from '@/utils/formatLastSeen';
-import { formatUptime } from '@/utils/formatUptime';
-import { getBatteryColor } from '@/utils/getBatteryColor';
+import { formatLastSeen, formatUptime, getBatteryColor } from '@/utils';
 
 import { CONNECTION_BUTTON, STATUS_DISPLAY } from './SystemStatusPanel.constants';
 import { ExpandableRow } from './ExpandableRow';
