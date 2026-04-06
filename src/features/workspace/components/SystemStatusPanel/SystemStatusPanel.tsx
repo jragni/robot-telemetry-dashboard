@@ -5,7 +5,7 @@ import { formatLastSeen } from '@/utils/formatLastSeen';
 import { formatUptime } from '@/utils/formatUptime';
 import { getBatteryColor } from '@/utils/getBatteryColor';
 
-import type { SystemStatusPanelProps } from '@/features/workspace/types/SystemStatusPanel.types';
+import type { SystemStatusPanelProps } from './SystemStatusPanel.types';
 import { StatusRow } from './StatusRow';
 import { ExpandableRow } from './ExpandableRow';
 

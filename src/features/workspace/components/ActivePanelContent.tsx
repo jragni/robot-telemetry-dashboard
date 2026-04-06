@@ -1,5 +1,5 @@
 import { MOBILE_PANEL_COMPONENTS } from '../constants';
-import type { ActivePanelContentProps } from '../types/ActivePanelContent.types';
+import type { ActivePanelContentProps } from './ActivePanelContent.types';
 import type { MobileDataPanelId } from '../types/RobotWorkspaceMobile.types';
 
 /** ActivePanelContent

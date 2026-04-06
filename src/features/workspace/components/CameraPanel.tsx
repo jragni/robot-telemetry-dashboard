@@ -1,5 +1,5 @@
 import { CameraEmptyState } from '@/components/CameraEmptyState';
-import type { CameraPanelProps } from '@/features/workspace/types/CameraPanel.types';
+import type { CameraPanelProps } from './CameraPanel.types';
 
 /** CameraPanel
  * @description Renders a camera feed panel. Displays live video via WebRTC
