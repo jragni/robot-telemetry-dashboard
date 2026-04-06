@@ -10,7 +10,7 @@ import {
   Square,
 } from 'lucide-react';
 
-import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
+import { useControlPublisher } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DpadButton } from '@/components/controls/DpadButton';
