@@ -1,6 +1,6 @@
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { PilotFullscreenToggleProps } from '../types/PilotFullscreenToggle.types';
+import type { PilotFullscreenToggleProps } from './PilotFullscreenToggle.types';
 
 /** PilotFullscreenToggle
  * @description Renders a button that toggles Pilot Mode between normal

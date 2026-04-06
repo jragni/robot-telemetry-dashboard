@@ -1,5 +1,5 @@
 import { getBatteryColor } from '@/utils/getBatteryColor';
-import type { BatteryRowProps } from '@/features/pilot/types/BatteryRow.types';
+import type { BatteryRowProps } from './PilotStatusBar.types';
 
 /** BatteryRow
  * @description Renders the battery percentage with a small bar indicator.

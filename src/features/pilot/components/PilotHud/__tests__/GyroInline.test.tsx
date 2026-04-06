@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { GyroInline } from './GyroInline';
+import { GyroInline } from '../GyroInline';
 
 describe('GyroInline', () => {
   it('renders R P Y labels', () => {

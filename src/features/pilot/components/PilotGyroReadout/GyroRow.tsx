@@ -1,5 +1,5 @@
 import { formatDegrees } from '@/utils/formatDegrees';
-import type { GyroRowProps } from '../../types/PilotGyroReadout.types';
+import type { GyroRowProps } from './PilotGyroReadout.types';
 
 /** GyroRow
  * @description Renders a single row in the gyro readout with label and

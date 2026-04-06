@@ -1,4 +1,4 @@
-import type { ConnectionRowProps } from '../../types/PilotStatusBar.types';
+import type { ConnectionRowProps } from './PilotStatusBar.types';
 
 /** ConnectionRow
  * @description Renders a connection status row with animated dot indicator

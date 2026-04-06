@@ -1,6 +1,6 @@
 import { OctagonX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { EStopButtonProps } from '../../types/PilotControls.types';
+import type { EStopButtonProps } from './PilotControls.types';
 
 /** EStopButton
  * @description Renders the emergency stop button with pulsing border glow,

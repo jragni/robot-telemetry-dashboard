@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { StatusDot } from './StatusDot';
+import { StatusDot } from '../StatusDot';
 
 describe('StatusDot', () => {
   it('renders label text', () => {
