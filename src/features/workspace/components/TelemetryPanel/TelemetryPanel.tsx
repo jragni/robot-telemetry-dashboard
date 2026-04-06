@@ -1,11 +1,13 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { cn } from '@/lib/utils';
 import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { useTelemetrySubscription } from '@/features/workspace/hooks/useTelemetrySubscription';
+import { cn } from '@/lib/utils';
 import {
   TELEMETRY_AXIS_PADDING,
   TELEMETRY_BOTTOM_PADDING,
   TELEMETRY_COLOR_FALLBACKS,
+  TELEMETRY_TIME_WINDOW_MS,
   TELEMETRY_TOKEN_MAP,
 } from '@/features/workspace/constants';
 import type { TelemetryPanelProps } from '@/features/workspace/types/TelemetryPanel.types';
@@ -20,13 +22,17 @@ import {
 
 /** TelemetryPanel
  * @description Renders a Canvas 2D time-series line chart for telemetry data.
- *  Accepts N data series, draws polylines with per-series colors, auto-scaled
- *  value axis, relative time axis. Empty state shows grid with "No data" text.
- * @prop series - Array of data series to plot.
- * @prop timeWindowMs - Time window in milliseconds to display.
+ *  Owns its ROS subscription via useTelemetrySubscription. Draws polylines with
+ *  per-series colors, auto-scaled value axis, relative time axis. Empty state
+ *  shows grid with "No data" text.
  * @prop connected - Whether the robot is currently connected.
+ * @prop ros - Active roslib connection, or undefined when disconnected.
+ * @prop topicName - The ROS topic name to subscribe to.
+ * @prop topicType - The ROS message type string.
  */
-export function TelemetryPanel({ connected, series, timeWindowMs }: TelemetryPanelProps) {
+export function TelemetryPanel({ connected, ros, topicName, topicType }: TelemetryPanelProps) {
+  const series = useTelemetrySubscription(ros, topicName, topicType);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasWidth, setCanvasWidth] = useState(400);
@@ -70,16 +76,16 @@ export function TelemetryPanel({ connected, series, timeWindowMs }: TelemetryPan
     ctx.clearRect(0, 0, w, h);
 
     const now = Date.now();
-    const tMin = now - timeWindowMs;
+    const tMin = now - TELEMETRY_TIME_WINDOW_MS;
     const { vMax, vMin } = computeValueRange(series, tMin, now);
 
     drawGrid(ctx, plotW, plotH, left, c);
-    drawTimeAxis(ctx, plotW, plotH, left, timeWindowMs, c);
+    drawTimeAxis(ctx, plotW, plotH, left, TELEMETRY_TIME_WINDOW_MS, c);
     drawValueAxis(ctx, plotH, left, vMin, vMax, c);
     drawSeriesLines(ctx, series, plotW, plotH, left, tMin, now, vMin, vMax, c);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
-  }, [series, timeWindowMs, resolveColors, themeVersion, colorsRef]);
+  }, [series, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {
     draw();
@@ -95,8 +101,8 @@ export function TelemetryPanel({ connected, series, timeWindowMs }: TelemetryPan
           ref={canvasRef}
           width={canvasWidth}
           height={canvasHeight}
-          style={{ width: '100%', height: '100%' }}
-          aria-label={`Telemetry chart: ${String(seriesCount)} series, ${String(totalPoints)} points, ${String(Math.round(timeWindowMs / 1000))}s window`}
+          style={{ height: '100%', width: '100%' }}
+          aria-label={`Telemetry chart: ${String(seriesCount)} series, ${String(totalPoints)} points, ${String(Math.round(TELEMETRY_TIME_WINDOW_MS / 1000))}s window`}
         />
       </div>
       <div className="flex items-center gap-3 font-mono text-xs shrink-0 px-1 overflow-x-auto flex-wrap">
