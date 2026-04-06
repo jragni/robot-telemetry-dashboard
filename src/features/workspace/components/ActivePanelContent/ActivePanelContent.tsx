@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 
 import type { MobileDataPanelId } from '@/features/workspace/types/RobotWorkspaceMobile.types';
+
 import { CameraPanel } from '../CameraPanel';
 import { ImuPanel } from '../ImuPanel';
 import { LidarPanel } from '../LidarPanel';
@@ -8,12 +9,13 @@ import { SystemStatusPanel } from '../SystemStatusPanel';
 import { TelemetryPanel } from '../TelemetryPanel';
 import type { ActivePanelContentProps } from './ActivePanelContent.types';
 
-const MOBILE_PANEL_MAP: Record<MobileDataPanelId, ComponentType<Record<string, unknown>>> = {
-  camera: CameraPanel as ComponentType<Record<string, unknown>>,
-  imu: ImuPanel as ComponentType<Record<string, unknown>>,
-  lidar: LidarPanel as ComponentType<Record<string, unknown>>,
-  status: SystemStatusPanel as ComponentType<Record<string, unknown>>,
-  telemetry: TelemetryPanel as ComponentType<Record<string, unknown>>,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- panels have different prop shapes, type safety is in propsMap
+const MOBILE_PANEL_MAP: Record<MobileDataPanelId, ComponentType<any>> = {
+  camera: CameraPanel,
+  imu: ImuPanel,
+  lidar: LidarPanel,
+  status: SystemStatusPanel,
+  telemetry: TelemetryPanel,
 };
 
 /** ActivePanelContent
