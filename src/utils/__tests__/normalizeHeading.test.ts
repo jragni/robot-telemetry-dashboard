@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { normalizeHeading } from './normalizeHeading';
+import { normalizeHeading } from '../normalizeHeading';
 
 describe('normalizeHeading', () => {
   it('returns 0 for 0 degrees', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatDegrees } from './formatDegrees';
+import { formatDegrees } from '../formatDegrees';
 
 describe('formatDegrees', () => {
   it('formats 0 degrees', () => {
