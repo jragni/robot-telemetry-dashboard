@@ -1,4 +1,4 @@
-import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+import { useResponsiveSize } from '@/hooks';
 
 const MOBILE_BREAKPOINT = 768;
 

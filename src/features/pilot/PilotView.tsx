@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
-import { useImuSubscription } from '@/hooks/useImuSubscription';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { useLidarSubscription } from '@/hooks/useLidarSubscription';
-import { useRobotConnection } from '@/hooks/useRobotConnection';
-import { useRosTopics } from '@/hooks/useRosTopics';
-import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
+import {
+  useBatterySubscription,
+  useControlPublisher,
+  useImuSubscription,
+  useIsMobile,
+  useLidarSubscription,
+  useRobotConnection,
+  useRosTopics,
+  useWebRtcStream,
+} from '@/hooks';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { cn } from '@/lib/utils';
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { X } from 'lucide-react';
 
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme } from '@/hooks';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { ConnectionToastProvider } from '@/components/ConnectionToastProvider';
@@ -54,11 +54,11 @@ export function AppShell() {
       </div>
 
       {drawerOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
-            onClick={closeDrawer}
-            aria-hidden="true"
-          />
+        <div
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
+          onClick={closeDrawer}
+          aria-hidden="true"
+        />
       )}
 
       <div

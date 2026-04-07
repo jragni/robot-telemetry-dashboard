@@ -1,5 +1,4 @@
-import { getBatteryColor } from '@/utils/getBatteryColor';
-import { normalizeHeading } from '@/utils/normalizeHeading';
+import { getBatteryColor, normalizeHeading } from '@/utils';
 
 import { HUD_PANEL_BASE } from '../../constants';
 import { MINIMAP_SIZE_MOBILE_MAX } from '../PilotLidarMinimap/constants';
@@ -47,7 +46,9 @@ export function PilotHudMobile({
         paddingRight: 'env(safe-area-inset-right, 0px)',
       }}
       aria-label="Pilot HUD overlay — mobile"
-      onContextMenu={(e) => { e.preventDefault(); }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+      }}
     >
       {/* Full-width compass strip */}
       <div className="absolute top-0 left-0 right-0 pointer-events-auto">
@@ -56,7 +57,9 @@ export function PilotHudMobile({
         </div>
 
         {/* Status + gyro row */}
-        <div className={`${HUD_PANEL_BASE} rounded-none border-x-0 border-t-0 flex items-center gap-3 px-3 py-1`}>
+        <div
+          className={`${HUD_PANEL_BASE} rounded-none border-x-0 border-t-0 flex items-center gap-3 px-3 py-1`}
+        >
           {/* ROS status */}
           <StatusDot connected={rosConnected} label="ROS" />
 

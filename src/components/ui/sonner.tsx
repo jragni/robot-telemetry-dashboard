@@ -6,7 +6,7 @@ import {
   TriangleAlertIcon,
 } from 'lucide-react';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme } from '@/hooks';
 
 /** Toaster
  * @description Wraps Sonner's toast container with the app's theme and

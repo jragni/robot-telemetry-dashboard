@@ -1,7 +1,4 @@
-import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-import { useRobotConnection } from '@/hooks/useRobotConnection';
-import { useRosGraph } from '@/hooks/useRosGraph';
-import { useRosTopics } from '@/hooks/useRosTopics';
+import { useBatterySubscription, useRobotConnection, useRosGraph, useRosTopics } from '@/hooks';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 

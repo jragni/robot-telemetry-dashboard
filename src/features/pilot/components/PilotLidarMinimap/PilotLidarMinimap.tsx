@@ -2,9 +2,7 @@ import { useRef, useEffect, useCallback } from 'react';
 import { Minus, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useCanvasColors } from '@/hooks/useCanvasColors';
-import { useResponsiveSize } from '@/hooks/useResponsiveSize';
-import { useZoom } from '@/hooks/useZoom';
+import { useCanvasColors, useResponsiveSize, useZoom } from '@/hooks';
 import { LIDAR_POINT_RADIUS } from '@/constants/canvas';
 
 import { HUD_PANEL_BASE } from '../../constants';
