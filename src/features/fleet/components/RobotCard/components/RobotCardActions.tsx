@@ -7,12 +7,12 @@ import { RobotDeleteButton } from './RobotDeleteButton';
 /** RobotCardActions
  * @description Renders the card action row with View, Pilot, Connect/Disconnect,
  *  and delete buttons.
- * @param robotId - Robot identifier for navigation links.
- * @param robotName - Robot name for delete button aria-label.
- * @param status - Current connection status.
- * @param onRemove - Callback invoked when user confirms deletion.
- * @param onConnect - Callback to initiate robot connection.
- * @param onDisconnect - Callback to disconnect robot.
+ * @prop robotId - Robot identifier for navigation links.
+ * @prop robotName - Robot name for delete button aria-label.
+ * @prop status - Current connection status.
+ * @prop onRemove - Callback invoked when user confirms deletion.
+ * @prop onConnect - Callback to initiate robot connection.
+ * @prop onDisconnect - Callback to disconnect robot.
  */
 export function RobotCardActions({
   robotId,
@@ -63,7 +63,13 @@ export function RobotCardActions({
           disabled={isConnecting}
           onClick={handleConnectionToggle}
           className="flex-1 font-sans text-xs uppercase tracking-widest cursor-pointer transition"
-          aria-label={isConnecting ? 'Connecting to robot' : isConnected ? `Disconnect ${robotName}` : `Connect ${robotName}`}
+          aria-label={
+            isConnecting
+              ? 'Connecting to robot'
+              : isConnected
+                ? `Disconnect ${robotName}`
+                : `Connect ${robotName}`
+          }
         >
           {isConnecting ? (
             <>

@@ -1,3 +1,5 @@
+import type { Ros } from 'roslib';
+
 export interface PlotDataPoint {
   readonly timestamp: number;
   readonly value: number;
@@ -10,7 +12,7 @@ export interface TelemetrySeries {
 }
 
 export interface TelemetryPanelProps {
-  readonly series: readonly TelemetrySeries[];
-  readonly timeWindowMs: number;
   readonly connected: boolean;
+  readonly ros: Ros | undefined;
+  readonly topicName: string;
 }

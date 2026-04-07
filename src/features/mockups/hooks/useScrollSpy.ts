@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 
+/** useScrollSpy
+ * @description Tracks which section is currently in view using IntersectionObserver.
+ * @param sectionIds - Array of DOM element IDs to observe.
+ */
 export function useScrollSpy(sectionIds: readonly string[]): string {
   const [activeId, setActiveId] = useState(sectionIds[0] ?? '');
   const observerRef = useRef<IntersectionObserver | null>(null);

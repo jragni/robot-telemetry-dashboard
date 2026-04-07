@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { Topic } from 'roslib';
-import type { Direction } from '@/types/control.types';
-import { VELOCITY_LIMITS } from '@/constants/controls';
-import type { UseControlPublisherOptions, UseControlPublisherReturn } from './types';
-import { ZERO_TWIST, DEFAULT_PUBLISH_RATE } from './constants';
-import { buildTwist } from './helpers';
 
+import { VELOCITY_LIMITS } from '@/constants/controls';
+import type { Direction } from '@/types/control.types';
+
+import { DEFAULT_PUBLISH_RATE, ZERO_TWIST } from './constants';
+import { buildTwist } from './helpers';
+import type { UseControlPublisherOptions, UseControlPublisherReturn } from './types';
+
+/** useControlPublisher
+ * @description Publishes geometry_msgs/msg/Twist commands to a ROS topic at a fixed rate.
+ *  Manages velocity state, interval-based publishing, and emergency stop.
+ * @param options - Publisher configuration including ros instance, topic, and publish rate.
+ */
 export function useControlPublisher(
   options: UseControlPublisherOptions = {},
 ): UseControlPublisherReturn {

@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
+import { Button } from '@/components/ui/button';
 import type { HeaderProps } from '@/types/Header.types';
 
 /** getBreadcrumb
  * @description Derives breadcrumb text from the current route pathname.
- * @param pathname - The current route pathname.
+ * @prop pathname - The current route pathname.
  * @returns The breadcrumb string for display.
  */
 function getBreadcrumb(pathname: string): string {
@@ -31,16 +31,16 @@ function getBreadcrumb(pathname: string): string {
 /** Header
  * @description Renders the navigation header with breadcrumb, theme toggle, and
  *  mobile hamburger.
- * @param onToggleDrawer - Callback invoked when the mobile hamburger is clicked.
- * @param showHamburger - Whether to show the mobile hamburger button.
- * @param theme - The current theme ('dark' or 'light').
- * @param onToggleTheme - Callback invoked to toggle the theme.
+ * @prop onToggleDrawer - Callback invoked when the mobile hamburger is clicked.
+ * @prop showHamburger - Whether to show the mobile hamburger button.
+ * @prop theme - The current theme ('dark' or 'light').
+ * @prop onToggleTheme - Callback invoked to toggle the theme.
  */
 export function Header({
   onToggleDrawer,
+  onToggleTheme,
   showHamburger = false,
   theme,
-  onToggleTheme,
 }: HeaderProps) {
   const location = useLocation();
   const breadcrumb = getBreadcrumb(location.pathname);
@@ -48,15 +48,15 @@ export function Header({
   return (
     <header className="bg-surface-primary border-b border-border flex items-center px-3 gap-2.5 h-full shadow-glow-bottom relative z-10">
       {showHamburger && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleDrawer}
-            aria-label="Open navigation"
-            className="w-8 h-8 text-text-secondary border border-border hover:border-border-hover hover:text-text-primary md:hidden"
-          >
-            <Menu size={16} />
-          </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleDrawer}
+          aria-label="Open navigation"
+          className="w-8 h-8 text-text-secondary border border-border hover:border-border-hover hover:text-text-primary md:hidden"
+        >
+          <Menu size={16} />
+        </Button>
       )}
 
       <Link

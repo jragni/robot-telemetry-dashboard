@@ -1,197 +1,279 @@
-# Issues — General Housekeeping (Audit 2)
+# Issues — General Housekeeping
 
-Consolidated from 5 parallel audits (architecture, quality, safety, performance, coverage) on 2026-04-03.
-Previous audit tickets TICKET-001 through TICKET-024; merged: T-001, T-002, T-003, T-006, T-007, T-007-v2, T-012, T-014, T-015-v2, T-016. Rejected: T-021 (no Context). Remaining old tickets superseded by this fresh audit.
-
----
-
-## Tickets
-
-### Wave 1 — Blocking (COMPLETE)
-
-- T-025: Fix shared→feature import boundary violations — PR #24 MERGED
-- T-026: Add cancel() to rafThrottle and clean up on unmount — PR #27 MERGED
-- T-027: Handle ConnectionManager.connect rejection — PR #25 MERGED
-- T-028: Publish ZERO_TWIST on useControlPublisher unmount — PR #26 MERGED
-
-### Wave 2 — Code Quality + Performance
-
-#### T-029: Migrate workspace canvas components to useCanvasColors
-- Severity: HIGH
-- Files: `src/features/workspace/components/TelemetryPanel.tsx`, `src/features/workspace/components/LidarPanel.tsx`, `src/features/workspace/components/ImuPanel/components/CompassHeading.tsx`, `src/features/workspace/components/ImuPanel/components/WireframeView.tsx`, `src/features/workspace/components/ImuPanel/components/AttitudeIndicator.tsx`
-- Scope: Replace inline colorsRef/resolveColors/themeVersion with useCanvasColors hook. Replace hardcoded OKLCH with CANVAS_FALLBACKS.
-- Acceptance: Zero inline getComputedStyle in workspace canvas components. All use useCanvasColors. Tests verify hook integration.
-- Conflicts: T-033 depends on this (both touch LidarPanel.tsx)
-- Branch: `fix/t-029/workspace-use-canvas-colors`
-
-#### T-030: Remove unused production dependencies
-- Severity: HIGH
-- Files: `package.json`
-- Scope: `npm uninstall d3 gsap next-themes observable-hooks react-grid-layout recharts rxjs react-is`
-- Acceptance: None of these packages in dependencies. Build succeeds. Test confirms no imports of removed packages.
-- Branch: `chore/t-030/remove-unused-deps`
-
-#### T-031: Route-level code splitting
-- Severity: HIGH
-- Files: `src/App.tsx`
-- Scope: React.lazy + Suspense for LandingPage, FleetOverview, RobotWorkspace, PilotView, MockupsPage.
-- Acceptance: Each route loads as separate chunk. Build shows multiple chunks. Test confirms lazy loading setup.
-- Branch: `perf/t-031/route-code-splitting`
-
-#### T-032: Extract StatusDot and GyroInline from PilotHudMobile
-- Severity: HIGH
-- Files: `src/features/pilot/components/PilotHudMobile.tsx` (+ new StatusDot.tsx, GyroInline.tsx)
-- Scope: Extract to own files per one-component-per-file rule.
-- Acceptance: One component per .tsx file. Tests verify components render.
-- Branch: `refactor/t-032/pilot-hud-mobile-extract`
-
-#### T-033: Fix LidarPanel Math.min stack overflow risk
-- Severity: MEDIUM
-- Files: `src/features/workspace/components/LidarPanel.tsx:228`
-- Scope: Replace Math.min(...points.map(...)) with for-loop.
-- Acceptance: No spread operator on points array. Test with large array.
-- Conflicts: Run after T-029
-- Branch: `fix/t-033/lidar-min-overflow`
-
-#### T-034: Fix telemetry ring buffer copy
-- Severity: MEDIUM
-- Files: `src/features/workspace/hooks/useTelemetrySubscription.ts:191`
-- Scope: Store data in ref, use frame-synced counter for redraws.
-- Acceptance: No [...buf] spread on every message. Test verifies ref-based approach.
-- Conflicts: Run after T-037
-- Branch: `perf/t-034/telemetry-ringbuf-ref`
-
-#### T-035: Add useMemo to PilotView render-path allocations
-- Severity: MEDIUM
-- Files: `src/features/pilot/PilotView.tsx:44-57`
-- Scope: useMemo for lidar points map and telemetry object.
-- Acceptance: Both values memoized with correct deps. Test verifies memoization.
-- Branch: `perf/t-035/pilot-view-memoize`
-
-#### T-036: Validate RTCSdpType with z.enum
-- Severity: MEDIUM
-- Files: `src/lib/webrtc/signaling.ts:34`
-- Scope: Replace z.string() with z.enum(["offer","answer","pranswer","rollback"]). Remove as RTCSdpType cast.
-- Acceptance: No type assertion on SDP type. Test verifies enum validation.
-- Branch: `fix/t-036/rtc-sdp-enum`
-
-#### T-037: Extract duplicate constants to shared
-- Severity: MEDIUM
-- Files: `src/features/workspace/constants.ts`, `src/features/pilot/constants.ts`, `src/hooks/useImuSubscription.ts`, `src/features/workspace/hooks/useTelemetrySubscription.ts`
-- Scope: Move COMPASS_CARDINALS, LIDAR_POINT_RADIUS to src/constants/. Move vector3Schema to src/types/ros2-schemas.ts.
-- Acceptance: No duplicate definitions across features. Tests verify exports.
-- Branch: `refactor/t-037/extract-shared-constants`
-
-#### T-038: Delete barrel file and re-export
-- Severity: MEDIUM
-- Files: `src/features/workspace/types/panel.types.ts`, `src/features/pilot/types/PilotView.types.ts:4`
-- Scope: Delete barrel file. Remove VideoStreamStatus re-export.
-- Acceptance: No barrel files or unnecessary re-exports. Test verifies no barrel imports.
-- Branch: `chore/t-038/remove-barrel-reexports`
-
-#### T-039: Extract inline types to types files
-- Severity: MEDIUM
-- Files: `src/components/ErrorBoundary.tsx`, `src/components/PanelErrorBoundary.tsx`, `src/features/pilot/components/PilotStatusBar/BatteryRow.tsx`, `src/components/DesktopOnlyGate.tsx`
-- Scope: Create types files, move interfaces.
-- Acceptance: No interface/type definitions in .tsx files. Tests verify type imports.
-- Branch: `refactor/t-039/extract-inline-types`
-
-#### T-040: Add post-unmount guards to useRosGraph and useRosTopics
-- Severity: MEDIUM
-- Files: `src/hooks/useRosGraph.ts`, `src/hooks/useRosTopics.ts`
-- Scope: Add aborted ref, check before setState.
-- Acceptance: No setState calls after cleanup runs. Tests verify cleanup behavior.
-- Branch: `fix/t-040/unmount-guards`
-
-### Wave 3 — Test Coverage
-
-#### T-041: Test ConnectionManager
-- Severity: CRITICAL
-- Files: `src/lib/rosbridge/__tests__/ConnectionManager.test.ts` (new)
-- Scope: Mock roslib Ros. Test connect, disconnect, reconnect, timeout, intentional disconnect guard, max attempts.
-- Acceptance: 6+ test cases covering all async paths.
-- Branch: `test/t-041/connection-manager`
-
-#### T-042: Test pure utility functions
-- Severity: HIGH
-- Files: `src/utils/formatDegrees.test.ts`, `src/utils/formatLastSeen.test.ts`, `src/utils/formatUptime.test.ts`, `src/utils/getBatteryColor.test.ts`, `src/utils/normalizeHeading.test.ts`, `src/utils/withAlpha.test.ts` (all new)
-- Scope: Co-located test files for 6 pure utilities. NOTE: rafThrottle.test.ts already exists from T-026, skip it.
-- Acceptance: All utility functions tested with edge cases.
-- Branch: `test/t-042/utility-tests`
-
-#### T-043: Test fleet helpers and schemas
-- Severity: MEDIUM
-- Files: `src/features/fleet/helpers.test.ts` (new), `src/features/fleet/schemas.test.ts` (new)
-- Scope: Test normalizeRosbridgeUrl (6 branches), addRobotSchema constraints.
-- Acceptance: All URL protocols and edge cases covered.
-- Branch: `test/t-043/fleet-helpers-schemas`
-
-#### T-044: Expand useConnectionStore tests
-- Severity: MEDIUM
-- Files: `src/stores/connection/__tests__/useConnectionStore.test.ts`
-- Scope: Add removeRobot, updateRobot, setRobotTopic tests. Add deriveRosbridgeUrl, deriveWebRtcUrl, assignRobotColor helper tests. NOTE: connectRobot rejection tests already exist from T-027, skip those.
-- Acceptance: All store actions and helpers tested.
-- Branch: `test/t-044/store-actions`
-
-#### T-045: Test calculateBackoffDelay and buildTwist
-- Severity: MEDIUM
-- Files: `src/constants/reconnection.test.ts` (new), `src/hooks/useControlPublisher/helpers.test.ts` (new)
-- Scope: Backoff boundaries (attempt 0, 1, cap). Twist direction signs and stop.
-- Acceptance: All branches covered.
-- Branch: `test/t-045/backoff-twist`
-
-#### T-046: Test subscription hook behavior
-- Severity: HIGH
-- Files: `src/hooks/useBatterySubscription.test.ts` (new), `src/hooks/useImuSubscription.test.ts` (new), `src/hooks/useLidarSubscription.test.ts` (new)
-- Scope: Mock useRosSubscriber. Test state updates, percentage normalization, cleanup.
-- Acceptance: Hook behavior tested, not just schemas.
-- Branch: `test/t-046/subscription-hooks`
-
-#### T-047: Test useMinimizedPanels
-- Severity: HIGH
-- Files: `src/features/workspace/hooks/__tests__/useMinimizedPanels.test.ts` (new)
-- Scope: renderHook tests for minimize, maximize, restore, restoreAll.
-- Acceptance: All 6 methods tested with state verification.
-- Branch: `test/t-047/minimized-panels`
-
-#### T-048: Test SignalingClient
-- Severity: MEDIUM
-- Files: `src/lib/webrtc/__tests__/signaling.test.ts` (new)
-- Scope: Mock fetch. URL conversion, success, HTTP error, malformed JSON, Zod failure.
-- Acceptance: All code paths covered.
-- Branch: `test/t-048/signaling-client`
-
-### Wave 4 — Mechanical Sweeps (deferred to next session)
-
-- T-049: Import ordering sweep
-- T-050: Styled comment removal sweep
-- T-051: Object key and props alphabetization sweep
-- T-052: MIL-STD-1472H status indicator compliance (visual work)
-- T-053: Performance memoization sweep
-- T-054: Miscellaneous LOW fixes
+Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into status sections.
 
 ---
 
-## Execution Plan
+## Done
 
-### Wave 1 (COMPLETE)
-All 4 tickets merged (PRs #24, #25, #26, #27).
+- T-025: Fix shared→feature import boundary violations — PR #24
+- T-026: Add cancel() to rafThrottle and clean up on unmount — PR #27
+- T-027: Handle ConnectionManager.connect rejection — PR #25
+- T-028: Publish ZERO_TWIST on useControlPublisher unmount — PR #26
+- T-029: Migrate workspace canvas components to useCanvasColors — PR #28
+- T-030: Remove unused production dependencies — PR #29
+- T-031: Route-level code splitting — PR #30
+- T-032: Extract StatusDot and GyroInline from PilotHudMobile — PR #31
+- T-033: Fix LidarPanel Math.min stack overflow risk — PR #32
+- T-034: Fix telemetry ring buffer copy — PR #33
+- T-035: Add useMemo to PilotView render-path allocations — PR #34
+- T-036: Validate RTCSdpType with z.enum — PR #35
+- T-037: Extract duplicate constants to shared — PR #36
+- T-038: Delete barrel file and re-export — PR #37
+- T-039: Extract inline types to types files — PR #38
+- T-040: Add post-unmount guards to useRosGraph and useRosTopics — PR #39
+- T-041: Test ConnectionManager — PR #40
+- T-042: Test pure utility functions — PR #41
+- T-043: Test fleet helpers and schemas — PR #42
+- T-044: Expand useConnectionStore tests — PR #43
+- T-045: Test calculateBackoffDelay and buildTwist — PR #44
+- T-046: Test subscription hook behavior — PR #45
+- T-047: Test useMinimizedPanels — PR #46
+- T-048: Test SignalingClient — PR #47
+- T-064: Full convention sweep — PR #49
+- T-066: Connection UX — PR #50
+- T-067: Misc fixes — PR #51
+- T-068: sensorVector3Schema nullable axes — PR #52
+- T-071: Landing page unit tests — PR #56
+- T-078: PilotCompass folder structure — PR #65
+- T-079: PilotHud types co-location — PR #66
+- T-080: PilotLidarMinimap folder structure — PR #67
+- T-081: Extract PilotNotFound from PilotView — PR #53
+- T-082: RobotWorkspaceMobile restructure — PR #64
+- T-083: TelemetryPanel draw helpers — PR #63
+- T-084: ConnectionManager class refactor — PR #54
+- T-086: Reconnect toast off-by-one — PR #61
+- T-090: Disable text selection on mobile pilot — PR #62
+- T-095: Pilot feature folder conventions — PR #70
+- T-096: Fleet feature folder conventions — PR #68
+- T-097: Workspace feature folder conventions — PR #69
+- T-075: Hooks restructure — PR #71
 
-### Wave 2 — Sequential execution, 3 phases
+## In Progress
 
-**Phase A** (no shared files): T-030 → T-031 → T-036 → T-038
-**Phase B** (after Phase A): T-029 → T-032 → T-035 → T-037 → T-039 → T-040
-**Phase C** (dependencies): T-033 (after T-029) → T-034 (after T-037)
+- T-088a: LidarPanel self-subscription
+- T-088b: ImuPanel self-subscription
+- T-088c: TelemetryPanel self-subscription
+- T-088d: ControlsPanel self-subscription
+- T-088e: CameraPanel self-subscription
+- T-088f: SystemStatusPanel self-subscription
+- T-088g: Extract workspace utilities
 
-| Serialization constraint | Shared file | Order |
-|--------------------------|-------------|-------|
-| T-029 → T-033 | `LidarPanel.tsx` | T-029 first |
-| T-037 → T-034 | `useTelemetrySubscription.ts` | T-037 first |
+## Backlog
 
-### Wave 3 — Sequential execution
-T-041 → T-042 → T-043 → T-044 → T-045 → T-046 → T-047 → T-048
+### Refactors
 
-All create new test files. No source modifications.
+#### EPIC/workspace-refactor — RobotWorkspace god component refactor
 
-### Wave 4 — Deferred
-Sweeps run after Waves 1-3 merge. Saved for next session.
+Panels own their ROS subscriptions. Workspace becomes a thin layout orchestrator.
+Branch: EPIC/workspace-refactor. Merge path: EPIC → overnight → main.
+
+##### Wave 1 — parallel (no file overlap, no blockers)
+
+**T-088a: LidarPanel self-subscription**
+
+- Internalize `useLidarSubscription`. New props: `ros`, `connected`, `topicName`.
+- Files: `LidarPanel.tsx`, `LidarPanel.types.ts`
+- Branch: refactor/t-088a/lidar-self-sub
+
+**T-088b: ImuPanel self-subscription**
+
+- Internalize `useImuSubscription`. New props: `ros`, `connected`, `topicName`.
+- Files: `ImuPanel.tsx`, `ImuPanel.types.ts`
+- Branch: refactor/t-088b/imu-self-sub
+
+**T-088c: TelemetryPanel self-subscription**
+
+- Internalize `useTelemetrySubscription`. New props: `ros`, `connected`, `topicName`, `topicType`.
+- Files: `TelemetryPanel.tsx`, `TelemetryPanel.types.ts`
+- Branch: refactor/t-088c/telemetry-self-sub
+
+**T-088d: ControlsPanel self-subscription**
+
+- Internalize `useControlPublisher`, import `VELOCITY_LIMITS` directly. New props: `ros`, `connected`, `robotId`, `topicName`.
+- Files: `ControlsPanel.tsx`, `ControlsPanel.types.ts`
+- Branch: refactor/t-088d/controls-self-sub
+
+**T-088e: CameraPanel self-subscription**
+
+- Internalize `useWebRtcStream`. New props: `ros`, `connected`, `robotUrl`.
+- Files: `CameraPanel.tsx`, `CameraPanel.types.ts`
+- Branch: refactor/t-088e/camera-self-sub
+
+**T-088f: SystemStatusPanel self-subscription**
+
+- Internalize `useBatterySubscription`, `useConnectionUptime`, `useRosGraph`. New props: `ros`, `connected`, `robot` (full object), `onConnect`, `onDisconnect`.
+- Files: `SystemStatusPanel.tsx`, `SystemStatusPanel.types.ts`
+- Branch: refactor/t-088f/status-self-sub
+
+**T-088g: Extract workspace utilities**
+
+- Extract `useTopicManager` hook, `WorkspaceNotFound` component, `MinimizedPanelBar` component.
+- Files: new files only (no existing file conflicts with Wave 1)
+- Branch: refactor/t-088g/workspace-utils
+
+##### Wave 2 — blocked by all of Wave 1
+
+**T-088h: RobotWorkspace slim-down**
+
+- Rewrite RobotWorkspace as thin orchestrator (~60-70 lines). Update RobotWorkspaceMobile interface to match.
+- Files: `RobotWorkspace.tsx`, `RobotWorkspaceMobile.tsx`, `RobotWorkspaceMobile.types.ts`
+- Acceptance: RobotWorkspace under 80 lines, build passes, all panels self-contained
+- Branch: refactor/t-088h/workspace-slim
+
+#### T-099: JSDoc sweep — convert @param to @prop on components, add prop docs
+
+- Severity: MEDIUM
+- Scope: all .tsx component files in src/
+- Fix: replace `@param` with `@prop` on all React component JSDoc. Add `@prop` entries for undocumented props. Keep `@param` on hooks and utility functions. Remove any inline JSDoc comments from `.types.ts` files that duplicate component-level `@prop` docs.
+- Can be merged with T-069 (JSDoc sweep) — same pass, different concern.
+- Branch: chore/t-099/jsdoc-prop-convention
+
+#### T-100: Move utils tests to **tests**/ subfolder
+
+- Severity: LOW
+- Scope: src/utils/ — 7 test files flat in the directory
+- Fix: create src/utils/**tests**/, move all 7 test files, update import paths
+- Acceptance: no test files flat in src/utils/, all tests pass, build passes
+- Branch: refactor/t-100/utils-tests-folder
+
+### Cross-cutting Sweeps
+
+#### T-077: Fix barrel file imports
+
+- Severity: MEDIUM
+- Scope: ~20 imports across src/ that bypass barrel index.ts files.
+- Also absorbs T-079 barrel import fixes.
+- Branch: refactor/t-077/barrel-imports
+
+#### T-074: Lint error sweep
+
+- Severity: MEDIUM
+- Scope: 23 lint errors across src/. Run after T-084 (rewrites ConnectionManager.test.ts).
+- Branch: fix/t-074/lint-sweep
+
+#### T-087: Rename feature entry components to Page convention
+
+- Severity: LOW
+- Scope: 3 features + ~23 consumer files
+- Rename main feature components to use Page suffix:
+  - `src/features/fleet/FleetOverview.tsx` → `FleetPage.tsx` (component: FleetOverview → FleetPage)
+  - `src/features/pilot/PilotView.tsx` → `PilotPage.tsx` (component: PilotView → PilotPage)
+  - `src/features/workspace/RobotWorkspace.tsx` → `WorkspacePage.tsx` (component: RobotWorkspace → WorkspacePage)
+- LandingPage.tsx and MockupsPage.tsx already follow the convention
+- Update all imports across src/ (~23 files reference these names)
+- Update App.tsx route lazy imports
+- Update route-code-splitting.test.ts
+- Acceptance: all feature entry components named \*Page, all imports updated, build + tests pass
+- Branch: refactor/t-087/page-naming-convention
+
+### Visual (requires /visual-pipeline)
+
+#### T-052: MIL-STD-1472H status indicator icons
+
+- Add lucide-react icons to all status indicators (ConnectionRow, SystemStatusPanel, ControlsPanel, BatteryRow).
+- Every status indicator must have color + icon + text.
+
+#### T-085: Add body-frame axes to WireframeView 3D visualization
+
+- Severity: LOW
+- Scope: WireframeView.tsx, workspace/constants.ts
+- Draw XYZ body-frame axis lines from origin, color-coded (red/green/blue), extending beyond cube edges.
+- Branch: feat/t-085/wireframe-body-axes
+
+#### T-065: Responsive + visual polish (split into 3 sub-tickets)
+
+- T-065a: Desktop resize + panel overflow/clipping
+- T-065b: Mobile layout trigger + camera tab blank
+- T-065c: Light mode contrast audit
+
+#### T-076: Extract PilotModeCta from ControlsPanel
+
+- Severity: LOW
+- Extract Pilot Mode CTA block into PilotModeCta.tsx. Run after T-052 (both touch ControlsPanel).
+- Branch: refactor/t-076/pilot-mode-cta
+
+#### T-098: Add reconnect button to PilotStatusBar
+
+- Severity: MEDIUM
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: src/features/pilot/components/PilotStatusBar/PilotStatusBar.tsx, PilotHud.tsx, PilotHudMobile.tsx, PilotView.tsx
+- Problem: when rosbridge disconnects in pilot mode, there's no way to reconnect without navigating back to fleet. The status bar shows connection state but has no action.
+- Fix: add a small reconnect button (shadcn Button, ghost variant) below or next to the ROS connection row. Only visible when disconnected. Wire onConnect/onDisconnect callbacks through PilotHud → PilotStatusBar.
+- Props to add: onConnect, onDisconnect to PilotStatusBarProps. Show reconnect button when rosbridgeStatus is 'disconnected' or 'error'.
+- Acceptance: reconnect button visible when disconnected, triggers connection attempt, hidden when connected, works on both desktop and mobile HUD, build passes
+- Branch: feat/t-098/pilot-reconnect-button
+
+### Bugs
+
+#### T-091: Mobile LiDAR minimap visual alignment with workspace
+
+- Severity: LOW
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: src/features/pilot/components/PilotLidarMinimap.tsx, pilot/constants.ts
+- Problem: mobile pilot LiDAR minimap uses different color scheme than the workspace LidarPanel, and point dots are too large for small viewports making the scan hard to read.
+- Fix: match point colors and background to workspace LidarPanel token scheme. Reduce point radius for mobile (use smaller pixel size for minimap context). May need separate mobile constants or responsive size logic.
+- Acceptance: mobile minimap visually consistent with workspace LidarPanel colors, dots smaller and scan readable on 375px viewport, build passes.
+- Branch: fix/t-091/mobile-lidar-visual
+
+### Portfolio Polish (anti-slop evidence)
+
+#### T-092: README overhaul — screenshot, design decisions, known limitations
+
+- Severity: HIGH
+- Scope: README.md
+- Add dashboard screenshot/GIF with live data to README header
+- Add "Design Decisions" section: Canvas over SVG for LiDAR (SVG re-renders full subtree at 10-20Hz), Zustand over Redux/Context, class singleton for ConnectionManager, rosbridge + RxJS data layer, OKLCH color system
+- Add "Known Limitations" section: WebRTC latency constraints, rosbridge JSON bandwidth inflation, single-robot pilot mode, no multi-echo LiDAR support
+- Add deployed site link in README header
+- Acceptance: README has visual proof, technical depth, and honest limitations. No generic "getting started" filler.
+- Branch: docs/t-092/readme-overhaul
+
+#### T-093: Clean dead code, TODO comments, commented-out blocks, and magic numbers
+
+- Severity: HIGH
+- Scope: all src/ files
+- Audit for:
+  - `// TODO:` comments without context — remove or convert to ticket
+  - Commented-out code blocks — remove
+  - Unused imports, dead functions — remove
+  - Placeholder text ("Dashboard screenshot — pending") — remove or replace
+  - Magic numbers — extract to named constants in co-located `.constants.ts` files. Numbers like pixel sizes, thresholds, delays, ratios should have descriptive names. Exceptions: 0, 1, 2 used for math/indexing, and CSS-related numbers handled by Tailwind utilities.
+- Acceptance: zero TODO comments, zero commented-out blocks, zero unexplained magic numbers in logic, build passes
+- Branch: chore/t-093/dead-code-sweep
+
+#### T-094: GitHub repo metadata
+
+- Severity: MEDIUM
+- Scope: GitHub settings (not code)
+- Add repo description, website URL (deployed site), and topics: ros2, webrtc, telemetry, react, typescript, robotics, zustand, tailwindcss
+- Can be done via `gh repo edit` CLI
+- Branch: n/a (GitHub settings only)
+
+### Testing (run after all restructures)
+
+#### T-070: Fleet feature testing (unit + E2E)
+
+- Severity: MEDIUM
+- Scope: src/features/fleet/ — components, helpers, schemas, connection flow.
+- Branch: test/t-070/fleet-testing
+
+#### T-072: Pilot feature testing (unit + E2E)
+
+- Severity: MEDIUM
+- Scope: src/features/pilot/ — PilotView, PilotHud, PilotCompass, PilotStatusBar, fullscreen, controls.
+- Branch: test/t-072/pilot-testing
+
+#### T-073: Workspace feature testing (unit + E2E)
+
+- Severity: MEDIUM
+- Scope: src/features/workspace/ — RobotWorkspace, 6 panels, minimize/maximize, mobile workspace.
+- Branch: test/t-073/workspace-testing
+
+### Documentation (run last — all paths finalized)
+
+#### T-069: JSDoc sweep
+
+- Severity: LOW
+- Scope: All exported functions in .ts and .tsx files across src/.
+- Branch: chore/t-069/jsdoc-sweep

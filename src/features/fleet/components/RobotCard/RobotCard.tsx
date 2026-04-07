@@ -1,23 +1,23 @@
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { useRobotConnection } from '@/hooks/useRobotConnection';
-import { useRosTopics } from '@/hooks/useRosTopics';
-import { useRosGraph } from '@/hooks/useRosGraph';
 import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-import type { RobotCardProps } from './types/RobotCard.types';
-import { ROBOT_COLOR_CLASSES } from './constants';
-import { RobotCardIdentity } from './components/RobotCardIdentity';
-import { RobotCardConnection } from './components/RobotCardConnection';
-import { RobotCardVitals } from './components/RobotCardVitals';
-import { RobotCardGraph } from './components/RobotCardGraph';
+import { useRobotConnection } from '@/hooks/useRobotConnection';
+import { useRosGraph } from '@/hooks/useRosGraph';
+import { useRosTopics } from '@/hooks/useRosTopics';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+
 import { RobotCardActions } from './components/RobotCardActions';
+import { RobotCardConnection } from './components/RobotCardConnection';
+import { RobotCardGraph } from './components/RobotCardGraph';
+import { RobotCardIdentity } from './components/RobotCardIdentity';
+import { RobotCardVitals } from './components/RobotCardVitals';
+import { ROBOT_COLOR_CLASSES } from './constants';
+import type { RobotCardProps } from './types/RobotCard.types';
 
 /** RobotCard
  * @description Displays a single robot's connection info, system diagnostics,
  *  and navigation actions.
- * @param robot - Robot connection data to display.
- * @param onRemove - Callback invoked with robot ID on removal confirmation.
+ * @prop robot - Robot connection data to display.
+ * @prop onRemove - Callback invoked with robot ID on removal confirmation.
  */
 export function RobotCard({ robot, onRemove }: RobotCardProps) {
   const connectRobot = useConnectionStore((s) => s.connectRobot);
@@ -43,12 +43,8 @@ export function RobotCard({ robot, onRemove }: RobotCardProps) {
         <RobotCardConnection url={robot.url} lastSeen={robot.lastSeen} />
         <hr className="border-border border-dashed" />
 
-        {isConnected && (
-            <>
-              <RobotCardVitals battery={battery} />
-              <hr className="border-border border-dashed" />
-            </>
-        )}
+        <RobotCardVitals battery={battery} />
+        <hr className="border-border border-dashed" />
 
         <RobotCardGraph graph={rosGraph} isConnected={isConnected} />
       </CardContent>

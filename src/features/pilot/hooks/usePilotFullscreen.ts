@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { UsePilotFullscreenReturn } from '../types/usePilotFullscreen.types';
+import type { UsePilotFullscreenReturn } from './usePilotFullscreen.types';
 
+/** usePilotFullscreen
+ * @description Manages fullscreen toggle state for the pilot view with Escape key support.
+ */
 export function usePilotFullscreen(): UsePilotFullscreenReturn {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -16,6 +19,8 @@ export function usePilotFullscreen(): UsePilotFullscreenReturn {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'f' || e.key === 'F') {
         if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+        const el = e.target instanceof HTMLElement ? e.target : null;
+        if (el?.getAttribute('contenteditable') === 'true') return;
         e.preventDefault();
         setIsFullscreen((prev) => !prev);
       }

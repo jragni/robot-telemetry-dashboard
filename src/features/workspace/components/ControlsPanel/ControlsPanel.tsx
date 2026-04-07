@@ -1,51 +1,45 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  OctagonX,
-  ChevronUp,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Square,
+  ChevronUp,
   Crosshair,
+  OctagonX,
+  Square,
 } from 'lucide-react';
+
+import { useControlPublisher } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { DpadButton, VelocitySlider } from '@/components/controls';
+import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls';
 import type { Direction } from '@/types/control.types';
-import type { ControlsPanelProps } from '@/features/workspace/types/ControlsPanel.types';
-import { KEY_TO_DIRECTION } from '@/constants/controls';
-import { DpadButton } from '@/components/controls/DpadButton';
-import { VelocitySlider } from '@/components/controls/VelocitySlider';
+
+import type { ControlsPanelProps } from './ControlsPanel.types';
 
 /** ControlsPanel
  * @description Renders robot directional controls with E-STOP, D-pad for
- *  press-and-hold movement, velocity sliders, and live readouts. Supports
- *  keyboard navigation: arrow keys for direction, Escape for E-STOP.
- * @param linearVelocity - Current linear velocity magnitude in m/s.
- * @param angularVelocity - Current angular velocity magnitude in rad/s.
- * @param linearLimits - Min/max/default for linear velocity slider.
- * @param angularLimits - Min/max/default for angular velocity slider.
- * @param isActive - Whether controls are currently sending commands.
- * @param onDirectionStart - Callback when a direction press begins.
- * @param onDirectionEnd - Callback when a direction press ends (sends zero).
- * @param onLinearVelocityChange - Callback when linear slider changes.
- * @param onAngularVelocityChange - Callback when angular slider changes.
- * @param onEmergencyStop - Callback for emergency stop.
+ *  press-and-hold movement, velocity sliders, and live readouts. Owns its
+ *  own ROS publisher via useControlPublisher. Supports keyboard navigation:
+ *  arrow keys for direction, Escape for E-STOP.
+ * @prop ros - roslib Ros instance for publishing commands (undefined when disconnected).
+ * @prop connected - Whether the robot connection is active.
+ * @prop robotId - Robot identifier for Pilot Mode navigation.
+ * @prop topicName - ROS topic name for Twist command publishing.
  */
-export function ControlsPanel({
-  linearVelocity,
-  angularVelocity,
-  linearLimits,
-  angularLimits,
-  isActive,
-  connected,
-  robotId,
-  onDirectionStart,
-  onDirectionEnd,
-  onLinearVelocityChange,
-  onAngularVelocityChange,
-  onEmergencyStop,
-}: ControlsPanelProps) {
+export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPanelProps) {
+  const {
+    angularVelocity,
+    handleAngularChange,
+    handleDirectionEnd,
+    handleDirectionStart,
+    handleEmergencyStop,
+    handleLinearChange,
+    isActive,
+    linearVelocity,
+  } = useControlPublisher({ ros, topicName });
   const disabled = !connected;
   const navigate = useNavigate();
   const [activeDirection, setActiveDirection] = useState<Direction | null>(null);
@@ -57,21 +51,21 @@ export function ControlsPanel({
       if (direction === 'stop') {
         activeRef.current = null;
         setActiveDirection(null);
-        onDirectionEnd();
+        handleDirectionEnd();
         return;
       }
       activeRef.current = direction;
       setActiveDirection(direction);
-      onDirectionStart(direction);
+      handleDirectionStart(direction);
     },
-    [onDirectionStart, onDirectionEnd],
+    [handleDirectionStart, handleDirectionEnd],
   );
 
   const handleEnd = useCallback(() => {
     activeRef.current = null;
     setActiveDirection(null);
-    onDirectionEnd();
-  }, [onDirectionEnd]);
+    handleDirectionEnd();
+  }, [handleDirectionEnd]);
 
   useEffect(() => {
     const panel = panelRef.current;
@@ -80,7 +74,7 @@ export function ControlsPanel({
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         e.preventDefault();
-        onEmergencyStop();
+        handleEmergencyStop();
         return;
       }
       const direction = KEY_TO_DIRECTION[e.key];
@@ -88,7 +82,7 @@ export function ControlsPanel({
         e.preventDefault();
         activeRef.current = direction;
         setActiveDirection(direction);
-        onDirectionStart(direction);
+        handleDirectionStart(direction);
       }
     }
 
@@ -98,7 +92,7 @@ export function ControlsPanel({
         e.preventDefault();
         activeRef.current = null;
         setActiveDirection(null);
-        onDirectionEnd();
+        handleDirectionEnd();
       }
     }
 
@@ -109,7 +103,7 @@ export function ControlsPanel({
       panel.removeEventListener('keydown', handleKeyDown);
       panel.removeEventListener('keyup', handleKeyUp);
     };
-  }, [onDirectionStart, onDirectionEnd, onEmergencyStop]);
+  }, [handleDirectionStart, handleDirectionEnd, handleEmergencyStop]);
 
   return (
     <div
@@ -125,7 +119,7 @@ export function ControlsPanel({
         disabled={disabled}
         aria-label="Emergency stop"
         className="w-full font-mono text-xs font-semibold cursor-pointer transition-all duration-200"
-        onClick={onEmergencyStop}
+        onClick={handleEmergencyStop}
       >
         <OctagonX className="size-4" />
         E-STOP
@@ -191,22 +185,22 @@ export function ControlsPanel({
         <VelocitySlider
           label="LINEAR"
           value={linearVelocity}
-          min={linearLimits.min}
-          max={linearLimits.max}
+          min={VELOCITY_LIMITS.linear.min}
+          max={VELOCITY_LIMITS.linear.max}
           step={0.01}
           unit="m/s"
           disabled={disabled}
-          onChange={onLinearVelocityChange}
+          onChange={handleLinearChange}
         />
         <VelocitySlider
           label="ANGULAR"
           value={angularVelocity}
-          min={angularLimits.min}
-          max={angularLimits.max}
+          min={VELOCITY_LIMITS.angular.min}
+          max={VELOCITY_LIMITS.angular.max}
           step={0.01}
           unit="rad/s"
           disabled={disabled}
-          onChange={onAngularVelocityChange}
+          onChange={handleAngularChange}
         />
       </div>
 

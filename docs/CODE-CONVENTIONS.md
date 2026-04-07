@@ -1,21 +1,24 @@
 # Code Conventions
 
-Source of truth for all code rules. Referenced by CLAUDE.md.
+Source of truth for all code rules.
 
 ## File Structure
 
 - One component per `.tsx` file
-- Types in feature `types/` folder as `{ComponentName}.types.ts` (named after the primary consumer). Never inline in `.tsx` files, never co-located next to components. Shared types (cross-feature) go in `src/types/`.
-- No barrel files (ADR-001) — import directly from source
+- Types co-located with their component as `{ComponentName}.types.ts` in the same folder. Never inline in `.tsx` files. Feature-shared types (used by 2+ components within a feature) go in `feature/types/`. Cross-feature types go in `src/types/`.
+- No feature-level barrel files (ADR-001 revised) — component-folder and hooks directory barrels are allowed (see FOLDER-STRUCTURE.md)
 - Named exports only
 - No `@ts-ignore`, `eslint-disable`, `as any`
-- Feature folders: `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`), `types/` for interfaces. Page-level components live at the feature root. Mocks in `mocks/`.
-- Hook folders: when a hook grows beyond a single file, give it its own folder: `hooks/{hookName}/` with `{hookName}.ts`, `types.ts`, `constants.ts`, `helpers.ts`.
+- Feature folders: `components/` for UI, `hooks/` for hooks, `constants.ts` (not `{feature}.constants.ts`), `helpers.ts` (not `{feature}.helpers.ts`). Page-level components live at the feature root. Mocks in `mocks/`. Feature `types/` folder only for types shared across multiple components within the feature.
+- Hook folders: every shared hook in `src/hooks/` gets its own folder: `hooks/{hookName}/` with `{hookName}.ts`, `index.ts`, and co-located tests, types, constants, helpers as needed. No flat hook files in `src/hooks/`. No `__tests__/` subfolder — tests co-locate directly in the hook's folder.
 - Shared component folders: components in `src/components/` with 2+ files get their own folder. Single-file components stay flat.
+- Test file placement: co-locate test files next to source by default (`RobotCard.test.tsx` beside `RobotCard.tsx`). When a folder accumulates 3+ test files, move them to a `__tests__/` subfolder within that folder. The `__tests__/` folder lives inside the directory it tests — never at a higher level. Already in use: `src/hooks/__tests__/`, `src/stores/connection/__tests__/`, `src/lib/rosbridge/__tests__/`.
 
 ## Imports
 
 **Aliases:** Use `@/` for any import outside the current feature directory. Relative imports (`./`, `../`) only for siblings within the same feature folder. Never use `../../` or deeper.
+
+**Barrel imports:** When a barrel file (`index.ts`) exists, always import from it — never bypass with deep paths. Multiple imports from the same module must be consolidated into a single import statement.
 
 **Ordering:** Three groups separated by blank lines. Within each group: hooks, then 3rd party components, then `@/` components, then types. Alphabetize by import name within each sub-group. React is always the first import.
 
@@ -27,7 +30,7 @@ import { z } from 'zod';
 import type { Ros } from 'roslib';
 
 // Aliased — hooks → 3rd party components → @/ components → types
-import { useBatterySubscription } from '@/hooks/useBatterySubscription';
+import { useBatterySubscription, useConnectionUptime } from '@/hooks';
 import { useConnectionStore } from '@/stores/connection/useConnectionStore';
 import { Activity, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -54,7 +57,8 @@ import type { WorkspaceProps } from './types/Workspace.types';
 
 - Extract inline JSX blocks over ~5 lines into named components. If a conditional branch contains a multi-line JSX subtree, it should be its own component.
 - Assign complex boolean conditions to named variables before using in JSX (e.g., `const canMinimize = !!onMinimize && !maximized`).
-- Conditional rendering: `&&` or ternaries. No wrapper components.
+- Conditional rendering: `&&` or single ternaries. No wrapper components.
+- No chained ternaries (`a ? x : b ? y : z`). Use lookup objects keyed by status/enum, or if/else blocks. Chained ternaries are unreadable.
 - shadcn-first: always check if shadcn can handle it before building custom.
 - Mobile-only components must be clearly identified. File name should include `Mobile` (e.g., `RobotWorkspaceMobile.tsx`, `PilotHudMobile.tsx`). JSDoc `@description` must state it is mobile-only and name its parent consumer.
 
@@ -77,22 +81,59 @@ import type { WorkspaceProps } from './types/Workspace.types';
 - Only weights 400/600.
 - Canvas text must use design system font sizes.
 
+## ROS 2 Integration
+
+All code interacting with ROS must follow the official ROS 2 interface definitions (`ros2 interface show <type>`). Zod schemas, TypeScript types, and field names must match the actual message spec. Account for rosbridge JSON serialization — JSON has no `NaN`/`Infinity`, so rosbridge sends `null` for those values. Always use `.nullable()` on numeric array fields that could contain invalid readings (e.g., `ranges`, `intensities` in `sensor_msgs/msg/LaserScan`). When in doubt, run `ros2 topic echo <topic>` against a real robot and validate the schema against actual data.
+
 ## Status Indicators
 
 Triple-redundant: color + icon + text label (per MIL-STD-1472H). Terminology: Nominal / Caution / Critical / Offline.
 
 ## Docstrings
 
-All exported `.tsx` components and functions must have JSDoc docstrings following [Google JS Style Guide](https://google.github.io/styleguide/jsguide.html). Format:
+JSDoc is required on all exported functions in `.tsx` and `.ts` files — components, hooks, helpers, store actions, utilities. Skip JSDoc only when the function is short, self-descriptive, and has no non-obvious parameters (e.g., `formatDegrees(deg: number): string` needs no comment).
+
+### Hooks and utility functions — use `@param`
+
+Hooks and utilities take actual function parameters. Document them with `@param`:
 
 ```ts
-/** MyComponent
- * @description Renders the widget with configuration options.
- * @param label - The display label for the widget.
+/** useZoom
+ * @description Manages zoom state with clamped min/max and keyboard support.
+ * @param config - Zoom configuration with min, max, step, and optional initial value.
+ * @returns Zoom state and handler functions.
  */
+export function useZoom(config: ZoomConfig) {
 ```
 
-`@param` and `@returns` required where applicable. Lines wrap at 100 characters.
+### React components — use `@prop`, not `@param`
+
+Components receive a props object, not individual parameters. Use `@prop` to document props:
+
+```ts
+/** PilotCompass
+ * @description Renders a horizontal compass heading strip using Canvas 2D.
+ *  Tick marks slide horizontally based on IMU yaw angle.
+ * @prop heading - Current heading in degrees (0-360).
+ */
+export function PilotCompass({ heading }: PilotCompassProps) {
+```
+
+Keep `.types.ts` files clean — just the interface with types, no inline JSDoc comments. The component's JSDoc is the single source of truth for what each prop means.
+
+### General rules
+
+- First line: function/component name
+- `@description`: required. Explain purpose and behavior, not just "renders X" or "returns Y"
+- `@param`: only on hooks, utilities, and non-component functions. Never on React component props.
+- `@returns`: required when the return value is non-obvious (skip for void, skip for components returning JSX)
+- Lines wrap at 100 characters
+
+### When to skip JSDoc entirely
+
+- Function is under ~5 lines and the name fully describes its behavior
+- Pure one-liner utilities with obvious signatures (e.g., `clamp`, `capitalize`)
+- Private/unexported helper functions that are only called once nearby
 
 ## PR Conventions
 

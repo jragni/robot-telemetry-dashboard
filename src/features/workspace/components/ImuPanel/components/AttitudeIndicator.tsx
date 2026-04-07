@@ -1,56 +1,28 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
-import { formatDegrees } from '@/utils/formatDegrees';
-import { withAlpha } from '@/utils/withAlpha';
-import { useThemeChange } from '@/hooks/useThemeChange';
-import { PITCH_LADDER_DEGREES } from '@/features/workspace/constants';
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
+import { useRef, useEffect, useCallback } from 'react';
+import { formatDegrees, withAlpha } from '@/utils';
+import { useCanvasColors } from '@/hooks';
+import {
+  PITCH_LADDER_DEGREES,
+  ATTITUDE_COLOR_FALLBACKS,
+  ATTITUDE_TOKEN_MAP,
+} from '@/features/workspace/constants';
 import type { AttitudeIndicatorProps } from '@/features/workspace/types/ImuPanel.types';
 
 /** AttitudeIndicator
  * @description Renders a canvas-based artificial horizon showing roll and pitch
  *  orientation. Sky/ground split rotates with roll, pitch offsets the horizon
  *  line. Fixed crosshair and roll pointer at top.
- * @param roll - Roll angle in degrees.
- * @param pitch - Pitch angle in degrees.
+ * @prop roll - Roll angle in degrees.
+ * @prop pitch - Pitch angle in degrees.
  */
 export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const colorsRef = useRef({
-    border: CANVAS_FALLBACKS.border,
-    accent: CANVAS_FALLBACKS.accent,
-    skyAlpha: withAlpha(CANVAS_FALLBACKS.imuSky, 0.6),
-    groundAlpha: withAlpha(CANVAS_FALLBACKS.imuGround, 0.8),
-    textPrimary: CANVAS_FALLBACKS.textPrimary,
-    textSecondaryAlpha: withAlpha(CANVAS_FALLBACKS.textSecondary, 0.5),
-  });
-  const colorsResolved = useRef(false);
 
-  const [themeVersion, setThemeVersion] = useState(0);
-
-  useThemeChange(() => {
-    colorsResolved.current = false;
-    setThemeVersion((v) => v + 1);
-  });
-
-  const resolveColors = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || colorsResolved.current) return;
-    const styles = getComputedStyle(canvas);
-    const accent = styles.getPropertyValue('--color-accent') || colorsRef.current.accent;
-    const sky = styles.getPropertyValue('--color-imu-sky') || 'oklch(0.5 0.14 230)';
-    const ground = styles.getPropertyValue('--color-imu-ground') || 'oklch(0.35 0.1 65)';
-    const textSecondary =
-      styles.getPropertyValue('--color-text-secondary') || 'oklch(0.65 0.02 260)';
-    colorsRef.current = {
-      border: styles.getPropertyValue('--color-border') || colorsRef.current.border,
-      accent,
-      skyAlpha: withAlpha(sky, 0.6),
-      groundAlpha: withAlpha(ground, 0.8),
-      textPrimary: styles.getPropertyValue('--color-text-primary') || colorsRef.current.textPrimary,
-      textSecondaryAlpha: withAlpha(textSecondary, 0.5),
-    };
-    colorsResolved.current = true;
-  }, []);
+  const {
+    colorsRef: rawColorsRef,
+    themeVersion,
+    resolveColors,
+  } = useCanvasColors(ATTITUDE_COLOR_FALLBACKS, ATTITUDE_TOKEN_MAP);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -58,7 +30,15 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     resolveColors();
-    const c = colorsRef.current;
+    const raw = rawColorsRef.current;
+    const c = {
+      accent: raw.accent,
+      border: raw.border,
+      groundAlpha: withAlpha(raw.ground, 0.8),
+      skyAlpha: withAlpha(raw.sky, 0.6),
+      textPrimary: raw.textPrimary,
+      textSecondaryAlpha: withAlpha(raw.textSecondary, 0.5),
+    };
 
     const size = canvas.width;
     const cx = size / 2;
@@ -127,8 +107,8 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
     ctx.closePath();
     ctx.fillStyle = c.accent;
     ctx.fill();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion triggers redraw on theme switch
-  }, [roll, pitch, resolveColors, themeVersion]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
+  }, [roll, pitch, resolveColors, themeVersion, rawColorsRef]);
 
   useEffect(() => {
     draw();

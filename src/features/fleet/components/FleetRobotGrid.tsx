@@ -1,10 +1,10 @@
-import { RobotCard } from './RobotCard/RobotCard';
-import type { FleetRobotGridProps } from '@/features/fleet/types/FleetOverview.types';
+import { RobotCard } from './RobotCard';
+import type { FleetRobotGridProps } from './FleetRobotGrid.types';
 
 /** FleetRobotGrid
  * @description Renders the robot cards in a responsive grid layout.
- * @param robots - Array of robot connections to display.
- * @param onRemove - Callback to remove a robot by id.
+ * @prop robots - Array of robot connections to display.
+ * @prop onRemove - Callback to remove a robot by id.
  */
 export function FleetRobotGrid({ robots, onRemove }: FleetRobotGridProps) {
   return (

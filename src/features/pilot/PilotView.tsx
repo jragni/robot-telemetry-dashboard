@@ -1,18 +1,22 @@
-import { useParams, Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { useConnectionStore } from '@/stores/connection/useConnectionStore';
-import { useRobotConnection } from '@/hooks/useRobotConnection';
-import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
-import { PilotCamera } from './components/PilotCamera';
-import { PilotHud } from './components/PilotHud';
-import { PilotHudMobile } from './components/PilotHudMobile';
-import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
-import { useRosTopics } from '@/hooks/useRosTopics';
+import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { useBatterySubscription } from '@/hooks/useBatterySubscription';
-import { useLidarSubscription } from '@/hooks/useLidarSubscription';
+import { useControlPublisher } from '@/hooks/useControlPublisher/useControlPublisher';
 import { useImuSubscription } from '@/hooks/useImuSubscription';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { useLidarSubscription } from '@/hooks/useLidarSubscription';
+import { useRobotConnection } from '@/hooks/useRobotConnection';
+import { useRosTopics } from '@/hooks/useRosTopics';
+import { useWebRtcStream } from '@/hooks/useWebRtcStream/useWebRtcStream';
+import { useConnectionStore } from '@/stores/connection/useConnectionStore';
+import { cn } from '@/lib/utils';
+
 import { usePilotFullscreen } from './hooks/usePilotFullscreen';
+import { PilotCamera } from './components/PilotCamera';
+import { PilotHud } from './components/PilotHud/PilotHud';
+import { PilotHudMobile } from './components/PilotHud/PilotHudMobile';
+import { PilotNotFound } from './components/PilotNotFound/PilotNotFound';
 import { PILOT_FULLSCREEN_Z } from './constants';
 import type { ProxyStatus } from './types/PilotView.types';
 
@@ -28,46 +32,43 @@ export function PilotView() {
   const selectedTopics = robot?.selectedTopics;
   const controls = useControlPublisher({ ros, topicName: selectedTopics?.controls });
   const { status: videoStatus, videoRef } = useWebRtcStream({
-    url: robot?.url ?? '',
+    connected,
     enabled: !!robot,
+    url: robot?.url ?? '',
   });
   const { isFullscreen, toggleFullscreen } = usePilotFullscreen();
   const isMobile = useIsMobile();
 
-  // ── ROS subscriptions (shared topics from workspace) ─────────────
   const availableTopics = useRosTopics(ros);
   const lidar = useLidarSubscription(ros, selectedTopics?.lidar ?? '/scan');
   const imu = useImuSubscription(ros, selectedTopics?.imu ?? '/imu/data');
   const battery = useBatterySubscription(ros, availableTopics);
 
   // Convert polar LidarPoints (workspace) to Cartesian (pilot minimap)
-  const pilotLidarPoints = lidar.points.map((p) => ({
-    x: Math.cos(p.angle) * p.distance,
-    y: Math.sin(p.angle) * p.distance,
-    distance: p.distance,
-  }));
+  const pilotLidarPoints = useMemo(
+    () =>
+      lidar.points.map((p) => ({
+        x: Math.cos(p.angle) * p.distance,
+        y: Math.sin(p.angle) * p.distance,
+        distance: p.distance,
+      })),
+    [lidar.points],
+  );
 
-  const telemetry = {
-    imu: connected ? { roll: imu.roll, pitch: imu.pitch, yaw: imu.yaw } : null,
-    lidarPoints: pilotLidarPoints,
-    lidarRangeMax: lidar.rangeMax,
-    battery: battery ? { percentage: battery.percentage, voltage: battery.voltage } : null,
-    linearSpeed: 0,
-    uptimeSeconds: null,
-  };
+  const telemetry = useMemo(
+    () => ({
+      battery: battery ? { percentage: battery.percentage, voltage: battery.voltage } : null,
+      imu: connected ? { pitch: imu.pitch, roll: imu.roll, yaw: imu.yaw } : null,
+      lidarPoints: pilotLidarPoints,
+      lidarRangeMax: lidar.rangeMax,
+      linearSpeed: 0,
+      uptimeSeconds: null,
+    }),
+    [connected, imu.roll, imu.pitch, imu.yaw, pilotLidarPoints, lidar.rangeMax, battery],
+  );
 
   if (!robot) {
-    return (
-      <section
-        aria-label="Robot not found"
-        className="flex flex-col items-center justify-center h-full gap-4"
-      >
-        <p className="font-mono text-xs text-text-muted">Robot not found: {id}</p>
-        <Link to="/fleet" className="font-mono text-xs text-accent hover:underline">
-          Back to Fleet
-        </Link>
-      </section>
-    );
+    return <PilotNotFound robotId={id} />;
   }
 
   const rosbridgeStatus: ProxyStatus = connected ? 'connected' : 'disconnected';

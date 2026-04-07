@@ -1,5 +1,4 @@
-import { formatDegrees } from '@/utils/formatDegrees';
-import { normalizeHeading } from '@/utils/normalizeHeading';
+import { formatDegrees, normalizeHeading } from '@/utils';
 import type { AttitudeCompassViewProps } from '@/features/workspace/types/ImuPanel.types';
 import { AttitudeIndicator } from './AttitudeIndicator';
 import { CompassHeading } from './CompassHeading';
@@ -7,9 +6,9 @@ import { CompassHeading } from './CompassHeading';
 /** AttitudeCompassView
  * @description Renders the default IMU visualization with attitude indicator
  *  and compass heading side by side, plus numeric readouts below.
- * @param roll - Roll angle in degrees.
- * @param pitch - Pitch angle in degrees.
- * @param yaw - Yaw heading in degrees.
+ * @prop roll - Roll angle in degrees.
+ * @prop pitch - Pitch angle in degrees.
+ * @prop yaw - Yaw heading in degrees.
  */
 export function AttitudeCompassView({ roll, pitch, yaw }: AttitudeCompassViewProps) {
   const heading = normalizeHeading(yaw);
