@@ -48,78 +48,23 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-096: Fleet feature folder conventions — PR #68
 - T-097: Workspace feature folder conventions — PR #69
 - T-075: Hooks restructure — PR #71
+- T-088a: LidarPanel self-subscription — PR #73
+- T-088b: ImuPanel self-subscription — PR #75
+- T-088c: TelemetryPanel self-subscription — PR #74
+- T-088d: ControlsPanel self-subscription — PR #79
+- T-088e: CameraPanel self-subscription — PR #77
+- T-088f: SystemStatusPanel self-subscription — PR #76
+- T-088g: Extract workspace utilities — PR #78
+- T-088h: RobotWorkspace slim-down — PR #80
+- Controls panel overflow fix — PR #81
 
 ## In Progress
 
-- T-088a: LidarPanel self-subscription
-- T-088b: ImuPanel self-subscription
-- T-088c: TelemetryPanel self-subscription
-- T-088d: ControlsPanel self-subscription
-- T-088e: CameraPanel self-subscription
-- T-088f: SystemStatusPanel self-subscription
-- T-088g: Extract workspace utilities
+(none)
 
 ## Backlog
 
 ### Refactors
-
-#### EPIC/workspace-refactor — RobotWorkspace god component refactor
-
-Panels own their ROS subscriptions. Workspace becomes a thin layout orchestrator.
-Branch: EPIC/workspace-refactor. Merge path: EPIC → overnight → main.
-
-##### Wave 1 — parallel (no file overlap, no blockers)
-
-**T-088a: LidarPanel self-subscription**
-
-- Internalize `useLidarSubscription`. New props: `ros`, `connected`, `topicName`.
-- Files: `LidarPanel.tsx`, `LidarPanel.types.ts`
-- Branch: refactor/t-088a/lidar-self-sub
-
-**T-088b: ImuPanel self-subscription**
-
-- Internalize `useImuSubscription`. New props: `ros`, `connected`, `topicName`.
-- Files: `ImuPanel.tsx`, `ImuPanel.types.ts`
-- Branch: refactor/t-088b/imu-self-sub
-
-**T-088c: TelemetryPanel self-subscription**
-
-- Internalize `useTelemetrySubscription`. New props: `ros`, `connected`, `topicName`, `topicType`.
-- Files: `TelemetryPanel.tsx`, `TelemetryPanel.types.ts`
-- Branch: refactor/t-088c/telemetry-self-sub
-
-**T-088d: ControlsPanel self-subscription**
-
-- Internalize `useControlPublisher`, import `VELOCITY_LIMITS` directly. New props: `ros`, `connected`, `robotId`, `topicName`.
-- Files: `ControlsPanel.tsx`, `ControlsPanel.types.ts`
-- Branch: refactor/t-088d/controls-self-sub
-
-**T-088e: CameraPanel self-subscription**
-
-- Internalize `useWebRtcStream`. New props: `ros`, `connected`, `robotUrl`.
-- Files: `CameraPanel.tsx`, `CameraPanel.types.ts`
-- Branch: refactor/t-088e/camera-self-sub
-
-**T-088f: SystemStatusPanel self-subscription**
-
-- Internalize `useBatterySubscription`, `useConnectionUptime`, `useRosGraph`. New props: `ros`, `connected`, `robot` (full object), `onConnect`, `onDisconnect`.
-- Files: `SystemStatusPanel.tsx`, `SystemStatusPanel.types.ts`
-- Branch: refactor/t-088f/status-self-sub
-
-**T-088g: Extract workspace utilities**
-
-- Extract `useTopicManager` hook, `WorkspaceNotFound` component, `MinimizedPanelBar` component.
-- Files: new files only (no existing file conflicts with Wave 1)
-- Branch: refactor/t-088g/workspace-utils
-
-##### Wave 2 — blocked by all of Wave 1
-
-**T-088h: RobotWorkspace slim-down**
-
-- Rewrite RobotWorkspace as thin orchestrator (~60-70 lines). Update RobotWorkspaceMobile interface to match.
-- Files: `RobotWorkspace.tsx`, `RobotWorkspaceMobile.tsx`, `RobotWorkspaceMobile.types.ts`
-- Acceptance: RobotWorkspace under 80 lines, build passes, all panels self-contained
-- Branch: refactor/t-088h/workspace-slim
 
 #### T-099: JSDoc sweep — convert @param to @prop on components, add prop docs
 
