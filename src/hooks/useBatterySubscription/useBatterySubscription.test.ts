@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useBatterySubscription } from './useBatterySubscription';
-import type { RosTopic } from '@/hooks';
+import type { RosTopic } from '../useRosTopics';
 
 let capturedOnMessage: ((msg: unknown) => void) | null = null;
 

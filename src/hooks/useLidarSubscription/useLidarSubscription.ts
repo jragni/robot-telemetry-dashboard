@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
-import { useRosSubscriber } from '@/hooks';
+import { useRosSubscriber } from '../useRosSubscriber';
 import { rafThrottle } from '@/utils';
 import type { LidarPoint } from '@/types/lidar.types';
 import type { UseLidarReturn } from './useLidarSubscription.types';

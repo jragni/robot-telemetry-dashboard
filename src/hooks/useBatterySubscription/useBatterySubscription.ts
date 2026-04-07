@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
-import { useRosSubscriber, type RosTopic } from '@/hooks';
+import { useRosSubscriber } from '../useRosSubscriber';
+import type { RosTopic } from '../useRosTopics';
 import type { BatteryStatus } from '@/types/battery.types';
 
 export const batteryStateMessageSchema = z.object({

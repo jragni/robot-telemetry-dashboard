@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from 'react';
-import { useThemeChange } from '@/hooks';
+import { useThemeChange } from '../useThemeChange';
 import type { TokenMapping } from './useCanvasColors.types';
 
 /** useCanvasColors
