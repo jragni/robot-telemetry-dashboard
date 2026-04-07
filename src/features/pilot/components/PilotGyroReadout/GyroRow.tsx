@@ -1,4 +1,4 @@
-import { formatDegrees } from '@/utils/formatDegrees';
+import { formatDegrees } from '@/utils';
 import type { GyroRowProps } from './PilotGyroReadout.types';
 
 /** GyroRow

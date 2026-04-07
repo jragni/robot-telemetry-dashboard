@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { useCanvasColors } from '@/hooks';
 import { COMPASS_CARDINALS } from '@/constants/canvas';
 
 import {
