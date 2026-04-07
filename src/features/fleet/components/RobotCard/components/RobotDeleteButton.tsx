@@ -13,10 +13,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import type { RobotDeleteButtonProps } from '../types/RobotDeleteButton.types';
 
-// TODO: When wiring real connections, add loading state to Remove button:
-// - Disable button + show spinner while deletion is in progress
-// - Show error toast if deletion fails with retry option
-
 /** RobotDeleteButton
  * @description Renders a trash icon that opens an AlertDialog confirmation
  *  before removing a robot.
