@@ -25,9 +25,8 @@ export function LandingHero() {
           </h1>
 
           <p className="font-sans text-sm text-text-secondary leading-relaxed max-w-100">
-            Fleet-wide robot telemetry in a single workspace. Connect to any
-            ROS2 robot via rosbridge, stream live sensor data, and operate
-            directly from the browser.
+            Fleet-wide robot telemetry in a single workspace. Connect to any ROS2 robot via
+            rosbridge, stream live sensor data, and operate directly from the browser.
           </p>
 
           <div className="flex gap-3 mt-2 flex-col sm:flex-row">
@@ -51,13 +50,8 @@ export function LandingHero() {
           </div>
         </div>
 
-        {/* TODO: Replace with real dashboard screenshot once workspace feature is built */}
         <div className="hidden md:block landing-hero-perspective">
-          <div className="w-full bg-surface-primary border border-border rounded-sm shadow-glow-accent-heavy flex items-center justify-center font-mono text-xs text-text-muted aspect-video landing-hero-viewport">
-            <p className="font-mono text-xs text-text-muted">
-              Dashboard screenshot — pending
-            </p>
-          </div>
+          <div className="w-full bg-surface-primary border border-border rounded-sm shadow-glow-accent-heavy aspect-video landing-hero-viewport" />
         </div>
       </div>
     </section>
