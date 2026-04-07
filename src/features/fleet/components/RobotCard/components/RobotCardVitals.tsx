@@ -4,7 +4,7 @@ import type { RobotCardVitalsProps } from '../types/RobotCardVitals.types';
 
 /** RobotCardVitals
  * @description Renders battery vitals when the robot is connected.
- * @param battery - Battery status or null if not discovered.
+ * @prop battery - Battery status or null if not discovered.
  */
 export function RobotCardVitals({ battery }: RobotCardVitalsProps) {
   const batteryValue = battery ? `${String(Math.round(battery.percentage))}%` : '—';
@@ -12,11 +12,7 @@ export function RobotCardVitals({ battery }: RobotCardVitalsProps) {
 
   return (
     <dl className="flex flex-col gap-2">
-      <RobotCardDataRow
-        label="Battery"
-        value={batteryValue}
-        valueClassName={batteryColor}
-      />
+      <RobotCardDataRow label="Battery" value={batteryValue} valueClassName={batteryColor} />
     </dl>
   );
 }

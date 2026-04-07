@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { UsePilotFullscreenReturn } from '../types/usePilotFullscreen.types';
+import type { UsePilotFullscreenReturn } from './usePilotFullscreen.types';
 
+/** usePilotFullscreen
+ * @description Manages fullscreen toggle state for the pilot view with Escape key support.
+ */
 export function usePilotFullscreen(): UsePilotFullscreenReturn {
   const [isFullscreen, setIsFullscreen] = useState(false);
 

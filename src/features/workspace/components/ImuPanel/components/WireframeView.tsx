@@ -1,7 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react';
-import { formatDegrees } from '@/utils/formatDegrees';
-import { normalizeHeading } from '@/utils/normalizeHeading';
-import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { formatDegrees, normalizeHeading } from '@/utils';
+import { useCanvasColors } from '@/hooks';
 import { WIREFRAME_COLOR_FALLBACKS, WIREFRAME_TOKEN_MAP } from '@/features/workspace/constants';
 import type { WireframeViewProps } from '@/features/workspace/types/ImuPanel.types';
 import { CUBE_VERTICES, CUBE_EDGES } from '../constants';
@@ -10,9 +9,9 @@ import { CUBE_VERTICES, CUBE_EDGES } from '../constants';
  * @description Renders a 3D wireframe rectangular prism that rotates based on
  *  roll, pitch, and yaw. Simple perspective projection with accent-colored
  *  edges. Submarine depth gauge crossed with aircraft attitude reference.
- * @param roll - Roll angle in degrees.
- * @param pitch - Pitch angle in degrees.
- * @param yaw - Yaw heading in degrees.
+ * @prop roll - Roll angle in degrees.
+ * @prop pitch - Pitch angle in degrees.
+ * @prop yaw - Yaw heading in degrees.
  */
 export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,7 +86,7 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     ctx.arc(cx, cy, 2, 0, Math.PI * 2);
     ctx.fillStyle = c.muted;
     ctx.fill();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [roll, pitch, yaw, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {

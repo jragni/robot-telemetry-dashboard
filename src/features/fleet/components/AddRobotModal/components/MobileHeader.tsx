@@ -3,7 +3,7 @@ import type { MobileHeaderProps } from '../types/MobileHeader.types';
 
 /** MobileHeader
  * @description Renders the full-screen mobile form header with back arrow.
- * @param onClose - Callback to close the form.
+ * @prop onClose - Callback to close the form.
  */
 export function MobileHeader({ onClose }: MobileHeaderProps) {
   return (

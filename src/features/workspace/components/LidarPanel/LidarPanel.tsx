@@ -1,20 +1,22 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
-import { Plus, Minus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { Minus, Plus } from 'lucide-react';
+
+import { useCanvasColors, useLidarSubscription, useZoom } from '@/hooks';
 import { Button } from '@/components/ui/button';
-import { useCanvasColors } from '@/hooks/useCanvasColors';
-import { useZoom } from '@/hooks/useZoom';
+import { cn } from '@/lib/utils';
 import { LIDAR_POINT_RADIUS } from '@/constants/canvas';
 import {
-  LIDAR_ZOOM_MIN,
-  LIDAR_ZOOM_MAX,
-  LIDAR_ZOOM_STEP,
   LIDAR_GRID_LINE_COUNT,
   LIDAR_ROBOT_SIZE,
+  LIDAR_ZOOM_MAX,
+  LIDAR_ZOOM_MIN,
+  LIDAR_ZOOM_STEP,
   WORKSPACE_LIDAR_COLOR_FALLBACKS,
   WORKSPACE_LIDAR_TOKEN_MAP,
 } from '@/features/workspace/constants';
-import type { LidarPanelProps } from '@/features/workspace/types/LidarPanel.types';
+import type { LidarPanelProps } from './LidarPanel.types';
+
 import { findMinDistance } from './LidarPanel.helpers';
 
 /** LidarPanel
@@ -22,11 +24,13 @@ import { findMinDistance } from './LidarPanel.helpers';
  *  Points colored by distance (close=critical, mid=caution, far=nominal).
  *  Robot shown as a centered triangle. Cartesian grid with crosshair and
  *  range circles for spatial reference. Supports zoom via mouse wheel.
- * @param points - Array of LiDAR scan points in polar coordinates.
- * @param rangeMax - Maximum sensor range in meters.
- * @param connected - Whether the robot is currently connected.
+ *  Owns its own ROS subscription via useLidarSubscription.
+ * @prop ros - Active roslib connection, or undefined when disconnected.
+ * @prop connected - Whether the robot is currently connected.
+ * @prop topicName - The LaserScan topic name to subscribe to.
  */
-export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
+export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
+  const { points, rangeMax } = useLidarSubscription(ros, topicName);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { zoom, zoomIn, zoomOut, handleWheel } = useZoom({
@@ -103,7 +107,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     const metersPerGrid = rangeMax / (LIDAR_GRID_LINE_COUNT / 2) / zoom;
     for (let i = 1; i < LIDAR_GRID_LINE_COUNT; i++) {
       const pos = i * gridSpacing;
-      const distFromCenter = ((i - LIDAR_GRID_LINE_COUNT / 2) * metersPerGrid);
+      const distFromCenter = (i - LIDAR_GRID_LINE_COUNT / 2) * metersPerGrid;
       const labelVal = Math.abs(distFromCenter);
       if (labelVal < 0.01) continue;
       const label = labelVal >= 1 ? `${labelVal.toFixed(0)}m` : `${labelVal.toFixed(1)}m`;
@@ -187,7 +191,7 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     ctx.lineTo(cx + robotSize * 0.7, cy + robotSize * 0.5);
     ctx.closePath();
     ctx.fill();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [points, rangeMax, connected, zoom, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {
@@ -200,7 +204,10 @@ export function LidarPanel({ points, rangeMax, connected }: LidarPanelProps) {
     <div
       className={cn('flex flex-col items-center gap-2 w-full h-full', !connected && 'opacity-50')}
     >
-      <div ref={containerRef} className="flex-1 flex items-center justify-center w-full min-h-0 aspect-square max-h-full">
+      <div
+        ref={containerRef}
+        className="flex-1 flex items-center justify-center w-full min-h-0 aspect-square max-h-full"
+      >
         <canvas
           ref={canvasRef}
           width={canvasSize}

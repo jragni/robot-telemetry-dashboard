@@ -1,13 +1,12 @@
-import { formatDegrees } from '@/utils/formatDegrees';
-import { normalizeHeading } from '@/utils/normalizeHeading';
+import { formatDegrees, normalizeHeading } from '@/utils';
 import type { NumbersViewProps } from '@/features/workspace/types/ImuPanel.types';
 
 /** NumbersView
  * @description Renders flight-data-recorder style numeric readouts for
  *  roll, pitch, and heading. Large monospace values, vertically stacked.
- * @param roll - Roll angle in degrees.
- * @param pitch - Pitch angle in degrees.
- * @param yaw - Yaw heading in degrees.
+ * @prop roll - Roll angle in degrees.
+ * @prop pitch - Pitch angle in degrees.
+ * @prop yaw - Yaw heading in degrees.
  */
 export function NumbersView({ roll, pitch, yaw }: NumbersViewProps) {
   const heading = normalizeHeading(yaw);

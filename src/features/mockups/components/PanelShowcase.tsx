@@ -1,7 +1,7 @@
-import { LidarPanel } from '@/features/workspace/components/LidarPanel/LidarPanel';
-import { TelemetryPanel } from '@/features/workspace/components/TelemetryPanel';
 import { CameraPanel } from '@/features/workspace/components/CameraPanel';
-import { ImuPanel } from '@/features/workspace/components/ImuPanel/ImuPanel';
+import { ImuPanel } from '@/features/workspace/components/ImuPanel';
+import { LidarPanel } from '@/features/workspace/components/LidarPanel';
+import { TelemetryPanel } from '@/features/workspace/components/TelemetryPanel';
 
 import { useMockTelemetry } from '../hooks/useMockTelemetry';
 import type { MockDpadBtnProps, MockStatusRowProps, PanelFrameProps } from './PanelShowcase.types';
@@ -69,32 +69,19 @@ export function PanelShowcase() {
       </PanelFrame>
 
       <PanelFrame label="ImuPanel">
-        <ImuPanel
-          roll={telemetry.imu.roll}
-          pitch={telemetry.imu.pitch}
-          yaw={telemetry.imu.yaw}
-          connected
-        />
+        <ImuPanel ros={undefined} connected={false} topicName="/imu/data" />
       </PanelFrame>
 
       <PanelFrame label="LidarPanel">
-        <LidarPanel
-          points={telemetry.lidarPoints as { angle: number; distance: number }[]}
-          rangeMax={5}
-          connected
-        />
+        <LidarPanel ros={undefined} connected={false} topicName="/scan" />
       </PanelFrame>
 
       <PanelFrame label="TelemetryPanel">
-        <TelemetryPanel
-          series={telemetry.telemetrySeries as { label: string; color: string; data: { timestamp: number; value: number }[] }[]}
-          timeWindowMs={10000}
-          connected
-        />
+        <TelemetryPanel ros={undefined} connected={false} topicName="/odom" />
       </PanelFrame>
 
       <PanelFrame label="CameraPanel">
-        <CameraPanel connected={false} label="/camera/rgb/image_raw" />
+        <CameraPanel connected={false} robotUrl="" label="/camera/rgb/image_raw" />
       </PanelFrame>
     </div>
   );
@@ -102,13 +89,10 @@ export function PanelShowcase() {
 
 /** PanelFrame
  * @description Wraps a panel demo in a fixed-height container with a label.
- * @param label - The panel name to display.
- * @param children - The panel content.
+ * @prop label - The panel name to display.
+ * @prop children - The panel content.
  */
-function PanelFrame({
-  children,
-  label,
-}: PanelFrameProps) {
+function PanelFrame({ children, label }: PanelFrameProps) {
   return (
     <div className="flex flex-col gap-2">
       <span className="font-mono text-xs text-text-muted">{label}</span>
@@ -121,13 +105,10 @@ function PanelFrame({
 
 /** MockStatusRow
  * @description Renders a simplified status row for the SystemStatusPanel recreation.
- * @param label - The row label.
- * @param value - The row value.
+ * @prop label - The row label.
+ * @prop value - The row value.
  */
-function MockStatusRow({
-  label,
-  value,
-}: MockStatusRowProps) {
+function MockStatusRow({ label, value }: MockStatusRowProps) {
   return (
     <div className="flex items-center justify-between">
       <span className="font-sans text-xs text-text-muted">{label}</span>
@@ -138,7 +119,7 @@ function MockStatusRow({
 
 /** MockDpadBtn
  * @description Renders a simplified D-pad button for the ControlsPanel recreation.
- * @param text - The button label text.
+ * @prop text - The button label text.
  */
 function MockDpadBtn({ text }: MockDpadBtnProps) {
   return (

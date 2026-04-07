@@ -1,8 +1,8 @@
-import type { ExpandableRowListProps } from '@/features/workspace/types/SystemStatusPanel.types';
+import type { ExpandableRowListProps } from './SystemStatusPanel.types';
 
 /** ExpandableRowList
  * @description Renders a scrollable list of names inside an expanded row.
- * @param names - The list of names to display.
+ * @prop names - The list of names to display.
  */
 export function ExpandableRowList({ names }: ExpandableRowListProps) {
   return (

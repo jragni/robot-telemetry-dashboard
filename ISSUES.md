@@ -33,80 +33,127 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-064: Full convention sweep — PR #49
 - T-066: Connection UX — PR #50
 - T-067: Misc fixes — PR #51
-- T-068: sensorVector3Schema nullable axes — 49de4d5 (pending PR)
-- T-081: Extract PilotNotFound from PilotView — 4249ebc (pending PR)
-- T-084: ConnectionManager class refactor — a4dadc5 (pending PR)
-- T-086: Reconnect toast off-by-one — fce1c81 (pending PR)
-- T-071: Landing page unit tests — c296d63 (pending PR)
+- T-068: sensorVector3Schema nullable axes — PR #52
+- T-071: Landing page unit tests — PR #56
+- T-078: PilotCompass folder structure — PR #65
+- T-079: PilotHud types co-location — PR #66
+- T-080: PilotLidarMinimap folder structure — PR #67
+- T-081: Extract PilotNotFound from PilotView — PR #53
+- T-082: RobotWorkspaceMobile restructure — PR #64
+- T-083: TelemetryPanel draw helpers — PR #63
+- T-084: ConnectionManager class refactor — PR #54
+- T-086: Reconnect toast off-by-one — PR #61
+- T-090: Disable text selection on mobile pilot — PR #62
+- T-095: Pilot feature folder conventions — PR #70
+- T-096: Fleet feature folder conventions — PR #68
+- T-097: Workspace feature folder conventions — PR #69
+- T-075: Hooks restructure — PR #71
 
 ## In Progress
 
-(none)
+- T-088a: LidarPanel self-subscription
+- T-088b: ImuPanel self-subscription
+- T-088c: TelemetryPanel self-subscription
+- T-088d: ControlsPanel self-subscription
+- T-088e: CameraPanel self-subscription
+- T-088f: SystemStatusPanel self-subscription
+- T-088g: Extract workspace utilities
 
 ## Backlog
 
-### Folder Restructure (serialize: T-078 → T-079 → T-080)
+### Refactors
 
-#### T-078: PilotCompass folder structure
+#### EPIC/workspace-refactor — RobotWorkspace god component refactor
+
+Panels own their ROS subscriptions. Workspace becomes a thin layout orchestrator.
+Branch: EPIC/workspace-refactor. Merge path: EPIC → overnight → main.
+
+##### Wave 1 — parallel (no file overlap, no blockers)
+
+**T-088a: LidarPanel self-subscription**
+
+- Internalize `useLidarSubscription`. New props: `ros`, `connected`, `topicName`.
+- Files: `LidarPanel.tsx`, `LidarPanel.types.ts`
+- Branch: refactor/t-088a/lidar-self-sub
+
+**T-088b: ImuPanel self-subscription**
+
+- Internalize `useImuSubscription`. New props: `ros`, `connected`, `topicName`.
+- Files: `ImuPanel.tsx`, `ImuPanel.types.ts`
+- Branch: refactor/t-088b/imu-self-sub
+
+**T-088c: TelemetryPanel self-subscription**
+
+- Internalize `useTelemetrySubscription`. New props: `ros`, `connected`, `topicName`, `topicType`.
+- Files: `TelemetryPanel.tsx`, `TelemetryPanel.types.ts`
+- Branch: refactor/t-088c/telemetry-self-sub
+
+**T-088d: ControlsPanel self-subscription**
+
+- Internalize `useControlPublisher`, import `VELOCITY_LIMITS` directly. New props: `ros`, `connected`, `robotId`, `topicName`.
+- Files: `ControlsPanel.tsx`, `ControlsPanel.types.ts`
+- Branch: refactor/t-088d/controls-self-sub
+
+**T-088e: CameraPanel self-subscription**
+
+- Internalize `useWebRtcStream`. New props: `ros`, `connected`, `robotUrl`.
+- Files: `CameraPanel.tsx`, `CameraPanel.types.ts`
+- Branch: refactor/t-088e/camera-self-sub
+
+**T-088f: SystemStatusPanel self-subscription**
+
+- Internalize `useBatterySubscription`, `useConnectionUptime`, `useRosGraph`. New props: `ros`, `connected`, `robot` (full object), `onConnect`, `onDisconnect`.
+- Files: `SystemStatusPanel.tsx`, `SystemStatusPanel.types.ts`
+- Branch: refactor/t-088f/status-self-sub
+
+**T-088g: Extract workspace utilities**
+
+- Extract `useTopicManager` hook, `WorkspaceNotFound` component, `MinimizedPanelBar` component.
+- Files: new files only (no existing file conflicts with Wave 1)
+- Branch: refactor/t-088g/workspace-utils
+
+##### Wave 2 — blocked by all of Wave 1
+
+**T-088h: RobotWorkspace slim-down**
+
+- Rewrite RobotWorkspace as thin orchestrator (~60-70 lines). Update RobotWorkspaceMobile interface to match.
+- Files: `RobotWorkspace.tsx`, `RobotWorkspaceMobile.tsx`, `RobotWorkspaceMobile.types.ts`
+- Acceptance: RobotWorkspace under 80 lines, build passes, all panels self-contained
+- Branch: refactor/t-088h/workspace-slim
+
+#### T-099: JSDoc sweep — convert @param to @prop on components, add prop docs
+
 - Severity: MEDIUM
-- Scope: src/features/pilot/components/PilotCompass/
-- Co-locate types, constants, helpers per FOLDER-STRUCTURE.md. Move compass constants from pilot/constants.ts.
-- Branch: refactor/t-078/pilot-compass-structure
+- Scope: all .tsx component files in src/
+- Fix: replace `@param` with `@prop` on all React component JSDoc. Add `@prop` entries for undocumented props. Keep `@param` on hooks and utility functions. Remove any inline JSDoc comments from `.types.ts` files that duplicate component-level `@prop` docs.
+- Can be merged with T-069 (JSDoc sweep) — same pass, different concern.
+- Branch: chore/t-099/jsdoc-prop-convention
 
-#### T-079: PilotHud folder structure (types co-location only — barrel imports handled by T-077)
-- Severity: MEDIUM
-- Scope: src/features/pilot/components/PilotHud/
-- Move PilotHudProps/PilotHudMobileProps to PilotHud.types.ts from PilotView.types.ts.
-- Branch: refactor/t-079/pilot-hud-structure
+#### T-100: Move utils tests to **tests**/ subfolder
 
-#### T-080: PilotLidarMinimap folder structure
-- Severity: MEDIUM
-- Scope: src/features/pilot/components/PilotLidarMinimap.tsx (210 lines)
-- Create folder with index.ts, types.ts, constants.ts, helpers.ts. Move minimap constants from pilot/constants.ts.
-- Branch: refactor/t-080/pilot-lidar-minimap-structure
+- Severity: LOW
+- Scope: src/utils/ — 7 test files flat in the directory
+- Fix: create src/utils/**tests**/, move all 7 test files, update import paths
+- Acceptance: no test files flat in src/utils/, all tests pass, build passes
+- Branch: refactor/t-100/utils-tests-folder
 
-#### T-088: RobotWorkspace god component refactor
-- Severity: HIGH
-- Scope: src/features/workspace/RobotWorkspace.tsx (305 lines, 14 hooks, 7 concerns)
-- Problem: single component owns all subscriptions, topic auto-selection, grid layout, mobile routing, 6 panel blocks, and minimized bar. Too many responsibilities.
-- Fix:
-  - Extract `useWorkspaceSubscriptions` hook — consolidates the 8 data hooks (battery, uptime, lidar, imu, telemetry, webrtc, controls, rosGraph) into one return object
-  - Extract `useAutoTopicSelection` hook — moves the auto-select effect + ref + filteredTopics memo
-  - Extract `WorkspaceNotFound` component — same pattern as PilotNotFound (T-081)
-  - Extract `WorkspaceGrid` component — receives panel data, renders the 6 WorkspacePanel blocks and grid layout
-  - Extract `MinimizedPanelBar` component — the restore nav at the bottom
-  - RobotWorkspace becomes an orchestrator: get robot, call hooks, route mobile vs desktop, render WorkspaceGrid
-  - Target: RobotWorkspace under 80 lines
-- Dependencies: run after T-082 (RobotWorkspaceMobile restructure) to avoid file conflicts
-- Acceptance: RobotWorkspace under 80 lines, each extracted piece tested, build passes
-- Branch: refactor/t-088/workspace-god-component
-
-#### T-082: RobotWorkspaceMobile convention violations
-- Severity: MEDIUM
-- Scope: src/features/workspace/components/RobotWorkspaceMobile.tsx
-- Create folder, extract MobileTabBar and MobilePanelHeader, alphabetize props, remove JSX comments.
-- Branch: refactor/t-082/workspace-mobile-structure
-
-#### T-083: TelemetryPanel draw logic helpers
-- Severity: MEDIUM
-- Scope: src/features/workspace/components/TelemetryPanel.tsx
-- Create folder, extract 5 draw helpers, orchestrator pattern. draw() under 30 lines.
-- Branch: refactor/t-083/telemetry-helpers
-
-### Cross-cutting Sweeps (run after folder restructures)
+### Cross-cutting Sweeps
 
 #### T-077: Fix barrel file imports
+
 - Severity: MEDIUM
 - Scope: ~20 imports across src/ that bypass barrel index.ts files.
 - Also absorbs T-079 barrel import fixes.
 - Branch: refactor/t-077/barrel-imports
 
 #### T-074: Lint error sweep
+
 - Severity: MEDIUM
 - Scope: 23 lint errors across src/. Run after T-084 (rewrites ConnectionManager.test.ts).
 - Branch: fix/t-074/lint-sweep
 
 #### T-087: Rename feature entry components to Page convention
+
 - Severity: LOW
 - Scope: 3 features + ~23 consumer files
 - Rename main feature components to use Page suffix:
@@ -117,44 +164,108 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Update all imports across src/ (~23 files reference these names)
 - Update App.tsx route lazy imports
 - Update route-code-splitting.test.ts
-- Acceptance: all feature entry components named *Page, all imports updated, build + tests pass
+- Acceptance: all feature entry components named \*Page, all imports updated, build + tests pass
 - Branch: refactor/t-087/page-naming-convention
 
 ### Visual (requires /visual-pipeline)
 
 #### T-052: MIL-STD-1472H status indicator icons
+
 - Add lucide-react icons to all status indicators (ConnectionRow, SystemStatusPanel, ControlsPanel, BatteryRow).
 - Every status indicator must have color + icon + text.
 
 #### T-085: Add body-frame axes to WireframeView 3D visualization
+
 - Severity: LOW
 - Scope: WireframeView.tsx, workspace/constants.ts
 - Draw XYZ body-frame axis lines from origin, color-coded (red/green/blue), extending beyond cube edges.
 - Branch: feat/t-085/wireframe-body-axes
 
 #### T-065: Responsive + visual polish (split into 3 sub-tickets)
+
 - T-065a: Desktop resize + panel overflow/clipping
 - T-065b: Mobile layout trigger + camera tab blank
 - T-065c: Light mode contrast audit
 
 #### T-076: Extract PilotModeCta from ControlsPanel
+
 - Severity: LOW
 - Extract Pilot Mode CTA block into PilotModeCta.tsx. Run after T-052 (both touch ControlsPanel).
 - Branch: refactor/t-076/pilot-mode-cta
 
+#### T-098: Add reconnect button to PilotStatusBar
+
+- Severity: MEDIUM
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: src/features/pilot/components/PilotStatusBar/PilotStatusBar.tsx, PilotHud.tsx, PilotHudMobile.tsx, PilotView.tsx
+- Problem: when rosbridge disconnects in pilot mode, there's no way to reconnect without navigating back to fleet. The status bar shows connection state but has no action.
+- Fix: add a small reconnect button (shadcn Button, ghost variant) below or next to the ROS connection row. Only visible when disconnected. Wire onConnect/onDisconnect callbacks through PilotHud → PilotStatusBar.
+- Props to add: onConnect, onDisconnect to PilotStatusBarProps. Show reconnect button when rosbridgeStatus is 'disconnected' or 'error'.
+- Acceptance: reconnect button visible when disconnected, triggers connection attempt, hidden when connected, works on both desktop and mobile HUD, build passes
+- Branch: feat/t-098/pilot-reconnect-button
+
+### Bugs
+
+#### T-091: Mobile LiDAR minimap visual alignment with workspace
+
+- Severity: LOW
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: src/features/pilot/components/PilotLidarMinimap.tsx, pilot/constants.ts
+- Problem: mobile pilot LiDAR minimap uses different color scheme than the workspace LidarPanel, and point dots are too large for small viewports making the scan hard to read.
+- Fix: match point colors and background to workspace LidarPanel token scheme. Reduce point radius for mobile (use smaller pixel size for minimap context). May need separate mobile constants or responsive size logic.
+- Acceptance: mobile minimap visually consistent with workspace LidarPanel colors, dots smaller and scan readable on 375px viewport, build passes.
+- Branch: fix/t-091/mobile-lidar-visual
+
+### Portfolio Polish (anti-slop evidence)
+
+#### T-092: README overhaul — screenshot, design decisions, known limitations
+
+- Severity: HIGH
+- Scope: README.md
+- Add dashboard screenshot/GIF with live data to README header
+- Add "Design Decisions" section: Canvas over SVG for LiDAR (SVG re-renders full subtree at 10-20Hz), Zustand over Redux/Context, class singleton for ConnectionManager, rosbridge + RxJS data layer, OKLCH color system
+- Add "Known Limitations" section: WebRTC latency constraints, rosbridge JSON bandwidth inflation, single-robot pilot mode, no multi-echo LiDAR support
+- Add deployed site link in README header
+- Acceptance: README has visual proof, technical depth, and honest limitations. No generic "getting started" filler.
+- Branch: docs/t-092/readme-overhaul
+
+#### T-093: Clean dead code, TODO comments, commented-out blocks, and magic numbers
+
+- Severity: HIGH
+- Scope: all src/ files
+- Audit for:
+  - `// TODO:` comments without context — remove or convert to ticket
+  - Commented-out code blocks — remove
+  - Unused imports, dead functions — remove
+  - Placeholder text ("Dashboard screenshot — pending") — remove or replace
+  - Magic numbers — extract to named constants in co-located `.constants.ts` files. Numbers like pixel sizes, thresholds, delays, ratios should have descriptive names. Exceptions: 0, 1, 2 used for math/indexing, and CSS-related numbers handled by Tailwind utilities.
+- Acceptance: zero TODO comments, zero commented-out blocks, zero unexplained magic numbers in logic, build passes
+- Branch: chore/t-093/dead-code-sweep
+
+#### T-094: GitHub repo metadata
+
+- Severity: MEDIUM
+- Scope: GitHub settings (not code)
+- Add repo description, website URL (deployed site), and topics: ros2, webrtc, telemetry, react, typescript, robotics, zustand, tailwindcss
+- Can be done via `gh repo edit` CLI
+- Branch: n/a (GitHub settings only)
+
 ### Testing (run after all restructures)
 
 #### T-070: Fleet feature testing (unit + E2E)
+
 - Severity: MEDIUM
 - Scope: src/features/fleet/ — components, helpers, schemas, connection flow.
 - Branch: test/t-070/fleet-testing
 
 #### T-072: Pilot feature testing (unit + E2E)
+
 - Severity: MEDIUM
 - Scope: src/features/pilot/ — PilotView, PilotHud, PilotCompass, PilotStatusBar, fullscreen, controls.
 - Branch: test/t-072/pilot-testing
 
 #### T-073: Workspace feature testing (unit + E2E)
+
 - Severity: MEDIUM
 - Scope: src/features/workspace/ — RobotWorkspace, 6 panels, minimize/maximize, mobile workspace.
 - Branch: test/t-073/workspace-testing
@@ -162,13 +273,7 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 ### Documentation (run last — all paths finalized)
 
 #### T-069: JSDoc sweep
+
 - Severity: LOW
 - Scope: All exported functions in .ts and .tsx files across src/.
 - Branch: chore/t-069/jsdoc-sweep
-
-### Deferred
-
-#### T-075: Restructure shared hooks into own folders
-- Severity: LOW
-- Deferred: most hooks have only 2 files, high-churn/low-value. Revisit when hooks grow.
-- Branch: refactor/t-075/hooks-restructure

@@ -1,7 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react';
-import { formatDegrees } from '@/utils/formatDegrees';
-import { withAlpha } from '@/utils/withAlpha';
-import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { formatDegrees, withAlpha } from '@/utils';
+import { useCanvasColors } from '@/hooks';
 import {
   PITCH_LADDER_DEGREES,
   ATTITUDE_COLOR_FALLBACKS,
@@ -13,16 +12,17 @@ import type { AttitudeIndicatorProps } from '@/features/workspace/types/ImuPanel
  * @description Renders a canvas-based artificial horizon showing roll and pitch
  *  orientation. Sky/ground split rotates with roll, pitch offsets the horizon
  *  line. Fixed crosshair and roll pointer at top.
- * @param roll - Roll angle in degrees.
- * @param pitch - Pitch angle in degrees.
+ * @prop roll - Roll angle in degrees.
+ * @prop pitch - Pitch angle in degrees.
  */
 export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { colorsRef: rawColorsRef, themeVersion, resolveColors } = useCanvasColors(
-    ATTITUDE_COLOR_FALLBACKS,
-    ATTITUDE_TOKEN_MAP,
-  );
+  const {
+    colorsRef: rawColorsRef,
+    themeVersion,
+    resolveColors,
+  } = useCanvasColors(ATTITUDE_COLOR_FALLBACKS, ATTITUDE_TOKEN_MAP);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -107,7 +107,7 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
     ctx.closePath();
     ctx.fillStyle = c.accent;
     ctx.fill();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [roll, pitch, resolveColors, themeVersion, rawColorsRef]);
 
   useEffect(() => {

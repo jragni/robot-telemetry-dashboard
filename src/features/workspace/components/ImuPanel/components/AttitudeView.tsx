@@ -1,12 +1,12 @@
-import { formatDegrees } from '@/utils/formatDegrees';
+import { formatDegrees } from '@/utils';
 import type { AttitudeViewProps } from '@/features/workspace/types/ImuPanel.types';
 import { AttitudeIndicator } from './AttitudeIndicator';
 
 /** AttitudeView
  * @description Renders a larger centered attitude indicator with roll and
  *  pitch readouts below. No compass heading.
- * @param roll - Roll angle in degrees.
- * @param pitch - Pitch angle in degrees.
+ * @prop roll - Roll angle in degrees.
+ * @prop pitch - Pitch angle in degrees.
  */
 export function AttitudeView({ roll, pitch }: AttitudeViewProps) {
   return (

@@ -6,12 +6,13 @@ import type { CameraEmptyStateProps } from '@/types/CameraEmptyState.types';
  * @description Renders a camera placeholder with an icon and status message.
  *  Used by both PilotCamera and CameraPanel when no stream is active.
  *  Parent controls layout wrapping.
- * @param message - Status text to display below the icon.
- * @param label - Optional secondary label (e.g., topic name).
- * @param variant - Size variant: compact (workspace panels) or hero (pilot full-bleed).
+ * @prop message - Status text to display below the icon.
+ * @prop label - Optional secondary label (e.g., topic name).
+ * @prop variant - Size variant: compact (workspace panels) or hero (pilot full-bleed).
  */
 export function CameraEmptyState({ label, message, variant = 'compact' }: CameraEmptyStateProps) {
-  const iconClass = variant === 'hero' ? 'size-12 text-text-muted' : 'size-8 text-text-muted opacity-30';
+  const iconClass =
+    variant === 'hero' ? 'size-12 text-text-muted' : 'size-8 text-text-muted opacity-30';
 
   return (
     <div className="flex flex-col items-center gap-2">

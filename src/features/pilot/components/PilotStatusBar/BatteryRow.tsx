@@ -1,10 +1,10 @@
 import { getBatteryColor } from '@/utils/getBatteryColor';
-import type { BatteryRowProps } from '@/features/pilot/types/BatteryRow.types';
+import type { BatteryRowProps } from './PilotStatusBar.types';
 
 /** BatteryRow
  * @description Renders the battery percentage with a small bar indicator.
  *  Derives color from percentage using battery threshold constants.
- * @param percentage - Battery percentage value (0-100), or null if unknown.
+ * @prop percentage - Battery percentage value (0-100), or null if unknown.
  */
 export function BatteryRow({ percentage }: BatteryRowProps) {
   const color = getBatteryColor(percentage);

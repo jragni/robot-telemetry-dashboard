@@ -1,12 +1,12 @@
 import { OctagonX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { EStopButtonProps } from '../../types/PilotControls.types';
+import type { EStopButtonProps } from './PilotControls.types';
 
 /** EStopButton
  * @description Renders the emergency stop button with pulsing border glow,
  *  OctagonX icon, and letter-spaced stencil text.
- * @param disabled - Whether the button is disabled (robot disconnected).
- * @param onEmergencyStop - Callback for emergency stop.
+ * @prop disabled - Whether the button is disabled (robot disconnected).
+ * @prop onEmergencyStop - Callback for emergency stop.
  */
 export function EStopButton({ disabled, onEmergencyStop }: EStopButtonProps) {
   return (

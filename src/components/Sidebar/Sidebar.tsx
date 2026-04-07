@@ -10,8 +10,8 @@ import { SYSTEM_ITEMS } from './constants';
 
 /** Sidebar
  * @description Renders the left sidebar with fleet robot list and system navigation.
- * @param collapsed - Whether the sidebar is in collapsed mode.
- * @param onToggleCollapse - Callback invoked to toggle sidebar collapse state.
+ * @prop collapsed - Whether the sidebar is in collapsed mode.
+ * @prop onToggleCollapse - Callback invoked to toggle sidebar collapse state.
  */
 export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   const location = useLocation();
@@ -33,35 +33,33 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
     >
       <nav className="flex-1 overflow-y-auto overflow-x-hidden">
         {!collapsed && (
-            <h2 className="font-sans text-xs font-semibold text-text-muted uppercase tracking-widest px-3 pt-3.5 pb-1.5">
-              Fleet
-            </h2>
+          <h2 className="font-sans text-xs font-semibold text-text-muted uppercase tracking-widest px-3 pt-3.5 pb-1.5">
+            Fleet
+          </h2>
         )}
         {robots.length > 0 && (
-            <>
-              {robots.map((item) => (
-                <NavItem
-                  key={item.path}
-                  item={item}
-                  active={location.pathname === item.path}
-                  collapsed={collapsed}
-                  onClick={() => {
-                    void navigate(item.path);
-                  }}
-                />
-              ))}
-            </>
+          <>
+            {robots.map((item) => (
+              <NavItem
+                key={item.path}
+                item={item}
+                active={location.pathname === item.path}
+                collapsed={collapsed}
+                onClick={() => {
+                  void navigate(item.path);
+                }}
+              />
+            ))}
+          </>
         )}
         {robots.length === 0 && !collapsed && (
-            <p className="px-3 py-2 font-mono text-xs text-text-muted">
-              No robots
-            </p>
+          <p className="px-3 py-2 font-mono text-xs text-text-muted">No robots</p>
         )}
 
         {!collapsed && (
-            <h2 className="font-sans text-xs font-semibold text-text-muted uppercase tracking-widest px-3 pt-3.5 pb-1.5">
-              System
-            </h2>
+          <h2 className="font-sans text-xs font-semibold text-text-muted uppercase tracking-widest px-3 pt-3.5 pb-1.5">
+            System
+          </h2>
         )}
         {SYSTEM_ITEMS.map((item) => (
           <NavItem

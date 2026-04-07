@@ -8,7 +8,7 @@ import type { DesktopOnlyGateProps } from '@/types/DesktopOnlyGate.types';
  * @description Renders a warning overlay when the viewport is below 1024px,
  *  informing the user that the workspace is designed for desktop. A "Proceed
  *  Anyway" button dismisses the gate for the session.
- * @param children - The workspace content to render when gate is dismissed or viewport is wide enough.
+ * @prop children - The workspace content to render when gate is dismissed or viewport is wide enough.
  */
 export function DesktopOnlyGate({ children }: DesktopOnlyGateProps) {
   const [dismissed, setDismissed] = useState(false);

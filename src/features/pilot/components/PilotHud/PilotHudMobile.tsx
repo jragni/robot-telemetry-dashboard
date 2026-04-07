@@ -1,16 +1,14 @@
 import { getBatteryColor } from '@/utils/getBatteryColor';
 import { normalizeHeading } from '@/utils/normalizeHeading';
 
-import {
-  HUD_PANEL_BASE,
-  MINIMAP_SIZE_MOBILE_MAX,
-} from '../../constants';
+import { HUD_PANEL_BASE } from '../../constants';
+import { MINIMAP_SIZE_MOBILE_MAX } from '../PilotLidarMinimap/constants';
 import { GyroInline } from './GyroInline';
 import { PilotCompassMobile } from '../PilotCompass/PilotCompassMobile';
 import { PilotControls } from '../PilotControls/PilotControls';
 import { PilotLidarMinimap } from '../PilotLidarMinimap';
 import { StatusDot } from './StatusDot';
-import type { PilotHudMobileProps } from '../../types/PilotView.types';
+import type { PilotHudMobileProps } from './PilotHud.types';
 
 /** PilotHudMobile
  * @description Renders the mobile-optimized HUD overlay for Pilot Mode.
@@ -42,12 +40,14 @@ export function PilotHudMobile({
     <div
       className="absolute inset-0 pointer-events-none select-none"
       style={{
+        touchAction: 'manipulation',
         paddingTop: 'env(safe-area-inset-top, 0px)',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         paddingLeft: 'env(safe-area-inset-left, 0px)',
         paddingRight: 'env(safe-area-inset-right, 0px)',
       }}
       aria-label="Pilot HUD overlay — mobile"
+      onContextMenu={(e) => { e.preventDefault(); }}
     >
       {/* Full-width compass strip */}
       <div className="absolute top-0 left-0 right-0 pointer-events-auto">

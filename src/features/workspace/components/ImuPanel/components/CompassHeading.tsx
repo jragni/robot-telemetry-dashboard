@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react';
-import { normalizeHeading } from '@/utils/normalizeHeading';
-import { useCanvasColors } from '@/hooks/useCanvasColors';
+import { normalizeHeading } from '@/utils';
+import { useCanvasColors } from '@/hooks';
 import { COMPASS_CARDINALS } from '@/constants/canvas';
 import {
   COMPASS_HEADING_COLOR_FALLBACKS,
@@ -12,7 +12,7 @@ import type { CompassHeadingProps } from '@/features/workspace/types/ImuPanel.ty
  * @description Renders a canvas-based compass dial showing yaw heading.
  *  Rotating dial with cardinal labels, tick marks, fixed pointer at top,
  *  and numeric heading readout in center.
- * @param yaw - Yaw heading in degrees.
+ * @prop yaw - Yaw heading in degrees.
  */
 export function CompassHeading({ yaw }: CompassHeadingProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -86,7 +86,7 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`${headingNormalized.toFixed(0)}°`, cx, cy);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
   }, [yaw, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {

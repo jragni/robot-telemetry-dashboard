@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 
 const WORKSPACE_CANVAS_FILES = [
   'src/features/workspace/components/LidarPanel/LidarPanel.tsx',
-  'src/features/workspace/components/TelemetryPanel.tsx',
+  'src/features/workspace/components/TelemetryPanel/TelemetryPanel.tsx',
   'src/features/workspace/components/ImuPanel/components/CompassHeading.tsx',
   'src/features/workspace/components/ImuPanel/components/WireframeView.tsx',
   'src/features/workspace/components/ImuPanel/components/AttitudeIndicator.tsx',

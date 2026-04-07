@@ -16,8 +16,8 @@ import type { RobotCardProps } from './types/RobotCard.types';
 /** RobotCard
  * @description Displays a single robot's connection info, system diagnostics,
  *  and navigation actions.
- * @param robot - Robot connection data to display.
- * @param onRemove - Callback invoked with robot ID on removal confirmation.
+ * @prop robot - Robot connection data to display.
+ * @prop onRemove - Callback invoked with robot ID on removal confirmation.
  */
 export function RobotCard({ robot, onRemove }: RobotCardProps) {
   const connectRobot = useConnectionStore((s) => s.connectRobot);
