@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { formatLastSeen } from './formatLastSeen';
+import { formatLastSeen } from '../formatLastSeen';
 
 describe('formatLastSeen', () => {
   beforeEach(() => {
