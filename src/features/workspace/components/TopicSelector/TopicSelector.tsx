@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import type { TopicSelectorProps } from '../types/WorkspacePanel.types';
+import type { TopicSelectorProps } from './TopicSelector.types';
 
 /** TopicSelector
  * @description Renders a topic dropdown that shows the current topic and lets

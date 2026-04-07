@@ -1,5 +1,4 @@
-import { formatDegrees } from '@/utils/formatDegrees';
-import { normalizeHeading } from '@/utils/normalizeHeading';
+import { formatDegrees, normalizeHeading } from '@/utils';
 import type { AttitudeCompassViewProps } from '@/features/workspace/types/ImuPanel.types';
 import { AttitudeIndicator } from './AttitudeIndicator';
 import { CompassHeading } from './CompassHeading';

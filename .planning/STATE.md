@@ -8,9 +8,10 @@ See: .planning/PROJECT.md
 
 ## Current Position
 
-**Next:** Mockups page (design system reference + live component gallery)
-**Status:** Phase 11 complete — all 6 production workspace panels built and wired
-**Branch:** EPIC/v4-rebuild
+**Current:** EPIC/workspace-refactor — T-088 god component breakup
+**Status:** Wave 1 dispatching (7 parallel tickets), Wave 2 blocked
+**Branch:** EPIC/workspace-refactor
+**Merge path:** EPIC/workspace-refactor → overnight → main
 
 ## Completed Work
 
@@ -84,36 +85,18 @@ See: .planning/PROJECT.md
 
 ## Session Continuity
 
-Last session: 2026-03-31
-Current: Starting Mockups page (living design system reference + live component gallery).
+Last session: 2026-04-05
+Current: EPIC/workspace-refactor — panels own their ROS subscriptions, workspace becomes thin orchestrator.
 
-### Next Task: Mockups Page
+### T-088 Workspace Refactor
 
-**Route:** `/mockups`
-**Sidebar:** Link at bottom of sidebar, below Settings
-**Type:** Living reference (reads real CSS tokens) + mock data for fully working component demos
+**Architecture decision:** Panels own their ROS subscriptions (not centralized in workspace).
+Each panel receives `ros` + `connected` + `topicName` and calls its own subscription hooks internally.
 
-**Approved sections:**
-1. **Colors** — all token namespaces (surface, text, accent, status, border) as swatches from getComputedStyle. Both themes.
-2. **Typography** — 4-size scale (12/14/20/36px), Exo + Roboto Mono, weights 400/600.
-3. **Spacing** — visual scale (4px increments) with Tailwind class labels.
-4. **Status Indicators** — triple-redundant (color + icon + text) for Nominal/Caution/Critical/Offline.
-5. **Buttons** — all variants (Primary, Secondary, Danger, Ghost) in default/hover/disabled.
-6. **Panels** — each workspace panel with mock data flowing:
-   - SystemStatus: battery 87%, uptime ticking, connected
-   - Controls: active D-pad, sliders at different positions
-   - IMU: animated roll/pitch/yaw cycling through values
-   - LiDAR: mock scan points rendered
-   - Telemetry: mock sine wave data
-   - Camera: empty state
-7. **Icons** — Lucide icon set used in the app.
-8. **Borders & Effects** — panel contract, shadow-glow-top, border tokens.
-9. **Empty States** — fleet empty, panel disconnected states.
-10. **Animations** — breathe pulse, scan-beam.
+**Wave 1 (parallel, no blockers):** T-088a through T-088g
+**Wave 2 (blocked by Wave 1):** T-088h — RobotWorkspace slim-down
 
-**Mock data approach:** useEffect + setInterval for cycling values (same pattern as old useAnimatedIMU).
-
-**Status:** Discussed and approved. Needs research (ui-ux-pro-max, /frontend-design) before implementation.
+**After this EPIC:** Mockups page is next.
 
 ### Open Issues
 
