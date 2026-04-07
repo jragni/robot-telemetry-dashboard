@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { rafThrottle } from './rafThrottle';
+import { rafThrottle } from '../rafThrottle';
 
 describe('rafThrottle', () => {
   let rafCallbacks: Map<number, FrameRequestCallback>;

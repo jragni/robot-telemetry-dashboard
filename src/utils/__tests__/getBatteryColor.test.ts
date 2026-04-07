@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getBatteryColor } from './getBatteryColor';
+import { getBatteryColor } from '../getBatteryColor';
 
 describe('getBatteryColor', () => {
   it('returns nominal for full charge', () => {

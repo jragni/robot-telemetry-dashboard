@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { withAlpha } from './withAlpha';
+import { withAlpha } from '../withAlpha';
 
 describe('withAlpha', () => {
   it('adds alpha to oklch color string', () => {

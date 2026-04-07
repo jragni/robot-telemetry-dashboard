@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatUptime } from './formatUptime';
+import { formatUptime } from '../formatUptime';
 
 describe('formatUptime', () => {
   it('returns em dash for null input', () => {
