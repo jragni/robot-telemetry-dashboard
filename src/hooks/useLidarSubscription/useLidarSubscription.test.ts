@@ -79,7 +79,7 @@ describe('useLidarSubscription', () => {
 
   it('rejects message with NaN ranges at schema level', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const { result } = renderHook(() =>
       useLidarSubscription(fakeRos, '/scan'),
     );
@@ -99,7 +99,7 @@ describe('useLidarSubscription', () => {
 
   it('rejects message with Infinity ranges at schema level', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const { result } = renderHook(() =>
       useLidarSubscription(fakeRos, '/scan'),
     );
@@ -173,7 +173,7 @@ describe('useLidarSubscription', () => {
 
   it('does not update state with invalid message', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const { result } = renderHook(() =>
       useLidarSubscription(fakeRos, '/scan'),
     );
@@ -188,7 +188,7 @@ describe('useLidarSubscription', () => {
 
   it('does not update state when message is missing required fields', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const { result } = renderHook(() =>
       useLidarSubscription(fakeRos, '/scan'),
     );

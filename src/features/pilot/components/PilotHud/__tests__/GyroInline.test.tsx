@@ -24,7 +24,7 @@ describe('GyroInline', () => {
   it('shows dashes for null values', () => {
     render(<GyroInline pitch={null} roll={null} yaw={null} />);
     const container = screen.getByLabelText('Gyro readout');
-    const text = container.textContent ?? '';
+    const text = container.textContent;
     const dashCount = (text.match(/---/g) ?? []).length;
     expect(dashCount).toBe(3);
   });
@@ -32,7 +32,7 @@ describe('GyroInline', () => {
   it('handles mixed null and numeric values', () => {
     render(<GyroInline pitch={null} roll={15} yaw={null} />);
     const container = screen.getByLabelText('Gyro readout');
-    const text = container.textContent ?? '';
+    const text = container.textContent;
     expect(text).toContain('15');
     const dashCount = (text.match(/---/g) ?? []).length;
     expect(dashCount).toBe(2);
