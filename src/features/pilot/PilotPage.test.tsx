@@ -3,11 +3,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const source = fs.readFileSync(
-  path.resolve(__dirname, 'PilotView.tsx'),
+  path.resolve(__dirname, 'PilotPage.tsx'),
   'utf-8',
 );
 
-describe('PilotView memoization', () => {
+describe('PilotPage memoization', () => {
   it('imports useMemo from react', () => {
     expect(source).toMatch(/import\s*\{[^}]*useMemo[^}]*\}\s*from\s*['"]react['"]/);
   });

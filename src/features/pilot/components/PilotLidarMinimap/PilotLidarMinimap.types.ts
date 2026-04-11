@@ -1,4 +1,4 @@
-import type { LidarPoint } from '../../types/PilotView.types';
+import type { LidarPoint } from '../../types/PilotPage.types';
 
 export interface PilotLidarMinimapProps {
   readonly heading: number;

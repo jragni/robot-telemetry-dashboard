@@ -1,5 +1,5 @@
 import { HUD_PANEL_BASE } from '../../constants';
-import type { PilotStatusBarProps } from '../../types/PilotView.types';
+import type { PilotStatusBarProps } from '../../types/PilotPage.types';
 import { BatteryRow } from './BatteryRow';
 import { ConnectionRow } from './ConnectionRow';
 

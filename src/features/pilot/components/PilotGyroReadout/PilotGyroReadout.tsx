@@ -1,5 +1,5 @@
 import { HUD_PANEL_BASE } from '../../constants';
-import type { PilotGyroReadoutProps } from '../../types/PilotView.types';
+import type { PilotGyroReadoutProps } from '../../types/PilotPage.types';
 import { GyroRow } from './GyroRow';
 
 /** PilotGyroReadout

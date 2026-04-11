@@ -4,11 +4,11 @@ import { AddRobotModal } from './components/AddRobotModal';
 import { FleetEmptyView } from './components/FleetEmptyView';
 import { FleetRobotGrid } from './components/FleetRobotGrid';
 
-/** FleetOverview
+/** FleetPage
  * @description Renders the fleet page showing robot cards grid or empty state
  *  with Add Robot modal.
  */
-export function FleetOverview() {
+export function FleetPage() {
   const robots = useConnectionStore((s) => s.robots);
   const removeRobot = useConnectionStore((s) => s.removeRobot);
   const robotList = Object.values(robots);

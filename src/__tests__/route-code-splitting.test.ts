@@ -7,19 +7,19 @@ describe('route-level code splitting', () => {
     expect(source.default).toContain("import('./features/landing/LandingPage')");
   });
 
-  it('App uses React.lazy for FleetOverview', async () => {
+  it('App uses React.lazy for FleetPage', async () => {
     const source = await import('../App?raw');
-    expect(source.default).toContain("import('./features/fleet/FleetOverview')");
+    expect(source.default).toContain("import('./features/fleet/FleetPage')");
   });
 
-  it('App uses React.lazy for RobotWorkspace', async () => {
+  it('App uses React.lazy for WorkspacePage', async () => {
     const source = await import('../App?raw');
-    expect(source.default).toContain("import('./features/workspace/RobotWorkspace')");
+    expect(source.default).toContain("import('./features/workspace/WorkspacePage')");
   });
 
-  it('App uses React.lazy for PilotView', async () => {
+  it('App uses React.lazy for PilotPage', async () => {
     const source = await import('../App?raw');
-    expect(source.default).toContain("import('./features/pilot/PilotView')");
+    expect(source.default).toContain("import('./features/pilot/PilotPage')");
   });
 
   it('App uses React.lazy for MockupsPage', async () => {
