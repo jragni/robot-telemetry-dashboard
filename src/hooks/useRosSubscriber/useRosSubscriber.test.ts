@@ -161,12 +161,12 @@ describe('useRosSubscriber', () => {
           useRosSubscriber(fakeRos, '/imu', 'sensor_msgs/msg/Imu', vi.fn(), {
             compression: comp,
           }),
-        { initialProps: { comp: 'cbor' as const } },
+        { initialProps: { comp: 'cbor' as 'cbor' | 'none' } },
       );
 
       expect(capturedOptions.compression).toBe('cbor');
 
-      rerender({ comp: 'none' as const });
+      rerender({ comp: 'none' });
 
       expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
       expect(Topic).toHaveBeenCalledTimes(2);
