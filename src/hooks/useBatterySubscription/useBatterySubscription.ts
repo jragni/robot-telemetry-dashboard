@@ -51,7 +51,9 @@ export function useBatterySubscription(
     }
   }, []);
 
-  useRosSubscriber(ros, batteryTopic, 'sensor_msgs/msg/BatteryState', onMessage);
+  useRosSubscriber(ros, batteryTopic, 'sensor_msgs/msg/BatteryState', onMessage, {
+    throttleRate: 1000,
+  });
 
   return battery;
 }

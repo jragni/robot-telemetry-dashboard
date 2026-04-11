@@ -94,7 +94,7 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
     [throttledSet],
   );
 
-  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/Imu', onMessage);
+  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/Imu', onMessage, { throttleRate: 100 });
 
   return state;
 }
