@@ -1,7 +1,7 @@
 import type { Direction } from '@/types/control.types';
 import type { VideoStreamStatus } from '@/types/streaming.types';
 
-import type { PilotTelemetry, ProxyStatus } from '../../types/PilotView.types';
+import type { PilotTelemetry, ProxyStatus } from '../../types/PilotPage.types';
 
 export interface PilotHudProps {
   readonly angularVelocity: number;

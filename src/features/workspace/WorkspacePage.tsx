@@ -18,12 +18,12 @@ import {
 } from './components';
 import { GRID_COL_MAP, WORKSPACE_PANEL_IDS } from './constants';
 
-/** RobotWorkspace
+/** WorkspacePage
  * @description Thin orchestrator for the workspace page. Gets robot connection,
  *  topic management, and panel layout state, then delegates rendering to
  *  WorkspacePanel wrappers. Each panel owns its own ROS subscriptions.
  */
-export function RobotWorkspace() {
+export function WorkspacePage() {
   const { id } = useParams<{ id: string }>();
   const { robot, connected, ros, connect, disconnect } = useRobotConnection(id);
   const { filteredTopics, selectedTopics, setTopic } = useTopicManager(id, ros);

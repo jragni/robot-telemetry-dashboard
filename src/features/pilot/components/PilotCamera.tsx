@@ -1,7 +1,7 @@
 import { CameraEmptyState } from '@/components/CameraEmptyState';
 
 import { VIDEO_STATUS_LABELS } from '../constants';
-import type { PilotCameraProps } from '../types/PilotView.types';
+import type { PilotCameraProps } from '../types/PilotPage.types';
 
 /** PilotCamera
  * @description Renders the full-bleed camera background for Pilot Mode.

@@ -20,14 +20,14 @@ import { PilotHud } from './components/PilotHud/PilotHud';
 import { PilotHudMobile } from './components/PilotHud/PilotHudMobile';
 import { PilotNotFound } from './components/PilotNotFound/PilotNotFound';
 import { PILOT_FULLSCREEN_Z } from './constants';
-import type { ProxyStatus } from './types/PilotView.types';
+import type { ProxyStatus } from './types/PilotPage.types';
 
-/** PilotView
+/** PilotPage
  * @description Renders the Pilot Mode page — a camera-first FPV view with
  *  translucent HUD overlays for robot teleoperation. Reads robot info from
  *  the connection store (read-only). All other state is self-contained.
  */
-export function PilotView() {
+export function PilotPage() {
   const { id } = useParams<{ id: string }>();
   const robot = useConnectionStore((s) => (id ? s.robots[id] : undefined));
   const { ros, connected } = useRobotConnection(id);

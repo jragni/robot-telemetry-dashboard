@@ -1,4 +1,4 @@
-import type { StatusDotProps } from '../../types/PilotView.types';
+import type { StatusDotProps } from '../../types/PilotPage.types';
 
 /** StatusDot
  * @description Renders a colored dot + label for connection status.

@@ -5,7 +5,7 @@ import { VelocitySlider } from '@/components/controls/VelocitySlider';
 import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls';
 import type { Direction } from '@/types/control.types';
 import { HUD_PANEL_BASE } from '../../constants';
-import type { PilotControlsProps } from '../../types/PilotView.types';
+import type { PilotControlsProps } from '../../types/PilotPage.types';
 import { EStopButton } from './EStopButton';
 
 /** PilotControls
