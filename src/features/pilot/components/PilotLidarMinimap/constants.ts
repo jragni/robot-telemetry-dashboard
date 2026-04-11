@@ -1,4 +1,4 @@
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
+import { CANVAS_FALLBACKS } from '@/utils';
 
 export const MINIMAP_SIZE_MIN = 120;
 export const MINIMAP_SIZE_MAX = 220;

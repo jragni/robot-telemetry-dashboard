@@ -1,4 +1,4 @@
-import { formatDegrees } from '@/utils/formatDegrees';
+import { formatDegrees } from '@/utils';
 
 import type { GyroInlineProps } from '../../types/PilotView.types';
 

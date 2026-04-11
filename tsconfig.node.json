@@ -14,5 +14,11 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "playwright.config.ts", "eslint.config.js"]
+  "include": [
+    "vite.config.ts",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "playwright.smoke.config.ts",
+    "eslint.config.js"
+  ]
 }

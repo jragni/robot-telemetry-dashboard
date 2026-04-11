@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-import { useCanvasColors } from '@/hooks/useCanvasColors';
-import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+import { useCanvasColors, useResponsiveSize } from '@/hooks';
 import { COMPASS_CARDINALS } from '@/constants/canvas';
 
 import {

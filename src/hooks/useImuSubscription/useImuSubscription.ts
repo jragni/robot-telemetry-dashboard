@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
-import { useRosSubscriber } from '@/hooks/useRosSubscriber';
-import { rafThrottle } from '@/utils/rafThrottle';
+import { useRosSubscriber } from '../useRosSubscriber';
+import { rafThrottle } from '@/utils';
 import { sensorVector3Schema } from '@/types/ros2-schemas';
 import type { UseImuReturn } from './useImuSubscription.types';
 

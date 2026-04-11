@@ -33,3 +33,8 @@ CLAUDE.md
 # Playwright MCP artifacts
 .playwright-mcp/
 *.png
+
+# Playwright
+/test-results
+/playwright-report
+/.playwright-mcp
