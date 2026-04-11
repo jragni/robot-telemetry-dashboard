@@ -73,7 +73,7 @@ export function useLidarSubscription(ros: Ros | undefined, topicName: string): U
     [throttledSet],
   );
 
-  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/LaserScan', onMessage);
+  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/LaserScan', onMessage, { throttleRate: 200 });
 
   return { points, rangeMax: LIDAR_DISPLAY_RANGE };
 }
