@@ -6,9 +6,9 @@ import type { PilotHudMobileProps } from '../PilotHud.types';
 
 beforeAll(() => {
   global.ResizeObserver = class {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+    observe() { /* noop */ }
+    unobserve() { /* noop */ }
+    disconnect() { /* noop */ }
   };
 });
 

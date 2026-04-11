@@ -110,7 +110,7 @@ describe('useBatterySubscription', () => {
 
   it('does not update state with invalid message', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const { result } = renderHook(() =>
       useBatterySubscription(fakeRos, BATTERY_TOPICS),
     );
@@ -126,7 +126,7 @@ describe('useBatterySubscription', () => {
 
   it('does not update state when message is missing required fields', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const { result } = renderHook(() =>
       useBatterySubscription(fakeRos, BATTERY_TOPICS),
     );

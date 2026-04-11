@@ -12,7 +12,7 @@ const WORKSPACE_CANVAS_FILES = [
 
 describe('workspace canvas components use shared useCanvasColors hook', () => {
   for (const file of WORKSPACE_CANVAS_FILES) {
-    const name = file.split('/').pop()!;
+    const name = file.split('/').pop() ?? file;
     const source = readFileSync(resolve(file), 'utf-8');
 
     it(`${name} imports useCanvasColors`, () => {

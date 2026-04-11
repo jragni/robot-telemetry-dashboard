@@ -158,7 +158,7 @@ describe('useImuSubscription', () => {
 
   it('does not update state with invalid message', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const { result } = renderHook(() =>
       useImuSubscription(fakeRos, '/imu'),
     );
@@ -175,7 +175,7 @@ describe('useImuSubscription', () => {
 
   it('does not update state when message is missing orientation', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const { result } = renderHook(() =>
       useImuSubscription(fakeRos, '/imu'),
     );

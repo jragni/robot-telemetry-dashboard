@@ -72,12 +72,14 @@ function seedRobot(id: string, status = 'disconnected') {
 
 function clearRobots() {
   for (const key of Object.keys(mockRobots)) {
-    delete mockRobots[key];
+    Reflect.deleteProperty(mockRobots, key);
   }
 }
 
 function latestRos(): InstanceType<typeof MockRos> {
-  return mockRosInstances[mockRosInstances.length - 1]!;
+  const last = mockRosInstances[mockRosInstances.length - 1];
+  if (!last) throw new Error('No MockRos instances');
+  return last;
 }
 
 describe('ConnectionManager', () => {
@@ -166,7 +168,7 @@ describe('ConnectionManager', () => {
   });
 
   describe('reconnection', () => {
-    const noop = () => {};
+    const noop = () => { /* noop */ };
 
     beforeEach(() => {
       process.on('unhandledRejection', noop);
@@ -264,7 +266,7 @@ describe('ConnectionManager', () => {
       expect(mockUpdateRobot).toHaveBeenCalledWith(
         'r1',
         expect.objectContaining({
-          lastError: expect.stringContaining(`Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`),
+          lastError: expect.stringContaining(`Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`) as string,
           status: 'error',
         }),
       );
