@@ -136,10 +136,16 @@ describe('ConnectionManager', () => {
     it('updates store status to connecting then connected', async () => {
       seedRobot('r1');
       const promise = cm.connect('r1', 'http://robot.local');
-      expect(mockUpdateRobot).toHaveBeenCalledWith('r1', expect.objectContaining({ status: 'connecting' }));
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ status: 'connecting' }),
+      );
       latestRos().emit('connection');
       await promise;
-      expect(mockUpdateRobot).toHaveBeenCalledWith('r1', expect.objectContaining({ status: 'connected' }));
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ status: 'connected' }),
+      );
     });
   });
 
@@ -168,7 +174,9 @@ describe('ConnectionManager', () => {
   });
 
   describe('reconnection', () => {
-    const noop = () => { /* noop */ };
+    const noop = () => {
+      /* suppress unhandled rejection */
+    };
 
     beforeEach(() => {
       process.on('unhandledRejection', noop);
@@ -266,9 +274,152 @@ describe('ConnectionManager', () => {
       expect(mockUpdateRobot).toHaveBeenCalledWith(
         'r1',
         expect.objectContaining({
-          lastError: expect.stringContaining(`Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`) as string,
+          lastError: expect.stringContaining(
+            `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`,
+          ) as string,
           status: 'error',
         }),
+      );
+    });
+  });
+
+  describe('lastSeen timestamp', () => {
+    const MOCK_TIMESTAMP = 1_712_000_000_000;
+    const noop = () => {
+      /* suppress unhandled rejection */
+    };
+
+    beforeEach(() => {
+      vi.spyOn(Date, 'now').mockReturnValue(MOCK_TIMESTAMP);
+      process.on('unhandledRejection', noop);
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+      process.removeListener('unhandledRejection', noop);
+    });
+
+    it('sets lastSeen when error event fires', async () => {
+      seedRobot('r1');
+      const promise = cm.connect('r1', 'http://robot.local');
+      latestRos().emit('error', new Error('ECONNREFUSED'));
+      await expect(promise).rejects.toThrow();
+
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ lastSeen: MOCK_TIMESTAMP, status: 'error' }),
+      );
+    });
+
+    it('sets lastSeen when close event fires before connection', async () => {
+      seedRobot('r1');
+      const promise = cm.connect('r1', 'http://robot.local');
+      latestRos().emit('close');
+      await expect(promise).rejects.toThrow();
+
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ lastSeen: MOCK_TIMESTAMP, status: 'disconnected' }),
+      );
+    });
+
+    it('sets lastSeen when disconnect() is called', async () => {
+      seedRobot('r1');
+      const promise = cm.connect('r1', 'http://robot.local');
+      latestRos().emit('connection');
+      await promise;
+
+      cm.disconnect('r1');
+
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ lastSeen: MOCK_TIMESTAMP, status: 'disconnected' }),
+      );
+    });
+
+    it('sets lastSeen when reconnect attempts are exhausted', async () => {
+      seedRobot('r1');
+      const promise = cm.connect('r1', 'http://robot.local');
+      const ros = latestRos();
+      ros.emit('connection');
+      await promise;
+      ros.emit('close');
+
+      for (let i = 0; i < RECONNECT_MAX_ATTEMPTS + 1; i++) {
+        await vi.advanceTimersByTimeAsync(60_000);
+        latestRos().emit('error', new Error('refused'));
+        await vi.advanceTimersByTimeAsync(0);
+      }
+
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({
+          lastSeen: MOCK_TIMESTAMP,
+          reconnectAttempt: null,
+          status: 'error',
+        }),
+      );
+    });
+
+    it('lastSeen is a number after any disconnect path', async () => {
+      seedRobot('r1');
+      const promise = cm.connect('r1', 'http://robot.local');
+      latestRos().emit('connection');
+      await promise;
+
+      cm.disconnect('r1');
+
+      const lastSeenCalls = mockUpdateRobot.mock.calls.filter(
+        ([, patch]: [string, Record<string, unknown>]) => patch.lastSeen !== undefined,
+      );
+      for (const [, patch] of lastSeenCalls) {
+        expect(typeof patch.lastSeen).toBe('number');
+      }
+    });
+
+    it('updates lastSeen on rapid disconnect/reconnect cycles', async () => {
+      seedRobot('r1');
+
+      const FIRST_TS = 1_000_000;
+      const SECOND_TS = 2_000_000;
+      vi.spyOn(Date, 'now').mockReturnValue(FIRST_TS);
+
+      const p1 = cm.connect('r1', 'http://robot.local');
+      latestRos().emit('connection');
+      await p1;
+
+      cm.disconnect('r1');
+
+      vi.spyOn(Date, 'now').mockReturnValue(SECOND_TS);
+
+      const p2 = cm.connect('r1', 'http://robot.local');
+      latestRos().emit('connection');
+      await p2;
+
+      cm.disconnect('r1');
+
+      const disconnectCalls = mockUpdateRobot.mock.calls.filter(
+        ([, patch]: [string, Record<string, unknown>]) =>
+          patch.status === 'disconnected' && patch.lastSeen !== undefined,
+      );
+      expect(disconnectCalls.length).toBeGreaterThanOrEqual(2);
+
+      const secondDisconnect = disconnectCalls[disconnectCalls.length - 1];
+      expect(secondDisconnect).toBeDefined();
+      expect((secondDisconnect as [string, Record<string, unknown>])[1].lastSeen).toBe(SECOND_TS);
+    });
+
+    it('intentional disconnect still sets lastSeen', async () => {
+      seedRobot('r1');
+      const promise = cm.connect('r1', 'http://robot.local');
+      latestRos().emit('connection');
+      await promise;
+
+      cm.disconnect('r1');
+
+      expect(mockUpdateRobot).toHaveBeenCalledWith(
+        'r1',
+        expect.objectContaining({ lastSeen: MOCK_TIMESTAMP }),
       );
     });
   });

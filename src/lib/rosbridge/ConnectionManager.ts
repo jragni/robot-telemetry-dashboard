@@ -42,6 +42,7 @@ export class ConnectionManager {
     if (attempts >= RECONNECT_MAX_ATTEMPTS) {
       this.updateStore(id, {
         lastError: `Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`,
+        lastSeen: Date.now(),
         reconnectAttempt: null,
         status: 'error',
       });
@@ -121,7 +122,7 @@ export class ConnectionManager {
         clearTimeout(timeout);
         this.connections.delete(id);
         const message = err instanceof Error ? err.message : 'Connection error';
-        this.updateStore(id, { lastError: message, status: 'error' });
+        this.updateStore(id, { lastError: message, lastSeen: Date.now(), status: 'error' });
         this.scheduleReconnect(id, url);
         reject(new Error(message));
       });
@@ -131,7 +132,7 @@ export class ConnectionManager {
           settled = true;
           clearTimeout(timeout);
           this.connections.delete(id);
-          this.updateStore(id, { status: 'disconnected' });
+          this.updateStore(id, { lastSeen: Date.now(), status: 'disconnected' });
           reject(new Error('Connection closed'));
           return;
         }
@@ -164,7 +165,12 @@ export class ConnectionManager {
       this.connections.delete(id);
     }
 
-    this.updateStore(id, { lastError: null, reconnectAttempt: null, status: 'disconnected' });
+    this.updateStore(id, {
+      lastError: null,
+      lastSeen: Date.now(),
+      reconnectAttempt: null,
+      status: 'disconnected',
+    });
   }
 
   /** @description Test if a rosbridge URL is reachable without persisting the connection. */
@@ -184,7 +190,9 @@ export class ConnectionManager {
         if (settled) return;
         settled = true;
         cleanup();
-        reject(new Error('Connection timed out — check the URL and ensure the robot is powered on'));
+        reject(
+          new Error('Connection timed out — check the URL and ensure the robot is powered on'),
+        );
       }, timeoutMs);
 
       ros.on('connection', () => {
