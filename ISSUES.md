@@ -111,11 +111,20 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-065b: Mobile layout trigger + camera tab blank
 - T-065c: Light mode contrast audit
 
-#### T-076: Extract PilotModeCta from ControlsPanel
+#### T-076: Pilot Mode CTA not visible without scrolling on 14" laptops
 
-- Severity: LOW
-- Extract Pilot Mode CTA block into PilotModeCta.tsx. Run after T-052 (both touch ControlsPanel).
-- Branch: refactor/t-076/pilot-mode-cta
+- Severity: MEDIUM
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: ControlsPanel, workspace layout, possibly sidebar
+- Problem: On a MacBook Pro 14" (1512x982 logical), the workspace 3x2 grid fills the viewport. The "Enter Pilot Mode" button is below the fold inside the Controls panel — users must scroll within the panel to discover it. New users would not know Pilot Mode exists.
+- Options to discuss:
+  1. Move Pilot Mode CTA out of Controls panel entirely — into workspace header/breadcrumb or as a floating action button (always visible)
+  2. Pin CTA at top of Controls panel with sticky positioning (visible without scroll)
+  3. Add Pilot Mode entry point to sidebar robot list (right-click or inline icon)
+  4. Compact Controls panel layout so CTA fits above the fold
+- Quick win: reduce workspace grid gutter size (helps on 14" but doesn't solve the root discoverability issue)
+- Acceptance: Pilot Mode entry point visible without scrolling on 14" MacBook (1512x982), discoverable for first-time users, build passes
+- Branch: feat/t-076/pilot-mode-visibility
 
 #### T-098: Add reconnect button to PilotStatusBar
 
@@ -131,6 +140,16 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 ### Performance
 
 ### Bugs
+
+#### T-111: Add copy-to-clipboard button for rosbridge URL on RobotCard
+
+- Severity: LOW
+- Visual work — requires `/visual-pipeline` (discuss/research/approve)
+- Scope: src/features/fleet/components/RobotCard/components/RobotCardConnection.tsx, RobotCardDataRow
+- Problem: The rosbridge URL is truncated with `truncate max-w-45` on the RobotCard. On smaller screens the URL is cut off and difficult to copy-paste.
+- Fix: Add a small copy-to-clipboard icon button (shadcn Button, ghost/icon variant, Lucide `Copy` or `ClipboardCopy` icon) next to the URL value. On click, copy the full URL to clipboard. Show brief feedback (e.g., icon changes to `Check` for 1.5s). Consider also adding a tooltip on hover that shows the full URL.
+- Acceptance: copy button visible next to URL, copies full URL on click, visual feedback on success, works on mobile (touch), build passes
+- Branch: feat/t-111/url-copy-button
 
 #### T-110: Pilot mode subscribes to hardcoded fallback topics before discovery
 
