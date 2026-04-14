@@ -13,10 +13,17 @@ import type { UseLidarReturn } from './useLidarSubscription.types';
 export const laserScanMessageSchema = z.object({
   angle_increment: z.number(),
   angle_min: z.number(),
-  intensities: z.array(z.number().nullable()).optional().default([]),
+  intensities: z
+    .array(z.number().nullable())
+    .nullable()
+    .optional()
+    .transform((v) => v ?? []),
   range_max: z.number(),
   range_min: z.number(),
-  ranges: z.array(z.number().nullable()),
+  ranges: z
+    .array(z.number().nullable())
+    .nullable()
+    .transform((v) => v ?? []),
 });
 const LIDAR_DISPLAY_RANGE = 15;
 
