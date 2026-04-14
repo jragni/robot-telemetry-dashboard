@@ -65,6 +65,8 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-102: Wire lastSeen timestamp — PR #93
 
 - T-069a: JSDoc sweep — shared layers — PR #94
+- T-105: Fake rosbridge server + integration tests (14 tests)
+- T-106: Connection lifecycle tests (5 tests)
 
 ## In Progress
 
@@ -272,54 +274,7 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Scope: src/features/workspace/ — RobotWorkspace, 6 panels, minimize/maximize, mobile workspace.
 - Branch: test/t-073/workspace-testing
 
-### Testing — Integration & Data Pipeline (NEW)
-
-#### T-105: Fake rosbridge server + telemetry fixture data
-
-- Severity: HIGH (highest interview signal)
-- Scope: test infrastructure + 8-12 integration tests
-- Problem: All 456 unit tests cover each layer in isolation (hooks mock useRosSubscriber, stores mock ConnectionManager). No test verifies the full pipeline: WebSocket message → Zod parse → store update → panel render. This is the single biggest gap for a telemetry dashboard — the data pipeline integration.
-- Fix:
-  - Create `e2e/fixtures/` with JSON fixture files for each message type:
-    - `imu-10hz-1sec.json` — 10 IMU messages with deterministic quaternion/acceleration values
-    - `lidar-5hz-1sec.json` — 5 LaserScan messages with 720-float range arrays
-    - `battery-1hz-3sec.json` — 3 BatteryState messages with declining percentage
-    - `odometry-10hz-1sec.json` — 10 Odometry messages with position/velocity
-  - Create `e2e/helpers/fake-rosbridge.ts` using Playwright's `page.routeWebSocket()`:
-    - Intercepts WebSocket connections to rosbridge URL
-    - Responds to rosbridge v2 protocol ops: `advertise`, `subscribe`, `publish`
-    - On `subscribe`, emits fixture data at realistic intervals
-    - Supports `close()` for disconnect testing and `burst()` for backpressure testing
-  - Write integration tests in `e2e/integration/`:
-    - `data-pipeline.spec.ts` — subscribe to IMU topic → verify store updates → verify panel shows data
-    - `lidar-pipeline.spec.ts` — subscribe to LaserScan → verify canvas renders non-empty content
-    - `battery-pipeline.spec.ts` — emit declining battery → verify percentage updates in UI
-    - `multi-topic.spec.ts` — subscribe to all topics simultaneously → verify each panel receives correct data
-- Acceptance: fake rosbridge intercepts WS connections, fixture data flows through the full pipeline, all integration tests pass, no live robot required
-- Dependencies: none (works alongside existing smoke tests)
-- Branch: test/t-105/fake-rosbridge-integration
-
-#### T-106: Connection state machine tests (reconnect, error, malformed)
-
-- Severity: HIGH
-- Scope: e2e/integration/, uses fake rosbridge from T-105
-- Problem: ConnectionManager has reconnect logic, backoff, intentional disconnect guard, and error handling — but no test exercises these through a real WebSocket lifecycle. Current tests mock the WebSocket entirely.
-- Fix:
-  - Use fake rosbridge from T-105 with additional capabilities:
-    - `dropConnection()` — close WS mid-stream to trigger reconnect
-    - `sendMalformed()` — emit invalid JSON/CBOR to trigger error handling
-    - `delay(ms)` — simulate latency spikes
-    - `rejectConnection()` — refuse handshake to test connection failure
-  - Write tests in `e2e/integration/connection-lifecycle.spec.ts`:
-    - Connect → receive data → server drops → verify reconnect attempt → server accepts → data resumes
-    - Connect → server sends malformed message → verify error handled gracefully, no crash
-    - Connect → intentional disconnect (user clicks) → verify no reconnect attempts
-    - Connect → server unreachable → verify backoff delays increase → verify max retries → verify "error" state
-    - Connect → server drops during subscribe → verify partial subscriptions cleaned up
-  - Use Playwright `page.clock.install()` for deterministic backoff timing assertions
-- Acceptance: all reconnect/error paths exercised via real WebSocket lifecycle, no mocked connections, tests pass deterministically with clock control
-- Dependencies: T-105 (fake rosbridge infrastructure)
-- Branch: test/t-106/connection-lifecycle
+### Testing — Integration & Data Pipeline
 
 #### T-107: Canvas content assertions for workspace panels
 
