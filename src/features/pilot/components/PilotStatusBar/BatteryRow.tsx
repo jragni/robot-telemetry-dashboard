@@ -1,4 +1,4 @@
-import { getBatteryColor } from '@/utils/getBatteryColor';
+import { getBatteryColor } from '@/utils';
 import type { BatteryRowProps } from './PilotStatusBar.types';
 
 /** BatteryRow

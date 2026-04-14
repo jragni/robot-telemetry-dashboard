@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
-import { useRosSubscriber } from '@/hooks/useRosSubscriber';
-import { rafThrottle } from '@/utils/rafThrottle';
+import { useRosSubscriber } from '../useRosSubscriber';
+import { rafThrottle } from '@/utils';
 import type { LidarPoint } from '@/types/lidar.types';
 import type { UseLidarReturn } from './useLidarSubscription.types';
 
+/** laserScanMessageSchema
+ * @description Zod schema validating the consumed fields of sensor_msgs/msg/LaserScan.
+ *  Ranges and intensities use nullable arrays to handle rosbridge null serialization.
+ */
 export const laserScanMessageSchema = z.object({
   angle_increment: z.number(),
   angle_min: z.number(),
@@ -73,7 +77,7 @@ export function useLidarSubscription(ros: Ros | undefined, topicName: string): U
     [throttledSet],
   );
 
-  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/LaserScan', onMessage);
+  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/LaserScan', onMessage, { throttleRate: 200 });
 
   return { points, rangeMax: LIDAR_DISPLAY_RANGE };
 }

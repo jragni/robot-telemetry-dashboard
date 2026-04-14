@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useBatterySubscription } from './useBatterySubscription';
-import type { RosTopic } from '@/hooks/useRosTopics';
+import type { RosTopic } from '../useRosTopics';
 
 let capturedOnMessage: ((msg: unknown) => void) | null = null;
 
@@ -29,18 +29,14 @@ describe('useBatterySubscription', () => {
 
   it('returns null as initial state', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useBatterySubscription(fakeRos, BATTERY_TOPICS),
-    );
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
 
     expect(result.current).toBeNull();
   });
 
   it('updates state with valid battery message', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useBatterySubscription(fakeRos, BATTERY_TOPICS),
-    );
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
 
     act(() => {
       capturedOnMessage?.({
@@ -59,9 +55,7 @@ describe('useBatterySubscription', () => {
 
   it('normalizes 0-1 scale percentage to 0-100', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useBatterySubscription(fakeRos, BATTERY_TOPICS),
-    );
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
 
     act(() => {
       capturedOnMessage?.({
@@ -76,9 +70,7 @@ describe('useBatterySubscription', () => {
 
   it('keeps 0-100 scale percentage as-is', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useBatterySubscription(fakeRos, BATTERY_TOPICS),
-    );
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
 
     act(() => {
       capturedOnMessage?.({
@@ -93,9 +85,7 @@ describe('useBatterySubscription', () => {
 
   it('detects charging status from power_supply_status', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useBatterySubscription(fakeRos, BATTERY_TOPICS),
-    );
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
 
     act(() => {
       capturedOnMessage?.({
@@ -110,10 +100,8 @@ describe('useBatterySubscription', () => {
 
   it('does not update state with invalid message', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { result } = renderHook(() =>
-      useBatterySubscription(fakeRos, BATTERY_TOPICS),
-    );
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
 
     act(() => {
       capturedOnMessage?.({ percentage: 'full', voltage: 12.6 });
@@ -126,10 +114,8 @@ describe('useBatterySubscription', () => {
 
   it('does not update state when message is missing required fields', () => {
     const fakeRos = {} as never;
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { result } = renderHook(() =>
-      useBatterySubscription(fakeRos, BATTERY_TOPICS),
-    );
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
 
     act(() => {
       capturedOnMessage?.({});
@@ -141,9 +127,7 @@ describe('useBatterySubscription', () => {
 
   it('finds battery topic from available topics by type', () => {
     const fakeRos = {} as never;
-    renderHook(() =>
-      useBatterySubscription(fakeRos, EMPTY_TOPICS),
-    );
+    renderHook(() => useBatterySubscription(fakeRos, EMPTY_TOPICS));
 
     // With no matching topic, useRosSubscriber gets empty string for topic name
     // The hook should still render without error

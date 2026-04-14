@@ -31,7 +31,9 @@ export function useControlPublisher(
   const linearRef = useRef(linearVelocity);
   const angularRef = useRef(angularVelocity);
 
-  // Create/destroy roslib Topic when ros or topicName changes
+  // No compression or throttle_rate on the publisher Topic. Commands must arrive
+  // at the robot immediately and without server-side rate limiting or CBOR encoding
+  // overhead in the publish direction.
   useEffect(() => {
     if (!ros) {
       topicRef.current = null;

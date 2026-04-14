@@ -14,7 +14,7 @@ function ThrowingChild() {
 describe('PanelErrorBoundary', () => {
   beforeEach(() => {
     shouldThrow = false;
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(vi.fn());
   });
 
   it('renders children when no error occurs', () => {

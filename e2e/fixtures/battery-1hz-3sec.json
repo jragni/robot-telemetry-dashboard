@@ -1,0 +1,29 @@
+[
+  {
+    "op": "publish",
+    "topic": "/battery_state",
+    "msg": {
+      "percentage": 0.85,
+      "voltage": 12.6,
+      "power_supply_status": 1
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/battery_state",
+    "msg": {
+      "percentage": 0.83,
+      "voltage": 12.5,
+      "power_supply_status": 1
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/battery_state",
+    "msg": {
+      "percentage": 0.8,
+      "voltage": 12.4,
+      "power_supply_status": 0
+    }
+  }
+]

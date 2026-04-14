@@ -9,14 +9,14 @@ import { NotFound } from './components/NotFound';
 const LandingPage = lazy(() =>
   import('./features/landing/LandingPage').then(m => ({ default: m.LandingPage }))
 );
-const FleetOverview = lazy(() =>
-  import('./features/fleet/FleetOverview').then(m => ({ default: m.FleetOverview }))
+const FleetPage = lazy(() =>
+  import('./features/fleet/FleetPage').then(m => ({ default: m.FleetPage }))
 );
-const RobotWorkspace = lazy(() =>
-  import('./features/workspace/RobotWorkspace').then(m => ({ default: m.RobotWorkspace }))
+const WorkspacePage = lazy(() =>
+  import('./features/workspace/WorkspacePage').then(m => ({ default: m.WorkspacePage }))
 );
-const PilotView = lazy(() =>
-  import('./features/pilot/PilotView').then(m => ({ default: m.PilotView }))
+const PilotPage = lazy(() =>
+  import('./features/pilot/PilotPage').then(m => ({ default: m.PilotPage }))
 );
 const MockupsPage = lazy(() =>
   import('./features/mockups/MockupsPage').then(m => ({ default: m.MockupsPage }))
@@ -36,10 +36,10 @@ export function App() {
 
             {/* App routes — inside AppShell with sidebar/header/statusbar */}
             <Route element={<AppShell />}>
-              <Route path="/fleet" element={<FleetOverview />} />
-              <Route path="/robot/:id" element={<RobotWorkspace />} />
-              <Route path="/pilot/:id" element={<PilotView />} />
-              <Route path="/demo" element={<FleetOverview />} />
+              <Route path="/fleet" element={<FleetPage />} />
+              <Route path="/robot/:id" element={<WorkspacePage />} />
+              <Route path="/pilot/:id" element={<PilotPage />} />
+              <Route path="/demo" element={<FleetPage />} />
               <Route path="/map" element={<ComingSoon label="Map" />} />
               <Route path="/settings" element={<ComingSoon label="Settings" />} />
               <Route path="/mockups" element={<MockupsPage />} />

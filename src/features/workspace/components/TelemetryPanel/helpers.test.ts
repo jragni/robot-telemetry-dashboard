@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { type Mock, describe, it, expect, vi, beforeEach } from 'vitest';
 
 import {
   computeValueRange,
@@ -8,7 +8,15 @@ import {
   drawValueAxis,
 } from './helpers';
 
-function createMockCtx(): CanvasRenderingContext2D {
+interface MockCtx extends CanvasRenderingContext2D {
+  beginPath: Mock;
+  fillText: Mock;
+  lineTo: Mock;
+  moveTo: Mock;
+  stroke: Mock;
+}
+
+function createMockCtx(): MockCtx {
   return {
     beginPath: vi.fn(),
     fillText: vi.fn(),
@@ -21,7 +29,7 @@ function createMockCtx(): CanvasRenderingContext2D {
     strokeStyle: '',
     textAlign: 'start' as CanvasTextAlign,
     textBaseline: 'alphabetic' as CanvasTextBaseline,
-  } as unknown as CanvasRenderingContext2D;
+  } as unknown as MockCtx;
 }
 
 const COLORS = { border: '#333', textMuted: '#999' };
@@ -102,7 +110,7 @@ describe('computeValueRange', () => {
 });
 
 describe('drawGrid', () => {
-  let ctx: CanvasRenderingContext2D;
+  let ctx: MockCtx;
 
   beforeEach(() => {
     ctx = createMockCtx();
@@ -124,7 +132,7 @@ describe('drawGrid', () => {
 });
 
 describe('drawTimeAxis', () => {
-  let ctx: CanvasRenderingContext2D;
+  let ctx: MockCtx;
 
   beforeEach(() => {
     ctx = createMockCtx();
@@ -132,15 +140,15 @@ describe('drawTimeAxis', () => {
 
   it('renders time labels including "now"', () => {
     drawTimeAxis(ctx, 400, 200, 40, 30000, COLORS);
-    const calls = vi.mocked(ctx.fillText).mock.calls;
-    const labels = calls.map((c) => c[0]);
+    const calls = ctx.fillText.mock.calls;
+    const labels = calls.map((c: unknown[]) => c[0]);
     expect(labels).toContain('now');
   });
 
   it('renders negative second labels', () => {
     drawTimeAxis(ctx, 400, 200, 40, 30000, COLORS);
-    const calls = vi.mocked(ctx.fillText).mock.calls;
-    const labels = calls.map((c) => c[0]);
+    const calls = ctx.fillText.mock.calls;
+    const labels = calls.map((c: unknown[]) => c[0]);
     expect(labels).toContain('-30s');
   });
 
@@ -151,7 +159,7 @@ describe('drawTimeAxis', () => {
 });
 
 describe('drawValueAxis', () => {
-  let ctx: CanvasRenderingContext2D;
+  let ctx: MockCtx;
 
   beforeEach(() => {
     ctx = createMockCtx();
@@ -160,28 +168,28 @@ describe('drawValueAxis', () => {
   it('renders value labels', () => {
     drawValueAxis(ctx, 200, 40, 0, 10, COLORS);
     expect(ctx.fillText).toHaveBeenCalled();
-    const calls = vi.mocked(ctx.fillText).mock.calls;
+    const calls = ctx.fillText.mock.calls;
     expect(calls.length).toBeGreaterThan(0);
   });
 
   it('uses more decimals for small ranges', () => {
     drawValueAxis(ctx, 200, 40, 0, 0.05, COLORS);
-    const calls = vi.mocked(ctx.fillText).mock.calls;
-    const firstLabel = calls[0]?.[0] ?? '';
+    const calls = ctx.fillText.mock.calls;
+    const firstLabel = String(calls[0]?.[0] ?? '');
     // range < 0.1 should use 3 decimal places
     expect(firstLabel).toMatch(/\.\d{3}$/);
   });
 
   it('uses 1 decimal for large ranges', () => {
     drawValueAxis(ctx, 200, 40, 0, 100, COLORS);
-    const calls = vi.mocked(ctx.fillText).mock.calls;
-    const firstLabel = calls[0]?.[0] ?? '';
+    const calls = ctx.fillText.mock.calls;
+    const firstLabel = String(calls[0]?.[0] ?? '');
     expect(firstLabel).toMatch(/\.\d$/);
   });
 });
 
 describe('drawSeriesLines', () => {
-  let ctx: CanvasRenderingContext2D;
+  let ctx: MockCtx;
 
   beforeEach(() => {
     ctx = createMockCtx();
@@ -215,8 +223,8 @@ describe('drawSeriesLines', () => {
 
   it('renders empty state when no series exist', () => {
     drawSeriesLines(ctx, [], 400, 200, 40, 0, 400, 0, 1, COLORS);
-    const calls = vi.mocked(ctx.fillText).mock.calls;
-    const labels = calls.map((c) => c[0]);
+    const calls = ctx.fillText.mock.calls;
+    const labels = calls.map((c: unknown[]) => c[0]);
     expect(labels).toContain('No data');
   });
 
@@ -226,8 +234,8 @@ describe('drawSeriesLines', () => {
       { color: '#00ff00', data: [], label: 'Temp' },
     ];
     drawSeriesLines(ctx, series, 400, 200, 40, 0, 400, 0, 1, COLORS);
-    const calls = vi.mocked(ctx.fillText).mock.calls;
-    const labels = calls.map((c) => c[0]);
+    const calls = ctx.fillText.mock.calls;
+    const labels = calls.map((c: unknown[]) => c[0]);
     expect(labels).toContain('No data');
   });
 
@@ -246,7 +254,7 @@ describe('drawSeriesLines', () => {
     ];
     drawSeriesLines(ctx, series, 400, 200, 40, 100, 300, 0, 15, COLORS);
     // Only 2 points in range (150, 200), so moveTo once, lineTo once
-    expect(vi.mocked(ctx.moveTo).mock.calls.length).toBe(1);
-    expect(vi.mocked(ctx.lineTo).mock.calls.length).toBe(1);
+    expect(ctx.moveTo.mock.calls.length).toBe(1);
+    expect(ctx.lineTo.mock.calls.length).toBe(1);
   });
 });

@@ -217,7 +217,7 @@ export function useTelemetrySubscription(
     [messageType, throttledSet],
   );
 
-  useRosSubscriber(ros, topicName, messageType, onMessage);
+  useRosSubscriber(ros, topicName, messageType, onMessage, { throttleRate: 100 });
 
   return series;
 }

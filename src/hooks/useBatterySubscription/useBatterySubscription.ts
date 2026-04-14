@@ -1,10 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
-import { useRosSubscriber } from '@/hooks/useRosSubscriber';
-import type { RosTopic } from '@/hooks/useRosTopics';
+import { useRosSubscriber } from '../useRosSubscriber';
+import type { RosTopic } from '../useRosTopics';
 import type { BatteryStatus } from '@/types/battery.types';
 
+/** batteryStateMessageSchema
+ * @description Zod schema validating the consumed fields of sensor_msgs/msg/BatteryState.
+ */
 export const batteryStateMessageSchema = z.object({
   percentage: z.number(),
   power_supply_status: z.number(),
@@ -51,7 +54,9 @@ export function useBatterySubscription(
     }
   }, []);
 
-  useRosSubscriber(ros, batteryTopic, 'sensor_msgs/msg/BatteryState', onMessage);
+  useRosSubscriber(ros, batteryTopic, 'sensor_msgs/msg/BatteryState', onMessage, {
+    throttleRate: 1000,
+  });
 
   return battery;
 }

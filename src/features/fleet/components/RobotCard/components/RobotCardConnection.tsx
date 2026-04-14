@@ -1,4 +1,4 @@
-import { formatLastSeen } from '@/utils/formatLastSeen';
+import { formatLastSeen } from '@/utils';
 import type { RobotCardConnectionProps } from '../types/RobotCardConnection.types';
 import { RobotCardDataRow } from './RobotCardDataRow';
 

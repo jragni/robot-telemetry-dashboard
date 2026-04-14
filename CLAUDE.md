@@ -17,6 +17,14 @@ When the user says "run this through our development process," execute ALL steps
 | 5. **Review** | PR reviewer posts inline comments on every finding | Agent | PR comments (feeds self-improvement loop) |
 | 6. **Fix** | PR responder addresses all findings, replies to every comment | Agent | Commits pushed |
 | 7. **Merge** | Through GitHub PRs only — never local `git merge` | `gh pr merge` | PR closed |
+
+### Branch Strategy
+
+- All work happens on an EPIC branch (e.g., `EPIC/general-house-keeping`).
+- Feature/fix branches are created from and PR'd back into the EPIC branch — never directly to `main`.
+- When the EPIC is complete, a single PR merges the EPIC branch into `main`.
+- Agent dispatch prompts must always specify the EPIC branch as the PR base (`--base EPIC/...`).
+- Before dispatching agents, confirm which EPIC branch to target.
 | 8. **Scorecard** (enforced) | Delta from baseline: what changed, regressed, caught in review | Script/overseer | `.planning/scorecards/{branch}.md` |
 | 9. **Session report** | End-of-session summary: agents, findings, process failures, metrics | `/retro` | `.planning/session-reports/{date}.md` |
 

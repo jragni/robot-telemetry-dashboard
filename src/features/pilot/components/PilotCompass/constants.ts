@@ -1,4 +1,4 @@
-import { CANVAS_FALLBACKS } from '@/utils/canvasColors';
+import { CANVAS_FALLBACKS } from '@/utils';
 
 // Desktop dimensions
 export const COMPASS_STRIP_WIDTH_MIN = 200;

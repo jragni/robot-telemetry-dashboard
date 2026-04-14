@@ -32,9 +32,9 @@ describe('SignalingClient', () => {
   });
 
   describe('URL conversion', () => {
-    it('converts ws:// to http://', () => {
+    it('converts ws:// to http://', async () => {
       const client = new SignalingClient('ws://localhost:8080/webrtc');
-      client.sendOffer(MOCK_OFFER);
+      await client.sendOffer(MOCK_OFFER);
 
       expect(fetch).toHaveBeenCalledWith(
         'http://localhost:8080/webrtc/offer',
@@ -42,9 +42,9 @@ describe('SignalingClient', () => {
       );
     });
 
-    it('converts wss:// to https://', () => {
+    it('converts wss:// to https://', async () => {
       const client = new SignalingClient('wss://robot.example.com/webrtc');
-      client.sendOffer(MOCK_OFFER);
+      await client.sendOffer(MOCK_OFFER);
 
       expect(fetch).toHaveBeenCalledWith(
         'https://robot.example.com/webrtc/offer',
@@ -52,9 +52,9 @@ describe('SignalingClient', () => {
       );
     });
 
-    it('preserves http:// URLs unchanged', () => {
+    it('preserves http:// URLs unchanged', async () => {
       const client = new SignalingClient('http://localhost:8080/webrtc');
-      client.sendOffer(MOCK_OFFER);
+      await client.sendOffer(MOCK_OFFER);
 
       expect(fetch).toHaveBeenCalledWith(
         'http://localhost:8080/webrtc/offer',
@@ -62,9 +62,9 @@ describe('SignalingClient', () => {
       );
     });
 
-    it('does not append /offer when URL already ends with /offer', () => {
+    it('does not append /offer when URL already ends with /offer', async () => {
       const client = new SignalingClient('ws://localhost:8080/webrtc/offer');
-      client.sendOffer(MOCK_OFFER);
+      await client.sendOffer(MOCK_OFFER);
 
       expect(fetch).toHaveBeenCalledWith(
         'http://localhost:8080/webrtc/offer',

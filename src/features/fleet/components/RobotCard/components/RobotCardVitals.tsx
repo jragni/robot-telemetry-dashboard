@@ -1,4 +1,4 @@
-import { getBatteryColor } from '@/utils/getBatteryColor';
+import { getBatteryColor } from '@/utils';
 import { RobotCardDataRow } from './RobotCardDataRow';
 import type { RobotCardVitalsProps } from '../types/RobotCardVitals.types';
 

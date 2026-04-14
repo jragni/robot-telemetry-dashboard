@@ -1,0 +1,92 @@
+[
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 },
+      "angular_velocity": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": 0.0, "y": 0.0, "z": 9.81 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.087, "y": 0.0, "z": 0.0, "w": 0.996 },
+      "angular_velocity": { "x": 0.1, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": 0.05, "y": 0.0, "z": 9.8 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.174, "y": 0.0, "z": 0.0, "w": 0.985 },
+      "angular_velocity": { "x": 0.15, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": 0.1, "y": 0.0, "z": 9.78 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.259, "y": 0.0, "z": 0.0, "w": 0.966 },
+      "angular_velocity": { "x": 0.12, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": 0.08, "y": 0.0, "z": 9.76 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.342, "y": 0.0, "z": 0.0, "w": 0.94 },
+      "angular_velocity": { "x": 0.1, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": 0.05, "y": 0.0, "z": 9.74 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.259, "y": 0.0, "z": 0.0, "w": 0.966 },
+      "angular_velocity": { "x": -0.1, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": -0.05, "y": 0.0, "z": 9.76 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.174, "y": 0.0, "z": 0.0, "w": 0.985 },
+      "angular_velocity": { "x": -0.12, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": -0.08, "y": 0.0, "z": 9.78 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.087, "y": 0.0, "z": 0.0, "w": 0.996 },
+      "angular_velocity": { "x": -0.1, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": -0.05, "y": 0.0, "z": 9.8 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 },
+      "angular_velocity": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": 0.0, "y": 0.0, "z": 9.81 }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.0, "y": 0.087, "z": 0.0, "w": 0.996 },
+      "angular_velocity": { "x": 0.0, "y": 0.1, "z": 0.0 },
+      "linear_acceleration": { "x": 0.0, "y": 0.05, "z": 9.8 }
+    }
+  }
+]
