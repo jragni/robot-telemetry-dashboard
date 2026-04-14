@@ -5,7 +5,13 @@ import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
 
 import type { ValidateFailure, ValidateSuccess } from './types/AddRobotModal.types';
 
-/** Validate name + url with Zod, then normalize the URL. */
+/** validateRobotForm
+ * @description Validates name and URL with Zod, then normalizes the URL to a
+ *  WebSocket address. Returns a discriminated union with parsed values on
+ *  success or per-field error messages on failure.
+ * @param name - User-entered robot display name.
+ * @param url - User-entered rosbridge URL or hostname.
+ */
 export function validateRobotForm(name: string, url: string): ValidateSuccess | ValidateFailure {
   const result = addRobotSchema.safeParse({ name, url });
   if (!result.success) {
@@ -26,7 +32,14 @@ export function validateRobotForm(name: string, url: string): ValidateSuccess | 
   return { name: result.data.name, ok: true, url: normalizedUrl };
 }
 
-/** Test connection with retries, calling onAttempt before each try. */
+/** testConnectionWithRetries
+ * @description Attempts a WebSocket connection up to RECONNECT_MAX_ATTEMPTS times,
+ *  invoking onAttempt before each try. Returns a discriminated union indicating
+ *  success or the final error message.
+ * @param url - Normalized WebSocket URL to test.
+ * @param onAttempt - Callback invoked with the current attempt number before each try.
+ * @param tester - Optional connection test function (defaults to ConnectionManager).
+ */
 export async function testConnectionWithRetries(
   url: string,
   onAttempt: (attempt: number) => void,
