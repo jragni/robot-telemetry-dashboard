@@ -29,6 +29,9 @@ export function toRobotId(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+/** robotConnectionSchema
+ * @description Zod schema for validating persisted robot connection data from localStorage.
+ */
 export const robotConnectionSchema = z.object({
   color: z.string().optional(),
   id: z.string(),
@@ -40,9 +43,13 @@ export const robotConnectionSchema = z.object({
   url: z.string(),
 });
 
+/** persistedStateSchema
+ * @description Zod schema for validating the full persisted connection store shape.
+ */
 export const persistedStateSchema = z.object({
   robots: z.record(z.string(), robotConnectionSchema),
 });
+
 /** deriveWebRtcUrl
  * @description Appends /webrtc to a base URL for WebRTC signaling endpoint derivation.
  * @param baseUrl - The robot's base URL.

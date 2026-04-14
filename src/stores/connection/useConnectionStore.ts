@@ -11,6 +11,10 @@ import {
 } from './useConnectionStore.helpers';
 import type { ConnectionStore } from './useConnectionStore.types';
 
+/** useConnectionStore
+ * @description Zustand store managing robot connections, status, topic selection,
+ *  and persistence to localStorage. Delegates WebSocket lifecycle to ConnectionManager.
+ */
 export const useConnectionStore = create<ConnectionStore>()(
   persist(
     (set) => ({

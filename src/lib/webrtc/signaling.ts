@@ -1,10 +1,17 @@
 import { z } from 'zod';
 
+/** offerResponseSchema
+ * @description Zod schema validating the SDP answer returned by the WebRTC signaling endpoint.
+ */
 export const offerResponseSchema = z.object({
   sdp: z.string(),
   type: z.enum(['offer', 'answer', 'pranswer', 'rollback']),
 });
 
+/** SignalingClient
+ * @description HTTP-based WebRTC signaling client. Sends SDP offers to the robot's
+ *  aiortc endpoint and returns the SDP answer for peer connection setup.
+ */
 export class SignalingClient {
   private readonly url: string;
 
@@ -12,6 +19,7 @@ export class SignalingClient {
     this.url = url.replace(/^ws(s)?:\/\//, 'http$1://');
   }
 
+  /** @description Posts an SDP offer to the signaling endpoint and returns the parsed answer. */
   async sendOffer(offer: RTCSessionDescriptionInit): Promise<RTCSessionDescriptionInit> {
     const endpoint = this.url.endsWith('/offer') ? this.url : `${this.url}/offer`;
 
