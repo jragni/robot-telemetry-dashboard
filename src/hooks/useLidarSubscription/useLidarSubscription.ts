@@ -6,6 +6,10 @@ import { rafThrottle } from '@/utils';
 import type { LidarPoint } from '@/types/lidar.types';
 import type { UseLidarReturn } from './useLidarSubscription.types';
 
+/** laserScanMessageSchema
+ * @description Zod schema validating the consumed fields of sensor_msgs/msg/LaserScan.
+ *  Ranges and intensities use nullable arrays to handle rosbridge null serialization.
+ */
 export const laserScanMessageSchema = z.object({
   angle_increment: z.number(),
   angle_min: z.number(),
