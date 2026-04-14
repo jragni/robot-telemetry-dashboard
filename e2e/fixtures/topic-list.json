@@ -1,0 +1,14 @@
+{
+  "op": "service_response",
+  "service": "/rosapi/topics",
+  "values": {
+    "topics": ["/battery_state", "/cmd_vel", "/imu/data", "/odom", "/scan"],
+    "types": [
+      "sensor_msgs/msg/BatteryState",
+      "geometry_msgs/msg/Twist",
+      "sensor_msgs/msg/Imu",
+      "nav_msgs/msg/Odometry",
+      "sensor_msgs/msg/LaserScan"
+    ]
+  }
+}

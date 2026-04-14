@@ -57,6 +57,14 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-088g: Extract workspace utilities — PR #78
 - T-088h: RobotWorkspace slim-down — PR #80
 - Controls panel overflow fix — PR #81
+- T-074: Lint error sweep — PR #90
+- T-087: Rename feature entry components to Page convention — PR #89
+- T-101: Enable CBOR compression and throttle_rate on ROS subscriptions — PR #91
+- T-094: GitHub repo metadata — gh repo edit (inline)
+- T-069b: JSDoc sweep — features — PR #92
+- T-102: Wire lastSeen timestamp — PR #93
+
+- T-069a: JSDoc sweep — shared layers — PR #94
 
 ## In Progress
 
@@ -65,14 +73,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 ## Backlog
 
 ### Refactors
-
-#### T-099: JSDoc sweep — convert @param to @prop on components, add prop docs
-
-- Severity: MEDIUM
-- Scope: all .tsx component files in src/
-- Fix: replace `@param` with `@prop` on all React component JSDoc. Add `@prop` entries for undocumented props. Keep `@param` on hooks and utility functions. Remove any inline JSDoc comments from `.types.ts` files that duplicate component-level `@prop` docs.
-- Can be merged with T-069 (JSDoc sweep) — same pass, different concern.
-- Branch: chore/t-099/jsdoc-prop-convention
 
 #### T-100: Move utils tests to **tests**/ subfolder
 
@@ -90,27 +90,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Scope: ~20 imports across src/ that bypass barrel index.ts files.
 - Also absorbs T-079 barrel import fixes.
 - Branch: refactor/t-077/barrel-imports
-
-#### T-074: Lint error sweep
-
-- Severity: MEDIUM
-- Scope: 23 lint errors across src/. Run after T-084 (rewrites ConnectionManager.test.ts).
-- Branch: fix/t-074/lint-sweep
-
-#### T-087: Rename feature entry components to Page convention
-
-- Severity: LOW
-- Scope: 3 features + ~23 consumer files
-- Rename main feature components to use Page suffix:
-  - `src/features/fleet/FleetOverview.tsx` → `FleetPage.tsx` (component: FleetOverview → FleetPage)
-  - `src/features/pilot/PilotView.tsx` → `PilotPage.tsx` (component: PilotView → PilotPage)
-  - `src/features/workspace/RobotWorkspace.tsx` → `WorkspacePage.tsx` (component: RobotWorkspace → WorkspacePage)
-- LandingPage.tsx and MockupsPage.tsx already follow the convention
-- Update all imports across src/ (~23 files reference these names)
-- Update App.tsx route lazy imports
-- Update route-code-splitting.test.ts
-- Acceptance: all feature entry components named \*Page, all imports updated, build + tests pass
-- Branch: refactor/t-087/page-naming-convention
 
 ### Visual (requires /visual-pipeline)
 
@@ -149,7 +128,74 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: reconnect button visible when disconnected, triggers connection attempt, hidden when connected, works on both desktop and mobile HUD, build passes
 - Branch: feat/t-098/pilot-reconnect-button
 
+### Performance
+
 ### Bugs
+
+#### T-110: Pilot mode subscribes to hardcoded fallback topics before discovery
+
+- Severity: MEDIUM
+- Scope: src/features/pilot/PilotPage.tsx, src/features/workspace/components/ActivePanelContent/ActivePanelContent.tsx
+- Problem: PilotPage and ActivePanelContent fall back to hardcoded topic names (`'/imu/data'`, `'/scan'`) when `selectedTopics` is undefined. If a user navigates directly to pilot mode before topic discovery completes, subscriptions fire on topics that may not exist on the robot — resulting in silent no-ops (no IMU/LiDAR data shows up, no error displayed).
+- Root cause: `useTopicManager` auto-selects topics after `useRosTopics` discovers them, but pilot mode bypasses `useTopicManager` entirely and reads `selectedTopics` from the store directly. Before discovery, these are `undefined` → fallback kicks in.
+- Fix: Remove hardcoded fallback topic names. If `selectedTopics?.imu` is undefined, pass `undefined` to the subscription hook (which already guards against it — `useRosSubscriber` skips subscription when topicName is falsy). Show a "Waiting for topics..." indicator in the HUD until discovery populates `selectedTopics`. Optionally, pilot mode could call `useTopicManager` itself instead of reading raw store state.
+- Files to change:
+  - `src/features/pilot/PilotPage.tsx` — remove `?? '/imu/data'` and `?? '/scan'` fallbacks, pass undefined when no topic selected
+  - `src/features/workspace/components/ActivePanelContent/ActivePanelContent.tsx` — same removal of `?? '/imu/data'` fallback
+  - `src/features/pilot/components/PilotHud/PilotHud.tsx` or `PilotHudMobile.tsx` — add "Awaiting topic discovery" state when telemetry values are all null
+  - `src/constants/panelTopics.ts` — evaluate if `DEFAULT_PANEL_TOPICS` is still needed after this change
+- Acceptance: no hardcoded topic name fallbacks in src/, pilot mode shows loading state until topics are discovered, IMU/LiDAR data appears correctly once discovery completes, build + tests pass
+- Branch: fix/t-110/pilot-topic-discovery
+
+#### T-103: WebRTC video unreliable on cellular networks (LTE/3G/4G)
+
+- Severity: HIGH
+- Scope: src/hooks/useWebRtcStream/, WebRTC signaling, TURN/STUN configuration
+- Problem: Video stream drops, freezes, or fails to establish on cellular connections (LTE, 3G, 4G). Likely causes:
+  - Symmetric NAT on cellular carriers blocks P2P — needs TURN relay fallback
+  - No TURN server configured (only STUN) — P2P fails silently
+  - ICE gathering timeout too short for high-latency cellular
+  - No adaptive bitrate — stream attempts full resolution on constrained bandwidth
+  - Carrier-level UDP throttling or blocking
+- Investigation:
+  - Check ICE candidate types in devtools (host/srflx/relay) — if no relay candidates, TURN is missing
+  - Test with a public TURN server (e.g., Twilio, Metered) to confirm TURN fixes connectivity
+  - Log ICE connection state transitions to identify where it fails (checking → failed vs connected → disconnected)
+  - Check `RTCPeerConnection.getStats()` for packet loss, jitter, round-trip time on cellular
+  - Test if DataChannel (non-video) works on cellular — isolates video bandwidth vs NAT issue
+- Fix candidates:
+  - Add TURN server to PEER_CONNECTION_CONFIG ICE servers
+  - Increase ICE_GATHERING_TIMEOUT for cellular latency
+  - Add bandwidth constraints to video transceiver (`maxBitrate`, resolution scaling)
+  - Implement connection quality indicator in UI
+- Acceptance: video stream establishes and maintains on LTE within 10 seconds, reconnects automatically on network handoff, graceful degradation on 3G (lower resolution, not failure)
+- Branch: fix/t-103/cellular-webrtc-reliability
+
+#### T-104: Sensor data freezes/delays browser on low bandwidth connections
+
+- Severity: HIGH
+- Scope: src/hooks/useRosSubscriber/, src/hooks/useLidarSubscription/, src/hooks/useImuSubscription/, src/features/workspace/hooks/useTelemetrySubscription.ts
+- Problem: On LTE/low-bandwidth connections, LiDAR, IMU, and telemetry data causes the browser tab to freeze or become unresponsive. Likely causes:
+  - rosbridge queues messages during bandwidth dips, then flushes them all at once — browser processes hundreds of stale messages in a single frame
+  - RAF throttle prevents rendering every message but still parses/validates every message (Zod schema parse on each)
+  - No backpressure — client has no way to tell rosbridge "slow down, I'm behind"
+  - Canvas redraws triggered per-message even when previous frame hasn't painted
+  - Large LaserScan arrays (720 floats) parsed via Zod on every message at source rate
+- Investigation:
+  - Profile with Chrome DevTools Performance tab on throttled network (slow 3G preset)
+  - Check if main thread is blocked by Zod parsing or canvas draws
+  - Measure message queue depth — how many messages arrive between RAF frames
+  - Test with throttle_rate (T-101) to see if server-side limiting fixes it
+- Fix candidates:
+  - T-101 (CBOR + throttle_rate) may fix this entirely by reducing message volume at the source
+  - Add message dropping in useRosSubscriber — if a new message arrives before the previous one was rendered, drop the old one
+  - Move Zod parsing to a Web Worker — keeps schema validation off the main thread
+  - Add queue depth monitoring — if messages are backing up, skip processing until caught up
+  - Implement connection quality detection — auto-increase throttle_rate when bandwidth is constrained
+  - Add a "degraded mode" that reduces subscription rates or pauses non-visible panels
+- Dependencies: T-101 (CBOR + throttle_rate) should be tried first — may resolve without additional work
+- Acceptance: browser remains responsive on throttled 3G connection with all panels active, no tab freezes, graceful degradation (stale data indicator) instead of crash
+- Branch: fix/t-104/low-bandwidth-resilience
 
 #### T-091: Mobile LiDAR minimap visual alignment with workspace
 
@@ -187,15 +233,7 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: zero TODO comments, zero commented-out blocks, zero unexplained magic numbers in logic, build passes
 - Branch: chore/t-093/dead-code-sweep
 
-#### T-094: GitHub repo metadata
-
-- Severity: MEDIUM
-- Scope: GitHub settings (not code)
-- Add repo description, website URL (deployed site), and topics: ros2, webrtc, telemetry, react, typescript, robotics, zustand, tailwindcss
-- Can be done via `gh repo edit` CLI
-- Branch: n/a (GitHub settings only)
-
-### Testing (run after all restructures)
+### Testing — Feature Coverage
 
 #### T-070: Fleet feature testing (unit + E2E)
 
@@ -215,10 +253,116 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Scope: src/features/workspace/ — RobotWorkspace, 6 panels, minimize/maximize, mobile workspace.
 - Branch: test/t-073/workspace-testing
 
+### Testing — Integration & Data Pipeline (NEW)
+
+#### T-105: Fake rosbridge server + telemetry fixture data
+
+- Severity: HIGH (highest interview signal)
+- Scope: test infrastructure + 8-12 integration tests
+- Problem: All 456 unit tests cover each layer in isolation (hooks mock useRosSubscriber, stores mock ConnectionManager). No test verifies the full pipeline: WebSocket message → Zod parse → store update → panel render. This is the single biggest gap for a telemetry dashboard — the data pipeline integration.
+- Fix:
+  - Create `e2e/fixtures/` with JSON fixture files for each message type:
+    - `imu-10hz-1sec.json` — 10 IMU messages with deterministic quaternion/acceleration values
+    - `lidar-5hz-1sec.json` — 5 LaserScan messages with 720-float range arrays
+    - `battery-1hz-3sec.json` — 3 BatteryState messages with declining percentage
+    - `odometry-10hz-1sec.json` — 10 Odometry messages with position/velocity
+  - Create `e2e/helpers/fake-rosbridge.ts` using Playwright's `page.routeWebSocket()`:
+    - Intercepts WebSocket connections to rosbridge URL
+    - Responds to rosbridge v2 protocol ops: `advertise`, `subscribe`, `publish`
+    - On `subscribe`, emits fixture data at realistic intervals
+    - Supports `close()` for disconnect testing and `burst()` for backpressure testing
+  - Write integration tests in `e2e/integration/`:
+    - `data-pipeline.spec.ts` — subscribe to IMU topic → verify store updates → verify panel shows data
+    - `lidar-pipeline.spec.ts` — subscribe to LaserScan → verify canvas renders non-empty content
+    - `battery-pipeline.spec.ts` — emit declining battery → verify percentage updates in UI
+    - `multi-topic.spec.ts` — subscribe to all topics simultaneously → verify each panel receives correct data
+- Acceptance: fake rosbridge intercepts WS connections, fixture data flows through the full pipeline, all integration tests pass, no live robot required
+- Dependencies: none (works alongside existing smoke tests)
+- Branch: test/t-105/fake-rosbridge-integration
+
+#### T-106: Connection state machine tests (reconnect, error, malformed)
+
+- Severity: HIGH
+- Scope: e2e/integration/, uses fake rosbridge from T-105
+- Problem: ConnectionManager has reconnect logic, backoff, intentional disconnect guard, and error handling — but no test exercises these through a real WebSocket lifecycle. Current tests mock the WebSocket entirely.
+- Fix:
+  - Use fake rosbridge from T-105 with additional capabilities:
+    - `dropConnection()` — close WS mid-stream to trigger reconnect
+    - `sendMalformed()` — emit invalid JSON/CBOR to trigger error handling
+    - `delay(ms)` — simulate latency spikes
+    - `rejectConnection()` — refuse handshake to test connection failure
+  - Write tests in `e2e/integration/connection-lifecycle.spec.ts`:
+    - Connect → receive data → server drops → verify reconnect attempt → server accepts → data resumes
+    - Connect → server sends malformed message → verify error handled gracefully, no crash
+    - Connect → intentional disconnect (user clicks) → verify no reconnect attempts
+    - Connect → server unreachable → verify backoff delays increase → verify max retries → verify "error" state
+    - Connect → server drops during subscribe → verify partial subscriptions cleaned up
+  - Use Playwright `page.clock.install()` for deterministic backoff timing assertions
+- Acceptance: all reconnect/error paths exercised via real WebSocket lifecycle, no mocked connections, tests pass deterministically with clock control
+- Dependencies: T-105 (fake rosbridge infrastructure)
+- Branch: test/t-106/connection-lifecycle
+
+#### T-107: Canvas content assertions for workspace panels
+
+- Severity: MEDIUM (high interview signal)
+- Scope: e2e/integration/, LidarPanel + ImuPanel + TelemetryPanel
+- Problem: Current smoke tests verify panels mount without crashing. No test verifies panels rendered actual content. A broken coordinate transform, missing canvas draw call, or theme color resolution failure would pass all current tests.
+- Fix:
+  - Use fake rosbridge (T-105) to inject known fixture data into workspace panels
+  - Two assertion strategies:
+    1. **Presence assertion** — screenshot the canvas, analyze pixel data to verify non-empty rendering (>5% non-background pixels in center region). Use `sharp` or raw pixel buffer analysis.
+    2. **Visual regression** — Playwright `toHaveScreenshot()` with `maxDiffPixelRatio: 0.02` for pixel-level stability. Store baselines in `e2e/snapshots/`.
+  - Tests in `e2e/integration/canvas-content.spec.ts`:
+    - LidarPanel: inject 720-point scan → assert canvas has rendered points in expected quadrant
+    - ImuPanel: inject quaternion data → assert wireframe cube is visible (non-empty center region)
+    - TelemetryPanel: inject 30 data points → assert chart lines are drawn (vertical scan for non-background pixels)
+    - Theme switch: render panel in dark mode → screenshot → switch to light mode → screenshot → verify both render correctly
+  - Optional: `jest-canvas-mock` (or `vitest-canvas-mock`) for unit-level draw command auditing — verify `fillRect`/`lineTo` called with correct coordinates
+- Acceptance: each canvas panel has at least one content presence assertion, visual regression baselines committed, tests pass in CI (Linux, fixed viewport)
+- Dependencies: T-105 (fake rosbridge for data injection)
+- Branch: test/t-107/canvas-content-assertions
+
+#### T-108: Performance regression guard for high-frequency panels
+
+- Severity: MEDIUM
+- Scope: e2e/integration/, uses CDP Performance API
+- Problem: No automated guard against performance regressions. A change that adds an extra React commit per message or triggers layout thrashing would pass all current tests. The first evidence would be a human noticing lag.
+- Fix:
+  - Use Playwright CDP session (`page.context().newCDPSession()`) to capture `Performance.getMetrics`
+  - Inject sustained data via fake rosbridge (T-105): 5 seconds of 10Hz IMU + 5Hz LiDAR simultaneously
+  - Tests in `e2e/integration/performance.spec.ts`:
+    - `LayoutCount` stays below threshold during sustained telemetry (canvas updates via RAF should not trigger layout)
+    - `ScriptDuration` per frame stays under 16ms average (60fps budget)
+    - No `LongTask` entries (tasks >50ms) during normal telemetry flow
+    - Message burst test: inject 100 messages in 500ms → verify UI remains responsive (no frozen frames)
+  - Use `Network.emulateNetworkConditions` to simulate 3G (50 Kbps, 400ms latency):
+    - Verify dashboard degrades gracefully — stale data indicators appear, UI does not crash
+    - This partially validates T-104 (low-bandwidth resilience) without needing a real robot
+- Acceptance: performance thresholds defined and enforced in CI, burst test passes without frame drops, throttled-network test shows graceful degradation
+- Dependencies: T-105 (fake rosbridge for sustained data injection)
+- Branch: test/t-108/performance-regression-guard
+
+#### T-109: Multi-robot state isolation tests
+
+- Severity: MEDIUM
+- Scope: e2e/integration/, fleet + workspace
+- Problem: No test verifies that connecting multiple robots keeps each robot's telemetry data isolated. A Zustand selector bug or topic namespace collision could cause Robot A's IMU data to appear in Robot B's workspace — this would be invisible to all current tests.
+- Fix:
+  - Use fake rosbridge (T-105) to simulate 2 robots on separate namespaces:
+    - Robot A: topics `/robot_a/imu`, `/robot_a/scan`, `/robot_a/battery`
+    - Robot B: topics `/robot_b/imu`, `/robot_b/scan`, `/robot_b/battery`
+    - Each robot emits different, distinguishable fixture data (e.g., Robot A battery at 80%, Robot B at 40%)
+  - Tests in `e2e/integration/multi-robot.spec.ts`:
+    - Add 2 robots via fleet UI → verify both appear in fleet list with correct status
+    - Navigate to Robot A workspace → verify Robot A's battery percentage displayed (not Robot B's)
+    - Disconnect Robot A → verify Robot B's panels continue receiving data
+    - Disconnect Robot B → verify fleet shows both as disconnected with correct lastSeen timestamps
+    - Reconnect Robot A only → verify Robot A resumes, Robot B stays disconnected
+  - Verify store state: use `page.evaluate()` to read Zustand store directly and assert robot connection objects are independent
+- Acceptance: 2-robot scenario fully tested, no data bleed between robots, disconnect/reconnect isolation verified
+- Dependencies: T-105 (fake rosbridge with multi-robot support)
+- Branch: test/t-109/multi-robot-isolation
+
 ### Documentation (run last — all paths finalized)
 
-#### T-069: JSDoc sweep
-
-- Severity: LOW
-- Scope: All exported functions in .ts and .tsx files across src/.
-- Branch: chore/t-069/jsdoc-sweep
+(none remaining)
