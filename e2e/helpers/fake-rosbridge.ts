@@ -1,6 +1,6 @@
 import type { Page, WebSocketRoute } from '@playwright/test';
 
-import topicListFixture from '../fixtures/topic-list.json';
+import topicListFixture from '../fixtures/topic-list.json' with { type: 'json' };
 import type { FakeRosbridgeController, RosbridgeMessage } from './fake-rosbridge.types';
 
 /**
@@ -24,25 +24,36 @@ export async function createFakeRosbridge(
   await page.routeWebSocket(url, (ws) => {
     activeRoute = ws;
 
-    // TODO: You implement this.
-    //
-    // ws.onMessage(handler) — called when the client (roslib) sends a message.
-    // Parse the rosbridge protocol op and route accordingly:
-    //
-    // - op: "call_service" with service "/rosapi/topics"
-    //     → respond with topicListFixture via ws.send()
-    //
-    // - op: "subscribe"
-    //     → track the topic in subscriptions Set
-    //     → resolve any pending waitForSubscription promises
-    //
-    // - op: "unsubscribe"
-    //     → remove the topic from subscriptions Set
-    //
-    // - op: "publish" (client publishing, e.g. cmd_vel)
-    //     → ignore (or log for debugging)
-    //
-    // Hint: messages arrive as strings. JSON.parse them to read the op field.
+    ws.onMessage((raw) => {
+      const msg = JSON.parse(raw as string) as RosbridgeMessage;
+
+      switch (msg.op) {
+        case 'call_service': {
+          const svc = msg.service?.replace(/^\//, '') ?? '';
+          if (svc === 'rosapi/topics') {
+            ws.send(JSON.stringify({ ...topicListFixture, id: msg.id }));
+          }
+          break;
+        }
+        case 'subscribe': {
+          const topic = msg.topic ?? '';
+          subscriptions.add(topic);
+          const resolver = pendingSubscriptions.get(topic);
+          if (resolver) {
+            pendingSubscriptions.delete(topic);
+            resolver();
+          }
+          break;
+        }
+        case 'unsubscribe': {
+          subscriptions.delete(msg.topic ?? '');
+          break;
+        }
+        // publish (client → server, e.g. cmd_vel) — no-op
+        default:
+          break;
+      }
+    });
   });
 
   function send(message: RosbridgeMessage): void {
