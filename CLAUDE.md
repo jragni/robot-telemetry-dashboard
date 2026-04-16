@@ -25,6 +25,21 @@ When the user says "run this through our development process," execute ALL steps
 - When the EPIC is complete, a single PR merges the EPIC branch into `main`.
 - Agent dispatch prompts must always specify the EPIC branch as the PR base (`--base EPIC/...`).
 - Before dispatching agents, confirm which EPIC branch to target.
+- **Never push directly to main.** All changes reach main through PRs only.
+- **Never cherry-pick to main.** Cherry-picks can reference files/dependencies that don't exist on the target branch. Always merge the full branch.
+
+### Hotfix Protocol
+
+When a production bug needs urgent fixing:
+
+1. Create a hotfix branch from the EPIC branch: `hotfix/description`
+2. Fix the bug, verify tests pass locally
+3. PR the hotfix into the EPIC branch (abbreviated review — can self-merge if urgent)
+4. Immediately PR the EPIC branch into main
+5. Log the hotfix in the dispatch log with a `HOTFIX` event type
+6. After main is updated, merge main back into the EPIC branch to keep them in sync
+
+**Never commit directly to main, even for hotfixes.** The deploy pipeline runs on main — if a hotfix references code that only exists on the EPIC branch, the pipeline will fail.
 | 8. **Scorecard** (enforced) | Delta from baseline: what changed, regressed, caught in review | Script/overseer | `.planning/scorecards/{branch}.md` |
 | 9. **Session report** | End-of-session summary: agents, findings, process failures, metrics | `/retro` | `.planning/session-reports/{date}.md` |
 
