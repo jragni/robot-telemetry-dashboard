@@ -34,7 +34,7 @@ describe('laserScanMessageSchema', () => {
     }
   });
 
-  it('rejects a message missing ranges', () => {
+  it('coerces missing ranges to empty array (CBOR resilience)', () => {
     const msg = {
       angle_min: -1.57,
       angle_increment: 0.01,
@@ -42,7 +42,10 @@ describe('laserScanMessageSchema', () => {
       range_max: 30,
     };
     const result = laserScanMessageSchema.safeParse(msg);
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.ranges).toEqual([]);
+    }
   });
 
   it('rejects an empty object', () => {

@@ -3,7 +3,7 @@ import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks';
 import { CANVAS_FALLBACKS, rafThrottle } from '@/utils';
-import { sensorVector3Schema, vector3Schema } from '@/types/ros2-schemas';
+import { coerceToArray, sensorVector3Schema, vector3Schema } from '@/types/ros2-schemas';
 import type { TelemetrySeries, PlotDataPoint } from '../types/TelemetryPanel.types';
 
 const ZERO_VEC3 = { x: 0, y: 0, z: 0 };
@@ -59,10 +59,7 @@ export const telemetryBatteryMessageSchema = z.object({
 export const telemetryLaserScanMessageSchema = z.object({
   range_min: z.number(),
   range_max: z.number(),
-  ranges: z
-    .array(z.number().nullable())
-    .nullable()
-    .transform((v) => v ?? []),
+  ranges: z.preprocess(coerceToArray, z.array(z.number().nullable())),
 });
 
 const MAX_POINTS = 600;
