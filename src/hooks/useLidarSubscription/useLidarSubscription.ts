@@ -3,6 +3,7 @@ import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '../useRosSubscriber';
 import { rafThrottle } from '@/utils';
+import { coerceToArray } from '@/types/ros2-schemas';
 import type { LidarPoint } from '@/types/lidar.types';
 import type { UseLidarReturn } from './useLidarSubscription.types';
 
@@ -13,17 +14,10 @@ import type { UseLidarReturn } from './useLidarSubscription.types';
 export const laserScanMessageSchema = z.object({
   angle_increment: z.number(),
   angle_min: z.number(),
-  intensities: z
-    .array(z.number().nullable())
-    .nullable()
-    .optional()
-    .transform((v) => v ?? []),
+  intensities: z.preprocess(coerceToArray, z.array(z.number().nullable())).optional().default([]),
   range_max: z.number(),
   range_min: z.number(),
-  ranges: z
-    .array(z.number().nullable())
-    .nullable()
-    .transform((v) => v ?? []),
+  ranges: z.preprocess(coerceToArray, z.array(z.number().nullable())),
 });
 const LIDAR_DISPLAY_RANGE = 15;
 

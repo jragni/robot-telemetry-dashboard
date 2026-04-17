@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+/** coerceToArray
+ * @description Coerces typed arrays (Float32Array, Float64Array, etc.) and null to plain
+ *  JavaScript arrays. CBOR decodes ROS float[] fields as TypedArrays, but Zod's z.array()
+ *  rejects them (Array.isArray returns false for TypedArrays).
+ */
+export function coerceToArray(val: unknown): unknown {
+  if (val == null) return [];
+  if (ArrayBuffer.isView(val)) return Array.from(val as Float32Array);
+  return val;
+}
+
 /** vector3Schema
  * @description Zod schema for geometry_msgs/msg/Vector3. Accepts null (rosbridge CBOR
  *  serialization) and defaults to zero vector.
