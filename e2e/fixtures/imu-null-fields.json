@@ -1,0 +1,29 @@
+[
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 },
+      "angular_velocity": null,
+      "linear_acceleration": null
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": null,
+      "angular_velocity": null,
+      "linear_acceleration": null
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/imu/data",
+    "msg": {
+      "orientation": { "x": 0.087, "y": 0.0, "z": 0.0, "w": 0.996 },
+      "angular_velocity": { "x": 0.1, "y": 0.0, "z": 0.0 },
+      "linear_acceleration": { "x": 0.0, "y": 0.0, "z": 9.81 }
+    }
+  }
+]

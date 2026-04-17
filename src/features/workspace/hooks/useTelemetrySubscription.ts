@@ -6,16 +6,25 @@ import { CANVAS_FALLBACKS, rafThrottle } from '@/utils';
 import { sensorVector3Schema, vector3Schema } from '@/types/ros2-schemas';
 import type { TelemetrySeries, PlotDataPoint } from '../types/TelemetryPanel.types';
 
+const ZERO_VEC3 = { x: 0, y: 0, z: 0 };
+
 /** odometryMessageSchema
  * @description Zod schema for consumed fields of nav_msgs/msg/Odometry.
+ *  Accepts null at each nesting level (rosbridge CBOR serialization).
  */
 export const odometryMessageSchema = z.object({
-  twist: z.object({
-    twist: z.object({
-      linear: vector3Schema,
-      angular: vector3Schema,
-    }),
-  }),
+  twist: z
+    .object({
+      twist: z
+        .object({
+          linear: vector3Schema,
+          angular: vector3Schema,
+        })
+        .nullable()
+        .transform((v) => v ?? { linear: ZERO_VEC3, angular: ZERO_VEC3 }),
+    })
+    .nullable()
+    .transform((v) => v ?? { twist: { linear: ZERO_VEC3, angular: ZERO_VEC3 } }),
 });
 
 /** twistMessageSchema
@@ -28,10 +37,11 @@ export const twistMessageSchema = z.object({
 
 /** telemetryImuMessageSchema
  * @description Zod schema for consumed IMU fields in the telemetry context.
+ *  Accepts null fields (rosbridge CBOR serialization), defaults to zero vectors.
  */
 export const telemetryImuMessageSchema = z.object({
-  angular_velocity: sensorVector3Schema,
-  linear_acceleration: sensorVector3Schema,
+  angular_velocity: sensorVector3Schema.nullable().transform((v) => v ?? ZERO_VEC3),
+  linear_acceleration: sensorVector3Schema.nullable().transform((v) => v ?? ZERO_VEC3),
 });
 
 /** telemetryBatteryMessageSchema
@@ -44,11 +54,15 @@ export const telemetryBatteryMessageSchema = z.object({
 
 /** telemetryLaserScanMessageSchema
  * @description Zod schema for consumed LaserScan fields in the telemetry context.
+ *  Accepts null ranges array (rosbridge CBOR serialization), defaults to empty.
  */
 export const telemetryLaserScanMessageSchema = z.object({
   range_min: z.number(),
   range_max: z.number(),
-  ranges: z.array(z.number().nullable()),
+  ranges: z
+    .array(z.number().nullable())
+    .nullable()
+    .transform((v) => v ?? []),
 });
 
 const MAX_POINTS = 600;
