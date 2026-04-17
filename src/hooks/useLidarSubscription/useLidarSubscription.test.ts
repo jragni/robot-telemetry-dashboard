@@ -41,9 +41,7 @@ describe('useLidarSubscription', () => {
 
   it('returns empty points as initial state', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     expect(result.current.points).toEqual([]);
     expect(result.current.rangeMax).toBe(15);
@@ -51,9 +49,7 @@ describe('useLidarSubscription', () => {
 
   it('converts valid scan to points with correct angles and distances', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
       capturedOnMessage?.(VALID_SCAN);
@@ -80,9 +76,7 @@ describe('useLidarSubscription', () => {
   it('rejects message with NaN ranges at schema level', () => {
     const fakeRos = {} as never;
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
       capturedOnMessage?.({
@@ -91,18 +85,16 @@ describe('useLidarSubscription', () => {
       });
     });
 
-    // Zod rejects NaN as invalid number, entire message fails validation
-    expect(result.current.points).toEqual([]);
-    expect(warnSpy).toHaveBeenCalled();
+    // NaN coerced to null by coerceToArray, then filtered out by range validation.
+    // Valid ranges (1.0, 3.0) produce points; NaN is skipped.
+    expect(result.current.points).toHaveLength(2);
     warnSpy.mockRestore();
   });
 
   it('rejects message with Infinity ranges at schema level', () => {
     const fakeRos = {} as never;
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
       capturedOnMessage?.({
@@ -120,9 +112,7 @@ describe('useLidarSubscription', () => {
 
   it('filters out ranges below range_min', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
       capturedOnMessage?.({
@@ -138,9 +128,7 @@ describe('useLidarSubscription', () => {
 
   it('filters out ranges above range_max', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
       capturedOnMessage?.({
@@ -155,9 +143,7 @@ describe('useLidarSubscription', () => {
 
   it('defaults intensity to 0 when intensities array is empty', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
       capturedOnMessage?.({
@@ -174,9 +160,7 @@ describe('useLidarSubscription', () => {
   it('does not update state with invalid message', () => {
     const fakeRos = {} as never;
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
       capturedOnMessage?.({ ranges: 'not-an-array' });
@@ -189,9 +173,7 @@ describe('useLidarSubscription', () => {
   it('does not update state when message is missing required fields', () => {
     const fakeRos = {} as never;
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
-    const { result } = renderHook(() =>
-      useLidarSubscription(fakeRos, '/scan'),
-    );
+    const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
       capturedOnMessage?.({});

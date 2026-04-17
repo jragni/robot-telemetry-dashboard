@@ -3,11 +3,19 @@ import { z } from 'zod';
 /** coerceToArray
  * @description Coerces typed arrays (Float32Array, Float64Array, etc.) and null to plain
  *  JavaScript arrays. CBOR decodes ROS float[] fields as TypedArrays, but Zod's z.array()
- *  rejects them (Array.isArray returns false for TypedArrays).
+ *  rejects them (Array.isArray returns false for TypedArrays). NaN values are converted
+ *  to null since Zod rejects NaN and downstream code already skips nulls.
  */
 export function coerceToArray(val: unknown): unknown {
   if (val == null) return [];
-  if (ArrayBuffer.isView(val)) return Array.from(val as Float32Array);
+  if (ArrayBuffer.isView(val)) {
+    return Array.from(val as Float32Array, (v) => (Number.isNaN(v) ? null : v));
+  }
+  if (Array.isArray(val)) {
+    return (val as (number | null)[]).map((v) =>
+      typeof v === 'number' && Number.isNaN(v) ? null : v,
+    );
+  }
   return val;
 }
 
