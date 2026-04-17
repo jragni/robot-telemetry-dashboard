@@ -6,15 +6,27 @@ import { rafThrottle } from '@/utils';
 import { sensorVector3Schema } from '@/types/ros2-schemas';
 import type { UseImuReturn } from './useImuSubscription.types';
 
-const quaternionSchema = z.object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() });
+const IDENTITY_QUATERNION = { x: 0, y: 0, z: 0, w: 1 };
+
+const quaternionSchema = z
+  .object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() })
+  .nullable()
+  .transform((v) => v ?? IDENTITY_QUATERNION);
 
 /** imuMessageSchema
  * @description Zod schema validating the consumed fields of sensor_msgs/msg/Imu.
+ *  All fields accept null (rosbridge CBOR serialization) with safe defaults.
  */
 export const imuMessageSchema = z.object({
   orientation: quaternionSchema,
-  angular_velocity: sensorVector3Schema.optional(),
-  linear_acceleration: sensorVector3Schema.optional(),
+  angular_velocity: sensorVector3Schema
+    .nullable()
+    .optional()
+    .transform((v) => v ?? undefined),
+  linear_acceleration: sensorVector3Schema
+    .nullable()
+    .optional()
+    .transform((v) => v ?? undefined),
 });
 
 /** quaternionToEuler

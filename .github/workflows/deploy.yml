@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -49,11 +51,13 @@ jobs:
         run: npx playwright test e2e/integration/
 
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name == 'push'
         with:
           path: dist
 
   deploy:
     needs: quality-gate
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

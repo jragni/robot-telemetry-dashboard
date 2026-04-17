@@ -1,9 +1,13 @@
 import { z } from 'zod';
 
 /** vector3Schema
- * @description Zod schema for geometry_msgs/msg/Vector3 with strict numeric fields.
+ * @description Zod schema for geometry_msgs/msg/Vector3. Accepts null (rosbridge CBOR
+ *  serialization) and defaults to zero vector.
  */
-export const vector3Schema = z.object({ x: z.number(), y: z.number(), z: z.number() });
+export const vector3Schema = z
+  .object({ x: z.number(), y: z.number(), z: z.number() })
+  .nullable()
+  .transform((v) => v ?? { x: 0, y: 0, z: 0 });
 
 /** sensorVector3Schema
  * @description Nullable variant of vector3Schema for sensor data. Rosbridge may

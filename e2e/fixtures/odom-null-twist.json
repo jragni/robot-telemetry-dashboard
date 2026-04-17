@@ -1,0 +1,30 @@
+[
+  {
+    "op": "publish",
+    "topic": "/odom",
+    "msg": {
+      "twist": {
+        "twist": null
+      }
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/odom",
+    "msg": {
+      "twist": null
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/odom",
+    "msg": {
+      "twist": {
+        "twist": {
+          "linear": { "x": 0.5, "y": 0.0, "z": 0.0 },
+          "angular": { "x": 0.0, "y": 0.0, "z": 0.1 }
+        }
+      }
+    }
+  }
+]

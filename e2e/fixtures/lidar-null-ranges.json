@@ -1,0 +1,28 @@
+[
+  {
+    "op": "publish",
+    "topic": "/scan",
+    "msg": {
+      "angle_min": -3.14159,
+      "angle_max": 3.14159,
+      "angle_increment": 0.00873,
+      "range_min": 0.12,
+      "range_max": 12.0,
+      "ranges": null,
+      "intensities": null
+    }
+  },
+  {
+    "op": "publish",
+    "topic": "/scan",
+    "msg": {
+      "angle_min": -3.14159,
+      "angle_max": 3.14159,
+      "angle_increment": 0.00873,
+      "range_min": 0.12,
+      "range_max": 12.0,
+      "ranges": [2.5, 2.4, 2.3, 2.2, 2.1, 2.0, 1.9, 1.8],
+      "intensities": null
+    }
+  }
+]
