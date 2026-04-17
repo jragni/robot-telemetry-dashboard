@@ -46,12 +46,16 @@ export function useRosSubscriber(
     topic.subscribe((message) => {
       // Temporary debug logging for T-113 — gated behind runtime flag
       // Enable in browser console: window.__DEBUG_ROS__ = true
-      if (typeof window !== 'undefined' && (window as Record<string, unknown>).__DEBUG_ROS__) {
+      if (
+        typeof window !== 'undefined' &&
+        (window as unknown as Record<string, unknown>).__DEBUG_ROS__
+      ) {
         const fields: Record<string, string> = {};
         if (message && typeof message === 'object') {
           for (const [k, v] of Object.entries(message as Record<string, unknown>)) {
             if (ArrayBuffer.isView(v)) {
-              fields[k] = `${v.constructor.name}(${String((v as ArrayLike<unknown>).length)})`;
+              const typed = v as unknown as { length: number };
+              fields[k] = `${v.constructor.name}(${String(typed.length)})`;
             } else if (Array.isArray(v)) {
               fields[k] = `Array(${String(v.length)})`;
             } else if (v === null) {
