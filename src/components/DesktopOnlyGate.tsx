@@ -4,6 +4,8 @@ import { Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { DesktopOnlyGateProps } from '@/types/DesktopOnlyGate.types';
 
+import { DESKTOP_MIN_WIDTH_PX } from './DesktopOnlyGate.constants';
+
 /** DesktopOnlyGate
  * @description Renders a warning overlay when the viewport is below 1024px,
  *  informing the user that the workspace is designed for desktop. A "Proceed
@@ -16,7 +18,7 @@ export function DesktopOnlyGate({ children }: DesktopOnlyGateProps) {
 
   useEffect(() => {
     function check() {
-      setIsNarrow(window.innerWidth < 1024);
+      setIsNarrow(window.innerWidth < DESKTOP_MIN_WIDTH_PX);
     }
     check();
     window.addEventListener('resize', check);

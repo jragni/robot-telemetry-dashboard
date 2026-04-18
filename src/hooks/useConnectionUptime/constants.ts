@@ -1,0 +1,1 @@
+export const UPTIME_POLL_INTERVAL_MS = 1000;

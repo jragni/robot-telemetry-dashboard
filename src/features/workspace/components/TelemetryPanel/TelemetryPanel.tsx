@@ -7,6 +7,10 @@ import {
   TELEMETRY_AXIS_PADDING,
   TELEMETRY_BOTTOM_PADDING,
   TELEMETRY_COLOR_FALLBACKS,
+  TELEMETRY_INITIAL_HEIGHT,
+  TELEMETRY_INITIAL_WIDTH,
+  TELEMETRY_MIN_HEIGHT,
+  TELEMETRY_MIN_WIDTH,
   TELEMETRY_TIME_WINDOW_MS,
   TELEMETRY_TOKEN_MAP,
 } from '@/features/workspace/constants';
@@ -39,8 +43,8 @@ export function TelemetryPanel({ connected, ros, topicName }: TelemetryPanelProp
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [canvasWidth, setCanvasWidth] = useState(400);
-  const [canvasHeight, setCanvasHeight] = useState(200);
+  const [canvasWidth, setCanvasWidth] = useState(TELEMETRY_INITIAL_WIDTH);
+  const [canvasHeight, setCanvasHeight] = useState(TELEMETRY_INITIAL_HEIGHT);
 
   const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
     TELEMETRY_COLOR_FALLBACKS,
@@ -52,8 +56,8 @@ export function TelemetryPanel({ connected, ros, topicName }: TelemetryPanelProp
     if (!container) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setCanvasWidth(Math.max(entry.contentRect.width, 100));
-        setCanvasHeight(Math.max(entry.contentRect.height, 80));
+        setCanvasWidth(Math.max(entry.contentRect.width, TELEMETRY_MIN_WIDTH));
+        setCanvasHeight(Math.max(entry.contentRect.height, TELEMETRY_MIN_HEIGHT));
       }
     });
     observer.observe(container);
