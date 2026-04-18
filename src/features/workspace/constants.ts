@@ -15,6 +15,15 @@ export const IMU_VIZ_OPTIONS: readonly { label: string; shortLabel: string; valu
 
 export const PITCH_LADDER_DEGREES = [-20, -10, 10, 20] as const;
 
+export const LIDAR_INITIAL_CANVAS_SIZE = 300;
+export const LIDAR_MIN_CANVAS_SIZE = 100;
+export const LIDAR_BG_ALPHA = 0.85;
+export const LIDAR_GRID_ALPHA = 0.4;
+export const LIDAR_LABEL_ALPHA = 0.7;
+export const LIDAR_CROSSHAIR_ALPHA = 0.6;
+export const LIDAR_CLOSE_THRESHOLD = 0.3;
+export const LIDAR_MID_THRESHOLD = 0.6;
+
 export const LIDAR_ZOOM_MIN = 0.5;
 
 export const LIDAR_ZOOM_MAX = 4;
@@ -53,6 +62,12 @@ export const GRID_COL_MAP: Record<number, string> = {
   3: 'grid-cols-3',
 };
 
+export const TELEMETRY_INITIAL_WIDTH = 400;
+export const TELEMETRY_INITIAL_HEIGHT = 200;
+export const TELEMETRY_MIN_WIDTH = 100;
+export const TELEMETRY_MIN_HEIGHT = 80;
+export const TELEMETRY_VALUE_PADDING_RATIO = 0.1;
+
 export const TELEMETRY_GRID_LINES_H = 4;
 
 export const TELEMETRY_GRID_LINES_V = 6;
@@ -66,7 +81,7 @@ export const TELEMETRY_AXIS_PADDING = 40;
 export const TELEMETRY_BOTTOM_PADDING = 20;
 
 export const PANEL_TOPIC_TYPES: Record<string, readonly string[]> = {
-  camera: ['sensor_msgs/msg/CompressedImage', 'sensor_msgs/msg/Image'],
+  camera: ['sensor_msgs/msg/CompressedImage', 'sensor_msgs/msg/Image'], // NOT used since webrtc
   controls: ['geometry_msgs/msg/Twist'],
   imu: ['sensor_msgs/msg/Imu'],
   lidar: ['sensor_msgs/msg/LaserScan'],

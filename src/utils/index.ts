@@ -3,6 +3,7 @@ export { formatDegrees } from './formatDegrees';
 export { formatLastSeen } from './formatLastSeen';
 export { formatUptime } from './formatUptime';
 export { getBatteryColor } from './getBatteryColor';
+export { normalizeCborMessage } from './normalizeCborMessage';
 export { normalizeHeading } from './normalizeHeading';
 export { rafThrottle } from './rafThrottle';
 export { withAlpha } from './withAlpha';

@@ -1,9 +1,19 @@
-import { useRef, useEffect, useCallback } from 'react';
-import { formatDegrees, normalizeHeading } from '@/utils';
+import { useCallback, useEffect, useRef } from 'react';
+
 import { useCanvasColors } from '@/hooks';
+import { formatDegrees, normalizeHeading } from '@/utils';
 import { WIREFRAME_COLOR_FALLBACKS, WIREFRAME_TOKEN_MAP } from '@/features/workspace/constants';
 import type { WireframeViewProps } from '@/features/workspace/types/ImuPanel.types';
-import { CUBE_VERTICES, CUBE_EDGES } from '../constants';
+
+import {
+  CANVAS_BORDER_INSET,
+  CUBE_EDGES,
+  CUBE_VERTICES,
+  WIREFRAME_CANVAS_SIZE,
+  WIREFRAME_CENTER_DOT_RADIUS,
+  WIREFRAME_FOCAL_LENGTH,
+  WIREFRAME_SCALE_FACTOR,
+} from '../constants';
 
 /** WireframeView
  * @description Renders a 3D wireframe rectangular prism that rotates based on
@@ -32,8 +42,8 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     const size = canvas.width;
     const cx = size / 2;
     const cy = size / 2;
-    const scale = size * 0.22;
-    const focalLength = 4;
+    const scale = size * WIREFRAME_SCALE_FACTOR;
+    const focalLength = WIREFRAME_FOCAL_LENGTH;
 
     ctx.clearRect(0, 0, size, size);
 
@@ -65,7 +75,7 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     const projected = CUBE_VERTICES.map(([x, y, z]) => project(x, y, z));
 
     ctx.beginPath();
-    ctx.arc(cx, cy, size / 2 - 4, 0, Math.PI * 2);
+    ctx.arc(cx, cy, size / 2 - CANVAS_BORDER_INSET, 0, Math.PI * 2);
     ctx.strokeStyle = c.border;
     ctx.lineWidth = 1;
     ctx.stroke();
@@ -83,7 +93,7 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     }
 
     ctx.beginPath();
-    ctx.arc(cx, cy, 2, 0, Math.PI * 2);
+    ctx.arc(cx, cy, WIREFRAME_CENTER_DOT_RADIUS, 0, Math.PI * 2);
     ctx.fillStyle = c.muted;
     ctx.fill();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
@@ -99,8 +109,8 @@ export function WireframeView({ roll, pitch, yaw }: WireframeViewProps) {
     <div className="flex flex-col items-center gap-3">
       <canvas
         ref={canvasRef}
-        width={160}
-        height={160}
+        width={WIREFRAME_CANVAS_SIZE}
+        height={WIREFRAME_CANVAS_SIZE}
         className="rounded-full"
         aria-label={`3D wireframe: roll ${formatDegrees(roll)}°, pitch ${formatDegrees(pitch)}°, heading ${String(Math.round(heading))}°`}
       />

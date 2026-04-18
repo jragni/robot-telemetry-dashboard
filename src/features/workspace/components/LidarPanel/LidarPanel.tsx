@@ -7,7 +7,15 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { LIDAR_POINT_RADIUS } from '@/constants/canvas';
 import {
+  LIDAR_BG_ALPHA,
+  LIDAR_CLOSE_THRESHOLD,
+  LIDAR_CROSSHAIR_ALPHA,
+  LIDAR_GRID_ALPHA,
   LIDAR_GRID_LINE_COUNT,
+  LIDAR_INITIAL_CANVAS_SIZE,
+  LIDAR_LABEL_ALPHA,
+  LIDAR_MID_THRESHOLD,
+  LIDAR_MIN_CANVAS_SIZE,
   LIDAR_ROBOT_SIZE,
   LIDAR_ZOOM_MAX,
   LIDAR_ZOOM_MIN,
@@ -38,7 +46,7 @@ export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
     max: LIDAR_ZOOM_MAX,
     step: LIDAR_ZOOM_STEP,
   });
-  const [canvasSize, setCanvasSize] = useState(300);
+  const [canvasSize, setCanvasSize] = useState(LIDAR_INITIAL_CANVAS_SIZE);
 
   const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
     WORKSPACE_LIDAR_COLOR_FALLBACKS,
@@ -52,7 +60,7 @@ export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const size = Math.min(entry.contentRect.width, entry.contentRect.height);
-        setCanvasSize(Math.max(size, 100));
+        setCanvasSize(Math.max(size, LIDAR_MIN_CANVAS_SIZE));
       }
     });
 
@@ -79,12 +87,12 @@ export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
 
     // Semi-transparent background — tactical radar scope effect
     ctx.fillStyle = c.surfaceBase;
-    ctx.globalAlpha = 0.85;
+    ctx.globalAlpha = LIDAR_BG_ALPHA;
     ctx.fillRect(0, 0, size, size);
     ctx.globalAlpha = 1;
 
     // Grid lines
-    ctx.globalAlpha = 0.4;
+    ctx.globalAlpha = LIDAR_GRID_ALPHA;
     ctx.strokeStyle = c.textMuted;
     ctx.lineWidth = 0.5;
     const gridSpacing = size / LIDAR_GRID_LINE_COUNT;
@@ -103,7 +111,7 @@ export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
     // Axis distance labels — X (forward) on vertical axis, Y (left) on horizontal
     ctx.font = '12px "Roboto Mono", monospace';
     ctx.fillStyle = c.textMuted;
-    ctx.globalAlpha = 0.7;
+    ctx.globalAlpha = LIDAR_LABEL_ALPHA;
     const metersPerGrid = rangeMax / (LIDAR_GRID_LINE_COUNT / 2) / zoom;
     for (let i = 1; i < LIDAR_GRID_LINE_COUNT; i++) {
       const pos = i * gridSpacing;
@@ -133,7 +141,7 @@ export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
     // Center crosshair
     ctx.strokeStyle = c.textPrimary;
     ctx.lineWidth = 1;
-    ctx.globalAlpha = 0.6;
+    ctx.globalAlpha = LIDAR_CROSSHAIR_ALPHA;
     ctx.beginPath();
     ctx.moveTo(cx, 0);
     ctx.lineTo(cx, size);
@@ -175,7 +183,12 @@ export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
 
         if (x < 0 || x > size || y < 0 || y > size) continue;
 
-        ctx.fillStyle = ratio < 0.3 ? c.critical : ratio < 0.6 ? c.caution : c.nominal;
+        ctx.fillStyle =
+          ratio < LIDAR_CLOSE_THRESHOLD
+            ? c.critical
+            : ratio < LIDAR_MID_THRESHOLD
+              ? c.caution
+              : c.nominal;
         ctx.beginPath();
         ctx.arc(x, y, LIDAR_POINT_RADIUS, 0, Math.PI * 2);
         ctx.fill();

@@ -67,22 +67,15 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-069a: JSDoc sweep — shared layers — PR #94
 - T-105: Fake rosbridge server + integration tests (14 tests)
 - T-106: Connection lifecycle tests (5 tests)
+- T-100: Move utils tests to **tests**/ subfolder (already done, verified by ticket reviewer)
+- T-110: Topic discovery auto-selection + hardcoded fallbacks — PR #102
+- T-113: CBOR normalization centralized in useRosSubscriber — PR #102
 
 ## In Progress
 
 (none)
 
 ## Backlog
-
-### Refactors
-
-#### T-100: Move utils tests to **tests**/ subfolder
-
-- Severity: LOW
-- Scope: src/utils/ — 7 test files flat in the directory
-- Fix: create src/utils/**tests**/, move all 7 test files, update import paths
-- Acceptance: no test files flat in src/utils/, all tests pass, build passes
-- Branch: refactor/t-100/utils-tests-folder
 
 ### Cross-cutting Sweeps
 
@@ -152,21 +145,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Fix: Add a small copy-to-clipboard icon button (shadcn Button, ghost/icon variant, Lucide `Copy` or `ClipboardCopy` icon) next to the URL value. On click, copy the full URL to clipboard. Show brief feedback (e.g., icon changes to `Check` for 1.5s). Consider also adding a tooltip on hover that shows the full URL.
 - Acceptance: copy button visible next to URL, copies full URL on click, visual feedback on success, works on mobile (touch), build passes
 - Branch: feat/t-111/url-copy-button
-
-#### T-110: Pilot mode subscribes to hardcoded fallback topics before discovery
-
-- Severity: MEDIUM
-- Scope: src/features/pilot/PilotPage.tsx, src/features/workspace/components/ActivePanelContent/ActivePanelContent.tsx
-- Problem: PilotPage and ActivePanelContent fall back to hardcoded topic names (`'/imu/data'`, `'/scan'`) when `selectedTopics` is undefined. If a user navigates directly to pilot mode before topic discovery completes, subscriptions fire on topics that may not exist on the robot — resulting in silent no-ops (no IMU/LiDAR data shows up, no error displayed).
-- Root cause: `useTopicManager` auto-selects topics after `useRosTopics` discovers them, but pilot mode bypasses `useTopicManager` entirely and reads `selectedTopics` from the store directly. Before discovery, these are `undefined` → fallback kicks in.
-- Fix: Remove hardcoded fallback topic names. If `selectedTopics?.imu` is undefined, pass `undefined` to the subscription hook (which already guards against it — `useRosSubscriber` skips subscription when topicName is falsy). Show a "Waiting for topics..." indicator in the HUD until discovery populates `selectedTopics`. Optionally, pilot mode could call `useTopicManager` itself instead of reading raw store state.
-- Files to change:
-  - `src/features/pilot/PilotPage.tsx` — remove `?? '/imu/data'` and `?? '/scan'` fallbacks, pass undefined when no topic selected
-  - `src/features/workspace/components/ActivePanelContent/ActivePanelContent.tsx` — same removal of `?? '/imu/data'` fallback
-  - `src/features/pilot/components/PilotHud/PilotHud.tsx` or `PilotHudMobile.tsx` — add "Awaiting topic discovery" state when telemetry values are all null
-  - `src/constants/panelTopics.ts` — evaluate if `DEFAULT_PANEL_TOPICS` is still needed after this change
-- Acceptance: no hardcoded topic name fallbacks in src/, pilot mode shows loading state until topics are discovered, IMU/LiDAR data appears correctly once discovery completes, build + tests pass
-- Branch: fix/t-110/pilot-topic-discovery
 
 #### T-103: WebRTC video unreliable on cellular networks (LTE/3G/4G)
 

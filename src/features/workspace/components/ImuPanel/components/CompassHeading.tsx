@@ -1,12 +1,24 @@
-import { useRef, useEffect, useCallback } from 'react';
-import { normalizeHeading } from '@/utils';
+import { useCallback, useEffect, useRef } from 'react';
+
 import { useCanvasColors } from '@/hooks';
+import { normalizeHeading } from '@/utils';
 import { COMPASS_CARDINALS } from '@/constants/canvas';
 import {
   COMPASS_HEADING_COLOR_FALLBACKS,
   COMPASS_HEADING_TOKEN_MAP,
 } from '@/features/workspace/constants';
 import type { CompassHeadingProps } from '@/features/workspace/types/ImuPanel.types';
+
+import {
+  CANVAS_BORDER_INSET,
+  CANVAS_POINTER_HALF_WIDTH,
+  CANVAS_POINTER_TOP_Y,
+  COMPASS_HEADING_CANVAS_SIZE,
+  COMPASS_HEADING_LABEL_OFFSET,
+  COMPASS_HEADING_TICK_LEN_30,
+  COMPASS_HEADING_TICK_LEN_CARDINAL,
+  COMPASS_HEADING_TICK_LEN_MINOR,
+} from '../constants';
 
 /** CompassHeading
  * @description Renders a canvas-based compass dial showing yaw heading.
@@ -33,7 +45,7 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
     const size = canvas.width;
     const cx = size / 2;
     const cy = size / 2;
-    const r = size / 2 - 4;
+    const r = size / 2 - CANVAS_BORDER_INSET;
 
     ctx.clearRect(0, 0, size, size);
 
@@ -51,7 +63,11 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
       const angleRad = ((deg - 90) * Math.PI) / 180;
       const isCardinal = deg % 90 === 0;
       const is30 = deg % 30 === 0;
-      const tickLen = isCardinal ? 10 : is30 ? 6 : 3;
+      const tickLen = isCardinal
+        ? COMPASS_HEADING_TICK_LEN_CARDINAL
+        : is30
+          ? COMPASS_HEADING_TICK_LEN_30
+          : COMPASS_HEADING_TICK_LEN_MINOR;
 
       ctx.beginPath();
       ctx.moveTo(Math.cos(angleRad) * r, Math.sin(angleRad) * r);
@@ -67,15 +83,19 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
     for (const { label, deg } of COMPASS_CARDINALS) {
       const angleRad = ((deg - 90) * Math.PI) / 180;
       ctx.fillStyle = label === 'N' ? c.accent : c.primary;
-      ctx.fillText(label, Math.cos(angleRad) * (r - 18), Math.sin(angleRad) * (r - 18));
+      ctx.fillText(
+        label,
+        Math.cos(angleRad) * (r - COMPASS_HEADING_LABEL_OFFSET),
+        Math.sin(angleRad) * (r - COMPASS_HEADING_LABEL_OFFSET),
+      );
     }
 
     ctx.restore();
 
     ctx.beginPath();
-    ctx.moveTo(cx, 6);
-    ctx.lineTo(cx - 4, 0);
-    ctx.lineTo(cx + 4, 0);
+    ctx.moveTo(cx, CANVAS_POINTER_TOP_Y);
+    ctx.lineTo(cx - CANVAS_POINTER_HALF_WIDTH, 0);
+    ctx.lineTo(cx + CANVAS_POINTER_HALF_WIDTH, 0);
     ctx.closePath();
     ctx.fillStyle = c.accent;
     ctx.fill();
@@ -96,8 +116,8 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
   return (
     <canvas
       ref={canvasRef}
-      width={120}
-      height={120}
+      width={COMPASS_HEADING_CANVAS_SIZE}
+      height={COMPASS_HEADING_CANVAS_SIZE}
       className="rounded-full"
       aria-label={`Compass heading: ${String(Math.round(normalizeHeading(yaw)))}°`}
     />
