@@ -67,6 +67,7 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-069a: JSDoc sweep — shared layers — PR #94
 - T-105: Fake rosbridge server + integration tests (14 tests)
 - T-106: Connection lifecycle tests (5 tests)
+- T-100: Move utils tests to **tests**/ subfolder (already done, verified by ticket reviewer)
 - T-110: Topic discovery auto-selection + hardcoded fallbacks — PR #102
 - T-113: CBOR normalization centralized in useRosSubscriber — PR #102
 
@@ -75,16 +76,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 (none)
 
 ## Backlog
-
-### Refactors
-
-#### T-100: Move utils tests to **tests**/ subfolder
-
-- Severity: LOW
-- Scope: src/utils/ — 7 test files flat in the directory
-- Fix: create src/utils/**tests**/, move all 7 test files, update import paths
-- Acceptance: no test files flat in src/utils/, all tests pass, build passes
-- Branch: refactor/t-100/utils-tests-folder
 
 ### Cross-cutting Sweeps
 
