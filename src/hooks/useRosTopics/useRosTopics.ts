@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
-import type { RosTopic } from './useRosTopics.types';
+import type { RosTopic } from './types';
 
 /** useRosTopics
  * @description Polls available ROS topics every 10 seconds and returns a stable list
