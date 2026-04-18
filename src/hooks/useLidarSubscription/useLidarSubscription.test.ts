@@ -79,14 +79,15 @@ describe('useLidarSubscription', () => {
     const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     act(() => {
+      // In production, normalizeCborMessage converts NaN → null before the hook sees it.
+      // Simulate normalized input.
       capturedOnMessage?.({
         ...VALID_SCAN,
-        ranges: [1.0, NaN, 3.0],
+        ranges: [1.0, null, 3.0],
       });
     });
 
-    // NaN coerced to null by coerceToArray, then filtered out by range validation.
-    // Valid ranges (1.0, 3.0) produce points; NaN is skipped.
+    // null ranges are filtered out by range validation. Valid ranges (1.0, 3.0) produce points.
     expect(result.current.points).toHaveLength(2);
     warnSpy.mockRestore();
   });

@@ -5,8 +5,8 @@ import { useRosSubscriber } from '../useRosSubscriber';
 import { rafThrottle } from '@/utils';
 import { sensorVector3Schema } from '@/types/ros2-schemas';
 import type { UseImuReturn } from './useImuSubscription.types';
-
-const IDENTITY_QUATERNION = { x: 0, y: 0, z: 0, w: 1 };
+import { IDENTITY_QUATERNION } from './useImuSubscription.constants';
+import { quaternionToEuler } from './useImuSubscription.helpers';
 
 const quaternionSchema = z
   .object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() })
@@ -28,25 +28,6 @@ export const imuMessageSchema = z.object({
     .optional()
     .transform((v) => v ?? undefined),
 });
-
-/** quaternionToEuler
- * @description Converts a quaternion to Euler angles in degrees.
- */
-function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
-  const sinr = 2 * (q.w * q.x + q.y * q.z);
-  const cosr = 1 - 2 * (q.x * q.x + q.y * q.y);
-  const roll = Math.atan2(sinr, cosr);
-
-  const sinp = 2 * (q.w * q.y - q.z * q.x);
-  const pitch = Math.abs(sinp) >= 1 ? Math.sign(sinp) * (Math.PI / 2) : Math.asin(sinp);
-
-  const siny = 2 * (q.w * q.z + q.x * q.y);
-  const cosy = 1 - 2 * (q.y * q.y + q.z * q.z);
-  const yaw = Math.atan2(siny, cosy);
-
-  const toDeg = 180 / Math.PI;
-  return { roll: roll * toDeg, pitch: pitch * toDeg, yaw: yaw * toDeg };
-}
 
 /** useImuSubscription
  * @description Subscribes to a sensor_msgs/msg/Imu topic, converts quaternion orientation
@@ -83,6 +64,7 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
   const onMessage = useMemo(
     () => (msg: unknown) => {
       try {
+        console.log('msg======', msg);
         const result = imuMessageSchema.safeParse(msg);
         if (!result.success) {
           console.warn('[useImuSubscription] Malformed message:', result.error.issues);

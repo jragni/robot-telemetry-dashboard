@@ -3,21 +3,21 @@ import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '../useRosSubscriber';
 import { rafThrottle } from '@/utils';
-import { coerceToArray } from '@/types/ros2-schemas';
 import type { LidarPoint } from '@/types/lidar.types';
 import type { UseLidarReturn } from './useLidarSubscription.types';
 
 /** laserScanMessageSchema
  * @description Zod schema validating the consumed fields of sensor_msgs/msg/LaserScan.
- *  Ranges and intensities use nullable arrays to handle rosbridge null serialization.
+ *  TypedArray→Array and NaN→null normalization is handled upstream by normalizeCborMessage
+ *  in useRosSubscriber. Schemas only handle rosbridge null semantics.
  */
 export const laserScanMessageSchema = z.object({
   angle_increment: z.number(),
   angle_min: z.number(),
-  intensities: z.preprocess(coerceToArray, z.array(z.number().nullable())).optional().default([]),
+  intensities: z.array(z.number().nullable()).optional().default([]),
   range_max: z.number(),
   range_min: z.number(),
-  ranges: z.preprocess(coerceToArray, z.array(z.number().nullable())),
+  ranges: z.array(z.number().nullable()),
 });
 const LIDAR_DISPLAY_RANGE = 15;
 

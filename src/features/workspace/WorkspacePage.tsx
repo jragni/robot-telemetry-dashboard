@@ -87,7 +87,7 @@ export function WorkspacePage() {
             label="LiDAR"
             icon={Radar}
             Component={LidarPanel}
-            componentProps={{ connected, ros, topicName: selectedTopics.lidar ?? '/scan' }}
+            componentProps={{ connected, ros, topicName: selectedTopics.lidar ?? '' }}
             topicName={selectedTopics.lidar}
             availableTopics={filteredTopics.lidar}
             onTopicChange={(t) => {
@@ -126,7 +126,7 @@ export function WorkspacePage() {
             label="IMU Attitude"
             icon={Compass}
             Component={ImuPanel}
-            componentProps={{ connected, ros, topicName: selectedTopics.imu ?? '/imu/data' }}
+            componentProps={{ connected, ros, topicName: selectedTopics.imu ?? '' }}
             topicName={selectedTopics.imu}
             availableTopics={filteredTopics.imu}
             onTopicChange={(t) => {
@@ -152,7 +152,7 @@ export function WorkspacePage() {
               connected,
               robotId: id,
               ros,
-              topicName: selectedTopics.controls ?? '/cmd_vel',
+              topicName: selectedTopics.controls ?? '',
             }}
             topicName={selectedTopics.controls}
             availableTopics={filteredTopics.controls}
@@ -175,7 +175,7 @@ export function WorkspacePage() {
             label="Telemetry"
             icon={Activity}
             Component={TelemetryPanel}
-            componentProps={{ connected, ros, topicName: selectedTopics.telemetry ?? '/odom' }}
+            componentProps={{ connected, ros, topicName: selectedTopics.telemetry ?? '' }}
             topicName={selectedTopics.telemetry}
             availableTopics={filteredTopics.telemetry}
             onTopicChange={(t) => {

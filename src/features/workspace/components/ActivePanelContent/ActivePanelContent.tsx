@@ -41,10 +41,10 @@ export function ActivePanelContent({
 }: ActivePanelContentProps) {
   const propsMap: Record<MobileDataPanelId, Record<string, unknown>> = {
     camera: { connected, robotUrl: robot.url },
-    imu: { connected, ros, topicName: selectedTopics.imu ?? '/imu/data' },
-    lidar: { connected, ros, topicName: selectedTopics.lidar ?? '/scan' },
+    imu: { connected, ros, topicName: selectedTopics.imu ?? '' },
+    lidar: { connected, ros, topicName: selectedTopics.lidar ?? '' },
     status: { connected, onConnect, onDisconnect, robot, ros },
-    telemetry: { connected, ros, topicName: selectedTopics.telemetry ?? '/odom' },
+    telemetry: { connected, ros, topicName: selectedTopics.telemetry ?? '' },
   };
 
   const PanelComponent = MOBILE_PANEL_MAP[activePanel];
