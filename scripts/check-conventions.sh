@@ -7,7 +7,7 @@ ERRORS=0
 
 for file in "$@"; do
   # Skip test files, type files, and non-existent files
-  if [[ "$file" == *.test.* ]] || [[ "$file" == *.types.* ]] || [[ ! -f "$file" ]]; then
+  if [[ "$file" == *.test.* ]] || [[ "$file" == *.types.* ]] || [[ "$file" == */types.ts ]] || [[ ! -f "$file" ]]; then
     continue
   fi
 
@@ -23,7 +23,7 @@ for file in "$@"; do
   fi
 
   # 2. Inline types in .ts files (hooks, helpers, etc. — not .types.ts, not constants, not index, not utils/)
-  if [[ "$file" == *.ts ]] && [[ "$file" != *.tsx ]] && [[ "$file" != *.types.ts ]] && [[ "$file" != */constants.ts ]] && [[ "$file" != */index.ts ]] && [[ "$file" != */schemas.ts ]] && [[ "$file" != src/utils/* ]]; then
+  if [[ "$file" == *.ts ]] && [[ "$file" != *.tsx ]] && [[ "$file" != *.types.ts ]] && [[ "$file" != */types.ts ]] && [[ "$file" != */constants.ts ]] && [[ "$file" != */index.ts ]] && [[ "$file" != */schemas.ts ]] && [[ "$file" != src/utils/* ]]; then
     INLINE_TYPES=$(grep -n '^\(export \)\?interface \|^\(export \)\?type [A-Z]' "$file" 2>/dev/null)
     if [[ -n "$INLINE_TYPES" ]]; then
       echo "CONVENTION: inline type/interface in .ts file — move to .types.ts"

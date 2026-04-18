@@ -3,7 +3,7 @@ import { Topic, type Ros } from 'roslib';
 
 import { normalizeCborMessage } from '@/utils';
 
-import type { SubscriberOptions } from './useRosSubscriber.types';
+import type { SubscriberOptions } from './types';
 
 /** useRosSubscriber
  * @description Subscribes to a ROS topic via roslib and invokes a callback on each message.

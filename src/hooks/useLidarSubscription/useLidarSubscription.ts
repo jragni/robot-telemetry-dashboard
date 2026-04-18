@@ -1,25 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
-import { z } from 'zod';
+
 import { useRosSubscriber } from '../useRosSubscriber';
 import { rafThrottle } from '@/utils';
 import type { LidarPoint } from '@/types/lidar.types';
-import type { UseLidarReturn } from './useLidarSubscription.types';
 
-/** laserScanMessageSchema
- * @description Zod schema validating the consumed fields of sensor_msgs/msg/LaserScan.
- *  TypedArray→Array and NaN→null normalization is handled upstream by normalizeCborMessage
- *  in useRosSubscriber. Schemas only handle rosbridge null semantics.
- */
-export const laserScanMessageSchema = z.object({
-  angle_increment: z.number(),
-  angle_min: z.number(),
-  intensities: z.array(z.number().nullable()).optional().default([]),
-  range_max: z.number(),
-  range_min: z.number(),
-  ranges: z.array(z.number().nullable()),
-});
-const LIDAR_DISPLAY_RANGE = 15;
+import { LIDAR_DISPLAY_RANGE } from './constants';
+import { laserScanMessageSchema } from './schemas';
+import type { UseLidarReturn } from './types';
 
 /** useLidarSubscription
  * @description Subscribes to a sensor_msgs/msg/LaserScan topic, parses valid range readings
