@@ -1,97 +1,79 @@
 # Robot Telemetry Dashboard
 
-A real-time web dashboard for monitoring and controlling ROS2-enabled robots. Connects via WebSocket (rosbridge) for telemetry and commands, with WebRTC video streaming for low-latency camera feeds.
+Real-time telemetry dashboard for ROS 2 robots over rosbridge WebSocket.
 
-## Features
+**Live demo:** [jragni.github.io/robot-telemetry-dashboard](https://jragni.github.io/robot-telemetry-dashboard/)
 
-### Real-Time Sensor Visualization
-- **LiDAR** — Canvas 2D tactical display with robot-frame orientation (X=forward, Y=left), zoom controls, distance labels
-- **IMU Attitude** — Quaternion-to-Euler conversion with compass, attitude indicator, numbers, and 3D wireframe views
-- **Telemetry Graphing** — Multi-topic time-series plotting supporting Odometry, Twist, IMU, BatteryState, and LaserScan
-- **Camera** — WebRTC video stream via aiortc REST signaling
-- **System Status** — Live ROS computation graph (nodes, topics, services, actions) with expandable name lists
+<!-- TODO: Add dashboard screenshot with live robot data -->
 
-### Robot Control
-- D-pad directional control with configurable linear/angular velocity
-- Keyboard arrow key support
-- Emergency stop
-- Real-time `geometry_msgs/msg/Twist` publishing to `/cmd_vel` via roslib
-- Pilot Mode — fullscreen FPV view with HUD overlays
+## What It Does
 
-### Connection Management
-- Multi-robot support with persistent connection store
-- Connection test before adding robots
-- Auto-reconnection with exponential backoff (2s → 30s cap, 5 attempts)
-- Toast notifications for connection state transitions
-- Per-robot topic selection shared between Workspace and Pilot views
-
-### Interface
-- Midnight Operations dark theme (OKLCH hue 260)
-- Triple-redundant status indicators (color + icon + text per MIL-STD-1472H)
-- 6-panel workspace with minimize/maximize
-- Responsive fleet card grid with connect/disconnect/delete
-- Topic dropdowns filtered by compatible ROS message types per panel
+Connects to one or more ROS 2 robots via rosbridge WebSocket to render live sensor data, publish velocity commands, and stream camera feeds over WebRTC. Panels include canvas-rendered LiDAR point clouds, IMU attitude wireframes, multi-topic telemetry graphs, a computation graph viewer, and a fullscreen pilot mode with HUD overlays. Fleet management handles connection lifecycle, topic discovery, and per-robot topic selection.
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Framework** | React 19, TypeScript 5.9, Vite 7 |
-| **Styling** | Tailwind CSS v4, shadcn/ui (Radix), Lucide React |
-| **Fonts** | Exo (UI) + Roboto Mono (telemetry data) |
-| **State** | Zustand with localStorage persistence |
-| **ROS Bridge** | roslib 2.x (pure ESM) via WebSocket |
-| **Video** | WebRTC with aiortc REST signaling |
-| **Validation** | Zod v4 |
-| **Notifications** | Sonner |
-| **Quality** | ESLint, TypeScript strict, eslint-plugin-boundaries (3-tier) |
+React 19, TypeScript 5.9, Vite 7, Tailwind CSS v4, shadcn/ui, Zustand, roslib 2.x, Zod v4, Vitest, Playwright
+
+## Design Decisions
+
+**Canvas 2D over Recharts/SVG for LiDAR and telemetry.** SVG re-renders the entire DOM subtree on every frame at 10-20Hz. Canvas 2D with a RAF loop and ring buffer renders thousands of LiDAR points without touching the React tree. The ring buffer provides O(1) append/evict for time-series data.
+
+**Zustand over Redux and React Context.** No Provider wrapping, no action boilerplate. Selector-based subscriptions prevent unnecessary re-renders. Persist middleware handles localStorage serialization for robot fleet state across sessions.
+
+**Class singleton for ConnectionManager.** A module-level singleton manages the Map of robotId to Ros instances. Handles WebSocket lifecycle, reconnection with exponential backoff (2s base, 30s cap, 5 attempts), and pushes connection status to the Zustand store. Keeps WebSocket concerns out of React components entirely.
+
+**roslib + CBOR compression.** rosbridge serializes everything as JSON, inflating float arrays roughly 5x on the wire. Enabling CBOR binary encoding on the rosbridge server reduces bandwidth 40-70% for sensor data. The dashboard runs a normalizeCborMessage pass to coerce TypedArrays to plain arrays and NaN values to null before Zod validation.
+
+**OKLCH color system.** All theme tokens use OKLCH with hue locked at 250. Perceptually uniform lightness means status colors (green/amber/red) maintain consistent visual weight. Tokens are registered via Tailwind v4's @theme inline directive so utility classes resolve to CSS custom properties.
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────┐
-│  Robot (ROS2)                           │
-│  nginx reverse proxy (:8000)            │
-│    /rosbridge → rosbridge_server (9090) │
-│    /webrtc    → aiortc signaling (8080) │
-└──────────────────┬──────────────────────┘
-                   │
-    ┌──────────────┼──────────────┐
-    │              │              │
-    ▼              ▼              ▼
- roslib        WebRTC        REST API
- Topics      PeerConn       SDP offer
-    │              │              │
-    ▼              ▼              ▼
-┌─────────────────────────────────────────┐
-│  Dashboard (Browser)                    │
-│                                         │
-│  ConnectionManager ← module singleton   │
-│    └→ Map<robotId, Ros>                 │
-│                                         │
-│  Zustand Store ← serializable state     │
-│    └→ robots, status, selectedTopics    │
-│                                         │
-│  React Hooks ← per-panel subscriptions  │
-│    └→ useRosSubscriber, useRosGraph,    │
-│       useLidarSubscription, useImu...   │
-│                                         │
-│  Components ← Canvas 2D + shadcn/ui    │
-└─────────────────────────────────────────┘
+Robot (ROS 2) ── rosbridge_server ── WebSocket ──> Browser
 ```
 
-**Three-layer data flow:**
-1. **ConnectionManager** (module singleton) — holds live Ros instances, pushes status to store
-2. **Zustand Store** — serializable UI state, persisted to localStorage
-3. **React Components** — read store via selectors, subscribe to topics via hooks
+Data flow through the dashboard:
 
-## Prerequisites
+```
+roslib Topic.subscribe()
+  -> CBOR decode (if enabled)
+  -> normalizeCborMessage (TypedArray/NaN coercion)
+  -> Zod schema validation
+  -> Zustand store update
+  -> React panel re-render (selector subscription)
+```
 
-**Web Application:** Node.js 18+, npm
+Three layers with strict boundaries:
 
-**Robot System:** Ubuntu 22.04+, ROS2 Humble, Python 3.10+, camera (USB/CSI) (TurtleBot 3 used)
+1. **ConnectionManager** (module singleton) -- holds live Ros instances, owns WebSocket lifecycle, pushes status to store
+2. **Zustand stores** (serializable state) -- robots, connection status, selected topics, panel minimization, persisted to localStorage
+3. **React components** (read-only consumers) -- read store via selectors, subscribe to ROS topics via hooks, render to Canvas 2D or shadcn/ui
 
-## Quick Start
+Panels own their subscriptions. Each panel receives a ros instance and topic name, then calls its own subscription hook internally. The workspace component is a layout orchestrator, not a data coordinator.
+
+## Testing
+
+476 unit tests (Vitest), 20 integration tests (Playwright with fake rosbridge), 43 smoke tests across 5 viewports.
+
+Integration tests use Playwright's `page.routeWebSocket()` to intercept rosbridge protocol at the WebSocket level. A fake rosbridge server responds to subscribe/advertise operations and pushes JSON fixtures through the pipeline, verifying data flows from wire format through Zod validation to rendered UI.
+
+Smoke tests run at 1920x1080, 1280x800, 1024x768, 768x1024, and 375x812. They check route rendering, layout overflow, and viewport-specific component visibility.
+
+```bash
+npm run test              # unit tests
+npm run test:integration  # Playwright integration
+npm run test:smoke        # Playwright 5-viewport smoke
+```
+
+## Known Limitations
+
+- WebRTC video streaming requires same-network access or a TURN relay for cellular connections
+- rosbridge JSON serialization inflates float arrays roughly 5x compared to binary (mitigated by CBOR, but not eliminated)
+- Pilot mode operates on a single robot at a time -- fleet-wide pilot control is not implemented
+- LiDAR visualization assumes single-echo LaserScan messages (no multi-echo support)
+- Canvas 2D panels resolve CSS custom properties via getComputedStyle on every theme change, since Canvas cannot read CSS variables directly
+
+## Getting Started
 
 ```bash
 git clone https://github.com/jragni/robot-telemetry-dashboard.git
@@ -100,157 +82,9 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`. Click **Add Robot**, enter the robot's base URL.
+Open http://localhost:5173, click Add Robot, enter the robot's rosbridge URL.
 
-## Robot Setup
-
-### 1. Install ROS Bridge Server
-
-```bash
-# Install rosbridge_server
-sudo apt install ros-${ROS_DISTRO}-rosbridge-server
-
-# Or build from source
-cd ~/ros2_ws/src
-git clone https://github.com/RobotWebTools/rosbridge_suite.git
-cd ~/ros2_ws && colcon build --packages-select rosbridge_server
-```
-
-Launch rosbridge:
-```bash
-source ~/ros2_ws/install/setup.bash
-ros2 launch rosbridge_server rosbridge_websocket.launch.xml
-# Default port: 9090
-```
-
-### 2. WebRTC Video Streaming
-
-For low-latency camera streaming, use the companion WebRTC server:
-
-**[github.com/jragni/ros-webrtc](https://github.com/jragni/ros-webrtc)** — lightweight Python-based WebRTC streaming using aiortc.
-
-Follow the installation instructions in that repository. Default port: 8080.
-
-### 3. Configure Nginx Reverse Proxy
-
-Nginx consolidates rosbridge and WebRTC behind a single port so the dashboard only needs one base URL.
-
-```bash
-sudo apt update && sudo apt install nginx
-sudo vim /etc/nginx/sites-available/robot-teleop
-```
-
-Add this configuration:
-```nginx
-server {
-    listen 8000;
-    server_name _;
-
-    # WebSocket for rosbridge
-    location /rosbridge {
-        rewrite ^/rosbridge/?(.*)$ /$1 break;
-        proxy_pass http://localhost:9090;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_read_timeout 86400;
-    }
-
-    # WebRTC signaling server
-    location /webrtc/ {
-        rewrite ^/webrtc/?(.*)$ /$1 break;
-        proxy_pass http://localhost:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-}
-```
-
-Enable and start:
-```bash
-sudo ln -s /etc/nginx/sites-available/robot-teleop /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-Your robot is now accessible at:
-- Rosbridge: `ws://<robot-ip>:8000/rosbridge`
-- WebRTC: `http://<robot-ip>:8000/webrtc/`
-
-### 4. Remote Access (optional)
-
-For accessing the robot over the internet. Two options:
-
-#### Cloudflare Tunnel (recommended)
-
-Free, no bandwidth limits, reliable TLS, no account needed for quick tunnels.
-
-```bash
-# Install cloudflared
-wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb
-sudo dpkg -i cloudflared-linux-arm64.deb
-
-# Start a quick tunnel (URL changes on restart)
-cloudflared tunnel --url http://127.0.0.1:8000
-```
-
-Use the Cloudflare URL in the dashboard:
-```
-cloudflared gives:  https://random-words.trycloudflare.com
-dashboard:          https://random-words.trycloudflare.com
-```
-
-For a stable URL that persists across restarts, set up a [named tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/) with a Cloudflare account (free).
-
-Each robot runs its own `cloudflared` process independently. Quick tunnels require no login and have no limit on concurrent tunnels.
-
-#### ngrok (alternative)
-
-```bash
-sudo apt install ngrok
-ngrok config add-authtoken YOUR_AUTHTOKEN
-ngrok http 8000
-```
-
-Use the ngrok URL in the dashboard:
-```
-ngrok gives:  https://abc123.ngrok-free.app
-dashboard:    wss://abc123.ngrok-free.app
-```
-
-**Note:** ngrok `.dev` subdomains may have TLS issues due to HSTS preloading. If you encounter `ERR_SSL_PROTOCOL_ERROR`, switch to Cloudflare Tunnel.
-
-## Connection Format
-
-Enter the base URL only — the dashboard appends `/rosbridge` and `/webrtc` automatically:
-- **Local:** `ws://192.168.1.100:8000`
-- **Cloudflare:** `https://random-words.trycloudflare.com`
-- **ngrok:** `wss://abc123.ngrok-free.app`
-
-## Supported ROS Message Types
-
-| Type | Topic Example | Used By |
-|------|--------------|---------|
-| `sensor_msgs/msg/LaserScan` | `/scan` | LiDAR panel |
-| `sensor_msgs/msg/Imu` | `/imu/data` | IMU panel, Telemetry |
-| `sensor_msgs/msg/BatteryState` | `/battery` | System Status, Fleet cards |
-| `nav_msgs/msg/Odometry` | `/odom` | Telemetry panel |
-| `geometry_msgs/msg/Twist` | `/cmd_vel` | Controls (publish) |
-| `sensor_msgs/msg/CompressedImage` | `/camera/image_raw/compressed` | Camera (via WebRTC) |
-
-## Development
-
-```bash
-npm run dev          # Dev server with HMR
-npm run build        # Production build
-npm run lint         # ESLint
-npx tsc --noEmit     # Type check
-```
+The robot needs [rosbridge_server](https://github.com/RobotWebTools/rosbridge_suite) running. For camera streaming, see [ros-webrtc](https://github.com/jragni/ros-webrtc). Full robot setup instructions are in `docs/`.
 
 ## License
 
