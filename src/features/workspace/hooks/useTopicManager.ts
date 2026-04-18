@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import type { Ros } from 'roslib';
 
 import { useRosTopics } from '@/hooks';
@@ -45,11 +45,11 @@ export function useTopicManager(
     [availableTopics],
   );
 
-  // Auto-select first valid topic per panel when topics are discovered
-  const autoSelectedRef = useRef(false);
+  // Auto-select first valid topic per panel when topics are discovered.
+  // Runs on every discovery poll — corrects stale/wrong persisted topic names
+  // (e.g., /imu/data when the robot actually publishes /imu).
   useEffect(() => {
-    if (!robotId || availableTopics.length === 0 || autoSelectedRef.current) return;
-    autoSelectedRef.current = true;
+    if (!robotId || availableTopics.length === 0) return;
 
     for (const [panelId, topics] of Object.entries(filteredTopics)) {
       if (!isPanelId(panelId) || topics.length === 0) continue;
@@ -61,11 +61,6 @@ export function useTopicManager(
       }
     }
   }, [availableTopics, filteredTopics, robotId, selectedTopics, setRobotTopic]);
-
-  // Reset auto-select flag when robot changes
-  useEffect(() => {
-    autoSelectedRef.current = false;
-  }, [robotId]);
 
   return { availableTopics, filteredTopics, selectedTopics, setTopic };
 }

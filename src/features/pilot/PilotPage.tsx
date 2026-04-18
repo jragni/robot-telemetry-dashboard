@@ -42,8 +42,8 @@ export function PilotPage() {
   const isMobile = useIsMobile();
 
   const availableTopics = useRosTopics(ros);
-  const lidar = useLidarSubscription(ros, selectedTopics?.lidar ?? '/scan');
-  const imu = useImuSubscription(ros, selectedTopics?.imu ?? '/imu/data');
+  const lidar = useLidarSubscription(ros, selectedTopics?.lidar ?? '');
+  const imu = useImuSubscription(ros, selectedTopics?.imu ?? '');
   const battery = useBatterySubscription(ros, availableTopics);
 
   // Convert polar LidarPoints (workspace) to Cartesian (pilot minimap)

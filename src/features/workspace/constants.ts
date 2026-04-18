@@ -66,7 +66,7 @@ export const TELEMETRY_AXIS_PADDING = 40;
 export const TELEMETRY_BOTTOM_PADDING = 20;
 
 export const PANEL_TOPIC_TYPES: Record<string, readonly string[]> = {
-  camera: ['sensor_msgs/msg/CompressedImage', 'sensor_msgs/msg/Image'],
+  camera: ['sensor_msgs/msg/CompressedImage', 'sensor_msgs/msg/Image'], // NOT used since webrtc
   controls: ['geometry_msgs/msg/Twist'],
   imu: ['sensor_msgs/msg/Imu'],
   lidar: ['sensor_msgs/msg/LaserScan'],
