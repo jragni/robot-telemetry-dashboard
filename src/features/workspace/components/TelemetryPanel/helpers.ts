@@ -2,6 +2,7 @@ import {
   TELEMETRY_GRID_LINES_H,
   TELEMETRY_GRID_LINES_V,
   TELEMETRY_LINE_WIDTH,
+  TELEMETRY_VALUE_PADDING_RATIO,
 } from '@/features/workspace/constants';
 import type { TelemetrySeries } from '@/features/workspace/types/TelemetryPanel.types';
 
@@ -82,7 +83,7 @@ export function computeValueRange(
   if (vMin >= 0) vMin = 0;
 
   const vRange = vMax - vMin;
-  const vPadding = vRange * 0.1;
+  const vPadding = vRange * TELEMETRY_VALUE_PADDING_RATIO;
   vMax += vPadding;
   if (vMin < 0) vMin -= vPadding;
 

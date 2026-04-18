@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
+
 import { connectionManager } from '@/lib/rosbridge/ConnectionManager';
+
+import { UPTIME_POLL_INTERVAL_MS } from './constants';
 
 /** useConnectionUptime
  * @description Tracks seconds elapsed since a robot connection was established.
@@ -24,7 +27,7 @@ export function useConnectionUptime(
   useEffect(() => {
     if (!robotId || !connected) return;
 
-    const interval = setInterval(tick, 1000);
+    const interval = setInterval(tick, UPTIME_POLL_INTERVAL_MS);
 
     return () => {
       clearInterval(interval);
