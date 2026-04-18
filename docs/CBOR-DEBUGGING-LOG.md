@@ -156,6 +156,125 @@ Three separate bugs masquerading as one. Only proper data-first investigation se
 - T-110: Hardcoded topic fallbacks (exposed by this investigation)
 - T-113: CBOR schema compatibility (the ticket that drove proper investigation)
 
+## Phase 8: Full-Stack Resolution
+
+### The Full Picture
+
+This bug spanned three layers of the stack, each requiring a different fix:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ROBOT (Raspberry Pi)                                       │
+│                                                             │
+│  ROS 2 Node publishes:                                      │
+│    /scan (LaserScan)    → float32[] ranges                  │
+│    /imu (Imu)           → float64[9] covariance arrays      │
+│    /odom (Odometry)     → float64[36] covariance arrays     │
+│    /battery_state       → simple numeric fields             │
+│                                                             │
+│  rosbridge_server encodes with CBOR:                        │
+│    /scan    → ✅ sequence<float> matched TAGGED_ARRAY_FORMATS│
+│    /imu     → ❌ double[9] matched NOTHING → AttributeError │
+│    /odom    → ❌ double[36] matched NOTHING → silent drop    │
+│    /battery → ✅ no arrays to encode                         │
+│                                                             │
+│  FIX: sudo apt upgrade ros-humble-rosbridge-library >= 2.0.5│
+│  FIX: rebuild turtlebot3 packages for cmd_vel compatibility │
+└─────────────┬───────────────────────────────────────────────┘
+              │ WebSocket (CBOR binary frames)
+              │ via Cloudflare Tunnel
+┌─────────────▼───────────────────────────────────────────────┐
+│  BROWSER (roslib + cbor2)                                   │
+│                                                             │
+│  cbor2 decodes CBOR binary → JavaScript objects:            │
+│    float32[] → Float32Array (NOT Array)                     │
+│    NaN values preserved in typed arrays                     │
+│                                                             │
+│  Zod rejects:                                               │
+│    Array.isArray(Float32Array) === false → "not an array"   │
+│    z.number() rejects NaN → "invalid number"                │
+│                                                             │
+│  FIX: normalizeCborMessage() in useRosSubscriber            │
+│    TypedArray → Array.from() → plain array                  │
+│    NaN → null (downstream code already skips nulls)         │
+│    Called once before any schema validation                  │
+└─────────────┬───────────────────────────────────────────────┘
+              │ normalized plain JS objects
+┌─────────────▼───────────────────────────────────────────────┐
+│  DASHBOARD (React + Zustand)                                │
+│                                                             │
+│  useTopicManager auto-selection:                            │
+│    Persisted selectedTopics.imu = "/imu/data" (wrong)       │
+│    Robot publishes on "/imu" (no /data suffix)              │
+│    autoSelectedRef prevented correction after first poll    │
+│                                                             │
+│  FIX: Removed autoSelectedRef gate — runs every poll        │
+│  FIX: Removed all hardcoded fallback topic names            │
+│    PilotPage, WorkspacePage, ActivePanelContent             │
+│    Empty string → useRosSubscriber skips subscription       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### How We Diagnosed It
+
+**Step 1: Wrong approach (3 reactive PRs)**
+Saw "Malformed message" errors in console → assumed schema problem → shipped PRs #98, #99, #100 fixing null handling, TypedArray coercion, NaN coercion. LiDAR started working but IMU/Odom remained broken. Each PR fixed a real client-side issue but didn't address why IMU messages never arrived.
+
+**Step 2: Data-first investigation**
+Added `window.__DEBUG_ROS__` runtime flag in useRosSubscriber to log raw messages before Zod validation. Result: zero `/imu` and zero `/odom` messages — the data wasn't arriving at all, not being rejected by schemas.
+
+**Step 3: Topic name mismatch**
+Checked `selectedTopics` in Zustand store: `imu: "/imu/data"` but robot publishes `/imu`. Fixed auto-selection logic and removed hardcoded fallbacks. IMU now subscribed to correct topic.
+
+**Step 4: CBOR isolation**
+After fixing topic names, IMU still silent. Systematic test matrix (one variable at a time):
+
+- `compression: 'none'` → messages arrive
+- `compression: 'cbor'` → zero messages
+- Confirmed: CBOR itself breaks IMU
+
+**Step 5: Client vs server**
+Used Playwright to capture WebSocket frames. Binary CBOR frames arrived for `/scan` but zero for `/imu`. No client-side decode errors. Conclusion: rosbridge server drops IMU messages during CBOR encoding.
+
+**Step 6: Source code analysis**
+Research agent traced the rosbridge_suite source code to `cbor_conversion.py`. Found the exact dispatch table (`TAGGED_ARRAY_FORMATS`) that handles `sequence<type>` but not `double[9]`. The crash path: `extract_cbor_values(numpy.ndarray)` → `AttributeError` → silently caught by `MultiSubscriber.callback()`.
+
+**Step 7: Server-side fix**
+`sudo apt upgrade ros-humble-rosbridge-library` → installed version >= 2.0.5 which includes PR #1161. Also rebuilt turtlebot3 packages to restore `cmd_vel` compatibility broken by the upgrade.
+
+### Client-Side Architectural Fix
+
+Even with rosbridge fixed, the client needed cleanup. The three reactive PRs left CBOR workarounds scattered across 5 files. Refactored to:
+
+- **`normalizeCborMessage()`** — pure recursive function in `src/utils/`. Converts TypedArrays to plain arrays, NaN to null. 20 unit tests.
+- **Integrated in `useRosSubscriber`** — called once when `compression === 'cbor'`, before the callback. Every consumer gets clean data automatically.
+- **Removed all per-schema workarounds** — deleted `coerceToArray`, removed `z.preprocess()` calls. Schemas now only handle rosbridge null semantics (protocol layer), not CBOR transport artifacts.
+
+Architecture after refactor:
+
+```
+CBOR binary → roslib cbor2.decode() → normalizeCborMessage() → onMessage → Zod schema
+                                       ▲                                     ▲
+                                  transport layer                       protocol layer
+                               (TypedArray→Array,                    (null→defaults,
+                                NaN→null)                             field validation)
+```
+
+### Verification
+
+Connected to real robot via Cloudflare tunnel after all fixes:
+
+- ✅ LiDAR — 200+ points, ~5Hz, CBOR encoded
+- ✅ IMU — roll/pitch/heading updating live, CBOR encoded
+- ✅ Battery — percentage and voltage, CBOR encoded
+- ✅ Odometry — telemetry panel plotting velocity data
+- ✅ Camera — WebRTC video streaming
+- ✅ Controls — cmd_vel publishing, robot responds to D-pad
+
+### Key Takeaway
+
+What appeared to be one bug ("CBOR broke my sensors") was actually **four independent bugs** at three stack layers. The only way to separate them was data-first investigation — capturing what actually arrives at each layer boundary instead of guessing from error messages.
+
 ## References
 
 - [PR #1161: fix numpy.ndarray not handled in CBOR serialization](https://github.com/RobotWebTools/rosbridge_suite/pull/1161)
