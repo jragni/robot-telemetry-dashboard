@@ -91,12 +91,9 @@ describe('telemetryLaserScanMessageSchema', () => {
     expect(telemetryLaserScanMessageSchema.safeParse({}).success).toBe(false);
   });
 
-  it('coerces missing ranges to empty array (CBOR resilience)', () => {
+  it('rejects missing ranges (normalization happens upstream)', () => {
     const msg = { range_min: 0.1, range_max: 30 };
     const result = telemetryLaserScanMessageSchema.safeParse(msg);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.ranges).toEqual([]);
-    }
+    expect(result.success).toBe(false);
   });
 });
