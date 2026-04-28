@@ -44,7 +44,7 @@ describe('useLidarSubscription', () => {
     const { result } = renderHook(() => useLidarSubscription(fakeRos, '/scan'));
 
     expect(result.current.points).toEqual([]);
-    expect(result.current.rangeMax).toBe(15);
+    expect(result.current.rangeMax).toBe(3);
   });
 
   it('converts valid scan to points with correct angles and distances', () => {
