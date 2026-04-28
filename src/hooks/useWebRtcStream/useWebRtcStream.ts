@@ -5,7 +5,8 @@ import { SignalingClient } from '@/lib/webrtc/signaling';
 import { calculateBackoffDelay, RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
 import type { VideoStreamStatus } from '@/types/streaming.types';
 
-import { ICE_GATHERING_TIMEOUT, PEER_CONNECTION_CONFIG } from './constants';
+import { ICE_GATHERING_TIMEOUT, MAX_VIDEO_BITRATE, PEER_CONNECTION_CONFIG } from './constants';
+import { applyBandwidthConstraint } from './helpers';
 import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
 
 /** useWebRtcStream
@@ -106,8 +107,11 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
         }
       };
 
-      // 5. Create SDP offer
+      // 5. Create SDP offer with bandwidth constraint
       const offer = await pc.createOffer();
+      if (offer.sdp) {
+        offer.sdp = applyBandwidthConstraint(offer.sdp, Math.round(MAX_VIDEO_BITRATE / 1000));
+      }
       await pc.setLocalDescription(offer);
 
       // 6. Wait for ICE gathering (or timeout)
