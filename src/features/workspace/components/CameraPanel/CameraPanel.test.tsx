@@ -5,7 +5,7 @@ import { CameraPanel } from './CameraPanel';
 
 const mockVideoRef = { current: null };
 
-vi.mock('@/hooks/useWebRtcStream/useWebRtcStream', () => ({
+vi.mock('@/hooks/useWebRtcStream', () => ({
   useWebRtcStream: vi.fn(() => ({
     error: null,
     retry: vi.fn(),
@@ -68,7 +68,7 @@ describe('CameraPanel', () => {
   });
 
   it('calls useWebRtcStream with correct options', async () => {
-    const { useWebRtcStream } = await import('@/hooks/useWebRtcStream/useWebRtcStream');
+    const { useWebRtcStream } = await import('@/hooks/useWebRtcStream');
 
     render(<CameraPanel connected={true} robotUrl="http://my-robot:9090" />);
 

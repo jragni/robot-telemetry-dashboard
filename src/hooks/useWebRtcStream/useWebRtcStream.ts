@@ -5,7 +5,7 @@ import { SignalingClient } from '@/lib/webrtc/signaling';
 import { calculateBackoffDelay, RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
 import type { VideoStreamStatus } from '@/types/streaming.types';
 
-import { ICE_GATHERING_TIMEOUT, PEER_CONNECTION_CONFIG } from './constants';
+import { ICE_GATHERING_TIMEOUT, MAX_VIDEO_BITRATE, PEER_CONNECTION_CONFIG } from './constants';
 import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
 
 /** useWebRtcStream
@@ -106,8 +106,15 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
         }
       };
 
-      // 5. Create SDP offer
+      // 5. Create SDP offer with bandwidth constraint
       const offer = await pc.createOffer();
+      // Signal max video bitrate to remote peer via SDP b=AS line
+      if (offer.sdp) {
+        offer.sdp = offer.sdp.replace(
+          /m=video (.+)\r\n/,
+          `m=video $1\r\nb=AS:${String(Math.round(MAX_VIDEO_BITRATE / 1000))}\r\n`,
+        );
+      }
       await pc.setLocalDescription(offer);
 
       // 6. Wait for ICE gathering (or timeout)
