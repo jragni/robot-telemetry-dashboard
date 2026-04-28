@@ -1,1 +1,1 @@
-export const LIDAR_DISPLAY_RANGE = 15;
+export const LIDAR_DISPLAY_RANGE = 3;
