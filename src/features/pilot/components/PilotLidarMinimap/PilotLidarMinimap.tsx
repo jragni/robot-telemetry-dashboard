@@ -12,10 +12,12 @@ import {
   LIDAR_DISTANCE_RATIO_CAUTION,
   LIDAR_DISTANCE_RATIO_CRITICAL,
   LIDAR_POINT_GLOW,
+  LIDAR_POINT_RADIUS_MOBILE,
   LIDAR_ROBOT_TRIANGLE_MIN,
   LIDAR_ROBOT_TRIANGLE_RATIO,
   LIDAR_TICK_LENGTH,
   LIDAR_TOKEN_MAP,
+  MINIMAP_SIZE_MOBILE_MAX,
   PILOT_ZOOM_MAX,
   PILOT_ZOOM_MIN,
   PILOT_ZOOM_STEP,
@@ -34,7 +36,7 @@ import type { PilotLidarMinimapProps } from './PilotLidarMinimap.types';
  * @prop heading - Current heading in degrees for robot triangle orientation.
  * @prop maxSize - Optional maximum pixel size override for mobile contexts.
  */
-export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotLidarMinimapProps) {
+export function PilotLidarMinimap({ heading, maxSize, points, rangeMax }: PilotLidarMinimapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { zoom, zoomIn, zoomOut, handleWheel } = useZoom({
     min: PILOT_ZOOM_MIN,
@@ -117,6 +119,8 @@ export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotL
 
     // Scan points
     ctx.shadowBlur = LIDAR_POINT_GLOW;
+    const pointRadius =
+      size <= MINIMAP_SIZE_MOBILE_MAX ? LIDAR_POINT_RADIUS_MOBILE : LIDAR_POINT_RADIUS;
 
     for (const point of points) {
       // Robot frame: X = forward (up on screen), Y = left (left on screen)
@@ -125,12 +129,12 @@ export function PilotLidarMinimap({ points, rangeMax, heading, maxSize }: PilotL
       const ratio = point.distance / rangeMax;
 
       let color = colors.nominal;
-      if (ratio > LIDAR_DISTANCE_RATIO_CRITICAL) color = colors.critical;
-      else if (ratio > LIDAR_DISTANCE_RATIO_CAUTION) color = colors.caution;
+      if (ratio < LIDAR_DISTANCE_RATIO_CRITICAL) color = colors.critical;
+      else if (ratio < LIDAR_DISTANCE_RATIO_CAUTION) color = colors.caution;
 
       ctx.shadowColor = color;
       ctx.beginPath();
-      ctx.arc(px, py, LIDAR_POINT_RADIUS, 0, Math.PI * 2);
+      ctx.arc(px, py, pointRadius, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
     }
