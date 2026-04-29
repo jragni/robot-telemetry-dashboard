@@ -70,6 +70,8 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-100: Move utils tests to **tests**/ subfolder (already done, verified by ticket reviewer)
 - T-110: Topic discovery auto-selection + hardcoded fallbacks — PR #102
 - T-113: CBOR normalization centralized in useRosSubscriber — PR #102
+- T-115: LiDAR display range default to 3m for indoor — PR #111
+- T-103: TURN relay + bandwidth constraints for cellular WebRTC — PR #112
 
 ## In Progress
 
@@ -136,6 +138,18 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 
 ### Bugs
 
+#### T-116: Mobile pilot mode — unwanted zoom on button press-and-hold
+
+- Severity: MEDIUM
+- Scope: src/features/pilot/ — mobile HUD, velocity sliders, action buttons
+- Problem: On mobile devices in pilot mode, press-and-holding buttons (e.g., velocity controls, zoom +/-) triggers the browser's native pinch-to-zoom or double-tap-to-zoom gesture, causing the viewport to zoom unexpectedly. This makes continuous control inputs unusable.
+- Fix candidates:
+  1. Add `touch-action: manipulation` to pilot mode container (disables double-tap zoom while keeping pan/scroll)
+  2. Add `touch-action: none` on specific control buttons that support press-and-hold
+  3. Prevent default on `touchstart`/`touchmove` for control elements
+- Acceptance: press-and-hold on pilot mode controls does not trigger browser zoom, normal scrolling still works outside controls, works on iOS Safari and Chrome Android
+- Branch: fix/t-116/mobile-pilot-zoom
+
 #### T-111: Add copy-to-clipboard button for rosbridge URL on RobotCard
 
 - Severity: LOW
@@ -145,30 +159,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Fix: Add a small copy-to-clipboard icon button (shadcn Button, ghost/icon variant, Lucide `Copy` or `ClipboardCopy` icon) next to the URL value. On click, copy the full URL to clipboard. Show brief feedback (e.g., icon changes to `Check` for 1.5s). Consider also adding a tooltip on hover that shows the full URL.
 - Acceptance: copy button visible next to URL, copies full URL on click, visual feedback on success, works on mobile (touch), build passes
 - Branch: feat/t-111/url-copy-button
-
-#### T-103: WebRTC video unreliable on cellular networks (LTE/3G/4G)
-
-- Severity: HIGH
-- Scope: src/hooks/useWebRtcStream/, WebRTC signaling, TURN/STUN configuration
-- Problem: Video stream drops, freezes, or fails to establish on cellular connections (LTE, 3G, 4G). Likely causes:
-  - Symmetric NAT on cellular carriers blocks P2P — needs TURN relay fallback
-  - No TURN server configured (only STUN) — P2P fails silently
-  - ICE gathering timeout too short for high-latency cellular
-  - No adaptive bitrate — stream attempts full resolution on constrained bandwidth
-  - Carrier-level UDP throttling or blocking
-- Investigation:
-  - Check ICE candidate types in devtools (host/srflx/relay) — if no relay candidates, TURN is missing
-  - Test with a public TURN server (e.g., Twilio, Metered) to confirm TURN fixes connectivity
-  - Log ICE connection state transitions to identify where it fails (checking → failed vs connected → disconnected)
-  - Check `RTCPeerConnection.getStats()` for packet loss, jitter, round-trip time on cellular
-  - Test if DataChannel (non-video) works on cellular — isolates video bandwidth vs NAT issue
-- Fix candidates:
-  - Add TURN server to PEER_CONNECTION_CONFIG ICE servers
-  - Increase ICE_GATHERING_TIMEOUT for cellular latency
-  - Add bandwidth constraints to video transceiver (`maxBitrate`, resolution scaling)
-  - Implement connection quality indicator in UI
-- Acceptance: video stream establishes and maintains on LTE within 10 seconds, reconnects automatically on network handoff, graceful degradation on 3G (lower resolution, not failure)
-- Branch: fix/t-103/cellular-webrtc-reliability
 
 #### T-104: Sensor data freezes/delays browser on low bandwidth connections
 
@@ -314,6 +304,23 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: 2-robot scenario fully tested, no data bleed between robots, disconnect/reconnect isolation verified
 - Dependencies: T-105 (fake rosbridge with multi-robot support)
 - Branch: test/t-109/multi-robot-isolation
+
+### UX
+
+#### T-114: Add Robot modal unresponsive during reconnection to failed connection
+
+- Severity: MEDIUM
+- Scope: src/features/fleet/components/AddRobotModal/AddRobotModal.tsx, helpers.ts, ConnectionToastProvider.tsx
+- Problem: When the system is actively reconnecting to a failed robot, attempting to add a new robot feels blocked. The architecture is per-robot keyed (no global lock), but `testConnectionWithRetries()` blocks the modal submit for up to 9 seconds (3 attempts with exponential backoff: 2s → 4s → 8s). Combined with reconnection toasts firing for the failed robot, the UI appears frozen and unresponsive — users perceive they can't add robots while reconnection is active.
+- Root cause: synchronous URL validation on submit blocks all modal interaction; overlapping toast notifications create confusion about which robot's status is being reported.
+- Fix candidates:
+  1. Move URL validation off the critical path — accept the form immediately, validate in background, show inline error if URL fails
+  2. Reduce test timeout / attempt count (e.g., single 3s attempt instead of 3 × exponential)
+  3. Show per-robot attribution on reconnection toasts so users can distinguish which robot is reconnecting
+  4. Add a "skip validation" option for known-good URLs (e.g., previously connected robots)
+  5. Disable reconnection attempts while AddRobotModal is open (debatable — may mask real issue)
+- Acceptance: user can open AddRobotModal, fill form, and submit without perceived freeze while another robot is reconnecting; modal closes within 3 seconds on valid URL; toast notifications clearly attribute which robot they refer to
+- Branch: fix/t-114/add-robot-during-reconnect
 
 ### Documentation (run last — all paths finalized)
 

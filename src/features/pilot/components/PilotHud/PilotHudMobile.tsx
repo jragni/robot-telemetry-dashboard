@@ -1,11 +1,14 @@
+import { RefreshCw } from 'lucide-react';
+
 import { getBatteryColor, normalizeHeading } from '@/utils';
+import { Button } from '@/components/ui/button';
 
 import { HUD_PANEL_BASE } from '../../constants';
 import { MINIMAP_SIZE_MOBILE_MAX } from '../PilotLidarMinimap/constants';
-import { GyroInline } from './GyroInline';
 import { PilotCompassMobile } from '../PilotCompass/PilotCompassMobile';
 import { PilotControls } from '../PilotControls/PilotControls';
 import { PilotLidarMinimap } from '../PilotLidarMinimap';
+import { GyroInline } from './GyroInline';
 import { StatusDot } from './StatusDot';
 import type { PilotHudMobileProps } from './PilotHud.types';
 
@@ -24,6 +27,7 @@ export function PilotHudMobile({
   onDirectionStart,
   onEmergencyStop,
   onLinearVelocityChange,
+  onReconnect,
   rosbridgeStatus,
   telemetry,
   videoStatus,
@@ -80,6 +84,19 @@ export function PilotHudMobile({
             pitch={telemetry.imu?.pitch ?? null}
             yaw={telemetry.imu?.yaw ?? null}
           />
+
+          {rosbridgeStatus === 'disconnected' && onReconnect ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onReconnect}
+              className="text-xs font-mono gap-1 text-text-muted hover:text-text-primary cursor-pointer pointer-events-auto"
+              aria-label="Reconnect to robot"
+            >
+              <RefreshCw className="size-3" />
+              Retry
+            </Button>
+          ) : null}
         </div>
       </div>
 
