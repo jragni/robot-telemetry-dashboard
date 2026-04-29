@@ -138,6 +138,14 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 
 ### Bugs
 
+#### T-117: Generate visual regression baselines for canvas-content integration tests
+
+- Severity: MEDIUM
+- Scope: e2e/integration/canvas-content.spec.ts, e2e/integration/canvas-content.spec.ts-snapshots/
+- Problem: T-107 shipped without committing chromium-linux baselines. Two tests skipped: lidar-with-data and imu-with-data. Visual regression hard-fails on first CI run with no baseline.
+- Fix: Run tests in CI with `--update-snapshots`, download artifact, commit baselines under `e2e/integration/canvas-content.spec.ts-snapshots/`. Or run locally in Linux Docker matching CI env. Then remove `test.skip` and TODO comments.
+- Branch: test/t-117/canvas-snapshot-baselines
+
 #### T-116: Mobile pilot mode — unwanted zoom on button press-and-hold
 
 - Severity: MEDIUM
