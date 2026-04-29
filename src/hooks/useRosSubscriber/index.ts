@@ -1,2 +1,2 @@
+export type { SubscriberOptions } from './types';
 export { useRosSubscriber } from './useRosSubscriber';
-export type { SubscriberOptions } from './useRosSubscriber.types';

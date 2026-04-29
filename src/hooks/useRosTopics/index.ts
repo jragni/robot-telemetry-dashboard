@@ -1,2 +1,2 @@
+export type { RosTopic } from './types';
 export { useRosTopics } from './useRosTopics';
-export type { RosTopic } from './useRosTopics.types';

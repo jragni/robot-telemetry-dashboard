@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { type Ros, Topic } from 'roslib';
 
 import { useRosSubscriber } from './useRosSubscriber';
-import type { SubscriberOptions } from './useRosSubscriber.types';
+import type { SubscriberOptions } from './types';
 
 const mockSubscribe = vi.fn();
 const mockUnsubscribe = vi.fn();
