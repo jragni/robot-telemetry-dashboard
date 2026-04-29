@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -30,6 +30,7 @@ import type { ProxyStatus } from './types/PilotPage.types';
 export function PilotPage() {
   const { id } = useParams<{ id: string }>();
   const robot = useConnectionStore((s) => (id ? s.robots[id] : undefined));
+  const connectRobot = useConnectionStore((s) => s.connectRobot);
   const { ros, connected } = useRobotConnection(id);
   const selectedTopics = robot?.selectedTopics;
   const controls = useControlPublisher({ ros, topicName: selectedTopics?.controls });
@@ -40,6 +41,9 @@ export function PilotPage() {
   });
   const { isFullscreen, toggleFullscreen } = usePilotFullscreen();
   const isMobile = useIsMobile();
+  const handleReconnect = useCallback(() => {
+    if (id) void connectRobot(id);
+  }, [connectRobot, id]);
 
   const availableTopics = useRosTopics(ros);
   const lidar = useLidarSubscription(ros, selectedTopics?.lidar ?? '');
@@ -87,34 +91,36 @@ export function PilotPage() {
 
       {isMobile ? (
         <PilotHudMobile
-          telemetry={telemetry}
-          videoStatus={videoStatus}
-          rosbridgeStatus={rosbridgeStatus}
+          angularVelocity={controls.angularVelocity}
           connected={connected}
           linearVelocity={controls.linearVelocity}
-          angularVelocity={controls.angularVelocity}
-          onDirectionStart={controls.handleDirectionStart}
-          onDirectionEnd={controls.handleDirectionEnd}
-          onLinearVelocityChange={controls.handleLinearChange}
           onAngularVelocityChange={controls.handleAngularChange}
+          onDirectionEnd={controls.handleDirectionEnd}
+          onDirectionStart={controls.handleDirectionStart}
           onEmergencyStop={controls.handleEmergencyStop}
+          onLinearVelocityChange={controls.handleLinearChange}
+          onReconnect={handleReconnect}
+          rosbridgeStatus={rosbridgeStatus}
+          telemetry={telemetry}
+          videoStatus={videoStatus}
         />
       ) : (
         <PilotHud
+          angularVelocity={controls.angularVelocity}
+          connected={connected}
+          isFullscreen={isFullscreen}
+          linearVelocity={controls.linearVelocity}
+          onAngularVelocityChange={controls.handleAngularChange}
+          onDirectionEnd={controls.handleDirectionEnd}
+          onDirectionStart={controls.handleDirectionStart}
+          onEmergencyStop={controls.handleEmergencyStop}
+          onLinearVelocityChange={controls.handleLinearChange}
+          onReconnect={handleReconnect}
+          onToggleFullscreen={toggleFullscreen}
+          robotId={id}
+          rosbridgeStatus={rosbridgeStatus}
           telemetry={telemetry}
           videoStatus={videoStatus}
-          rosbridgeStatus={rosbridgeStatus}
-          isFullscreen={isFullscreen}
-          connected={connected}
-          onToggleFullscreen={toggleFullscreen}
-          linearVelocity={controls.linearVelocity}
-          angularVelocity={controls.angularVelocity}
-          onDirectionStart={controls.handleDirectionStart}
-          onDirectionEnd={controls.handleDirectionEnd}
-          onLinearVelocityChange={controls.handleLinearChange}
-          onAngularVelocityChange={controls.handleAngularChange}
-          onEmergencyStop={controls.handleEmergencyStop}
-          robotId={id}
         />
       )}
     </div>

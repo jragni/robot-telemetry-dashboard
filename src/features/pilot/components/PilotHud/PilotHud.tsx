@@ -22,6 +22,7 @@ import type { PilotHudProps } from './PilotHud.types';
  * @prop rosbridgeStatus - Rosbridge connection status.
  * @prop isFullscreen - Whether Pilot Mode is fullscreen.
  * @prop connected - Whether the robot is connected.
+ * @prop onReconnect - Callback to reconnect when rosbridge is disconnected.
  * @prop onToggleFullscreen - Callback to toggle fullscreen.
  */
 export function PilotHud({
@@ -34,6 +35,7 @@ export function PilotHud({
   onDirectionStart,
   onEmergencyStop,
   onLinearVelocityChange,
+  onReconnect,
   onToggleFullscreen,
   robotId,
   rosbridgeStatus,
@@ -61,6 +63,7 @@ export function PilotHud({
         <div className="w-36 sm:w-44">
           <PilotStatusBar
             battery={telemetry.battery}
+            onReconnect={onReconnect}
             rosbridgeStatus={rosbridgeStatus}
             videoStatus={videoStatus}
           />

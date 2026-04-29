@@ -31,6 +31,7 @@ export interface PilotGyroReadoutProps {
 
 export interface PilotStatusBarProps {
   readonly battery: { percentage: number; voltage: number } | null;
+  readonly onReconnect?: () => void;
   readonly rosbridgeStatus: ProxyStatus;
   readonly videoStatus: VideoStreamStatus;
 }
