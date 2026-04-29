@@ -13,6 +13,7 @@ export interface PilotHudProps {
   readonly onDirectionStart: (direction: Direction) => void;
   readonly onEmergencyStop: () => void;
   readonly onLinearVelocityChange: (value: number) => void;
+  readonly onReconnect?: () => void;
   readonly onToggleFullscreen: () => void;
   readonly robotId?: string;
   readonly rosbridgeStatus: ProxyStatus;
@@ -29,6 +30,7 @@ export interface PilotHudMobileProps {
   readonly onDirectionStart: (direction: Direction) => void;
   readonly onEmergencyStop: () => void;
   readonly onLinearVelocityChange: (value: number) => void;
+  readonly onReconnect?: () => void;
   readonly rosbridgeStatus: ProxyStatus;
   readonly telemetry: PilotTelemetry;
   readonly videoStatus: VideoStreamStatus;
