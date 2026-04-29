@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { laserScanMessageSchema } from './useLidarSubscription';
+import { laserScanMessageSchema } from './schemas';
 
 describe('laserScanMessageSchema', () => {
   it('parses a valid LaserScan message', () => {

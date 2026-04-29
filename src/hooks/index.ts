@@ -1,7 +1,7 @@
 export { useBatterySubscription } from './useBatterySubscription';
 export { useCanvasColors } from './useCanvasColors';
 export { useConnectionUptime } from './useConnectionUptime';
-export { useControlPublisher } from './useControlPublisher/useControlPublisher';
+export { useControlPublisher } from './useControlPublisher';
 export { useImuSubscription } from './useImuSubscription';
 export { useIsMobile } from './useIsMobile';
 export { useLidarSubscription } from './useLidarSubscription';
@@ -12,5 +12,5 @@ export { useRosSubscriber, type SubscriberOptions } from './useRosSubscriber';
 export { useRosTopics, type RosTopic } from './useRosTopics';
 export { useTheme } from './useTheme';
 export { useThemeChange } from './useThemeChange';
-export { useWebRtcStream } from './useWebRtcStream/useWebRtcStream';
+export { useWebRtcStream } from './useWebRtcStream';
 export { useZoom } from './useZoom';

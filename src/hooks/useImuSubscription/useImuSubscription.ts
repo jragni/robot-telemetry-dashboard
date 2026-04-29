@@ -1,33 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
-import { z } from 'zod';
+
 import { useRosSubscriber } from '../useRosSubscriber';
 import { rafThrottle } from '@/utils';
-import { sensorVector3Schema } from '@/types/ros2-schemas';
-import type { UseImuReturn } from './useImuSubscription.types';
-import { IDENTITY_QUATERNION } from './useImuSubscription.constants';
-import { quaternionToEuler } from './useImuSubscription.helpers';
 
-const quaternionSchema = z
-  .object({ x: z.number(), y: z.number(), z: z.number(), w: z.number() })
-  .nullable()
-  .transform((v) => v ?? IDENTITY_QUATERNION);
-
-/** imuMessageSchema
- * @description Zod schema validating the consumed fields of sensor_msgs/msg/Imu.
- *  All fields accept null (rosbridge CBOR serialization) with safe defaults.
- */
-export const imuMessageSchema = z.object({
-  orientation: quaternionSchema,
-  angular_velocity: sensorVector3Schema
-    .nullable()
-    .optional()
-    .transform((v) => v ?? undefined),
-  linear_acceleration: sensorVector3Schema
-    .nullable()
-    .optional()
-    .transform((v) => v ?? undefined),
-});
+import { quaternionToEuler } from './helpers';
+import { imuMessageSchema } from './schemas';
+import type { UseImuReturn } from './types';
 
 /** useImuSubscription
  * @description Subscribes to a sensor_msgs/msg/Imu topic, converts quaternion orientation
@@ -73,11 +52,11 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
         const m = result.data;
         const euler = quaternionToEuler(m.orientation);
         const next: UseImuReturn = {
-          roll: euler.roll,
-          pitch: euler.pitch,
-          yaw: euler.yaw,
           angularVelocity: m.angular_velocity,
           linearAcceleration: m.linear_acceleration,
+          pitch: euler.pitch,
+          roll: euler.roll,
+          yaw: euler.yaw,
         };
         latestRef.current = next;
         throttledSet(next);

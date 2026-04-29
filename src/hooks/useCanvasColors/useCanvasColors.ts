@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from 'react';
 import { useThemeChange } from '../useThemeChange';
-import type { TokenMapping } from './useCanvasColors.types';
+import type { TokenMapping } from './types';
 
 /** useCanvasColors
  * @description Resolves CSS custom properties into concrete color strings for Canvas 2D rendering.
