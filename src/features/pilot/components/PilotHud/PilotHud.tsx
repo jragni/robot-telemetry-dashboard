@@ -4,11 +4,11 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { PilotCompass } from '../PilotCompass/PilotCompass';
-import { PilotLidarMinimap } from '../PilotLidarMinimap';
-import { PilotGyroReadout } from '../PilotGyroReadout/PilotGyroReadout';
-import { PilotStatusBar } from '../PilotStatusBar/PilotStatusBar';
 import { PilotControls } from '../PilotControls/PilotControls';
 import { PilotFullscreenToggle } from '../PilotFullscreenToggle';
+import { PilotGyroReadout } from '../PilotGyroReadout/PilotGyroReadout';
+import { PilotLidarMinimap } from '../PilotLidarMinimap';
+import { PilotStatusBar } from '../PilotStatusBar/PilotStatusBar';
 import type { PilotHudProps } from './PilotHud.types';
 
 /** PilotHud
@@ -16,14 +16,24 @@ import type { PilotHudProps } from './PilotHud.types';
  *  all HUD elements using absolute positioning within a pointer-events-none
  *  container. Each child panel re-enables pointer events individually.
  *  Layout: LiDAR top-left, compass top-center, status top-right, gyro
- *  bottom-left, fullscreen toggle bottom-left, controls bottom-right.
+ *  bottom-left, fullscreen toggle bottom-left, controls bottom-right. The
+ *  reconnect action lives inside PilotControls so the recovery button sits
+ *  next to the disabled D-pad and sliders.
+ * @prop angularVelocity - Current angular velocity in rad/s.
+ * @prop connected - Whether the robot is connected.
+ * @prop isFullscreen - Whether Pilot Mode is fullscreen.
+ * @prop linearVelocity - Current linear velocity in m/s.
+ * @prop onAngularVelocityChange - Callback when angular slider changes.
+ * @prop onDirectionEnd - Callback when a direction press ends.
+ * @prop onDirectionStart - Callback when a direction press begins.
+ * @prop onEmergencyStop - Callback for emergency stop.
+ * @prop onLinearVelocityChange - Callback when linear slider changes.
+ * @prop onReconnect - Optional callback to reconnect when rosbridge is disconnected.
+ * @prop onToggleFullscreen - Callback to toggle fullscreen.
+ * @prop robotId - Optional robot id used to render the dashboard back link.
+ * @prop rosbridgeStatus - Rosbridge connection status.
  * @prop telemetry - Aggregated telemetry state.
  * @prop videoStatus - WebRTC video stream status.
- * @prop rosbridgeStatus - Rosbridge connection status.
- * @prop isFullscreen - Whether Pilot Mode is fullscreen.
- * @prop connected - Whether the robot is connected.
- * @prop onReconnect - Callback to reconnect when rosbridge is disconnected.
- * @prop onToggleFullscreen - Callback to toggle fullscreen.
  */
 export function PilotHud({
   angularVelocity,
@@ -63,7 +73,6 @@ export function PilotHud({
         <div className="w-36 sm:w-44">
           <PilotStatusBar
             battery={telemetry.battery}
-            onReconnect={onReconnect}
             rosbridgeStatus={rosbridgeStatus}
             videoStatus={videoStatus}
           />
@@ -95,15 +104,16 @@ export function PilotHud({
 
       <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-40 sm:w-48">
         <PilotControls
-          connected={connected}
-          linearVelocity={linearVelocity}
           angularVelocity={angularVelocity}
+          connected={connected}
           isFullscreen={isFullscreen}
-          onDirectionStart={onDirectionStart}
-          onDirectionEnd={onDirectionEnd}
-          onLinearVelocityChange={onLinearVelocityChange}
+          linearVelocity={linearVelocity}
           onAngularVelocityChange={onAngularVelocityChange}
+          onDirectionEnd={onDirectionEnd}
+          onDirectionStart={onDirectionStart}
           onEmergencyStop={onEmergencyStop}
+          onLinearVelocityChange={onLinearVelocityChange}
+          onReconnect={onReconnect}
         />
       </div>
     </div>

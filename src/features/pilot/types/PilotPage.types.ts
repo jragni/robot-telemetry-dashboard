@@ -31,7 +31,6 @@ export interface PilotGyroReadoutProps {
 
 export interface PilotStatusBarProps {
   readonly battery: { percentage: number; voltage: number } | null;
-  readonly onReconnect?: () => void;
   readonly rosbridgeStatus: ProxyStatus;
   readonly videoStatus: VideoStreamStatus;
 }
@@ -48,13 +47,14 @@ export interface GyroInlineProps {
 }
 
 export interface PilotControlsProps {
-  readonly connected: boolean;
-  readonly linearVelocity: number;
   readonly angularVelocity: number;
+  readonly connected: boolean;
   readonly isFullscreen: boolean;
-  readonly onDirectionStart: (direction: Direction) => void;
-  readonly onDirectionEnd: () => void;
-  readonly onLinearVelocityChange: (value: number) => void;
+  readonly linearVelocity: number;
   readonly onAngularVelocityChange: (value: number) => void;
+  readonly onDirectionEnd: () => void;
+  readonly onDirectionStart: (direction: Direction) => void;
   readonly onEmergencyStop: () => void;
+  readonly onLinearVelocityChange: (value: number) => void;
+  readonly onReconnect?: () => void;
 }

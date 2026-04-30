@@ -27,6 +27,9 @@ When the user says "run this through our development process," execute ALL steps
 - Before dispatching agents, confirm which EPIC branch to target.
 - **Never push directly to main.** All changes reach main through PRs only.
 - **Never cherry-pick to main.** Cherry-picks can reference files/dependencies that don't exist on the target branch. Always merge the full branch.
+- **Never use `--squash` on `gh pr merge`.** Squash rewrites history and breaks branch tracking — Git loses the parent relationship, so EPIC branches appear "unmerged" in `git log` even after content lands on main. Always use `--merge` (regular merge commit) so the graph stays honest.
+- **One active EPIC at a time.** After an EPIC merges to main, delete the remote and local EPIC branch immediately. New EPICs cut from main, not from previous EPICs.
+- **Post-merge cleanup is mandatory.** After every PR merge: pull base branch, delete merged feature branch local + remote, prune stale refs (`git fetch --prune`), remove leftover worktrees. The `branch-guardian` agent owns Phase 5 cleanup.
 
 ### Hotfix Protocol
 
