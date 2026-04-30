@@ -1,41 +1,50 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Square } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, RefreshCw, Square } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import { DpadButton } from '@/components/controls/DpadButton';
 import { VelocitySlider } from '@/components/controls/VelocitySlider';
 import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls';
 import type { Direction } from '@/types/control.types';
+
+import { EStopButton } from './EStopButton';
 import { HUD_PANEL_BASE } from '../../constants';
 import type { PilotControlsProps } from '../../types/PilotPage.types';
-import { EStopButton } from './EStopButton';
 
 /** PilotControls
  * @description Renders the compact HUD controls overlay with D-pad, velocity
- *  sliders, and E-STOP button. Reuses shared DpadButton and VelocitySlider
- *  components with the useControlPublisher hook. Keyboard handling is scoped
- *  to the panel ref. Escape priority: fullscreen exit takes precedence over
- *  E-STOP when in fullscreen mode.
- * @prop connected - Whether the robot is connected.
- * @prop linearVelocity - Current linear velocity in m/s.
+ *  sliders, E-STOP, and an optional Reconnect button. Reuses shared DpadButton
+ *  and VelocitySlider components with the useControlPublisher hook. Keyboard
+ *  handling is scoped to the panel ref. Escape priority: fullscreen exit takes
+ *  precedence over E-STOP when in fullscreen mode. The Reconnect button only
+ *  renders while the robot is disconnected and an onReconnect handler is
+ *  provided — placed above E-STOP so the recovery action sits next to the
+ *  disabled controls.
  * @prop angularVelocity - Current angular velocity in rad/s.
+ * @prop connected - Whether the robot is connected.
  * @prop isFullscreen - Whether Pilot Mode is in fullscreen (affects Escape handling).
- * @prop onDirectionStart - Callback when a direction press begins.
- * @prop onDirectionEnd - Callback when a direction press ends.
- * @prop onLinearVelocityChange - Callback when linear slider changes.
+ * @prop linearVelocity - Current linear velocity in m/s.
  * @prop onAngularVelocityChange - Callback when angular slider changes.
+ * @prop onDirectionEnd - Callback when a direction press ends.
+ * @prop onDirectionStart - Callback when a direction press begins.
  * @prop onEmergencyStop - Callback for emergency stop.
+ * @prop onLinearVelocityChange - Callback when linear slider changes.
+ * @prop onReconnect - Optional callback to reconnect when rosbridge is disconnected.
  */
 export function PilotControls({
-  connected,
-  linearVelocity,
   angularVelocity,
+  connected,
   isFullscreen,
-  onDirectionStart,
-  onDirectionEnd,
-  onLinearVelocityChange,
+  linearVelocity,
   onAngularVelocityChange,
+  onDirectionEnd,
+  onDirectionStart,
   onEmergencyStop,
+  onLinearVelocityChange,
+  onReconnect,
 }: PilotControlsProps) {
   const disabled = !connected;
+  const showReconnect = !connected && !!onReconnect;
   const [activeDirection, setActiveDirection] = useState<Direction | null>(null);
   const activeRef = useRef<Direction | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -107,6 +116,19 @@ export function PilotControls({
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
     >
+      {showReconnect ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onReconnect}
+          className="w-full font-mono text-xs gap-1.5 text-text-muted hover:text-text-primary cursor-pointer"
+          aria-label="Reconnect to robot"
+        >
+          <RefreshCw className="size-3" />
+          Reconnect
+        </Button>
+      ) : null}
+
       <EStopButton disabled={disabled} onEmergencyStop={onEmergencyStop} />
 
       <div
