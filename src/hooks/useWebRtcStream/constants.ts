@@ -47,6 +47,12 @@ export const ICE_GATHERING_TIMEOUT = 5000;
 /** Max video bitrate in bps for bandwidth-constrained connections. */
 export const MAX_VIDEO_BITRATE = 1_500_000;
 
+/** Interval in ms between getStats() polls for stall detection. */
+export const STATS_POLL_INTERVAL = 2000;
+
+/** Frames-decoded delta of zero for this many consecutive polls triggers reconnect. */
+export const STALL_RECONNECT_AFTER_POLLS = 3;
+
 export const PEER_CONNECTION_CONFIG: RTCConfiguration = {
   iceCandidatePoolSize: 10,
   iceServers: DEFAULT_ICE_SERVERS,

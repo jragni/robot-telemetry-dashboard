@@ -5,7 +5,13 @@ import { SignalingClient } from '@/lib/webrtc/signaling';
 import { calculateBackoffDelay, RECONNECT_MAX_ATTEMPTS } from '@/constants/reconnection';
 import type { VideoStreamStatus } from '@/types/streaming.types';
 
-import { ICE_GATHERING_TIMEOUT, MAX_VIDEO_BITRATE, PEER_CONNECTION_CONFIG } from './constants';
+import {
+  ICE_GATHERING_TIMEOUT,
+  MAX_VIDEO_BITRATE,
+  PEER_CONNECTION_CONFIG,
+  STALL_RECONNECT_AFTER_POLLS,
+  STATS_POLL_INTERVAL,
+} from './constants';
 import { applyBandwidthConstraint } from './helpers';
 import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
 
@@ -26,6 +32,9 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
   const reconnectTimerRef = useRef<number | null>(null);
   const attemptsRef = useRef(0);
   const shouldConnectRef = useRef(false);
+  const statsTimerRef = useRef<number | null>(null);
+  const lastFramesDecodedRef = useRef(0);
+  const stalledPollsRef = useRef(0);
 
   const transition = useCallback(
     (next: VideoStreamStatus) => {
@@ -40,10 +49,16 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       clearTimeout(reconnectTimerRef.current);
       reconnectTimerRef.current = null;
     }
+    if (statsTimerRef.current) {
+      clearInterval(statsTimerRef.current);
+      statsTimerRef.current = null;
+    }
     if (pcRef.current) {
       pcRef.current.close();
       pcRef.current = null;
     }
+    lastFramesDecodedRef.current = 0;
+    stalledPollsRef.current = 0;
     setStream(null);
   }, []);
 
@@ -83,14 +98,23 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       // 2. Add recvonly video transceiver — tells aiortc we want video
       pc.addTransceiver('video', { direction: 'recvonly' });
 
-      // 3. Handle incoming video track
+      // 3. Handle incoming video track. Always wrap in a fresh MediaStream so React
+      // re-attaches srcObject even if aiortc reuses the same stream reference.
       pc.ontrack = (event) => {
-        if (event.streams[0]) {
-          setStream(event.streams[0]);
-          transition('streaming');
-          setError(null);
-          attemptsRef.current = 0;
-        }
+        const fresh = new MediaStream([event.track]);
+        setStream(fresh);
+        transition('streaming');
+        setError(null);
+        attemptsRef.current = 0;
+        lastFramesDecodedRef.current = 0;
+        stalledPollsRef.current = 0;
+
+        event.track.onended = () => {
+          if (shouldConnectRef.current) scheduleReconnect();
+        };
+        event.track.onmute = () => {
+          if (shouldConnectRef.current) scheduleReconnect();
+        };
       };
 
       // 4. Handle connection state changes
@@ -106,6 +130,40 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
             break;
         }
       };
+
+      pc.oniceconnectionstatechange = () => {
+        if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+          if (shouldConnectRef.current) scheduleReconnect();
+        }
+      };
+
+      // Stall detector: poll inbound video stats; reconnect if framesDecoded stops advancing.
+      statsTimerRef.current = window.setInterval(() => {
+        void pc.getStats().then((stats) => {
+          let framesDecoded = 0;
+          stats.forEach(
+            (report: RTCInboundRtpStreamStats & { kind?: string; framesDecoded?: number }) => {
+              if (report.type === 'inbound-rtp' && report.kind === 'video') {
+                framesDecoded = report.framesDecoded ?? 0;
+              }
+            },
+          );
+          if (framesDecoded === 0) return;
+          if (framesDecoded === lastFramesDecodedRef.current) {
+            stalledPollsRef.current += 1;
+            if (
+              stalledPollsRef.current >= STALL_RECONNECT_AFTER_POLLS &&
+              shouldConnectRef.current
+            ) {
+              setError('Video stream stalled');
+              scheduleReconnect();
+            }
+          } else {
+            stalledPollsRef.current = 0;
+            lastFramesDecodedRef.current = framesDecoded;
+          }
+        });
+      }, STATS_POLL_INTERVAL);
 
       // 5. Create SDP offer with bandwidth constraint
       const offer = await pc.createOffer();

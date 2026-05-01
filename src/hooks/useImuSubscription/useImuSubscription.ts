@@ -43,7 +43,6 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
   const onMessage = useMemo(
     () => (msg: unknown) => {
       try {
-        console.log('msg======', msg);
         const result = imuMessageSchema.safeParse(msg);
         if (!result.success) {
           console.warn('[useImuSubscription] Malformed message:', result.error.issues);
