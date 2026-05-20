@@ -20,6 +20,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
   const [status, setStatus] = useState<VideoStreamStatus>('idle');
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pc, setPc] = useState<RTCPeerConnection | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
@@ -45,6 +46,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       pcRef.current = null;
     }
     setStream(null);
+    setPc(null);
   }, []);
 
   const scheduleReconnect = useCallback(() => {
@@ -77,14 +79,15 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
 
     try {
       // 1. Create peer connection
-      const pc = new RTCPeerConnection(PEER_CONNECTION_CONFIG);
-      pcRef.current = pc;
+      const peerConnection = new RTCPeerConnection(PEER_CONNECTION_CONFIG);
+      pcRef.current = peerConnection;
+      setPc(peerConnection);
 
       // 2. Add recvonly video transceiver — tells aiortc we want video
-      pc.addTransceiver('video', { direction: 'recvonly' });
+      peerConnection.addTransceiver('video', { direction: 'recvonly' });
 
       // 3. Handle incoming video track
-      pc.ontrack = (event) => {
+      peerConnection.ontrack = (event) => {
         if (event.streams[0]) {
           setStream(event.streams[0]);
           transition('streaming');
@@ -94,8 +97,8 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       };
 
       // 4. Handle connection state changes
-      pc.onconnectionstatechange = () => {
-        switch (pc.connectionState) {
+      peerConnection.onconnectionstatechange = () => {
+        switch (peerConnection.connectionState) {
           case 'disconnected':
           case 'failed':
             setStream(null);
@@ -108,21 +111,21 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       };
 
       // 5. Create SDP offer with bandwidth constraint
-      const offer = await pc.createOffer();
+      const offer = await peerConnection.createOffer();
       if (offer.sdp) {
         offer.sdp = applyBandwidthConstraint(offer.sdp, Math.round(MAX_VIDEO_BITRATE / 1000));
       }
-      await pc.setLocalDescription(offer);
+      await peerConnection.setLocalDescription(offer);
 
       // 6. Wait for ICE gathering (or timeout)
       await new Promise<void>((resolve) => {
-        if (pc.iceGatheringState === 'complete') {
+        if (peerConnection.iceGatheringState === 'complete') {
           resolve();
           return;
         }
         const timeout = setTimeout(resolve, ICE_GATHERING_TIMEOUT);
-        pc.onicegatheringstatechange = () => {
-          if (pc.iceGatheringState === 'complete') {
+        peerConnection.onicegatheringstatechange = () => {
+          if (peerConnection.iceGatheringState === 'complete') {
             clearTimeout(timeout);
             resolve();
           }
@@ -131,14 +134,14 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
 
       // 7. Send offer to aiortc, get answer
       const signaling = new SignalingClient(signalingUrl);
-      if (!pc.localDescription) return;
-      const answer = await signaling.sendOffer(pc.localDescription);
+      if (!peerConnection.localDescription) return;
+      const answer = await signaling.sendOffer(peerConnection.localDescription);
 
       // 8. Guard: peer connection may have been torn down during async work
-      if (pcRef.current !== pc || pc.signalingState === 'closed') return;
+      if (pcRef.current !== peerConnection || peerConnection.signalingState === 'closed') return;
 
       // 9. Set remote description — video should start flowing
-      await pc.setRemoteDescription(new RTCSessionDescription(answer));
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Connection failed';
       setError(message);
@@ -188,5 +191,5 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected, enabled, url]);
 
-  return { status, stream, videoRef, error, retry };
+  return { status, stream, videoRef, error, retry, pc };
 }
