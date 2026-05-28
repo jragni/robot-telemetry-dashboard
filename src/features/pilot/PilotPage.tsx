@@ -19,6 +19,7 @@ import { PilotCamera } from './components/PilotCamera';
 import { PilotHud } from './components/PilotHud/PilotHud';
 import { PilotHudMobile } from './components/PilotHud/PilotHudMobile';
 import { PilotNotFound } from './components/PilotNotFound/PilotNotFound';
+import { WebRtcStatsOverlay } from './components/WebRtcStatsOverlay';
 import { PILOT_FULLSCREEN_Z } from './constants';
 import type { ProxyStatus } from './types/PilotPage.types';
 
@@ -34,7 +35,11 @@ export function PilotPage() {
   const { ros, connected } = useRobotConnection(id);
   const selectedTopics = robot?.selectedTopics;
   const controls = useControlPublisher({ ros, topicName: selectedTopics?.controls });
-  const { status: videoStatus, videoRef } = useWebRtcStream({
+  const {
+    pc,
+    status: videoStatus,
+    videoRef,
+  } = useWebRtcStream({
     connected,
     enabled: !!robot,
     url: robot?.url ?? '',
@@ -88,6 +93,8 @@ export function PilotPage() {
       style={{ overscrollBehavior: 'contain' }}
     >
       <PilotCamera videoStatus={videoStatus} videoRef={videoRef} />
+
+      <WebRtcStatsOverlay pc={pc} url={robot.url} />
 
       {isMobile ? (
         <PilotHudMobile
