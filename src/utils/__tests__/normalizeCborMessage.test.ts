@@ -28,13 +28,14 @@ describe('normalizeCborMessage', () => {
     });
   });
 
-  describe('NaN coercion', () => {
+  describe('non-finite coercion', () => {
     it('converts NaN to null', () => {
       expect(normalizeCborMessage(NaN)).toBeNull();
     });
 
-    it('preserves Infinity (not NaN)', () => {
-      expect(normalizeCborMessage(Infinity)).toBe(Infinity);
+    it('converts Infinity to null (LaserScan no-return beams)', () => {
+      expect(normalizeCborMessage(Infinity)).toBeNull();
+      expect(normalizeCborMessage(-Infinity)).toBeNull();
     });
   });
 
@@ -144,12 +145,12 @@ describe('normalizeCborMessage', () => {
         angle_increment: 0.01,
         range_min: 0.12,
         range_max: 12.0,
-        ranges: new Float32Array([1.0, 2.0, NaN, 4.0]),
-        intensities: new Float32Array([100, 100, 0, 100]),
+        ranges: new Float32Array([1.0, 2.0, NaN, Infinity, 4.0]),
+        intensities: new Float32Array([100, 100, 0, 0, 100]),
       };
       const result = normalizeCborMessage(scanMsg) as Record<string, unknown>;
-      expect(result.ranges).toEqual([1.0, 2.0, null, 4.0]);
-      expect(result.intensities).toEqual([100, 100, 0, 100]);
+      expect(result.ranges).toEqual([1.0, 2.0, null, null, 4.0]);
+      expect(result.intensities).toEqual([100, 100, 0, 0, 100]);
       expect(result.angle_min).toBe(-3.14);
     });
   });
