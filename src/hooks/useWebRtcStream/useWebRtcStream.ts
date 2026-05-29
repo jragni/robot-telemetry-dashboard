@@ -27,14 +27,18 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
   const reconnectTimerRef = useRef<number | null>(null);
   const attemptsRef = useRef(0);
   const shouldConnectRef = useRef(false);
+  const onStatusChangeRef = useRef(onStatusChange);
+  useEffect(() => {
+    onStatusChangeRef.current = onStatusChange;
+  }, [onStatusChange]);
 
-  const transition = useCallback(
-    (next: VideoStreamStatus) => {
-      setStatus(next);
-      onStatusChange?.(next);
-    },
-    [onStatusChange],
-  );
+  // Read the latest onStatusChange via ref so transition — and the connect /
+  // scheduleReconnect callbacks that close over it — keep a stable identity and
+  // never capture a stale callback when a parent passes an unstable onStatusChange.
+  const transition = useCallback((next: VideoStreamStatus) => {
+    setStatus(next);
+    onStatusChangeRef.current?.(next);
+  }, []);
 
   const teardown = useCallback(() => {
     if (reconnectTimerRef.current) {
@@ -51,6 +55,10 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
 
   const scheduleReconnect = useCallback(() => {
     if (!shouldConnectRef.current) return;
+    // onconnectionstatechange ('failed'/'disconnected') and the connect() catch block
+    // can both fire for a single failure. A pending timer means a reconnect is already
+    // scheduled — bail so the retry budget isn't burned twice and no timer leaks.
+    if (reconnectTimerRef.current !== null) return;
     if (attemptsRef.current >= RECONNECT_MAX_ATTEMPTS) {
       setError(`Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`);
       transition('failed');
@@ -63,6 +71,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     const delay = calculateBackoffDelay(attemptsRef.current - 1);
 
     reconnectTimerRef.current = window.setTimeout(() => {
+      reconnectTimerRef.current = null;
       void connect();
     }, delay);
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -43,6 +43,23 @@ describe('imuMessageSchema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('falls back to identity quaternion when an orientation axis is null', () => {
+    const msg = { orientation: { x: 0, y: null, z: 0, w: 1 } };
+    const result = imuMessageSchema.safeParse(msg);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.orientation).toEqual({ x: 0, y: 0, z: 0, w: 1 });
+    }
+  });
+
+  it('falls back to identity quaternion when orientation is null', () => {
+    const result = imuMessageSchema.safeParse({ orientation: null });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.orientation).toEqual({ x: 0, y: 0, z: 0, w: 1 });
+    }
+  });
+
   it('rejects null', () => {
     const result = imuMessageSchema.safeParse(null);
     expect(result.success).toBe(false);

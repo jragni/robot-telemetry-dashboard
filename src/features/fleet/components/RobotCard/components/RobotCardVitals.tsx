@@ -7,7 +7,8 @@ import type { RobotCardVitalsProps } from '../types/RobotCardVitals.types';
  * @prop battery - Battery status or null if not discovered.
  */
 export function RobotCardVitals({ battery }: RobotCardVitalsProps) {
-  const batteryValue = battery ? `${String(Math.round(battery.percentage))}%` : '—';
+  const batteryValue =
+    battery?.percentage != null ? `${String(Math.round(battery.percentage))}%` : '—';
   const batteryColor = getBatteryColor(battery?.percentage ?? null);
 
   return (
