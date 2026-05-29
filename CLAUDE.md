@@ -20,29 +20,43 @@ When the user says "run this through our development process," execute ALL steps
 
 ### Branch Strategy
 
-- All work happens on an EPIC branch (e.g., `EPIC/general-house-keeping`).
-- Feature/fix branches are created from and PR'd back into the EPIC branch — never directly to `main`.
-- When the EPIC is complete, a single PR merges the EPIC branch into `main`.
-- Agent dispatch prompts must always specify the EPIC branch as the PR base (`--base EPIC/...`).
-- Before dispatching agents, confirm which EPIC branch to target.
-- **Never push directly to main.** All changes reach main through PRs only.
-- **Never cherry-pick to main.** Cherry-picks can reference files/dependencies that don't exist on the target branch. Always merge the full branch.
-- **Never use `--squash` on `gh pr merge`.** Squash rewrites history and breaks branch tracking — Git loses the parent relationship, so EPIC branches appear "unmerged" in `git log` even after content lands on main. Always use `--merge` (regular merge commit) so the graph stays honest.
-- **One active EPIC at a time.** After an EPIC merges to main, delete the remote and local EPIC branch immediately. New EPICs cut from main, not from previous EPICs.
-- **Post-merge cleanup is mandatory.** After every PR merge: pull base branch, delete merged feature branch local + remote, prune stale refs (`git fetch --prune`), remove leftover worktrees. The `branch-guardian` agent owns Phase 5 cleanup.
+Three long-lived branches: `main` (production), `uat` (review/staging), `dev` (integration). Feature/fix branches cut from `dev`.
+
+**Flow:**
+
+```
+feature/T-XXX  →  dev  →  uat  →  main
+```
+
+- All feature/fix branches cut from `dev` and PR'd back into `dev`. Never PR directly to `uat` or `main`.
+- When a body of work on `dev` is ready (one or more tickets actioned), open a PR `dev → uat`. UAT is the user's review surface for massive changes — may spawn additional dev tickets if issues found.
+- After UAT approval, user requests a PR `uat → main`.
+- After `uat → main` merges: sync `main → uat`, then `main → dev` to keep all three aligned. Same for any direct change that lands on main.
+- **Long-lived branches.** `main`, `uat`, and `dev` are never deleted. Feature branches kept until UAT approval (see Branch Cleanup below).
+- Agent dispatch prompts must specify `--base dev` for feature PRs. Confirm base before dispatching.
+- **Never push directly to `main` or `uat`.** All changes reach them through PRs only.
+- **Never cherry-pick to `main` or `uat`.** Cherry-picks can reference code that does not exist on the target branch. Always merge the full branch.
+- **Never use `--squash` on any `gh pr merge`** (feature → dev, dev → uat, uat → main). Always `--merge` (regular merge commit). Squash rewrites history and breaks branch tracking, leaving downstream branches appearing unmerged.
+- **No rebase, no force-push** on long-lived branches. Direct merges only.
+
+### Branch Cleanup
+
+- **Do not delete feature branches at dev-merge time.** If UAT review surfaces a regression, the fix may require cutting from the original feature branch. Branches stay until their work has cleared UAT.
+- After `uat → main` ships, the feature branches included in that UAT batch can be deleted local + remote. The `branch-guardian` agent reconciles which branches are now safe to remove.
+- After every merge (any direction): pull the base branch, prune stale refs (`git fetch --prune`), remove leftover worktrees.
 
 ### Hotfix Protocol
 
-When a production bug needs urgent fixing:
+Hotfixes still flow through `dev`. No direct hotfix → main.
 
-1. Create a hotfix branch from the EPIC branch: `hotfix/description`
-2. Fix the bug, verify tests pass locally
-3. PR the hotfix into the EPIC branch (abbreviated review — can self-merge if urgent)
-4. Immediately PR the EPIC branch into main
-5. Log the hotfix in the dispatch log with a `HOTFIX` event type
-6. After main is updated, merge main back into the EPIC branch to keep them in sync
+1. Create `hotfix/description` from `dev`.
+2. Fix bug, verify tests pass locally.
+3. PR `hotfix → dev` (abbreviated review — can self-merge if urgent).
+4. Immediately PR `dev → uat`, then `uat → main` once verified in UAT.
+5. Log the hotfix in the dispatch log with a `HOTFIX` event type.
+6. After main is updated, sync `main → uat → dev`.
 
-**Never commit directly to main, even for hotfixes.** The deploy pipeline runs on main — if a hotfix references code that only exists on the EPIC branch, the pipeline will fail.
+**Never commit directly to `main` or `uat`, even for hotfixes.** Deploy pipeline runs on `main` — a hotfix referencing dev-only code breaks the pipeline.
 | 8. **Scorecard** (enforced) | Delta from baseline: what changed, regressed, caught in review | Script/overseer | `.planning/scorecards/{branch}.md` |
 | 9. **Session report** | End-of-session summary: agents, findings, process failures, metrics | `/retro` | `.planning/session-reports/{date}.md` |
 
@@ -52,7 +66,8 @@ When a production bug needs urgent fixing:
 - **Pre-cycle snapshot** — test count, lint errors, build status captured before agent work begins.
 - **Post-cycle scorecard** — delta from snapshot: what improved, what regressed, what review caught.
 - **Session report** — generated at end of session. Covers agent performance, process failures, convention violations, metrics.
-- **Overseer** — reads dispatch log, builds step matrix per ticket, flags MISSING/SKIPPED/FAILED steps.
+- **UAT findings** — when UAT review surfaces issues, log to `.planning/uat-findings/{date}.md`. Each finding includes: failing scenario, originating ticket(s), root cause, new ticket id(s) cut to fix. Overseer reads this file at the start of the next cycle and feeds patterns into agent self-improvement (which agent missed it, which step skipped, which convention drifted).
+- **Overseer** — reads dispatch log + UAT findings, builds step matrix per ticket, flags MISSING/SKIPPED/FAILED steps, surfaces recurring miss patterns from UAT.
 
 ### Execution Rules
 
@@ -126,10 +141,11 @@ Project-level agent definitions live in `.claude/agents/`. These are the team ro
 
 | Directory | Purpose |
 |-----------|---------|
-| `dispatch-logs/` | Append-only logs per wave/EPIC |
+| `dispatch-logs/` | Append-only logs per wave |
 | `snapshots/` | Pre-cycle baseline captures |
 | `scorecards/` | Post-cycle deltas |
 | `session-reports/` | End-of-session summaries |
+| `uat-findings/` | UAT review issues — feeds agent self-improvement loop |
 | `archive/` | Historical phase summaries, research, specs |
 
 Source of truth for tickets: root `ISSUES.md` (not `.planning/ISSUES.md`).
