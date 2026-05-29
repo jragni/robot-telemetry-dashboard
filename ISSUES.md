@@ -138,6 +138,23 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 
 ### Bugs
 
+#### T-160: Footer StatusBar shows hardcoded text — never reflects live connection state
+
+- Severity: MEDIUM
+- Scope: src/components/StatusBar.tsx, src/stores/connection/useConnectionStore.ts (new selector), topic-count source (useRosGraph/useRosTopics or store cache)
+- Problem: StatusBar.tsx renders fixed strings — "No robots connected" and "0 topics · —ms" — with zero store wiring. Confirmed in 2026-05-29 live-robot audit: footer showed "No robots connected · 0 topics · —ms" on Fleet, Workspace, and Pilot across desktop/tablet/mobile and both themes while a robot was connected and streaming 19 topics. The component is static JSX (no props, no store reads).
+- Expected: footer reflects live state —
+  - connected robot count ("No robots connected" / "1 robot connected" / "N robots connected")
+  - topic count for the relevant robot(s) ("19 topics")
+  - link latency when a real source exists ("· 42ms"); otherwise omit the segment (no fake "—ms")
+- Open design questions (resolve in discuss before implementing):
+  1. Multi-robot semantics: StatusBar is global (app shell). Does count/topics aggregate across all connected robots, or reflect only the active/viewed robot? Likely "N robots connected" + active-robot topic count — decide.
+  2. Topic-count source: useRosGraph subscribes per-robot. Footer must not force a subscription from the shell. Options: read cached graph from store, sum selectedTopics, or a light read. Decide.
+  3. Latency: no latency field exists on RobotConnection. WebRTC stats hook (PR #121) gives RTT for WebRTC transport only; rosbridge WS has none. MVP: hide latency until a real source exists; later reuse WebRTC RTT when present.
+  4. Pluralization + connecting/error/empty copy.
+- Acceptance: footer updates within ~1s of connect/disconnect; correct connected count + topic count for the live robot; latency shown only with a real data source (no placeholder "—ms"); reflects disconnect immediately; unit tests for the selector + footer render states (empty/connecting/connected/error).
+- Branch: fix/t-160/statusbar-live-state
+
 #### T-117: Generate visual regression baselines for canvas-content integration tests
 
 - Severity: MEDIUM
