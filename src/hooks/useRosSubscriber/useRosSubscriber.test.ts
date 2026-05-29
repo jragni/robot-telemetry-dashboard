@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { type Ros, Topic } from 'roslib';
 
@@ -8,6 +8,13 @@ import type { SubscriberOptions } from './types';
 const mockSubscribe = vi.fn();
 const mockUnsubscribe = vi.fn();
 let capturedOptions: Record<string, unknown> = {};
+let rafQueue: (() => void)[] = [];
+
+function flushRaf() {
+  const queued = rafQueue;
+  rafQueue = [];
+  for (const run of queued) run();
+}
 
 vi.mock('roslib', () => {
   const MockTopic = vi.fn(function (this: Record<string, unknown>, opts: Record<string, unknown>) {
@@ -22,10 +29,22 @@ const fakeRos = { on: vi.fn() } as never;
 
 describe('useRosSubscriber', () => {
   beforeEach(() => {
+    rafQueue = [];
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+      rafQueue.push(() => cb(0));
+      return rafQueue.length;
+    });
+    vi.stubGlobal('cancelAnimationFrame', (id: number) => {
+      rafQueue[id - 1] = () => undefined;
+    });
     capturedOptions = {};
     mockSubscribe.mockClear();
     mockUnsubscribe.mockClear();
     vi.mocked(Topic).mockClear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('creates Topic with CBOR compression and queue_length 1 by default', () => {
@@ -63,7 +82,7 @@ describe('useRosSubscriber', () => {
     expect(Topic).not.toHaveBeenCalled();
   });
 
-  it('subscribes to the topic and calls the callback on message', () => {
+  it('subscribes to the topic and calls the callback on message (next frame)', () => {
     const onMessage = vi.fn();
     mockSubscribe.mockImplementation((cb: (msg: unknown) => void) => {
       cb({ data: 'test' });
@@ -72,6 +91,7 @@ describe('useRosSubscriber', () => {
     renderHook(() => useRosSubscriber(fakeRos, '/test', 'std_msgs/msg/String', onMessage));
 
     expect(mockSubscribe).toHaveBeenCalled();
+    flushRaf();
     expect(onMessage).toHaveBeenCalledWith({ data: 'test' });
   });
 
@@ -208,6 +228,7 @@ describe('useRosSubscriber', () => {
       rerender({ cb: secondCallback });
 
       subscribeFn?.({ data: 'late-message' });
+      flushRaf();
 
       expect(firstCallback).not.toHaveBeenCalled();
       expect(secondCallback).toHaveBeenCalledWith({ data: 'late-message' });
@@ -258,6 +279,66 @@ describe('useRosSubscriber', () => {
       expect(capturedOptions.name).toBe('/scan');
       expect(capturedOptions.messageType).toBe('sensor_msgs/msg/LaserScan');
       expect(capturedOptions.ros).toBe(fakeRos);
+    });
+  });
+
+  describe('message coalescing', () => {
+    it('coalesces a burst to the latest message, delivered once on the next frame', () => {
+      const onMessage = vi.fn();
+      let subscribeFn: ((msg: unknown) => void) | undefined;
+      mockSubscribe.mockImplementation((cb: (msg: unknown) => void) => {
+        subscribeFn = cb;
+      });
+
+      renderHook(() => useRosSubscriber(fakeRos, '/scan', 'sensor_msgs/msg/LaserScan', onMessage));
+
+      subscribeFn?.({ seq: 1 });
+      subscribeFn?.({ seq: 2 });
+      subscribeFn?.({ seq: 3 });
+      expect(onMessage).not.toHaveBeenCalled();
+
+      flushRaf();
+
+      expect(onMessage).toHaveBeenCalledTimes(1);
+      expect(onMessage).toHaveBeenCalledWith({ seq: 3 });
+    });
+
+    it('delivers every message synchronously when coalesce is false', () => {
+      const onMessage = vi.fn();
+      let subscribeFn: ((msg: unknown) => void) | undefined;
+      mockSubscribe.mockImplementation((cb: (msg: unknown) => void) => {
+        subscribeFn = cb;
+      });
+
+      renderHook(() =>
+        useRosSubscriber(fakeRos, '/odom', 'nav_msgs/msg/Odometry', onMessage, { coalesce: false }),
+      );
+
+      subscribeFn?.({ seq: 1 });
+      subscribeFn?.({ seq: 2 });
+
+      expect(onMessage).toHaveBeenCalledTimes(2);
+      expect(onMessage).toHaveBeenNthCalledWith(1, { seq: 1 });
+      expect(onMessage).toHaveBeenNthCalledWith(2, { seq: 2 });
+    });
+
+    it('cancels a pending frame on unmount so no stale message is delivered', () => {
+      const onMessage = vi.fn();
+      let subscribeFn: ((msg: unknown) => void) | undefined;
+      mockSubscribe.mockImplementation((cb: (msg: unknown) => void) => {
+        subscribeFn = cb;
+      });
+
+      const { unmount } = renderHook(() =>
+        useRosSubscriber(fakeRos, '/scan', 'sensor_msgs/msg/LaserScan', onMessage),
+      );
+
+      subscribeFn?.({ seq: 1 });
+      unmount();
+      flushRaf();
+
+      expect(onMessage).not.toHaveBeenCalled();
+      expect(mockUnsubscribe).toHaveBeenCalled();
     });
   });
 });
