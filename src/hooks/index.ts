@@ -12,5 +12,6 @@ export { useRosSubscriber, type SubscriberOptions } from './useRosSubscriber';
 export { useRosTopics, type RosTopic } from './useRosTopics';
 export { useTheme } from './useTheme';
 export { useThemeChange } from './useThemeChange';
+export { useWebRtcStats, type WebRtcStats } from './useWebRtcStats';
 export { useWebRtcStream } from './useWebRtcStream';
 export { useZoom } from './useZoom';

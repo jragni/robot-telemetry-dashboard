@@ -13,4 +13,5 @@ export interface UseWebRtcStreamReturn {
   readonly videoRef: React.RefObject<HTMLVideoElement | null>;
   readonly error: string | null;
   readonly retry: () => void;
+  readonly pc: RTCPeerConnection | null;
 }
