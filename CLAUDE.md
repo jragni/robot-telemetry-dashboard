@@ -14,8 +14,8 @@ When the user says "run this through our development process," execute ALL steps
 | 2. **Snapshot** (enforced) | Capture baseline: test count, lint errors, build status | Script | `.planning/snapshots/pre-{branch}.md` |
 | 3. **Plan** | Break into tickets, identify parallelism, blockers | Pair | `ISSUES.md` updated |
 | 4. **Dispatch** (enforced) | Agents execute tickets, log every event | Agents | `.planning/dispatch-logs/{wave}.md` |
-| 5. **Review** | PR reviewer posts inline comments on every finding | Agent | PR comments (feeds self-improvement loop) |
-| 6. **Fix** | PR responder addresses all findings, replies to every comment | Agent | Commits pushed |
+| 5. **Review (antagonistic)** | Reviewer matrix dispatched per `docs/PR-REVIEW.md`; each finding tagged BLOCK / WARN / NIT | Agents | PR comments + `## Antagonistic review` block in PR body with counts |
+| 6. **Fix** | PR author resolves every BLOCK + WARN (or explicitly overrides/accepts in body); replies with the fixing commit SHA | Author | Commits pushed |
 | 7. **Merge** | Through GitHub PRs only — never local `git merge` | `gh pr merge` | PR closed |
 
 ### Branch Strategy
@@ -102,6 +102,7 @@ Before writing ANY component file, verify:
 | Testing          | [docs/TESTING.md](docs/TESTING.md)                   | Co-location, unit tests, integration tests, E2E, quality gate                                          |
 | Code Conventions | [docs/CODE-CONVENTIONS.md](docs/CODE-CONVENTIONS.md) | File structure, imports, naming, comments, components, state management, semantic HTML, PR conventions  |
 | Dev Workflow     | [docs/DEVELOPMENT-WORKFLOW.md](docs/DEVELOPMENT-WORKFLOW.md) | Pair programming pipeline, 5-role agent team, audit process, wave ordering, PR conventions       |
+| PR Review        | [docs/PR-REVIEW.md](docs/PR-REVIEW.md)               | Antagonistic review process: BLOCK/WARN/NIT severities, voltagent reviewer dispatch matrix, resolution rules |
 
 These docs are the source of truth. CLAUDE.md does not duplicate their content.
 
