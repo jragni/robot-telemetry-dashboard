@@ -108,6 +108,7 @@ Triage: `.planning/bug-hunt/00-triage.md`. Wave A tickets are under In Progress.
 - MOB-2 → **T-065a** (refine): controls scrollbar = workspace grid gutters too large + ControlsPanel internal spacing + container-query breakpoints firing inside 144-230px boxes. Desktop/tablet only; mobile PilotControls confirmed fine. Wave B [VISUAL].
 - M3 = **T-114**: Add Robot test blocks submit up to 30s (3× back-to-back, 10s timeout each, no backoff). `AddRobotModal/helpers.ts:43-63`.
 - M6 = **T-111**: RobotCard URL `truncate max-w-45`, no copy affordance. Wave B [VISUAL].
+- **T-161**: Double rafThrottle redundancy after T-104 coalescing. Surfaced by voltagent calibration review on PR #124. With `useRosSubscriber` now coalescing per-RAF (default `coalesce: true`), the inner `throttledSet = rafThrottle(setState)` in IMU / LiDAR / Battery consumer hooks is redundant AND adds ~16ms (one frame) of additional latency: subscriber RAF delivers msg → onMessage schedules another RAF → setState fires next frame. Fix: drop the inner `rafThrottle` in `useImuSubscription.ts`, `useLidarSubscription.ts`, `useBatterySubscription.ts` (telemetry keeps its own throttle — it uses `coalesce: false`). Sev: WARN. Branch: `fix/t-161/drop-double-raf`.
 
 ### Visual (requires /visual-pipeline)
 
