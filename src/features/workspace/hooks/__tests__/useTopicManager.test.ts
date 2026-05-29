@@ -96,4 +96,37 @@ describe('useTopicManager', () => {
     expect(result.current.selectedTopics).toBeDefined();
     expect(typeof result.current.selectedTopics).toBe('object');
   });
+
+  it('auto-fills empty topic defaults with the first discovered topic per panel', () => {
+    // Order matters: the telemetry panel accepts multiple types (Odometry, Twist, Imu,
+    // BatteryState, LaserScan), so the first matching topic in the discovery list wins.
+    const mockTopics = [
+      { name: '/odom', type: 'nav_msgs/msg/Odometry' },
+      { name: '/scan', type: 'sensor_msgs/msg/LaserScan' },
+      { name: '/imu/data', type: 'sensor_msgs/msg/Imu' },
+    ];
+    mockedUseRosTopics.mockReturnValue(mockTopics);
+    mockRobots[ROBOT_ID] = {
+      selectedTopics: { camera: '', controls: '/cmd_vel', imu: '', lidar: '', telemetry: '' },
+    };
+
+    renderHook(() => useTopicManager(ROBOT_ID, undefined));
+
+    expect(mockSetRobotTopic).toHaveBeenCalledWith(ROBOT_ID, 'imu', '/imu/data');
+    expect(mockSetRobotTopic).toHaveBeenCalledWith(ROBOT_ID, 'lidar', '/scan');
+    expect(mockSetRobotTopic).toHaveBeenCalledWith(ROBOT_ID, 'telemetry', '/odom');
+  });
+
+  it('overwrites a stale persisted topic name that is not in the discovered set', () => {
+    const mockTopics = [{ name: '/imu/data', type: 'sensor_msgs/msg/Imu' }];
+    mockedUseRosTopics.mockReturnValue(mockTopics);
+    mockRobots[ROBOT_ID] = {
+      // /imu does not exist on this robot — the auto-select must replace it with /imu/data
+      selectedTopics: { camera: '', controls: '/cmd_vel', imu: '/imu', lidar: '', telemetry: '' },
+    };
+
+    renderHook(() => useTopicManager(ROBOT_ID, undefined));
+
+    expect(mockSetRobotTopic).toHaveBeenCalledWith(ROBOT_ID, 'imu', '/imu/data');
+  });
 });

@@ -11,7 +11,7 @@ export interface PilotTelemetry {
   readonly imu: { roll: number; pitch: number; yaw: number } | null;
   readonly lidarPoints: readonly LidarPoint[];
   readonly lidarRangeMax: number;
-  readonly battery: { percentage: number; voltage: number } | null;
+  readonly battery: { percentage: number | null; voltage: number } | null;
   readonly linearSpeed: number;
   readonly uptimeSeconds: number | null;
 }
@@ -30,7 +30,7 @@ export interface PilotGyroReadoutProps {
 }
 
 export interface PilotStatusBarProps {
-  readonly battery: { percentage: number; voltage: number } | null;
+  readonly battery: { percentage: number | null; voltage: number } | null;
   readonly rosbridgeStatus: ProxyStatus;
   readonly videoStatus: VideoStreamStatus;
 }

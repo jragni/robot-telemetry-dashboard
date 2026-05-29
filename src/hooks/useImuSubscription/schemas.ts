@@ -5,9 +5,19 @@ import { sensorVector3Schema } from '@/types/ros2-schemas';
 import { IDENTITY_QUATERNION } from './constants';
 
 const quaternionSchema = z
-  .object({ w: z.number(), x: z.number(), y: z.number(), z: z.number() })
+  .object({
+    w: z.number().nullable(),
+    x: z.number().nullable(),
+    y: z.number().nullable(),
+    z: z.number().nullable(),
+  })
   .nullable()
-  .transform((v) => v ?? IDENTITY_QUATERNION);
+  .transform((v) => {
+    if (v === null) return IDENTITY_QUATERNION;
+    const { w, x, y, z } = v;
+    if (w === null || x === null || y === null || z === null) return IDENTITY_QUATERNION;
+    return { w, x, y, z };
+  });
 
 /** imuMessageSchema
  * @description Zod schema validating the consumed fields of sensor_msgs/msg/Imu.
