@@ -1,18 +1,15 @@
-import { test, expect, type ConsoleMessage } from '@playwright/test';
+import { test, expect, type ConsoleMessage, type Page } from '@playwright/test';
 
 const ROBOT_NAME = 'UAT-Bot';
-// Override with UAT_ROBOT_URL env var when the tunnel rotates: trycloudflare URLs are ephemeral.
-const ROBOT_URL =
-  process.env.UAT_ROBOT_URL ?? 'https://sample-suggesting-presentations-project.trycloudflare.com';
+// REQUIRED — trycloudflare tunnels are ephemeral; never carry a default that will rot.
+// Tests skip when unset so a missing env doesn't manifest as a false promotion failure.
+const ROBOT_URL = process.env.UAT_ROBOT_URL ?? '';
 
-// Errors we expect to ignore — third-party / browser noise, not regressions.
-const IGNORED_ERROR_PATTERNS: RegExp[] = [
-  /favicon/i,
-  /chrome-extension/i,
-  /\bWebRTC\b.*candidate/i,
-];
+// Browser noise only. WebRTC errors are deliberately NOT filtered — this UAT exists in
+// part to catch transport regressions.
+const IGNORED_ERROR_PATTERNS: RegExp[] = [/favicon/i, /chrome-extension/i];
 
-function recordConsoleErrors(page: import('@playwright/test').Page): string[] {
+function recordConsoleErrors(page: Page): string[] {
   const errors: string[] = [];
   page.on('console', (m: ConsoleMessage) => {
     if (m.type() !== 'error') return;
@@ -28,7 +25,24 @@ function recordConsoleErrors(page: import('@playwright/test').Page): string[] {
   return errors;
 }
 
+// Belt-and-suspenders fixture cleanup. Playwright default chromium contexts are
+// in-memory, but clearing storage explicitly per test means a future fixture change
+// (storageState, persistent context) cannot silently let UAT-Bot leak between runs and
+// turn "modal closed" into a false positive (addRobot returns null when the name exists,
+// the modal closes instantly, and the test passes for the wrong reason).
+async function clearAppStorage(page: Page) {
+  await page.goto('fleet');
+  await page.evaluate(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  });
+  await page.reload();
+  await page.waitForLoadState('domcontentloaded');
+}
+
 test.describe('UAT — dev / uat / main promotion gate against the cloudflare robot', () => {
+  test.skip(!ROBOT_URL, 'UAT_ROBOT_URL not set — skipping live-robot UAT');
+
   test('Landing page renders and is console-clean', async ({ page }) => {
     const errors = recordConsoleErrors(page);
 
@@ -39,7 +53,7 @@ test.describe('UAT — dev / uat / main promotion gate against the cloudflare ro
   });
 
   test('Fleet empty state shows Add Robot CTA', async ({ page }) => {
-    await page.goto('fleet');
+    await clearAppStorage(page);
     await expect(page.getByRole('button', { name: /add robot/i }).first()).toBeVisible({
       timeout: 10_000,
     });
@@ -49,8 +63,14 @@ test.describe('UAT — dev / uat / main promotion gate against the cloudflare ro
     test.setTimeout(180_000);
     const errors = recordConsoleErrors(page);
 
+    // Precondition: fleet is provably empty so the "modal closes -> robot added" signal is real.
+    await clearAppStorage(page);
+    expect(
+      await page.getByText(ROBOT_NAME).count(),
+      'fleet not empty at test start — storage cleanup is broken',
+    ).toBe(0);
+
     // 1. Add robot via the modal — exercises the Add Robot UI path end-to-end.
-    await page.goto('fleet');
     await page
       .getByRole('button', { name: /add robot/i })
       .first()
@@ -75,55 +95,71 @@ test.describe('UAT — dev / uat / main promotion gate against the cloudflare ro
 
     // 3. Discovery completes within ~10s of connecting (auto-fill from empty defaults).
     await expect(page.locator('canvas').first()).toBeVisible({ timeout: 20_000 });
-
-    // 4. Each panel surface present.
     await expect(page.getByText(/BATTERY/i).first()).toBeVisible({ timeout: 10_000 });
-    // IMU / LiDAR / Telemetry render via canvas; expect at least 3 canvases on workspace.
     await expect
       .poll(async () => page.locator('canvas').count(), { timeout: 15_000 })
       .toBeGreaterThanOrEqual(3);
 
-    // 5. Sustain data flow briefly so the per-RAF coalescing actually runs on the hot path.
-    await page.waitForTimeout(4_000);
-    const canvasCount = await page.locator('canvas').count();
-    expect(canvasCount, 'workspace should render multiple canvas panels').toBeGreaterThanOrEqual(3);
+    // 4. Liveness assertions (BLOCK fix from PR #127 review).
+    //    Canvas presence does not prove the subscription pipeline is alive — assert a
+    //    text-based signal that only changes when real messages arrive.
+    //    (a) battery row eventually renders a percentage value (NOT the unknown "—").
+    const batteryValue = page.getByText(/^\s*\d+\s*%\s*$/);
+    await expect(
+      batteryValue.first(),
+      'battery percent never rendered — subscription pipeline likely broken',
+    ).toBeVisible({ timeout: 15_000 });
+    //    (b) uptime counter advances — proves the connection-uptime hook is ticking
+    //    (this also implicitly proves the connection is held).
+    const uptimeRow = page
+      .getByText(/UPTIME/i)
+      .first()
+      .locator('..');
+    const readUptime = async () => (await uptimeRow.textContent())?.trim() ?? '';
+    const uptimeT0 = await readUptime();
+    await expect.poll(readUptime, { timeout: 6_000, intervals: [400] }).not.toBe(uptimeT0);
 
-    // 6. Pilot mode entry — covers PilotControls + the merged reconnect-in-controls UI.
+    // 5. Pilot mode entry — covers PilotControls + the merged reconnect-in-controls UI.
+    //    Both link and button affordances are accepted in case the UI evolves.
     const pilotLink = page.getByRole('link', { name: /pilot/i }).first();
     const pilotButton = page.getByRole('button', { name: /pilot mode|enter pilot/i }).first();
-    if (await pilotLink.count()) {
+    const pilotLinkCount = await pilotLink.count();
+    if (pilotLinkCount > 0) {
       await pilotLink.click();
     } else {
       await pilotButton.click();
     }
     await page.waitForURL(/\/pilot\//, { timeout: 10_000 });
-    // Pilot view should render at least one canvas (LiDAR minimap or wireframe).
     await expect(page.locator('canvas').first()).toBeVisible({ timeout: 10_000 });
-    // Sustain pilot view briefly to verify no console errors under live IMU / LiDAR feed.
-    await page.waitForTimeout(2_000);
     await page.goBack();
     await page.waitForURL(/\/robot\//, { timeout: 10_000 });
 
-    // 7. Mobile viewport reflow check.
+    // 6. Mobile viewport reflow check.
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.waitForTimeout(500);
-    const pageOverflowMobile = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    );
-    expect(pageOverflowMobile, 'mobile page-level horizontal overflow').toBeLessThanOrEqual(0);
+    await expect
+      .poll(
+        async () =>
+          page.evaluate(
+            () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          ),
+        { timeout: 3_000 },
+      )
+      .toBeLessThanOrEqual(0);
 
-    // 8. mobile-sm (320) sanity.
+    // 7. mobile-sm (320) sanity.
     await page.setViewportSize({ width: 320, height: 600 });
-    await page.waitForTimeout(500);
-    const pageOverflowSm = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    );
-    expect(pageOverflowSm, 'mobile-sm page-level horizontal overflow').toBeLessThanOrEqual(0);
+    await expect
+      .poll(
+        async () =>
+          page.evaluate(
+            () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          ),
+        { timeout: 3_000 },
+      )
+      .toBeLessThanOrEqual(0);
 
-    // 9. Reset viewport, sustain telemetry briefly to confirm long-running stability.
+    // 8. Reset viewport; final assert that no console error accumulated across the run.
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.waitForTimeout(3_000);
-
     expect(errors, `UAT console errors:\n${errors.join('\n')}`).toEqual([]);
   });
 });

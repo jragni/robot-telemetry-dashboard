@@ -1,6 +1,6 @@
 # PR Review Process — Antagonistic Review
 
-Adopted 2026-05-29 (re-issued after the three-tier branch strategy in PR #120). Replaces the older single-`pr-reviewer` flow. Modeled on OnlyOn's antagonistic review pattern.
+Adopted 2026-05-29 (re-issued after the three-tier branch strategy in PR #120). Augments the older single-`pr-reviewer` flow (`.claude/agents/pr-reviewer.md` + `pr-responder.md`) with a multi-agent matrix. Modeled on OnlyOn's antagonistic review pattern.
 
 ## Severities
 
@@ -62,17 +62,17 @@ Bypassing the reviewer matrix requires an explicit "skip reviewer matrix" note i
 
 ## Resolution comments (from PR author)
 
-When replying to a finding, use one of:
+BLOCK and WARN findings MUST receive one of these three closure replies before merge:
 
 - `Resolved in <sha>.` (the fixing commit)
-- `Accepted (no fix). Reason: <one line>.`
+- `Accepted (no fix). Reason: <one line>.` (WARN only — BLOCK accepted-without-fix uses Override below)
 - `Override (BLOCK only). Reason: <one line>. Owner: <handle>.`
 
-These three replies are the only acceptable closures. Anything else stays open.
+NITs do not require a closure reply — they can be left open or closed without one. Anything other than the three closures above leaves a BLOCK or WARN open.
 
 ## Document the matrix in the PR body
 
-The PR template ships an `## Antagonistic review` section. Fill it like:
+The PR template ships an `## Antagonistic review` section. The PR body uses markdown (this is the only place markdown is permitted in the review flow — inline review comments stay plain text per the conventions above). Fill the section like:
 
 ```
 ## Antagonistic review

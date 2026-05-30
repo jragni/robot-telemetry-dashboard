@@ -73,7 +73,7 @@ See: docs/PR-REVIEW.md for the antagonistic review process and dispatch matrix.
 <!--
 Dispatch matrix is in docs/PR-REVIEW.md. Fill counts after reviewer agents return.
 Every BLOCK must be Resolved or explicitly Overridden (with reason + owner) before merge.
-Required on feature -> dev PRs. dev -> uat and uat -> main promotions can skip if no new code.
+Required on feature -> dev PRs. dev -> uat and uat -> main promotions can SKIP the matrix when each constituent feature -> dev PR already ran it (the diff is non-empty by definition for any promotion PR — what gates the skip is whether every commit in the diff was already reviewed under the matrix).
 -->
 
 - Reviewers invoked: <!-- e.g., voltagent-qa-sec:code-reviewer, voltagent-qa-sec:performance-engineer -->
