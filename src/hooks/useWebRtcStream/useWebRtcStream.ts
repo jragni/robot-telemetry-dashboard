@@ -7,7 +7,7 @@ import type { VideoStreamStatus } from '@/types/streaming.types';
 
 import { ICE_GATHERING_TIMEOUT, MAX_VIDEO_BITRATE, PEER_CONNECTION_CONFIG } from './constants';
 import { applyBandwidthConstraint } from './helpers';
-import type { UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
+import type { ConnectStep, UseWebRtcStreamOptions, UseWebRtcStreamReturn } from './types';
 
 /** useWebRtcStream
  * @description Manages a WebRTC video stream connection with automatic reconnection.
@@ -27,6 +27,9 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
   const reconnectTimerRef = useRef<number | null>(null);
   const attemptsRef = useRef(0);
   const shouldConnectRef = useRef(false);
+  // Last user-visible error message — surfaced by the dedup warn so a discarded reconnect
+  // attempt carries its cause forward instead of vanishing (T-163 follow-up).
+  const lastErrorRef = useRef<string | null>(null);
   const onStatusChangeRef = useRef(onStatusChange);
   useEffect(() => {
     onStatusChangeRef.current = onStatusChange;
@@ -61,7 +64,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     // the dedup so a stuck-state can be traced from a console transcript (T-163).
     if (reconnectTimerRef.current !== null) {
       console.warn(
-        `[useWebRtcStream] scheduleReconnect dedup: reconnect already pending (attempts=${String(attemptsRef.current)})`,
+        `[useWebRtcStream] scheduleReconnect dedup: reconnect already pending (attempts=${String(attemptsRef.current)}, last_error="${lastErrorRef.current ?? 'unknown'}")`,
       );
       return;
     }
@@ -95,7 +98,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     // Track which step failed so the catch block can log it with full stack context.
     // Without this, the 9-await connect path collapses every failure into one opaque
     // err.message and stuck-reconnecting states are undebuggable in production (T-162).
-    let step = 'init';
+    let step: ConnectStep = 'init';
 
     try {
       step = 'create-peer-connection';
@@ -140,38 +143,63 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
       await peerConnection.setLocalDescription(offer);
 
       step = 'ice-gathering';
-      await new Promise<void>((resolve) => {
+      // Distinguish ICE-complete from ICE-timed-out so a partial-candidates connect is
+      // surfaced in the console — silent timeout used to hide degraded P2P paths.
+      const iceComplete = await new Promise<boolean>((resolve) => {
         if (peerConnection.iceGatheringState === 'complete') {
-          resolve();
+          resolve(true);
           return;
         }
-        const timeout = setTimeout(resolve, ICE_GATHERING_TIMEOUT);
+        const timeout = setTimeout(() => {
+          resolve(false);
+        }, ICE_GATHERING_TIMEOUT);
         peerConnection.onicegatheringstatechange = () => {
           if (peerConnection.iceGatheringState === 'complete') {
             clearTimeout(timeout);
-            resolve();
+            resolve(true);
           }
         };
       });
+      if (!iceComplete) {
+        console.warn(
+          `[useWebRtcStream] ICE gathering timed out after ${String(ICE_GATHERING_TIMEOUT)}ms — proceeding with partial candidates`,
+        );
+      }
 
       step = 'create-signaling-client';
       const signaling = new SignalingClient(signalingUrl);
-      if (!peerConnection.localDescription) return;
+      if (!peerConnection.localDescription) {
+        // No silent return — log + surface as failure so the user isn't stuck on 'connecting'.
+        console.error(
+          '[useWebRtcStream] connect() aborted at step="create-signaling-client": missing localDescription',
+        );
+        lastErrorRef.current = 'missing localDescription';
+        setError('Missing local description');
+        transition('failed');
+        return;
+      }
 
       step = 'send-offer';
       const answer = await signaling.sendOffer(peerConnection.localDescription);
 
-      // Guard: peer connection may have been torn down during async work.
-      if (pcRef.current !== peerConnection || peerConnection.signalingState === 'closed') return;
+      // Guard: peer connection may have been torn down during async work. Leave a
+      // breadcrumb so the race is visible in production console transcripts.
+      if (pcRef.current !== peerConnection || peerConnection.signalingState === 'closed') {
+        console.warn(
+          '[useWebRtcStream] connect() aborted at step="send-offer": peer connection torn down mid-flight',
+        );
+        return;
+      }
 
       step = 'set-remote-description';
       await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     } catch (err) {
       // Boundary log — preserves the failing step and the full stack so production
       // failures are debuggable rather than collapsing into a single err.message (T-162).
-      const stackOrMessage = err instanceof Error ? (err.stack ?? err.message) : String(err);
-      console.error(`[useWebRtcStream] connect() failed at step="${step}":`, stackOrMessage);
       const message = err instanceof Error ? err.message : 'Connection failed';
+      const stackOrMessage = err instanceof Error ? (err.stack ?? message) : String(err);
+      console.error(`[useWebRtcStream] connect() failed at step="${step}":`, stackOrMessage);
+      lastErrorRef.current = message;
       setError(message);
       // shouldConnectRef may have been set to false by cleanup during async gap
       if (shouldConnectRef.current as boolean) {

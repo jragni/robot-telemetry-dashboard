@@ -118,6 +118,10 @@ describe('useWebRtcStream', () => {
 
     expect(lastPc).not.toBeNull();
     expect(lastPc?.addTransceiver).toHaveBeenCalledWith('video', { direction: 'recvonly' });
+    // Regression guard: proves SignalingClient actually constructs and sendOffer is reached.
+    // If the mock ever reverts to a non-constructible vi.fn(arrow), `new SignalingClient()`
+    // throws TypeError and sendOffer is never called.
+    expect(mockSendOffer).toHaveBeenCalled();
   });
 
   it('does not double-schedule reconnect when both failure paths fire for one failure', async () => {
@@ -135,10 +139,11 @@ describe('useWebRtcStream', () => {
       await flushAsync();
     });
 
-    // The connect() catch ran and scheduled exactly one reconnect timer. Note: during
-    // a real failure both paths (onconnectionstatechange + catch) can race; the guard
-    // may already fire and warn during this initial flow — that's expected.
+    // The connect() catch ran and scheduled exactly one reconnect timer. The natural
+    // failure flow may also fire the guard once (catch + statechange race) — clear the
+    // spy now so the next assertion strictly proves the EXPLICIT second-path guard fires.
     expect(vi.getTimerCount()).toBe(1);
+    warnSpy.mockClear();
 
     // Now simulate the second failure path: connectionstatechange 'failed' on the same pc.
     // Without the guard this would schedule a second reconnect, leaking a timer and burning
@@ -151,14 +156,17 @@ describe('useWebRtcStream', () => {
     });
 
     expect(vi.getTimerCount()).toBe(1);
-    // (T-163) The guard fired and logged — proves a dropped reconnect leaves a trace.
+    // (T-163) The guard fired EXACTLY ONCE in response to the explicit second-path event.
+    expect(warnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('scheduleReconnect dedup'));
+    // Last error context is carried into the dedup log (T-163 follow-up).
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('last_error="signaling failed"'));
 
     warnSpy.mockRestore();
     errorSpy.mockRestore();
   });
 
-  it('logs the failing step name when connect() throws (T-162)', async () => {
+  it('logs the failing step name when connect() throws at send-offer (T-162)', async () => {
     mockSendOffer.mockRejectedValue(new Error('signaling failed'));
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
@@ -170,11 +178,11 @@ describe('useWebRtcStream', () => {
       await flushAsync();
     });
 
-    // The catch block records which step threw so production failures are debuggable.
-    // sendOffer rejecting means step === 'send-offer' at catch time.
+    // The catch block records WHICH step threw AND propagates the original message —
+    // assert both so a regression that loses either is caught.
     expect(errorSpy).toHaveBeenCalledWith(
       expect.stringContaining('step="send-offer"'),
-      expect.anything(),
+      expect.stringContaining('signaling failed'),
     );
 
     errorSpy.mockRestore();
