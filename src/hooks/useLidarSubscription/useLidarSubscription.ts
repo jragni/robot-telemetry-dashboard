@@ -10,9 +10,10 @@ import type { UseLidarReturn } from './types';
 
 /** useLidarSubscription
  * @description Subscribes to a sensor_msgs/msg/LaserScan topic and parses valid range
- *  readings into polar coordinates. setState is called directly: useRosSubscriber already
- *  coalesces incoming messages to one per animation frame (default `coalesce: true`), so
- *  wrapping setState in another rafThrottle was redundant and added one frame of display
+ *  readings into polar coordinates. setPoints is called directly: useRosSubscriber
+ *  coalesces incoming messages to one per animation frame (this hook passes
+ *  `coalesce: true` explicitly so the contract is pinned at the call site), so wrapping
+ *  setPoints in another rafThrottle was redundant and added one frame of display
  *  latency (T-161).
  * @param ros - Active roslib connection, or undefined when disconnected.
  * @param topicName - The LaserScan topic name to subscribe to.
@@ -54,7 +55,10 @@ export function useLidarSubscription(ros: Ros | undefined, topicName: string): U
     [],
   );
 
-  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/LaserScan', onMessage, { throttleRate: 200 });
+  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/LaserScan', onMessage, {
+    coalesce: true,
+    throttleRate: 200,
+  });
 
   return { points, rangeMax: LIDAR_DISPLAY_RANGE };
 }
