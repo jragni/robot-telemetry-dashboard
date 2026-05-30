@@ -32,8 +32,9 @@ export function PilotHudMobile({
   telemetry,
   videoStatus,
 }: PilotHudMobileProps) {
-  const heading = telemetry.imu?.yaw ?? 0;
-  const headingNormalized = normalizeHeading(heading);
+  // Null = orientation unknown; compass dims to a loss-of-fix state, minimap uses robot-frame (0).
+  const yaw = telemetry.imu?.yaw ?? null;
+  const headingNormalized = yaw !== null ? normalizeHeading(yaw) : null;
   const videoConnected = videoStatus === 'streaming';
   const rosConnected = rosbridgeStatus === 'connected';
   const batteryPct = telemetry.battery?.percentage ?? null;
@@ -80,7 +81,7 @@ export function PilotHudMobile({
         <PilotLidarMinimap
           points={telemetry.lidarPoints}
           rangeMax={telemetry.lidarRangeMax}
-          heading={headingNormalized}
+          heading={headingNormalized ?? 0}
           maxSize={MINIMAP_SIZE_MOBILE_MAX}
         />
       </div>

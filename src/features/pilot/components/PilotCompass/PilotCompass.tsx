@@ -16,6 +16,8 @@ import {
   COMPASS_TICK_MINOR_INTERVAL,
   COMPASS_TOKEN_MAP,
 } from './constants';
+import { cn } from '@/lib/utils';
+
 import { clampCompassWidth } from './helpers';
 import type { PilotCompassProps } from './PilotCompass.types';
 
@@ -24,10 +26,13 @@ import type { PilotCompassProps } from './PilotCompass.types';
  *  Tick marks slide horizontally based on IMU yaw angle. Major ticks every
  *  30 degrees, minor every 10. Cardinal labels (N/E/S/W) rendered inline.
  *  Gradient fade at left/right edges. No background — ticks float over
- *  the camera feed.
- * @prop heading - Current heading in degrees (0-360).
+ *  the camera feed. When heading is null (orientation unknown) the strip is
+ *  frozen and dimmed and the readout shows "---°" rather than a confident North.
+ * @prop heading - Current heading in degrees (0-360), or null when unknown.
  */
 export function PilotCompass({ heading }: PilotCompassProps) {
+  const isUnknown = heading === null;
+  const drawHeading = heading ?? 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stripWidth = useResponsiveSize(clampCompassWidth);
   const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
@@ -60,7 +65,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     const cardinalSet = new Map(COMPASS_CARDINALS.map((c) => [c.deg, c.label]));
 
     for (let deg = 0; deg < 360; deg += COMPASS_TICK_MINOR_INTERVAL) {
-      let offset = deg - heading;
+      let offset = deg - drawHeading;
       if (offset > 180) offset -= 360;
       if (offset < -180) offset += 360;
 
@@ -114,9 +119,9 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     ctx.fillStyle = fadeRight;
     ctx.fillRect(w - COMPASS_FADE_WIDTH, 0, COMPASS_FADE_WIDTH, h);
     ctx.globalCompositeOperation = 'source-over';
-  }, [heading, stripWidth, themeVersion, resolveColors, colorsRef]);
+  }, [drawHeading, stripWidth, themeVersion, resolveColors, colorsRef]);
 
-  const headingNormalized = ((heading % 360) + 360) % 360;
+  const headingNormalized = ((drawHeading % 360) + 360) % 360;
 
   return (
     <div className="flex flex-col items-center gap-0.5 pointer-events-auto bg-surface-base/60 backdrop-blur-sm rounded-sm px-2 py-1">
@@ -125,10 +130,20 @@ export function PilotCompass({ heading }: PilotCompassProps) {
         width={stripWidth}
         height={COMPASS_STRIP_HEIGHT}
         style={{ width: stripWidth, height: COMPASS_STRIP_HEIGHT }}
-        aria-label={`Heading: ${headingNormalized.toFixed(0)} degrees`}
+        className={cn(isUnknown && 'opacity-40')}
+        aria-label={
+          isUnknown
+            ? 'Heading unknown — no orientation data'
+            : `Heading: ${headingNormalized.toFixed(0)} degrees`
+        }
       />
-      <span className="font-mono text-xl font-semibold text-accent tabular-nums">
-        {headingNormalized.toFixed(0)}°
+      <span
+        className={cn(
+          'font-mono text-xl font-semibold tabular-nums',
+          isUnknown ? 'text-text-muted' : 'text-accent',
+        )}
+      >
+        {isUnknown ? '---°' : `${headingNormalized.toFixed(0)}°`}
       </span>
     </div>
   );

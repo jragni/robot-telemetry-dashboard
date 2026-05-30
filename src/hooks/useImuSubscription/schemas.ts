@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
 import { sensorVector3Schema } from '@/types/ros2-schemas';
-
-import { IDENTITY_QUATERNION } from './constants';
+import type { Quaternion } from '@/types/ros2-primitives.types';
 
 const quaternionSchema = z
   .object({
@@ -12,10 +11,13 @@ const quaternionSchema = z
     z: z.number().nullable(),
   })
   .nullable()
-  .transform((v) => {
-    if (v === null) return IDENTITY_QUATERNION;
+  .transform((v): Quaternion | null => {
+    // Unknown orientation (rosbridge serializes a faulted axis or the whole
+    // quaternion as null) returns null — never identity, which a consumer
+    // cannot distinguish from a sensor genuinely at level (T-165).
+    if (v === null) return null;
     const { w, x, y, z } = v;
-    if (w === null || x === null || y === null || z === null) return IDENTITY_QUATERNION;
+    if (w === null || x === null || y === null || z === null) return null;
     return { w, x, y, z };
   });
 

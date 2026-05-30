@@ -52,7 +52,10 @@ export function PilotHud({
   telemetry,
   videoStatus,
 }: PilotHudProps) {
-  const heading = telemetry.imu?.yaw ?? 0;
+  // Null heading = orientation unknown; the compass renders a dimmed loss-of-fix
+  // state. The LiDAR minimap falls back to robot-frame (0) since its points are
+  // already robot-relative — that is honest, not a confidently-wrong world heading.
+  const heading = telemetry.imu?.yaw ?? null;
 
   return (
     <div className="absolute inset-0 pointer-events-none" aria-label="Pilot HUD overlay">
@@ -60,7 +63,7 @@ export function PilotHud({
         <PilotLidarMinimap
           points={telemetry.lidarPoints}
           rangeMax={telemetry.lidarRangeMax}
-          heading={heading}
+          heading={heading ?? 0}
         />
       </div>
 

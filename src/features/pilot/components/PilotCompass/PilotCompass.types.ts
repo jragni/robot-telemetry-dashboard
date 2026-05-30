@@ -1,3 +1,3 @@
 export interface PilotCompassProps {
-  readonly heading: number;
+  readonly heading: number | null;
 }

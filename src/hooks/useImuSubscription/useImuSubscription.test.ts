@@ -50,17 +50,34 @@ describe('useImuSubscription', () => {
     capturedOnMessage = null;
   });
 
-  it('returns zero angles as initial state', () => {
+  it('returns null angles as initial state (orientation unknown until first message)', () => {
     const fakeRos = {} as never;
     const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     expect(result.current).toEqual({
       angularVelocity: undefined,
       linearAcceleration: undefined,
-      pitch: 0,
-      roll: 0,
-      yaw: 0,
+      pitch: null,
+      roll: null,
+      yaw: null,
     });
+  });
+
+  it('surfaces null angles when orientation is null (sensor reports unknown)', () => {
+    const fakeRos = {} as never;
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
+
+    act(() => {
+      capturedOnMessage?.({
+        angular_velocity: { x: 0.1, y: 0.2, z: 0.3 },
+        orientation: null,
+      });
+    });
+
+    expect(result.current.roll).toBeNull();
+    expect(result.current.pitch).toBeNull();
+    expect(result.current.yaw).toBeNull();
+    expect(result.current.angularVelocity).toEqual({ x: 0.1, y: 0.2, z: 0.3 });
   });
 
   it('updates state with valid IMU message', () => {
@@ -146,9 +163,9 @@ describe('useImuSubscription', () => {
       capturedOnMessage?.({ orientation: 'bad' });
     });
 
-    expect(result.current.roll).toBe(0);
-    expect(result.current.pitch).toBe(0);
-    expect(result.current.yaw).toBe(0);
+    expect(result.current.roll).toBeNull();
+    expect(result.current.pitch).toBeNull();
+    expect(result.current.yaw).toBeNull();
     warnSpy.mockRestore();
   });
 
@@ -161,7 +178,7 @@ describe('useImuSubscription', () => {
       capturedOnMessage?.({});
     });
 
-    expect(result.current.roll).toBe(0);
+    expect(result.current.roll).toBeNull();
     warnSpy.mockRestore();
   });
 });

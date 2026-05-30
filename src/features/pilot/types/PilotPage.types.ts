@@ -8,7 +8,7 @@ export interface LidarPoint {
 }
 
 export interface PilotTelemetry {
-  readonly imu: { roll: number; pitch: number; yaw: number } | null;
+  readonly imu: { roll: number | null; pitch: number | null; yaw: number | null } | null;
   readonly lidarPoints: readonly LidarPoint[];
   readonly lidarRangeMax: number;
   readonly battery: { percentage: number | null; voltage: number } | null;
