@@ -43,7 +43,8 @@ export function useBatterySubscription(
       setBattery({
         charging: power_supply_status === POWER_SUPPLY_CHARGING,
         percentage: pct,
-        voltage: voltage ?? 0,
+        // Unknown voltage (rosbridge NaN -> null) stays null; never conflate with a real 0 V reading.
+        voltage,
       });
     } catch (err) {
       console.warn('[useBatterySubscription] Unexpected error processing message:', err);
