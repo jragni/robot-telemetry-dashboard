@@ -83,6 +83,12 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-118: Move pilot reconnect button into PilotControls — PR #117
 - WebRTC stats instrumentation hook + pilot overlay — PR #121
 - T-150: Convert non-finite CBOR values to null — PR #122
+- T-161: Drop redundant rafThrottle in IMU + LiDAR hooks — PR #128
+- T-162: WebRTC connect() step-context boundary logger — PR #129
+- T-163: WebRTC reconnect-guard trace — PR #129
+- T-164: Make BatteryStatus.voltage nullable (+ voltage resilience) — PR #130
+- T-166: Battery both-null hook-layer test — PR #130
+- T-165: Surface unknown IMU orientation instead of fake-level identity — PR #131
 
 ## In Progress
 
@@ -96,18 +102,9 @@ EPIC/bug-hunt-mobile-ux — multi-agent bug hunt + mobile UX. Triage: `.planning
 
 ## Backlog
 
-### Antagonistic Review 2026-05-30 (PR #126 BLOCK overrides — follow-up)
+### Type-design follow-up (deferred from PR #131 review)
 
-Findings surfaced by the post-merge antagonistic review matrix (silent-failure-hunter, type-design-analyzer, pr-test-analyzer) on the EPIC → dev migration. BLOCKs overridden in PR #126 body with rationale: pre-existing in already-merged Wave A/C code (PRs #123/#124); fixed here as discrete follow-ups so the migration is not held hostage to legacy code.
-
-- **T-162** [HIGH]: `useWebRtcStream.ts` connect() catch swallows ~9 distinct throw points (RTCPeerConnection ctor, addTransceiver, createOffer, setLocalDescription, ICE-gather Promise, SignalingClient URL parse, sendOffer HTTP, setRemoteDescription SDP parse) into one `err.message` stored only in local state. Stuck reconnecting states are undebuggable in production. Fix: add boundary logger (`console.error` with full `err.stack` + a `step` tag for each await), keep the user-visible error message minimal. Branch: `fix/t-162/webrtc-catch-context`.
-- **T-163** [MED]: `useWebRtcStream.ts` double-schedule guard (`if (reconnectTimerRef.current !== null) return;`) silently drops a legitimate later reconnect with no log and no `attemptsRef` bookkeeping. A late `onconnectionstatechange 'failed'` during a long backoff window is discarded with zero trace. Fix: log when the guard fires; record latest-failure for visibility. Branch: `fix/t-163/reconnect-guard-trace`.
-- **T-164** [MED]: `BatteryStatus.voltage` is `number` with `voltage ?? 0` defaulting in the hook — conflates unknown with an actual 0 V reading; asymmetric to `percentage: number | null`. Fix: make `voltage: number | null`; update the four consumers to render `—` for unknown voltage. Branch: `fix/t-164/battery-voltage-nullable`.
-- **T-165** [HIGH]: IMU quaternion all-or-nothing identity fallback in `schemas.ts` returns `{w:1,x:0,y:0,z:0}` indistinguishable from a sensor truly at identity — downstream HUD / 3D will draw a confidently-wrong horizon. Fix: schema returns `Quaternion | null`; the hook decides policy (skip frame or surface an "Orientation unknown" indicator). Branch: `fix/t-165/quaternion-nullable-policy`.
-- **T-166** [LOW, test gap]: `useBatterySubscription.test.ts` covers null+null at the schema layer but never the hook layer — the consumer-facing BatteryStatus shape under simultaneous unknown voltage + unknown percentage is unverified. Fix: add a hook test for both-null and assert the produced shape matches T-164's policy. Branch: `test/t-166/battery-both-null`.
 - **T-167** [WARN, type design]: After T-165, `UseImuReturn` and `PilotTelemetry.imu` carry per-axis nullable angles (`{ roll: number | null; pitch: number | null; yaw: number | null }`), which models an illegal state — orientation is produced all-three-or-none, so a mixed-null reading is unconstructible. Collapse to a single discriminator: `UseImuReturn.orientation: { roll; pitch; yaw } | null` (and `PilotTelemetry.imu` inner-non-null), so the unknown bit is checked once instead of via a triple guard. Deferred from PR #131 review (type-design-analyzer ×2) to keep that PR scoped. Touches `useImuSubscription` (+ tests), `ImuPanel`, `PilotPage`, `PilotPage.types.ts`. No live bug — pure type-design hardening.
-
-- **T-161** [WARN]: Double rafThrottle redundancy after T-104. `useRosSubscriber` coalesces per-RAF by default, but `useImuSubscription` and `useLidarSubscription` still wrap `setState` in another `rafThrottle` — redundant and adds one frame (~16ms) of display latency. `useBatterySubscription` unaffected (calls `setBattery` directly). Telemetry's throttle stays (it uses `coalesce: false`). Fix: drop the inner `rafThrottle` in IMU + LiDAR hooks. Branch: `fix/t-161/drop-double-raf`. Surfaced by the voltagent calibration review on PR #124.
 
 ### Bug Hunt 2026-05-29 (remaining — Wave B/C)
 
