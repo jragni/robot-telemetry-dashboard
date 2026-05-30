@@ -1,16 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
 
 import { useRosSubscriber } from '../useRosSubscriber';
-import { rafThrottle } from '@/utils';
 
 import { quaternionToEuler } from './helpers';
 import { imuMessageSchema } from './schemas';
 import type { UseImuReturn } from './types';
 
 /** useImuSubscription
- * @description Subscribes to a sensor_msgs/msg/Imu topic, converts quaternion orientation
- *  to Euler angles, and throttles updates to animation frame rate.
+ * @description Subscribes to a sensor_msgs/msg/Imu topic and converts quaternion
+ *  orientation to Euler angles. setState is called directly: useRosSubscriber coalesces
+ *  incoming messages to one per animation frame (this hook passes `coalesce: true`
+ *  explicitly so the contract is pinned at the call site), so wrapping setState in
+ *  another rafThrottle was redundant and added one frame of display latency (T-161).
  * @param ros - Active roslib connection, or undefined when disconnected.
  * @param topicName - The IMU topic name to subscribe to.
  */
@@ -23,23 +25,6 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
     yaw: 0,
   });
 
-  const latestRef = useRef(state);
-
-  // Throttle setState to animation frame rate
-  const throttledSet = useMemo(
-    () =>
-      rafThrottle((next: UseImuReturn) => {
-        setState(next);
-      }),
-    [],
-  );
-
-  useEffect(() => {
-    return () => {
-      throttledSet.cancel();
-    };
-  }, [throttledSet]);
-
   const onMessage = useMemo(
     () => (msg: unknown) => {
       try {
@@ -50,23 +35,24 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
         }
         const m = result.data;
         const euler = quaternionToEuler(m.orientation);
-        const next: UseImuReturn = {
+        setState({
           angularVelocity: m.angular_velocity,
           linearAcceleration: m.linear_acceleration,
           pitch: euler.pitch,
           roll: euler.roll,
           yaw: euler.yaw,
-        };
-        latestRef.current = next;
-        throttledSet(next);
+        });
       } catch (err) {
         console.warn('[useImuSubscription] Unexpected error processing message:', err);
       }
     },
-    [throttledSet],
+    [],
   );
 
-  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/Imu', onMessage, { throttleRate: 100 });
+  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/Imu', onMessage, {
+    coalesce: true,
+    throttleRate: 100,
+  });
 
   return state;
 }
