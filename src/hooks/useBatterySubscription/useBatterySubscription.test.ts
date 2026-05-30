@@ -128,8 +128,40 @@ describe('useBatterySubscription', () => {
       capturedOnMessage?.({ percentage: 0.5, power_supply_status: 0, voltage: null });
     });
 
+    expect(result.current).toEqual({ charging: false, percentage: 50, voltage: null });
+  });
+
+  it('preserves a real 0 V reading as 0 (never conflated with unknown)', () => {
+    const fakeRos = {} as never;
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
+
+    act(() => {
+      capturedOnMessage?.({ percentage: 0.5, power_supply_status: 0, voltage: 0 });
+    });
+
+    expect(result.current).toEqual({ charging: false, percentage: 50, voltage: 0 });
+  });
+
+  it('treats a NaN voltage as unknown without dropping the known percentage', () => {
+    const fakeRos = {} as never;
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
+
+    act(() => {
+      capturedOnMessage?.({ percentage: 0.5, power_supply_status: 0, voltage: NaN });
+    });
+
+    expect(result.current).toEqual({ charging: false, percentage: 50, voltage: null });
+  });
+
+  it('treats a negative voltage as unknown (null)', () => {
+    const fakeRos = {} as never;
+    const { result } = renderHook(() => useBatterySubscription(fakeRos, BATTERY_TOPICS));
+
+    act(() => {
+      capturedOnMessage?.({ percentage: 0.5, power_supply_status: 0, voltage: -1 });
+    });
+
     expect(result.current?.voltage).toBeNull();
-    expect(result.current?.percentage).toBe(50);
   });
 
   it('reports both unknown voltage and unknown percentage as null without dropping the battery', () => {
