@@ -36,6 +36,12 @@ describe('batteryStateMessageSchema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('accepts null fields (rosbridge serializes unknown/NaN as null)', () => {
+    const msg = { percentage: null, voltage: null, power_supply_status: null };
+    const result = batteryStateMessageSchema.safeParse(msg);
+    expect(result.success).toBe(true);
+  });
+
   it('rejects null', () => {
     const result = batteryStateMessageSchema.safeParse(null);
     expect(result.success).toBe(false);

@@ -33,12 +33,17 @@ export function useBatterySubscription(
         return;
       }
       const { percentage, power_supply_status, voltage } = result.data;
-      // ROS BatteryState.percentage can be 0-1 (fraction) or 0-100 (percent)
-      const pct = percentage > 1 ? percentage : percentage * 100;
+      // ROS BatteryState reports unknown charge as NaN (-> null) or a negative value.
+      // A known value may be a 0-1 fraction or a 0-100 percent; normalize then clamp.
+      let pct: number | null = null;
+      if (percentage !== null && Number.isFinite(percentage) && percentage >= 0) {
+        const scaled = percentage > 1 ? percentage : percentage * 100;
+        pct = Math.min(scaled, 100);
+      }
       setBattery({
         charging: power_supply_status === POWER_SUPPLY_CHARGING,
         percentage: pct,
-        voltage,
+        voltage: voltage ?? 0,
       });
     } catch (err) {
       console.warn('[useBatterySubscription] Unexpected error processing message:', err);

@@ -77,7 +77,7 @@ export function SystemStatusPanel({
           <StatusRow label="UPTIME" value={formatUptime(uptimeSeconds)} />
           <StatusRow
             label="BATTERY"
-            value={battery ? `${String(Math.round(battery.percentage))}%` : '—'}
+            value={battery?.percentage != null ? `${String(Math.round(battery.percentage))}%` : '—'}
             valueClass={getBatteryColor(battery?.percentage ?? null)}
           />
         </>
