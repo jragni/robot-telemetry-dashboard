@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 
 import { useCanvasColors, useResponsiveSize } from '@/hooks';
 import { COMPASS_CARDINALS } from '@/constants/canvas';
+import { cn } from '@/lib/utils';
 
 import {
   COMPASS_COLOR_FALLBACKS,
@@ -16,8 +17,6 @@ import {
   COMPASS_TICK_MINOR_INTERVAL,
   COMPASS_TOKEN_MAP,
 } from './constants';
-import { cn } from '@/lib/utils';
-
 import { clampCompassWidth } from './helpers';
 import type { PilotCompassProps } from './PilotCompass.types';
 

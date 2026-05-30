@@ -23,7 +23,10 @@ const quaternionSchema = z
 
 /** imuMessageSchema
  * @description Zod schema validating the consumed fields of sensor_msgs/msg/Imu.
- *  All fields accept null (rosbridge CBOR serialization) with safe defaults.
+ *  orientation is required but resolves to null when unknown (no default — a null
+ *  or faulted quaternion is surfaced as unknown, not coerced to identity). The
+ *  optional angular_velocity / linear_acceleration normalize null to undefined.
+ *  A message that omits orientation entirely is rejected (malformed, not unknown).
  */
 export const imuMessageSchema = z.object({
   angular_velocity: sensorVector3Schema

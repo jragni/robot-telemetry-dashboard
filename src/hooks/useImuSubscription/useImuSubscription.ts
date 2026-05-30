@@ -36,13 +36,15 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
         const m = result.data;
         // Null orientation = sensor reports unknown; surface null angles so the UI
         // shows an "orientation unknown" state instead of a confidently-wrong level (T-165).
-        const euler = m.orientation ? quaternionToEuler(m.orientation) : null;
+        const euler = m.orientation
+          ? quaternionToEuler(m.orientation)
+          : { roll: null, pitch: null, yaw: null };
         setState({
           angularVelocity: m.angular_velocity,
           linearAcceleration: m.linear_acceleration,
-          pitch: euler?.pitch ?? null,
-          roll: euler?.roll ?? null,
-          yaw: euler?.yaw ?? null,
+          pitch: euler.pitch,
+          roll: euler.roll,
+          yaw: euler.yaw,
         });
       } catch (err) {
         console.warn('[useImuSubscription] Unexpected error processing message:', err);
