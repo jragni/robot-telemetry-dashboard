@@ -1,7 +1,9 @@
 import { test, expect, type ConsoleMessage } from '@playwright/test';
 
 const ROBOT_NAME = 'UAT-Bot';
-const ROBOT_URL = 'https://expansion-barely-litigation-prescription.trycloudflare.com';
+// Override with UAT_ROBOT_URL env var when the tunnel rotates: trycloudflare URLs are ephemeral.
+const ROBOT_URL =
+  process.env.UAT_ROBOT_URL ?? 'https://sample-suggesting-presentations-project.trycloudflare.com';
 
 // Errors we expect to ignore — third-party / browser noise, not regressions.
 const IGNORED_ERROR_PATTERNS: RegExp[] = [
