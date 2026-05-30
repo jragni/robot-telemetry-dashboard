@@ -20,43 +20,39 @@ When the user says "run this through our development process," execute ALL steps
 
 ### Branch Strategy
 
-Three long-lived branches: `main` (production), `uat` (review/staging), `dev` (integration). Feature/fix branches cut from `dev`.
+GitHub Flow — one long-lived branch: `main` (production; merges auto-deploy to GitHub Pages via `.github/workflows/deploy.yml`). All work happens on short-lived branches (`feature/*`, `fix/*`, `hotfix/*`, `chore/*`) cut from `main` and PR'd back into `main`. (Migrated 2026-05-30 from the dev/uat/main three-tier flow — too much ceremony for a solo dev; the PR + `quality-gate` CI + review matrix already cover what `uat` did.)
 
 **Flow:**
 
 ```
-feature/T-XXX  →  dev  →  uat  →  main
+feature/T-XXX  →  PR  →  main
 ```
 
-- All feature/fix branches cut from `dev` and PR'd back into `dev`. Never PR directly to `uat` or `main`.
-- When a body of work on `dev` is ready (one or more tickets actioned), open a PR `dev → uat`. UAT is the user's review surface for massive changes — may spawn additional dev tickets if issues found.
-- After UAT approval, user requests a PR `uat → main`.
-- After `uat → main` merges: sync `main → uat`, then `main → dev` to keep all three aligned. Same for any direct change that lands on main.
-- **Long-lived branches.** `main`, `uat`, and `dev` are never deleted. Feature branches kept until UAT approval (see Branch Cleanup below).
-- Agent dispatch prompts must specify `--base dev` for feature PRs. Confirm base before dispatching.
-- **Never push directly to `main` or `uat`.** All changes reach them through PRs only.
-- **Never cherry-pick to `main` or `uat`.** Cherry-picks can reference code that does not exist on the target branch. Always merge the full branch.
-- **Never use `--squash` on any `gh pr merge`** (feature → dev, dev → uat, uat → main). Always `--merge` (regular merge commit). Squash rewrites history and breaks branch tracking, leaving downstream branches appearing unmerged.
-- **No rebase, no force-push** on long-lived branches. Direct merges only.
+- Cut every branch from the latest `main`; PR it back into `main`. There is no `dev` or `uat` branch.
+- **The PR is the review surface.** The antagonistic review matrix (`docs/PR-REVIEW.md`) + a green `quality-gate` CI check + local visual verification (`npm run dev` / Playwright) replace the old UAT branch. When a change touches live ROS/video/connection, run `e2e/uat` (with `UAT_ROBOT_URL`) against the robot on the feature branch before merging. (A per-PR preview deploy is a possible future add — note the GH Pages base-path `/robot-telemetry-dashboard/` caveat if wiring Cloudflare Pages.)
+- Agent dispatch prompts must specify `--base main` for PRs. Confirm base before dispatching.
+- **Merge gate:** BLOCK count = 0 (or explicitly overridden in the PR body), `quality-gate` green, owner sign-off.
+- **Never push directly to `main`.** It is branch-protected (required `quality-gate` check, strict/up-to-date). All changes reach it through PRs only.
+- **Never cherry-pick to `main`.** Always merge the full branch.
+- **Never use `--squash` on `gh pr merge`.** Always `--merge` (regular merge commit) — squash rewrites history.
+- **No rebase, no force-push** on `main`.
 
 ### Branch Cleanup
 
-- **Do not delete feature branches at dev-merge time.** If UAT review surfaces a regression, the fix may require cutting from the original feature branch. Branches stay until their work has cleared UAT.
-- After `uat → main` ships, the feature branches included in that UAT batch can be deleted local + remote. The `branch-guardian` agent reconciles which branches are now safe to remove.
-- After every merge (any direction): pull the base branch, prune stale refs (`git fetch --prune`), remove leftover worktrees.
+- Delete each short-lived branch (local + remote) right after its PR merges: `gh pr merge --merge --delete-branch`.
+- After every merge: `git checkout main && git pull --ff-only && git fetch --prune`; remove leftover worktrees.
 
 ### Hotfix Protocol
 
-Hotfixes still flow through `dev`. No direct hotfix → main.
+No separate path — hotfixes use the same `main` PR flow, just faster.
 
-1. Create `hotfix/description` from `dev`.
+1. Cut `hotfix/description` from `main`.
 2. Fix bug, verify tests pass locally.
-3. PR `hotfix → dev` (abbreviated review — can self-merge if urgent).
-4. Immediately PR `dev → uat`, then `uat → main` once verified in UAT.
+3. PR `hotfix → main` (abbreviated review — one reviewer agent + owner; self-merge allowed once `quality-gate` is green).
+4. Merge → `main` auto-deploys. Delete the hotfix branch.
 5. Log the hotfix in the dispatch log with a `HOTFIX` event type.
-6. After main is updated, sync `main → uat → dev`.
 
-**Never commit directly to `main` or `uat`, even for hotfixes.** Deploy pipeline runs on `main` — a hotfix referencing dev-only code breaks the pipeline.
+**Never commit directly to `main`, even for hotfixes** — it is branch-protected and the deploy pipeline runs on merge.
 | 8. **Scorecard** (enforced) | Delta from baseline: what changed, regressed, caught in review | Script/overseer | `.planning/scorecards/{branch}.md` |
 | 9. **Session report** | End-of-session summary: agents, findings, process failures, metrics | `/retro` | `.planning/session-reports/{date}.md` |
 
@@ -66,7 +62,7 @@ Hotfixes still flow through `dev`. No direct hotfix → main.
 - **Pre-cycle snapshot** — test count, lint errors, build status captured before agent work begins.
 - **Post-cycle scorecard** — delta from snapshot: what improved, what regressed, what review caught.
 - **Session report** — generated at end of session. Covers agent performance, process failures, convention violations, metrics.
-- **UAT findings** — when UAT review surfaces issues, log to `.planning/uat-findings/{date}.md`. Each finding includes: failing scenario, originating ticket(s), root cause, new ticket id(s) cut to fix. Overseer reads this file at the start of the next cycle and feeds patterns into agent self-improvement (which agent missed it, which step skipped, which convention drifted).
+- **UAT findings** — when pre-merge verification (the PR preview or a live-robot UAT run) surfaces issues, log to `.planning/uat-findings/{date}.md`. Each finding includes: failing scenario, originating ticket(s), root cause, new ticket id(s) cut to fix. Overseer reads this file at the start of the next cycle and feeds patterns into agent self-improvement (which agent missed it, which step skipped, which convention drifted).
 - **Overseer** — reads dispatch log + UAT findings, builds step matrix per ticket, flags MISSING/SKIPPED/FAILED steps, surfaces recurring miss patterns from UAT.
 
 ### Execution Rules
@@ -117,7 +113,7 @@ Before writing ANY component file, verify:
 | Testing          | [docs/TESTING.md](docs/TESTING.md)                   | Co-location, unit tests, integration tests, E2E, quality gate                                          |
 | Code Conventions | [docs/CODE-CONVENTIONS.md](docs/CODE-CONVENTIONS.md) | File structure, imports, naming, comments, components, state management, semantic HTML, PR conventions  |
 | Dev Workflow     | [docs/DEVELOPMENT-WORKFLOW.md](docs/DEVELOPMENT-WORKFLOW.md) | Pair programming pipeline, 5-role agent team, audit process, wave ordering, PR conventions       |
-| PR Review        | [docs/PR-REVIEW.md](docs/PR-REVIEW.md)               | Antagonistic review: BLOCK/WARN/NIT severities, voltagent reviewer dispatch matrix, resolution rules, three-tier promotion gates |
+| PR Review        | [docs/PR-REVIEW.md](docs/PR-REVIEW.md)               | Antagonistic review: BLOCK/WARN/NIT severities, voltagent reviewer dispatch matrix, resolution rules, feature → main merge gate |
 
 These docs are the source of truth. CLAUDE.md does not duplicate their content.
 

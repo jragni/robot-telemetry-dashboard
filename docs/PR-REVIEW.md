@@ -14,22 +14,24 @@ Every reviewer comment MUST be classified as one of:
 
 Comment bodies are plain text — no markdown formatting (project convention). Every comment cites `file:line`, quotes the code, and proposes a concrete fix without implementing it.
 
-## When the review runs in the three-tier flow
+## When the review runs (GitHub Flow)
 
-| Promotion         | Review depth                                                                                                                                         | Notes                                    |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| `feature/* → dev` | Full antagonistic review per the matrix below. BLOCKs must be resolved before merge.                                                                 | Per-PR review. Most reviews happen here. |
-| `dev → uat`       | Owner review + targeted re-review only if dev accumulated risky surfaces. The matrix is not re-run on every dev→uat — UAT is a human review surface. | Use for batches of dev work.             |
-| `uat → main`      | No new findings expected. Owner verifies UAT sign-off; smoke + UAT regression spec passes.                                                           | Promotion only.                          |
-| `hotfix/* → dev`  | Abbreviated review (one reviewer agent + owner).                                                                                                     | Hotfix protocol in CLAUDE.md.            |
+Every PR targets `main`. The PR is the only review surface — there is no `dev` or `uat` branch.
+
+| PR                 | Review depth                                                                                          | Notes                         |
+| ------------------ | ----------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `feature/* → main` | Full antagonistic review per the matrix below. BLOCKs resolved before merge; `quality-gate` CI green. | Most reviews happen here.     |
+| `fix/* → main`     | Same as feature.                                                                                      | Scope the matrix to the diff. |
+| `hotfix/* → main`  | Abbreviated review (one reviewer agent + owner). Self-merge allowed once `quality-gate` is green.     | Hotfix protocol in CLAUDE.md. |
+| `chore/* (docs)`   | May skip the matrix with a "skip reviewer matrix" note in the PR body + reason.                       | Doc-only / bookkeeping.       |
 
 ## Reviewer matrix (dispatch by change surface)
 
-Dispatch the reviewer team in parallel after the `feature/* → dev` PR opens. Pick from this matrix based on what the diff actually touches:
+Dispatch the reviewer team in parallel after the `feature/* → main` PR opens. Pick from this matrix based on what the diff actually touches:
 
 | Surface                                           | Reviewer agent(s)                                                                                                                        |
 | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| All feature → dev PRs (baseline)                  | `voltagent-qa-sec:code-reviewer`                                                                                                         |
+| All feature → main PRs (baseline)                 | `voltagent-qa-sec:code-reviewer`                                                                                                         |
 | Hot-path hooks / per-message work                 | `voltagent-qa-sec:performance-engineer`                                                                                                  |
 | Connection, transport, retry, async               | `pr-review-toolkit:silent-failure-hunter`                                                                                                |
 | Schemas, types, type design                       | `pr-review-toolkit:type-design-analyzer`                                                                                                 |
@@ -43,11 +45,11 @@ A PR can (and often will) attract multiple reviewers. Total finding counts in th
 
 ## Workflow
 
-1. **Open the PR** with `--base dev`. Body MUST include the `## Antagonistic review` block (see `.github/PULL_REQUEST_TEMPLATE.md`).
+1. **Open the PR** with `--base main`. Body MUST include the `## Antagonistic review` block (see `.github/PULL_REQUEST_TEMPLATE.md`).
 2. **Dispatch the matrix.** Author dispatches the relevant agents in parallel (background). Each posts inline comments on its findings and returns a structured summary.
 3. **Aggregate.** Update the PR body with: reviewers invoked, BLOCK count, WARN count, NIT count.
 4. **Resolve.** For each BLOCK: fix and reply on the comment with the fixing commit SHA. For each WARN: fix or reply with acceptance rationale. NITs are optional.
-5. **Merge gate (feature → dev).** BLOCK count = 0 (or explicitly overridden in the PR body). Owner sign-off + pre-merge checklist complete. Always `--merge`, never `--squash`.
+5. **Merge gate (feature → main).** BLOCK count = 0 (or explicitly overridden in the PR body), `quality-gate` CI green, owner sign-off. Always `--merge --delete-branch`, never `--squash`.
 
 Bypassing the reviewer matrix requires an explicit "skip reviewer matrix" note in the PR body with a reason — used only for trivial doc-only / chore PRs.
 

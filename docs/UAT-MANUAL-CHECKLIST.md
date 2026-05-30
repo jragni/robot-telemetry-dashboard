@@ -1,10 +1,10 @@
-# Manual UAT Checklist (driver-side, three-tier `dev → uat → main`)
+# Manual UAT Checklist (driver-side, GitHub Flow)
 
-The headless Playwright UAT (`e2e/uat/wave-merged-uat.spec.ts`) covers render + console + reflow + happy-path connect. Some behaviors only show up under a human driver — visual fidelity, actual data values, interaction feedback, long-running stability. Run this checklist against the `uat` branch tip when promoting `dev → uat → main`.
+The headless Playwright UAT (`e2e/uat/wave-merged-uat.spec.ts`) covers render + console + reflow + happy-path connect. Some behaviors only show up under a human driver — visual fidelity, actual data values, interaction feedback, long-running stability. Run this checklist on the feature branch (or its preview deploy) before merging to `main`, whenever the PR touches live ROS, video, or connection behavior.
 
 ## 0. Setup
 
-- [ ] `git checkout uat && git pull --ff-only`
+- [ ] `git checkout <feature-branch> && git pull --ff-only`
 - [ ] `npm ci` if dependencies changed since last UAT
 - [ ] `npm run dev` (Vite — http://localhost:5173/robot-telemetry-dashboard/)
 - [ ] Robot tunnel up: `curl -I https://<robot>.trycloudflare.com` returns 200 on `/` and 400 on `/rosbridge` (400 = needs WS upgrade, expected)
@@ -88,4 +88,4 @@ Switch DevTools device toolbar.
 - [ ] Console error count = 0 (excluding the IGNORED_ERROR_PATTERNS from the UAT spec)
 - [ ] No Network panel errors that map to first-party origins
 - [ ] Headless UAT spec also passes against the same robot URL: `UAT_ROBOT_URL=<url> npx playwright test e2e/uat/wave-merged-uat.spec.ts --workers=1`
-- [ ] Sign-off note added to the `dev → uat` or `uat → main` PR with the commit SHA you tested
+- [ ] Sign-off note added to the `feature → main` PR with the commit SHA you tested
