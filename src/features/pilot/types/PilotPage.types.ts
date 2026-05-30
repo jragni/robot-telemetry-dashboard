@@ -1,5 +1,8 @@
+import type { BatteryStatus } from '@/types/battery.types';
 import type { Direction } from '@/types/control.types';
 import type { VideoStreamStatus } from '@/types/streaming.types';
+
+type PilotBattery = Pick<BatteryStatus, 'percentage' | 'voltage'>;
 
 export interface LidarPoint {
   readonly x: number;
@@ -11,7 +14,7 @@ export interface PilotTelemetry {
   readonly imu: { roll: number; pitch: number; yaw: number } | null;
   readonly lidarPoints: readonly LidarPoint[];
   readonly lidarRangeMax: number;
-  readonly battery: { percentage: number | null; voltage: number } | null;
+  readonly battery: PilotBattery | null;
   readonly linearSpeed: number;
   readonly uptimeSeconds: number | null;
 }
@@ -30,7 +33,7 @@ export interface PilotGyroReadoutProps {
 }
 
 export interface PilotStatusBarProps {
-  readonly battery: { percentage: number | null; voltage: number } | null;
+  readonly battery: PilotBattery | null;
   readonly rosbridgeStatus: ProxyStatus;
   readonly videoStatus: VideoStreamStatus;
 }
