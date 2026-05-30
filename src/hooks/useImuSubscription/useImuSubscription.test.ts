@@ -15,15 +15,8 @@ vi.mock('@/hooks/useRosSubscriber', () => ({
   },
 }));
 
-vi.mock('@/utils/rafThrottle', () => ({
-  rafThrottle: (fn: (...args: never[]) => void) => {
-    const throttled = (...args: Parameters<typeof fn>) => {
-      (fn as (...a: unknown[]) => void)(...args);
-    };
-    throttled.cancel = vi.fn();
-    return throttled;
-  },
-}));
+// (T-161) No rafThrottle mock needed — setState is now called directly; subscriber-level
+// coalescing handles per-frame batching upstream.
 
 // Identity quaternion (no rotation): roll=0, pitch=0, yaw=0
 const IDENTITY_QUATERNION = { w: 1, x: 0, y: 0, z: 0 };
@@ -59,9 +52,7 @@ describe('useImuSubscription', () => {
 
   it('returns zero angles as initial state', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useImuSubscription(fakeRos, '/imu'),
-    );
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     expect(result.current).toEqual({
       angularVelocity: undefined,
@@ -74,9 +65,7 @@ describe('useImuSubscription', () => {
 
   it('updates state with valid IMU message', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useImuSubscription(fakeRos, '/imu'),
-    );
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     act(() => {
       capturedOnMessage?.({
@@ -95,9 +84,7 @@ describe('useImuSubscription', () => {
 
   it('converts quaternion to euler angles for 90-degree roll', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useImuSubscription(fakeRos, '/imu'),
-    );
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     act(() => {
       capturedOnMessage?.({
@@ -112,9 +99,7 @@ describe('useImuSubscription', () => {
 
   it('converts quaternion to euler angles for 90-degree pitch', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useImuSubscription(fakeRos, '/imu'),
-    );
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     act(() => {
       capturedOnMessage?.({
@@ -127,9 +112,7 @@ describe('useImuSubscription', () => {
 
   it('converts quaternion to euler angles for 90-degree yaw', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useImuSubscription(fakeRos, '/imu'),
-    );
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     act(() => {
       capturedOnMessage?.({
@@ -142,9 +125,7 @@ describe('useImuSubscription', () => {
 
   it('handles optional angular_velocity and linear_acceleration', () => {
     const fakeRos = {} as never;
-    const { result } = renderHook(() =>
-      useImuSubscription(fakeRos, '/imu'),
-    );
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     act(() => {
       capturedOnMessage?.({
@@ -159,9 +140,7 @@ describe('useImuSubscription', () => {
   it('does not update state with invalid message', () => {
     const fakeRos = {} as never;
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
-    const { result } = renderHook(() =>
-      useImuSubscription(fakeRos, '/imu'),
-    );
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     act(() => {
       capturedOnMessage?.({ orientation: 'bad' });
@@ -176,9 +155,7 @@ describe('useImuSubscription', () => {
   it('does not update state when message is missing orientation', () => {
     const fakeRos = {} as never;
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
-    const { result } = renderHook(() =>
-      useImuSubscription(fakeRos, '/imu'),
-    );
+    const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     act(() => {
       capturedOnMessage?.({});

@@ -106,6 +106,8 @@ Findings surfaced by the post-merge antagonistic review matrix (silent-failure-h
 - **T-165** [HIGH]: IMU quaternion all-or-nothing identity fallback in `schemas.ts` returns `{w:1,x:0,y:0,z:0}` indistinguishable from a sensor truly at identity — downstream HUD / 3D will draw a confidently-wrong horizon. Fix: schema returns `Quaternion | null`; the hook decides policy (skip frame or surface an "Orientation unknown" indicator). Branch: `fix/t-165/quaternion-nullable-policy`.
 - **T-166** [LOW, test gap]: `useBatterySubscription.test.ts` covers null+null at the schema layer but never the hook layer — the consumer-facing BatteryStatus shape under simultaneous unknown voltage + unknown percentage is unverified. Fix: add a hook test for both-null and assert the produced shape matches T-164's policy. Branch: `test/t-166/battery-both-null`.
 
+- **T-161** [WARN]: Double rafThrottle redundancy after T-104. `useRosSubscriber` coalesces per-RAF by default, but `useImuSubscription` and `useLidarSubscription` still wrap `setState` in another `rafThrottle` — redundant and adds one frame (~16ms) of display latency. `useBatterySubscription` unaffected (calls `setBattery` directly). Telemetry's throttle stays (it uses `coalesce: false`). Fix: drop the inner `rafThrottle` in IMU + LiDAR hooks. Branch: `fix/t-161/drop-double-raf`. Surfaced by the voltagent calibration review on PR #124.
+
 ### Bug Hunt 2026-05-29 (remaining — Wave B/C)
 
 Triage: `.planning/bug-hunt/00-triage.md`. Wave A tickets are under In Progress.
