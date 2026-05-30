@@ -5,8 +5,15 @@ import { useWebRtcStream } from './useWebRtcStream';
 
 const mockSendOffer = vi.fn();
 
+// Function declaration (not arrow inside vi.fn) so `new SignalingClient(...)` actually
+// constructs. Arrow functions lack [[Construct]] and silently throw a TypeError that the
+// connect() catch attributes to a misleading step.
+function MockSignalingClient(): { sendOffer: typeof mockSendOffer } {
+  return { sendOffer: mockSendOffer };
+}
+
 vi.mock('@/lib/webrtc/signaling', () => ({
-  SignalingClient: vi.fn().mockImplementation(() => ({ sendOffer: mockSendOffer })),
+  SignalingClient: MockSignalingClient,
 }));
 
 vi.mock('@/stores/connection/useConnectionStore.helpers', () => ({
@@ -116,6 +123,9 @@ describe('useWebRtcStream', () => {
   it('does not double-schedule reconnect when both failure paths fire for one failure', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     mockSendOffer.mockRejectedValue(new Error('signaling failed'));
+    // (T-163) the guard logs a warn so a dropped reconnect can be traced in console.
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     renderHook(() =>
       useWebRtcStream({ connected: true, enabled: true, url: 'https://robot.example' }),
@@ -125,7 +135,9 @@ describe('useWebRtcStream', () => {
       await flushAsync();
     });
 
-    // The connect() catch ran and scheduled exactly one reconnect timer.
+    // The connect() catch ran and scheduled exactly one reconnect timer. Note: during
+    // a real failure both paths (onconnectionstatechange + catch) can race; the guard
+    // may already fire and warn during this initial flow — that's expected.
     expect(vi.getTimerCount()).toBe(1);
 
     // Now simulate the second failure path: connectionstatechange 'failed' on the same pc.
@@ -139,5 +151,32 @@ describe('useWebRtcStream', () => {
     });
 
     expect(vi.getTimerCount()).toBe(1);
+    // (T-163) The guard fired and logged — proves a dropped reconnect leaves a trace.
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('scheduleReconnect dedup'));
+
+    warnSpy.mockRestore();
+    errorSpy.mockRestore();
+  });
+
+  it('logs the failing step name when connect() throws (T-162)', async () => {
+    mockSendOffer.mockRejectedValue(new Error('signaling failed'));
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    renderHook(() =>
+      useWebRtcStream({ connected: true, enabled: true, url: 'https://robot.example' }),
+    );
+
+    await act(async () => {
+      await flushAsync();
+    });
+
+    // The catch block records which step threw so production failures are debuggable.
+    // sendOffer rejecting means step === 'send-offer' at catch time.
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('step="send-offer"'),
+      expect.anything(),
+    );
+
+    errorSpy.mockRestore();
   });
 });

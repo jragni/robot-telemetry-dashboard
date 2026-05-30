@@ -57,8 +57,14 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     if (!shouldConnectRef.current) return;
     // onconnectionstatechange ('failed'/'disconnected') and the connect() catch block
     // can both fire for a single failure. A pending timer means a reconnect is already
-    // scheduled — bail so the retry budget isn't burned twice and no timer leaks.
-    if (reconnectTimerRef.current !== null) return;
+    // scheduled — bail so the retry budget isn't burned twice and no timer leaks. Log
+    // the dedup so a stuck-state can be traced from a console transcript (T-163).
+    if (reconnectTimerRef.current !== null) {
+      console.warn(
+        `[useWebRtcStream] scheduleReconnect dedup: reconnect already pending (attempts=${String(attemptsRef.current)})`,
+      );
+      return;
+    }
     if (attemptsRef.current >= RECONNECT_MAX_ATTEMPTS) {
       setError(`Failed after ${String(RECONNECT_MAX_ATTEMPTS)} attempts`);
       transition('failed');
@@ -86,16 +92,21 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
     setError(null);
     shouldConnectRef.current = true;
 
+    // Track which step failed so the catch block can log it with full stack context.
+    // Without this, the 9-await connect path collapses every failure into one opaque
+    // err.message and stuck-reconnecting states are undebuggable in production (T-162).
+    let step = 'init';
+
     try {
-      // 1. Create peer connection
+      step = 'create-peer-connection';
       const peerConnection = new RTCPeerConnection(PEER_CONNECTION_CONFIG);
       pcRef.current = peerConnection;
       setPc(peerConnection);
 
-      // 2. Add recvonly video transceiver — tells aiortc we want video
+      step = 'add-transceiver';
       peerConnection.addTransceiver('video', { direction: 'recvonly' });
 
-      // 3. Handle incoming video track
+      // Handle incoming video track (sync; no step bump).
       peerConnection.ontrack = (event) => {
         if (event.streams[0]) {
           setStream(event.streams[0]);
@@ -105,7 +116,7 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
         }
       };
 
-      // 4. Handle connection state changes
+      // Handle connection state changes (sync; no step bump).
       peerConnection.onconnectionstatechange = () => {
         switch (peerConnection.connectionState) {
           case 'disconnected':
@@ -119,14 +130,16 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
         }
       };
 
-      // 5. Create SDP offer with bandwidth constraint
+      step = 'create-offer';
       const offer = await peerConnection.createOffer();
       if (offer.sdp) {
         offer.sdp = applyBandwidthConstraint(offer.sdp, Math.round(MAX_VIDEO_BITRATE / 1000));
       }
+
+      step = 'set-local-description';
       await peerConnection.setLocalDescription(offer);
 
-      // 6. Wait for ICE gathering (or timeout)
+      step = 'ice-gathering';
       await new Promise<void>((resolve) => {
         if (peerConnection.iceGatheringState === 'complete') {
           resolve();
@@ -141,17 +154,23 @@ export function useWebRtcStream(options: UseWebRtcStreamOptions): UseWebRtcStrea
         };
       });
 
-      // 7. Send offer to aiortc, get answer
+      step = 'create-signaling-client';
       const signaling = new SignalingClient(signalingUrl);
       if (!peerConnection.localDescription) return;
+
+      step = 'send-offer';
       const answer = await signaling.sendOffer(peerConnection.localDescription);
 
-      // 8. Guard: peer connection may have been torn down during async work
+      // Guard: peer connection may have been torn down during async work.
       if (pcRef.current !== peerConnection || peerConnection.signalingState === 'closed') return;
 
-      // 9. Set remote description — video should start flowing
+      step = 'set-remote-description';
       await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     } catch (err) {
+      // Boundary log — preserves the failing step and the full stack so production
+      // failures are debuggable rather than collapsing into a single err.message (T-162).
+      const stackOrMessage = err instanceof Error ? (err.stack ?? err.message) : String(err);
+      console.error(`[useWebRtcStream] connect() failed at step="${step}":`, stackOrMessage);
       const message = err instanceof Error ? err.message : 'Connection failed';
       setError(message);
       // shouldConnectRef may have been set to false by cleanup during async gap
