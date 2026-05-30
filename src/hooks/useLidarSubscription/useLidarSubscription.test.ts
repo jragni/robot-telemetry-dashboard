@@ -15,15 +15,8 @@ vi.mock('@/hooks/useRosSubscriber', () => ({
   },
 }));
 
-vi.mock('@/utils/rafThrottle', () => ({
-  rafThrottle: (fn: (...args: never[]) => void) => {
-    const throttled = (...args: Parameters<typeof fn>) => {
-      (fn as (...a: unknown[]) => void)(...args);
-    };
-    throttled.cancel = vi.fn();
-    return throttled;
-  },
-}));
+// (T-161) No rafThrottle mock needed — setPoints is now called directly; subscriber-level
+// coalescing handles per-frame batching upstream.
 
 const VALID_SCAN = {
   angle_increment: 0.01,

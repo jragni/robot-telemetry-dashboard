@@ -70,6 +70,11 @@ describe('telemetryBatteryMessageSchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('accepts null fields (rosbridge serializes unknown/NaN as null)', () => {
+    const msg = { voltage: null, percentage: null };
+    expect(telemetryBatteryMessageSchema.safeParse(msg).success).toBe(true);
+  });
+
   it('rejects an empty object', () => {
     expect(telemetryBatteryMessageSchema.safeParse({}).success).toBe(false);
   });

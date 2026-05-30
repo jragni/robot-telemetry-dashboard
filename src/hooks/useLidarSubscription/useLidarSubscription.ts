@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Ros } from 'roslib';
 
 import { useRosSubscriber } from '../useRosSubscriber';
-import { rafThrottle } from '@/utils';
 import type { LidarPoint } from '@/types/lidar.types';
 
 import { LIDAR_DISPLAY_RANGE } from './constants';
@@ -10,27 +9,17 @@ import { laserScanMessageSchema } from './schemas';
 import type { UseLidarReturn } from './types';
 
 /** useLidarSubscription
- * @description Subscribes to a sensor_msgs/msg/LaserScan topic, parses valid range readings
- *  into polar coordinates, and throttles updates to animation frame rate.
+ * @description Subscribes to a sensor_msgs/msg/LaserScan topic and parses valid range
+ *  readings into polar coordinates. setPoints is called directly: useRosSubscriber
+ *  coalesces incoming messages to one per animation frame (this hook passes
+ *  `coalesce: true` explicitly so the contract is pinned at the call site), so wrapping
+ *  setPoints in another rafThrottle was redundant and added one frame of display
+ *  latency (T-161).
  * @param ros - Active roslib connection, or undefined when disconnected.
  * @param topicName - The LaserScan topic name to subscribe to.
  */
 export function useLidarSubscription(ros: Ros | undefined, topicName: string): UseLidarReturn {
   const [points, setPoints] = useState<readonly LidarPoint[]>([]);
-
-  const throttledSet = useMemo(
-    () =>
-      rafThrottle((p: readonly LidarPoint[]) => {
-        setPoints(p);
-      }),
-    [],
-  );
-
-  useEffect(() => {
-    return () => {
-      throttledSet.cancel();
-    };
-  }, [throttledSet]);
 
   const onMessage = useMemo(
     () => (msg: unknown) => {
@@ -58,15 +47,18 @@ export function useLidarSubscription(ros: Ros | undefined, topicName: string): U
             intensity: m.intensities[i] ?? 0,
           });
         }
-        throttledSet(parsed);
+        setPoints(parsed);
       } catch (err) {
         console.warn('[useLidarSubscription] Unexpected error processing message:', err);
       }
     },
-    [throttledSet],
+    [],
   );
 
-  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/LaserScan', onMessage, { throttleRate: 200 });
+  useRosSubscriber(ros, topicName, 'sensor_msgs/msg/LaserScan', onMessage, {
+    coalesce: true,
+    throttleRate: 200,
+  });
 
   return { points, rangeMax: LIDAR_DISPLAY_RANGE };
 }

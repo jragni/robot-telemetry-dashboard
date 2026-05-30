@@ -1,5 +1,5 @@
 export interface BatteryStatus {
-  readonly percentage: number;
-  readonly voltage: number;
+  readonly percentage: number | null;
+  readonly voltage: number | null;
   readonly charging: boolean;
 }

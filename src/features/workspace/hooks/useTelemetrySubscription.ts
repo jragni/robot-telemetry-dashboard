@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Ros } from 'roslib';
 import { z } from 'zod';
 import { useRosSubscriber } from '@/hooks';
@@ -48,8 +48,8 @@ export const telemetryImuMessageSchema = z.object({
  * @description Zod schema for consumed BatteryState fields in the telemetry context.
  */
 export const telemetryBatteryMessageSchema = z.object({
-  voltage: z.number(),
-  percentage: z.number(),
+  voltage: z.number().nullable(),
+  percentage: z.number().nullable(),
 });
 
 /** telemetryLaserScanMessageSchema
@@ -122,11 +122,15 @@ function parseMessage(msg: unknown, messageType: string): Record<string, number>
         return null;
       }
       const m = result.data;
-      const pct = m.percentage > 1 ? m.percentage : m.percentage * 100;
-      return {
-        'Voltage (V)': m.voltage,
-        'Percentage (%)': pct,
-      };
+      // Match useBatterySubscription: drop unknown (null/NaN/negative) readings rather
+      // than plotting a bogus value, normalize a 0-1 fraction to percent, and clamp.
+      const out: Record<string, number> = {};
+      if (m.voltage !== null && Number.isFinite(m.voltage)) out['Voltage (V)'] = m.voltage;
+      if (m.percentage !== null && Number.isFinite(m.percentage) && m.percentage >= 0) {
+        const scaled = m.percentage > 1 ? m.percentage : m.percentage * 100;
+        out['Percentage (%)'] = Math.min(scaled, 100);
+      }
+      return out;
     }
     case 'sensor_msgs/msg/LaserScan': {
       const result = telemetryLaserScanMessageSchema.safeParse(msg);
@@ -177,21 +181,37 @@ export function useTelemetrySubscription(
     };
   }, [topicName, messageType]);
 
-  // Throttle series state updates to RAF cadence
-  const throttledSet = useMemo(
-    () =>
-      rafThrottle((s: readonly TelemetrySeries[]) => {
-        setSeries(s);
-      }),
-    [],
-  );
+  // Throttled rebuild of the plottable series. The throttle is created in an effect so
+  // its closure can read buffersRef without tripping the refs-during-render rule.
+  // Decoupling rebuild from ingestion means a burst of messages triggers one O(points)
+  // copy per frame instead of one per message.
+  const flushRef = useRef<((() => void) & { cancel: () => void }) | null>(null);
 
   useEffect(() => {
+    const flush = rafThrottle(() => {
+      const buffers = buffersRef.current;
+      const next: TelemetrySeries[] = [];
+      let colorIdx = 0;
+      for (const [label, buf] of buffers) {
+        if (buf.length > MAX_POINTS) buf.splice(0, buf.length - MAX_POINTS);
+        next.push({
+          label,
+          color: SERIES_COLORS[colorIdx % SERIES_COLORS.length] ?? CANVAS_FALLBACKS.accent,
+          data: buf.slice(),
+        });
+        colorIdx += 1;
+      }
+      setSeries(next);
+    });
+    flushRef.current = flush;
     return () => {
-      throttledSet.cancel();
+      flush.cancel();
+      flushRef.current = null;
     };
-  }, [throttledSet]);
+  }, []);
 
+  // coalesce: false so every sample is recorded in the time-series history; the per-frame
+  // flush keeps the expensive array copy off the per-message path.
   const onMessage = useCallback(
     (msg: unknown) => {
       try {
@@ -200,9 +220,6 @@ export function useTelemetrySubscription(
         const now = Date.now();
         const buffers = buffersRef.current;
 
-        const newSeries: TelemetrySeries[] = [];
-        let colorIdx = 0;
-
         for (const [label, value] of Object.entries(values)) {
           let buf = buffers.get(label);
           if (!buf) {
@@ -210,25 +227,17 @@ export function useTelemetrySubscription(
             buffers.set(label, buf);
           }
           buf.push({ timestamp: now, value });
-          if (buf.length > MAX_POINTS) buf.shift();
-
-          newSeries.push({
-            label,
-            color: SERIES_COLORS[colorIdx % SERIES_COLORS.length] ?? CANVAS_FALLBACKS.accent,
-            data: [...buf],
-          });
-          colorIdx += 1;
         }
 
-        throttledSet(newSeries);
+        flushRef.current?.();
       } catch (err) {
         console.warn('[useTelemetrySubscription] Unexpected error processing message:', err);
       }
     },
-    [messageType, throttledSet],
+    [messageType],
   );
 
-  useRosSubscriber(ros, topicName, messageType, onMessage, { throttleRate: 100 });
+  useRosSubscriber(ros, topicName, messageType, onMessage, { throttleRate: 100, coalesce: false });
 
   return series;
 }
