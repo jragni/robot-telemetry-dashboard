@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import type { ImuPanelProps, ImuVariant } from '@/features/workspace/types/ImuPanel.types';
 
 import { ImuVizSelect } from './components/ImuVizSelect';
+import { OrientationUnknown } from './components/OrientationUnknown';
 import { VARIANT_VIEWS } from './constants';
 
 /** ImuPanel
@@ -21,9 +22,16 @@ export function ImuPanel({ connected, ros, topicName }: ImuPanelProps) {
   const [variant, setVariant] = useState<ImuVariant>('attitude-compass');
   const ViewToRender = VARIANT_VIEWS[variant];
 
+  const orientationView =
+    roll !== null && pitch !== null && yaw !== null ? (
+      <ViewToRender pitch={pitch} roll={roll} yaw={yaw} />
+    ) : (
+      <OrientationUnknown />
+    );
+
   return (
     <div className={cn('flex flex-col items-center gap-3 w-full', !connected && 'opacity-50')}>
-      <ViewToRender pitch={pitch} roll={roll} yaw={yaw} />
+      {orientationView}
       <ImuVizSelect onChange={setVariant} value={variant} />
     </div>
   );

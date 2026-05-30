@@ -20,9 +20,9 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
   const [state, setState] = useState<UseImuReturn>({
     angularVelocity: undefined,
     linearAcceleration: undefined,
-    pitch: 0,
-    roll: 0,
-    yaw: 0,
+    pitch: null,
+    roll: null,
+    yaw: null,
   });
 
   const onMessage = useMemo(
@@ -34,7 +34,11 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
           return;
         }
         const m = result.data;
-        const euler = quaternionToEuler(m.orientation);
+        // Null orientation = sensor reports unknown; surface null angles so the UI
+        // shows an "orientation unknown" state instead of a confidently-wrong level (T-165).
+        const euler = m.orientation
+          ? quaternionToEuler(m.orientation)
+          : { roll: null, pitch: null, yaw: null };
         setState({
           angularVelocity: m.angular_velocity,
           linearAcceleration: m.linear_acceleration,

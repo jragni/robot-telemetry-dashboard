@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useCanvasColors } from '@/hooks';
 import { COMPASS_CARDINALS } from '@/constants/canvas';
+import { cn } from '@/lib/utils';
 
 import {
   COMPASS_COLOR_FALLBACKS,
@@ -23,9 +24,11 @@ import type { PilotCompassProps } from './PilotCompass.types';
  *  mobile. Ticks and degree labels share the same vertical center line.
  *  Cardinals (N/E/S/W) rendered in accent color at their tick positions.
  *  Fills 100% of the container width via ResizeObserver.
- * @prop heading - Current heading in degrees (0-360).
+ * @prop heading - Current heading in degrees (0-360), or null when unknown.
  */
 export function PilotCompassMobile({ heading }: PilotCompassProps) {
+  const isUnknown = heading === null;
+  const drawHeading = heading ?? 0;
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [width, setWidth] = useState(0);
@@ -80,7 +83,7 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
 
     // Ticks and labels (inline at same vertical center)
     for (let deg = 0; deg < 360; deg += COMPASS_TICK_MINOR_INTERVAL) {
-      let offset = deg - heading;
+      let offset = deg - drawHeading;
       if (offset > 180) offset -= 360;
       if (offset < -180) offset += 360;
 
@@ -148,16 +151,21 @@ export function PilotCompassMobile({ heading }: PilotCompassProps) {
     ctx.fillStyle = fadeRight;
     ctx.fillRect(w - fadeW, 0, fadeW, h);
     ctx.globalCompositeOperation = 'source-over';
-  }, [heading, width, themeVersion, resolveColors, colorsRef]);
+  }, [drawHeading, width, themeVersion, resolveColors, colorsRef]);
 
   return (
     <div
       ref={containerRef}
       className="w-full"
-      aria-label={`Heading: ${heading.toFixed(0)} degrees`}
+      aria-label={
+        isUnknown
+          ? 'Heading unknown — no orientation data'
+          : `Heading: ${drawHeading.toFixed(0)} degrees`
+      }
     >
       <canvas
         ref={canvasRef}
+        className={cn(isUnknown && 'opacity-40')}
         style={{ width: '100%', height: COMPASS_STRIP_HEIGHT_MOBILE, display: 'block' }}
       />
     </div>
