@@ -33,12 +33,21 @@ export function useBatterySubscription(
         return;
       }
       const { percentage, power_supply_status, voltage } = result.data;
-      // ROS BatteryState.percentage can be 0-1 (fraction) or 0-100 (percent)
-      const pct = percentage > 1 ? percentage : percentage * 100;
+      // ROS BatteryState reports unknown charge as NaN (-> null) or a negative value.
+      // A known value may be a 0-1 fraction or a 0-100 percent; normalize then clamp.
+      let pct: number | null = null;
+      if (percentage !== null && Number.isFinite(percentage) && percentage >= 0) {
+        const scaled = percentage > 1 ? percentage : percentage * 100;
+        pct = Math.min(scaled, 100);
+      }
+      // Unknown voltage stays null (schema already mapped NaN/Inf -> null); a negative
+      // reading is non-physical and treated as unknown, symmetric to percentage. A real
+      // 0 V is preserved as 0 — never conflated with unknown.
+      const cleanVoltage = voltage !== null && voltage >= 0 ? voltage : null;
       setBattery({
         charging: power_supply_status === POWER_SUPPLY_CHARGING,
         percentage: pct,
-        voltage,
+        voltage: cleanVoltage,
       });
     } catch (err) {
       console.warn('[useBatterySubscription] Unexpected error processing message:', err);

@@ -11,7 +11,8 @@ describe('imuMessageSchema', () => {
     const result = imuMessageSchema.safeParse(msg);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.orientation.w).toBe(1);
+      expect(result.data.orientation).not.toBeNull();
+      expect(result.data.orientation?.w).toBe(1);
       expect(result.data.angular_velocity?.x).toBe(0.1);
     }
   });
@@ -41,6 +42,23 @@ describe('imuMessageSchema', () => {
     const msg = { orientation: { x: 'bad', y: 0, z: 0, w: 1 } };
     const result = imuMessageSchema.safeParse(msg);
     expect(result.success).toBe(false);
+  });
+
+  it('returns null orientation when an axis is null (unknown, not identity)', () => {
+    const msg = { orientation: { x: 0, y: null, z: 0, w: 1 } };
+    const result = imuMessageSchema.safeParse(msg);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.orientation).toBeNull();
+    }
+  });
+
+  it('returns null orientation when orientation is null (unknown, not identity)', () => {
+    const result = imuMessageSchema.safeParse({ orientation: null });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.orientation).toBeNull();
+    }
   });
 
   it('rejects null', () => {

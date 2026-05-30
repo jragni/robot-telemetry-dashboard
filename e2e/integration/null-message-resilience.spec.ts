@@ -28,7 +28,7 @@ test.describe('Null message resilience (CBOR serialization)', () => {
     await expect(imuVisual.first()).toBeVisible({ timeout: 5000 });
   });
 
-  test('IMU panel handles fully null orientation', async ({ page }) => {
+  test('IMU panel surfaces orientation-unknown for fully null orientation', async ({ page }) => {
     const rosbridge = await createFakeRosbridge(page);
     await seedTestRobot(page);
     await page.goto('robot/testbot-01');
@@ -38,13 +38,13 @@ test.describe('Null message resilience (CBOR serialization)', () => {
     await connectButton.click();
     await rosbridge.waitForSubscription('/imu/data', 10000);
 
-    // Send message with ALL fields null — should default to identity quaternion
+    // Send message with ALL fields null — orientation is unknown. The panel must
+    // surface that honestly, not fall back to a confidently-wrong identity/level (T-165).
     rosbridge.send(imuNullFixtures[1] as RosbridgeMessage);
     await page.waitForTimeout(500);
 
-    // Panel should show 0° values (identity quaternion)
-    const zeroValue = page.getByText('0°');
-    await expect(zeroValue.first()).toBeVisible({ timeout: 5000 });
+    const unknownState = page.getByText(/orientation unknown/i);
+    await expect(unknownState.first()).toBeVisible({ timeout: 5000 });
   });
 
   test('IMU panel recovers after null message when valid data arrives', async ({ page }) => {

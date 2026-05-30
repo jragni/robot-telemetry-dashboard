@@ -72,21 +72,52 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-113: CBOR normalization centralized in useRosSubscriber — PR #102
 - T-115: LiDAR display range default to 3m for indoor — PR #111
 - T-103: TURN relay + bandwidth constraints for cellular WebRTC — PR #112
+- T-077: Fix barrel file imports — PR #108
+- T-092: README overhaul — PR #103
+- T-093: Dead code + magic numbers sweep — PR #104 + dead-code-sweep
+- T-107: Canvas content assertions — PR #106
+- T-108: Performance regression guard — PR #107
+- T-109: Multi-robot state isolation tests — PR #109
+- T-091: Mobile LiDAR minimap visual alignment — PR #114
+- T-098: Reconnect button on PilotStatusBar — PR #115
+- T-118: Move pilot reconnect button into PilotControls — PR #117
+- WebRTC stats instrumentation hook + pilot overlay — PR #121
+- T-150: Convert non-finite CBOR values to null — PR #122
+- T-161: Drop redundant rafThrottle in IMU + LiDAR hooks — PR #128
+- T-162: WebRTC connect() step-context boundary logger — PR #129
+- T-163: WebRTC reconnect-guard trace — PR #129
+- T-164: Make BatteryStatus.voltage nullable (+ voltage resilience) — PR #130
+- T-166: Battery both-null hook-layer test — PR #130
+- T-165: Surface unknown IMU orientation instead of fake-level identity — PR #131
 
 ## In Progress
 
-(none)
+EPIC/bug-hunt-mobile-ux — multi-agent bug hunt + mobile UX. Triage: `.planning/bug-hunt/00-triage.md`.
+
+- T-151: Remove debug console.log from IMU hot path — Wave A
+- T-152: Harden WebRTC reconnect — clear timer before reschedule, guard double-fire, stabilize onStatusChange — Wave A
+- T-153: Empty hardcoded sensor topic defaults, rely on discovery auto-select — Wave A
+- T-155: IMU quaternion schema — nullable components with identity fallback — Wave A
+- T-156: Battery schema — nullable fields, clamp 0-100, unknown(-1/null) handling — Wave A
 
 ## Backlog
 
-### Cross-cutting Sweeps
+### Type-design follow-up (deferred from PR #131 review)
 
-#### T-077: Fix barrel file imports
+- **T-167** [WARN, type design]: After T-165, `UseImuReturn` and `PilotTelemetry.imu` carry per-axis nullable angles (`{ roll: number | null; pitch: number | null; yaw: number | null }`), which models an illegal state — orientation is produced all-three-or-none, so a mixed-null reading is unconstructible. Collapse to a single discriminator: `UseImuReturn.orientation: { roll; pitch; yaw } | null` (and `PilotTelemetry.imu` inner-non-null), so the unknown bit is checked once instead of via a triple guard. Deferred from PR #131 review (type-design-analyzer ×2) to keep that PR scoped. Touches `useImuSubscription` (+ tests), `ImuPanel`, `PilotPage`, `PilotPage.types.ts`. No live bug — pure type-design hardening.
 
-- Severity: MEDIUM
-- Scope: ~20 imports across src/ that bypass barrel index.ts files.
-- Also absorbs T-079 barrel import fixes.
-- Branch: refactor/t-077/barrel-imports
+### Bug Hunt 2026-05-29 (remaining — Wave B/C)
+
+Triage: `.planning/bug-hunt/00-triage.md`. Wave A tickets are under In Progress.
+
+- C1 = **T-104** (low-bandwidth freeze) — bug hunt confirmed root cause: no client-side coalescing; parse runs per wire frame. Absorbs H1 (telemetry ring-buffer alloc), H2 (LaserScan O(n)×3), H5 (JSON path skips normalization), M5 (throttle_rate is ms-interval). Fix: latest-wins per-topic coalescing at useRosSubscriber, parse/validate once per RAF. Wave C — design first.
+- T-154: Touch targets <44px (D-pad, E-STOP `size=sm`, header icon buttons). Wave B [VISUAL].
+- H8 → **T-116** (extend): `touch-action`/`select-none` only on PilotHudMobile; desktop PilotHud/PilotControls (used ≥768px incl. touch tablets) still long-press zoom. Wave B [VISUAL].
+- T-158: Audit other 14px inputs for iOS auto-zoom (font-size <16px). Wave B.
+- T-159 (MOB-1): Add Robot modal mobile UX — inputs `text-sm`(14px)→16px to stop iOS auto-zoom; URL field needs `autoCapitalize="none"/autoCorrect="off"/spellCheck={false}`. `AddRobotModal.tsx:159,188`. Wave B [VISUAL].
+- MOB-2 → **T-065a** (refine): controls scrollbar = workspace grid gutters too large + ControlsPanel internal spacing + container-query breakpoints firing inside 144-230px boxes. Desktop/tablet only; mobile PilotControls confirmed fine. Wave B [VISUAL].
+- M3 = **T-114**: Add Robot test blocks submit up to 30s (3× back-to-back, 10s timeout each, no backoff). `AddRobotModal/helpers.ts:43-63`.
+- M6 = **T-111**: RobotCard URL `truncate max-w-45`, no copy affordance. Wave B [VISUAL].
 
 ### Visual (requires /visual-pipeline)
 
@@ -123,20 +154,26 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: Pilot Mode entry point visible without scrolling on 14" MacBook (1512x982), discoverable for first-time users, build passes
 - Branch: feat/t-076/pilot-mode-visibility
 
-#### T-098: Add reconnect button to PilotStatusBar
-
-- Severity: MEDIUM
-- Visual work — requires `/visual-pipeline` (discuss/research/approve)
-- Scope: src/features/pilot/components/PilotStatusBar/PilotStatusBar.tsx, PilotHud.tsx, PilotHudMobile.tsx, PilotView.tsx
-- Problem: when rosbridge disconnects in pilot mode, there's no way to reconnect without navigating back to fleet. The status bar shows connection state but has no action.
-- Fix: add a small reconnect button (shadcn Button, ghost variant) below or next to the ROS connection row. Only visible when disconnected. Wire onConnect/onDisconnect callbacks through PilotHud → PilotStatusBar.
-- Props to add: onConnect, onDisconnect to PilotStatusBarProps. Show reconnect button when rosbridgeStatus is 'disconnected' or 'error'.
-- Acceptance: reconnect button visible when disconnected, triggers connection attempt, hidden when connected, works on both desktop and mobile HUD, build passes
-- Branch: feat/t-098/pilot-reconnect-button
-
 ### Performance
 
 ### Bugs
+
+#### T-160: Footer StatusBar shows hardcoded text — never reflects live connection state
+
+- Severity: MEDIUM
+- Scope: src/components/StatusBar.tsx, src/stores/connection/useConnectionStore.ts (new selector), topic-count source (useRosGraph/useRosTopics or store cache)
+- Problem: StatusBar.tsx renders fixed strings — "No robots connected" and "0 topics · —ms" — with zero store wiring. Confirmed in 2026-05-29 live-robot audit: footer showed "No robots connected · 0 topics · —ms" on Fleet, Workspace, and Pilot across desktop/tablet/mobile and both themes while a robot was connected and streaming 19 topics. The component is static JSX (no props, no store reads).
+- Expected: footer reflects live state —
+  - connected robot count ("No robots connected" / "1 robot connected" / "N robots connected")
+  - topic count for the relevant robot(s) ("19 topics")
+  - link latency when a real source exists ("· 42ms"); otherwise omit the segment (no fake "—ms")
+- Open design questions (resolve in discuss before implementing):
+  1. Multi-robot semantics: StatusBar is global (app shell). Does count/topics aggregate across all connected robots, or reflect only the active/viewed robot? Likely "N robots connected" + active-robot topic count — decide.
+  2. Topic-count source: useRosGraph subscribes per-robot. Footer must not force a subscription from the shell. Options: read cached graph from store, sum selectedTopics, or a light read. Decide.
+  3. Latency: no latency field exists on RobotConnection. WebRTC stats hook (PR #121) gives RTT for WebRTC transport only; rosbridge WS has none. MVP: hide latency until a real source exists; later reuse WebRTC RTT when present.
+  4. Pluralization + connecting/error/empty copy.
+- Acceptance: footer updates within ~1s of connect/disconnect; correct connected count + topic count for the live robot; latency shown only with a real data source (no placeholder "—ms"); reflects disconnect immediately; unit tests for the selector + footer render states (empty/connecting/connected/error).
+- Branch: fix/t-160/statusbar-live-state
 
 #### T-117: Generate visual regression baselines for canvas-content integration tests
 
@@ -194,42 +231,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Acceptance: browser remains responsive on throttled 3G connection with all panels active, no tab freezes, graceful degradation (stale data indicator) instead of crash
 - Branch: fix/t-104/low-bandwidth-resilience
 
-#### T-091: Mobile LiDAR minimap visual alignment with workspace
-
-- Severity: LOW
-- Visual work — requires `/visual-pipeline` (discuss/research/approve)
-- Scope: src/features/pilot/components/PilotLidarMinimap.tsx, pilot/constants.ts
-- Problem: mobile pilot LiDAR minimap uses different color scheme than the workspace LidarPanel, and point dots are too large for small viewports making the scan hard to read.
-- Fix: match point colors and background to workspace LidarPanel token scheme. Reduce point radius for mobile (use smaller pixel size for minimap context). May need separate mobile constants or responsive size logic.
-- Acceptance: mobile minimap visually consistent with workspace LidarPanel colors, dots smaller and scan readable on 375px viewport, build passes.
-- Branch: fix/t-091/mobile-lidar-visual
-
-### Portfolio Polish (anti-slop evidence)
-
-#### T-092: README overhaul — screenshot, design decisions, known limitations
-
-- Severity: HIGH
-- Scope: README.md
-- Add dashboard screenshot/GIF with live data to README header
-- Add "Design Decisions" section: Canvas over SVG for LiDAR (SVG re-renders full subtree at 10-20Hz), Zustand over Redux/Context, class singleton for ConnectionManager, rosbridge + RxJS data layer, OKLCH color system
-- Add "Known Limitations" section: WebRTC latency constraints, rosbridge JSON bandwidth inflation, single-robot pilot mode, no multi-echo LiDAR support
-- Add deployed site link in README header
-- Acceptance: README has visual proof, technical depth, and honest limitations. No generic "getting started" filler.
-- Branch: docs/t-092/readme-overhaul
-
-#### T-093: Clean dead code, TODO comments, commented-out blocks, and magic numbers
-
-- Severity: HIGH
-- Scope: all src/ files
-- Audit for:
-  - `// TODO:` comments without context — remove or convert to ticket
-  - Commented-out code blocks — remove
-  - Unused imports, dead functions — remove
-  - Placeholder text ("Dashboard screenshot — pending") — remove or replace
-  - Magic numbers — extract to named constants in co-located `.constants.ts` files. Numbers like pixel sizes, thresholds, delays, ratios should have descriptive names. Exceptions: 0, 1, 2 used for math/indexing, and CSS-related numbers handled by Tailwind utilities.
-- Acceptance: zero TODO comments, zero commented-out blocks, zero unexplained magic numbers in logic, build passes
-- Branch: chore/t-093/dead-code-sweep
-
 ### Testing — Feature Coverage
 
 #### T-070: Fleet feature testing (unit + E2E)
@@ -249,69 +250,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - Severity: MEDIUM
 - Scope: src/features/workspace/ — RobotWorkspace, 6 panels, minimize/maximize, mobile workspace.
 - Branch: test/t-073/workspace-testing
-
-### Testing — Integration & Data Pipeline
-
-#### T-107: Canvas content assertions for workspace panels
-
-- Severity: MEDIUM (high interview signal)
-- Scope: e2e/integration/, LidarPanel + ImuPanel + TelemetryPanel
-- Problem: Current smoke tests verify panels mount without crashing. No test verifies panels rendered actual content. A broken coordinate transform, missing canvas draw call, or theme color resolution failure would pass all current tests.
-- Fix:
-  - Use fake rosbridge (T-105) to inject known fixture data into workspace panels
-  - Two assertion strategies:
-    1. **Presence assertion** — screenshot the canvas, analyze pixel data to verify non-empty rendering (>5% non-background pixels in center region). Use `sharp` or raw pixel buffer analysis.
-    2. **Visual regression** — Playwright `toHaveScreenshot()` with `maxDiffPixelRatio: 0.02` for pixel-level stability. Store baselines in `e2e/snapshots/`.
-  - Tests in `e2e/integration/canvas-content.spec.ts`:
-    - LidarPanel: inject 720-point scan → assert canvas has rendered points in expected quadrant
-    - ImuPanel: inject quaternion data → assert wireframe cube is visible (non-empty center region)
-    - TelemetryPanel: inject 30 data points → assert chart lines are drawn (vertical scan for non-background pixels)
-    - Theme switch: render panel in dark mode → screenshot → switch to light mode → screenshot → verify both render correctly
-  - Optional: `jest-canvas-mock` (or `vitest-canvas-mock`) for unit-level draw command auditing — verify `fillRect`/`lineTo` called with correct coordinates
-- Acceptance: each canvas panel has at least one content presence assertion, visual regression baselines committed, tests pass in CI (Linux, fixed viewport)
-- Dependencies: T-105 (fake rosbridge for data injection)
-- Branch: test/t-107/canvas-content-assertions
-
-#### T-108: Performance regression guard for high-frequency panels
-
-- Severity: MEDIUM
-- Scope: e2e/integration/, uses CDP Performance API
-- Problem: No automated guard against performance regressions. A change that adds an extra React commit per message or triggers layout thrashing would pass all current tests. The first evidence would be a human noticing lag.
-- Fix:
-  - Use Playwright CDP session (`page.context().newCDPSession()`) to capture `Performance.getMetrics`
-  - Inject sustained data via fake rosbridge (T-105): 5 seconds of 10Hz IMU + 5Hz LiDAR simultaneously
-  - Tests in `e2e/integration/performance.spec.ts`:
-    - `LayoutCount` stays below threshold during sustained telemetry (canvas updates via RAF should not trigger layout)
-    - `ScriptDuration` per frame stays under 16ms average (60fps budget)
-    - No `LongTask` entries (tasks >50ms) during normal telemetry flow
-    - Message burst test: inject 100 messages in 500ms → verify UI remains responsive (no frozen frames)
-  - Use `Network.emulateNetworkConditions` to simulate 3G (50 Kbps, 400ms latency):
-    - Verify dashboard degrades gracefully — stale data indicators appear, UI does not crash
-    - This partially validates T-104 (low-bandwidth resilience) without needing a real robot
-- Acceptance: performance thresholds defined and enforced in CI, burst test passes without frame drops, throttled-network test shows graceful degradation
-- Dependencies: T-105 (fake rosbridge for sustained data injection)
-- Branch: test/t-108/performance-regression-guard
-
-#### T-109: Multi-robot state isolation tests
-
-- Severity: MEDIUM
-- Scope: e2e/integration/, fleet + workspace
-- Problem: No test verifies that connecting multiple robots keeps each robot's telemetry data isolated. A Zustand selector bug or topic namespace collision could cause Robot A's IMU data to appear in Robot B's workspace — this would be invisible to all current tests.
-- Fix:
-  - Use fake rosbridge (T-105) to simulate 2 robots on separate namespaces:
-    - Robot A: topics `/robot_a/imu`, `/robot_a/scan`, `/robot_a/battery`
-    - Robot B: topics `/robot_b/imu`, `/robot_b/scan`, `/robot_b/battery`
-    - Each robot emits different, distinguishable fixture data (e.g., Robot A battery at 80%, Robot B at 40%)
-  - Tests in `e2e/integration/multi-robot.spec.ts`:
-    - Add 2 robots via fleet UI → verify both appear in fleet list with correct status
-    - Navigate to Robot A workspace → verify Robot A's battery percentage displayed (not Robot B's)
-    - Disconnect Robot A → verify Robot B's panels continue receiving data
-    - Disconnect Robot B → verify fleet shows both as disconnected with correct lastSeen timestamps
-    - Reconnect Robot A only → verify Robot A resumes, Robot B stays disconnected
-  - Verify store state: use `page.evaluate()` to read Zustand store directly and assert robot connection objects are independent
-- Acceptance: 2-robot scenario fully tested, no data bleed between robots, disconnect/reconnect isolation verified
-- Dependencies: T-105 (fake rosbridge with multi-robot support)
-- Branch: test/t-109/multi-robot-isolation
 
 ### UX
 
