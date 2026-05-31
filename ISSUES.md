@@ -94,6 +94,8 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-164: Make BatteryStatus.voltage nullable (+ voltage resilience) — PR #130
 - T-166: Battery both-null hook-layer test — PR #130
 - T-165: Surface unknown IMU orientation instead of fake-level identity — PR #131
+- T-104: Latest-wins message coalescing (low-bandwidth freeze) — PR #124
+- T-160: Wire footer StatusBar to live connection state — PR #138
 
 ## In Progress
 
@@ -109,7 +111,6 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 
 Triage: `.planning/bug-hunt/00-triage.md`. Wave A tickets are under In Progress.
 
-- C1 = **T-104** (low-bandwidth freeze) — bug hunt confirmed root cause: no client-side coalescing; parse runs per wire frame. Absorbs H1 (telemetry ring-buffer alloc), H2 (LaserScan O(n)×3), H5 (JSON path skips normalization), M5 (throttle_rate is ms-interval). Fix: latest-wins per-topic coalescing at useRosSubscriber, parse/validate once per RAF. Wave C — design first.
 - T-154: Touch targets <44px (D-pad, E-STOP `size=sm`, header icon buttons). Wave B [VISUAL].
 - H8 → **T-116** (extend): `touch-action`/`select-none` only on PilotHudMobile; desktop PilotHud/PilotControls (used ≥768px incl. touch tablets) still long-press zoom. Wave B [VISUAL].
 - T-158: Audit other 14px inputs for iOS auto-zoom (font-size <16px). Wave B.
@@ -157,23 +158,6 @@ Triage: `.planning/bug-hunt/00-triage.md`. Wave A tickets are under In Progress.
 
 ### Bugs
 
-#### T-160: Footer StatusBar shows hardcoded text — never reflects live connection state
-
-- Severity: MEDIUM
-- Scope: src/components/StatusBar.tsx, src/stores/connection/useConnectionStore.ts (new selector), topic-count source (useRosGraph/useRosTopics or store cache)
-- Problem: StatusBar.tsx renders fixed strings — "No robots connected" and "0 topics · —ms" — with zero store wiring. Confirmed in 2026-05-29 live-robot audit: footer showed "No robots connected · 0 topics · —ms" on Fleet, Workspace, and Pilot across desktop/tablet/mobile and both themes while a robot was connected and streaming 19 topics. The component is static JSX (no props, no store reads).
-- Expected: footer reflects live state —
-  - connected robot count ("No robots connected" / "1 robot connected" / "N robots connected")
-  - topic count for the relevant robot(s) ("19 topics")
-  - link latency when a real source exists ("· 42ms"); otherwise omit the segment (no fake "—ms")
-- Open design questions (resolve in discuss before implementing):
-  1. Multi-robot semantics: StatusBar is global (app shell). Does count/topics aggregate across all connected robots, or reflect only the active/viewed robot? Likely "N robots connected" + active-robot topic count — decide.
-  2. Topic-count source: useRosGraph subscribes per-robot. Footer must not force a subscription from the shell. Options: read cached graph from store, sum selectedTopics, or a light read. Decide.
-  3. Latency: no latency field exists on RobotConnection. WebRTC stats hook (PR #121) gives RTT for WebRTC transport only; rosbridge WS has none. MVP: hide latency until a real source exists; later reuse WebRTC RTT when present.
-  4. Pluralization + connecting/error/empty copy.
-- Acceptance: footer updates within ~1s of connect/disconnect; correct connected count + topic count for the live robot; latency shown only with a real data source (no placeholder "—ms"); reflects disconnect immediately; unit tests for the selector + footer render states (empty/connecting/connected/error).
-- Branch: fix/t-160/statusbar-live-state
-
 #### T-117: Generate visual regression baselines for canvas-content integration tests
 
 - Severity: MEDIUM
@@ -203,32 +187,6 @@ Triage: `.planning/bug-hunt/00-triage.md`. Wave A tickets are under In Progress.
 - Fix: Add a small copy-to-clipboard icon button (shadcn Button, ghost/icon variant, Lucide `Copy` or `ClipboardCopy` icon) next to the URL value. On click, copy the full URL to clipboard. Show brief feedback (e.g., icon changes to `Check` for 1.5s). Consider also adding a tooltip on hover that shows the full URL.
 - Acceptance: copy button visible next to URL, copies full URL on click, visual feedback on success, works on mobile (touch), build passes
 - Branch: feat/t-111/url-copy-button
-
-#### T-104: Sensor data freezes/delays browser on low bandwidth connections
-
-- Severity: HIGH
-- Scope: src/hooks/useRosSubscriber/, src/hooks/useLidarSubscription/, src/hooks/useImuSubscription/, src/features/workspace/hooks/useTelemetrySubscription.ts
-- Problem: On LTE/low-bandwidth connections, LiDAR, IMU, and telemetry data causes the browser tab to freeze or become unresponsive. Likely causes:
-  - rosbridge queues messages during bandwidth dips, then flushes them all at once — browser processes hundreds of stale messages in a single frame
-  - RAF throttle prevents rendering every message but still parses/validates every message (Zod schema parse on each)
-  - No backpressure — client has no way to tell rosbridge "slow down, I'm behind"
-  - Canvas redraws triggered per-message even when previous frame hasn't painted
-  - Large LaserScan arrays (720 floats) parsed via Zod on every message at source rate
-- Investigation:
-  - Profile with Chrome DevTools Performance tab on throttled network (slow 3G preset)
-  - Check if main thread is blocked by Zod parsing or canvas draws
-  - Measure message queue depth — how many messages arrive between RAF frames
-  - Test with throttle_rate (T-101) to see if server-side limiting fixes it
-- Fix candidates:
-  - T-101 (CBOR + throttle_rate) may fix this entirely by reducing message volume at the source
-  - Add message dropping in useRosSubscriber — if a new message arrives before the previous one was rendered, drop the old one
-  - Move Zod parsing to a Web Worker — keeps schema validation off the main thread
-  - Add queue depth monitoring — if messages are backing up, skip processing until caught up
-  - Implement connection quality detection — auto-increase throttle_rate when bandwidth is constrained
-  - Add a "degraded mode" that reduces subscription rates or pauses non-visible panels
-- Dependencies: T-101 (CBOR + throttle_rate) should be tried first — may resolve without additional work
-- Acceptance: browser remains responsive on throttled 3G connection with all panels active, no tab freezes, graceful degradation (stale data indicator) instead of crash
-- Branch: fix/t-104/low-bandwidth-resilience
 
 ### Testing — Feature Coverage
 
