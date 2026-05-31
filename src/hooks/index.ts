@@ -2,7 +2,7 @@ export { useBatterySubscription } from './useBatterySubscription';
 export { useCanvasColors } from './useCanvasColors';
 export { useConnectionUptime } from './useConnectionUptime';
 export { useControlPublisher } from './useControlPublisher';
-export { useImuSubscription } from './useImuSubscription';
+export { useImuSubscription, type Orientation } from './useImuSubscription';
 export { useIsMobile } from './useIsMobile';
 export { useLidarSubscription } from './useLidarSubscription';
 export { useResponsiveSize } from './useResponsiveSize';

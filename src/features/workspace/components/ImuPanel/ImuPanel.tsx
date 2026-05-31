@@ -18,16 +18,15 @@ import { VARIANT_VIEWS } from './constants';
  * @prop topicName - The IMU topic name to subscribe to.
  */
 export function ImuPanel({ connected, ros, topicName }: ImuPanelProps) {
-  const { pitch, roll, yaw } = useImuSubscription(ros, topicName);
+  const { orientation } = useImuSubscription(ros, topicName);
   const [variant, setVariant] = useState<ImuVariant>('attitude-compass');
   const ViewToRender = VARIANT_VIEWS[variant];
 
-  const orientationView =
-    roll !== null && pitch !== null && yaw !== null ? (
-      <ViewToRender pitch={pitch} roll={roll} yaw={yaw} />
-    ) : (
-      <OrientationUnknown />
-    );
+  const orientationView = orientation ? (
+    <ViewToRender pitch={orientation.pitch} roll={orientation.roll} yaw={orientation.yaw} />
+  ) : (
+    <OrientationUnknown />
+  );
 
   return (
     <div className={cn('flex flex-col items-center gap-3 w-full', !connected && 'opacity-50')}>

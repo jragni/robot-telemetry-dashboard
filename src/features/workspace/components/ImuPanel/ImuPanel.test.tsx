@@ -27,7 +27,7 @@ describe('ImuPanel self-subscription', () => {
     expect(propsText).not.toContain('yaw');
   });
 
-  it('derives roll, pitch, yaw from the hook return value', () => {
-    expect(source).toMatch(/const\s*\{[^}]*pitch[^}]*roll[^}]*yaw[^}]*\}\s*=\s*useImuSubscription/);
+  it('derives orientation from the hook return value', () => {
+    expect(source).toMatch(/const\s*\{[^}]*orientation[^}]*\}\s*=\s*useImuSubscription/);
   });
 });

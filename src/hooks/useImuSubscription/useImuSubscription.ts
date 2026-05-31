@@ -20,9 +20,7 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
   const [state, setState] = useState<UseImuReturn>({
     angularVelocity: undefined,
     linearAcceleration: undefined,
-    pitch: null,
-    roll: null,
-    yaw: null,
+    orientation: null,
   });
 
   const onMessage = useMemo(
@@ -34,17 +32,13 @@ export function useImuSubscription(ros: Ros | undefined, topicName: string): Use
           return;
         }
         const m = result.data;
-        // Null orientation = sensor reports unknown; surface null angles so the UI
-        // shows an "orientation unknown" state instead of a confidently-wrong level (T-165).
-        const euler = m.orientation
-          ? quaternionToEuler(m.orientation)
-          : { roll: null, pitch: null, yaw: null };
+        // Null orientation = sensor reports unknown; surface null so the UI shows an
+        // "orientation unknown" state instead of a confidently-wrong level (T-165).
+        // Orientation is all-three-or-none, so it is one nullable field, not three (T-167).
         setState({
           angularVelocity: m.angular_velocity,
           linearAcceleration: m.linear_acceleration,
-          pitch: euler.pitch,
-          roll: euler.roll,
-          yaw: euler.yaw,
+          orientation: m.orientation ? quaternionToEuler(m.orientation) : null,
         });
       } catch (err) {
         console.warn('[useImuSubscription] Unexpected error processing message:', err);

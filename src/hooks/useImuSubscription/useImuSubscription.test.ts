@@ -50,20 +50,18 @@ describe('useImuSubscription', () => {
     capturedOnMessage = null;
   });
 
-  it('returns null angles as initial state (orientation unknown until first message)', () => {
+  it('returns null orientation as initial state (orientation unknown until first message)', () => {
     const fakeRos = {} as never;
     const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
     expect(result.current).toEqual({
       angularVelocity: undefined,
       linearAcceleration: undefined,
-      pitch: null,
-      roll: null,
-      yaw: null,
+      orientation: null,
     });
   });
 
-  it('surfaces null angles when orientation is null (sensor reports unknown)', () => {
+  it('surfaces null orientation when orientation is null (sensor reports unknown)', () => {
     const fakeRos = {} as never;
     const { result } = renderHook(() => useImuSubscription(fakeRos, '/imu'));
 
@@ -74,9 +72,7 @@ describe('useImuSubscription', () => {
       });
     });
 
-    expect(result.current.roll).toBeNull();
-    expect(result.current.pitch).toBeNull();
-    expect(result.current.yaw).toBeNull();
+    expect(result.current.orientation).toBeNull();
     expect(result.current.angularVelocity).toEqual({ x: 0.1, y: 0.2, z: 0.3 });
   });
 
@@ -92,9 +88,9 @@ describe('useImuSubscription', () => {
       });
     });
 
-    expect(result.current.roll).toBeCloseTo(0);
-    expect(result.current.pitch).toBeCloseTo(0);
-    expect(result.current.yaw).toBeCloseTo(0);
+    expect(result.current.orientation?.roll).toBeCloseTo(0);
+    expect(result.current.orientation?.pitch).toBeCloseTo(0);
+    expect(result.current.orientation?.yaw).toBeCloseTo(0);
     expect(result.current.angularVelocity).toEqual({ x: 0.1, y: 0.2, z: 0.3 });
     expect(result.current.linearAcceleration).toEqual({ x: 0, y: 0, z: 9.81 });
   });
@@ -109,9 +105,9 @@ describe('useImuSubscription', () => {
       });
     });
 
-    expect(result.current.roll).toBeCloseTo(90, 0);
-    expect(result.current.pitch).toBeCloseTo(0, 0);
-    expect(result.current.yaw).toBeCloseTo(0, 0);
+    expect(result.current.orientation?.roll).toBeCloseTo(90, 0);
+    expect(result.current.orientation?.pitch).toBeCloseTo(0, 0);
+    expect(result.current.orientation?.yaw).toBeCloseTo(0, 0);
   });
 
   it('converts quaternion to euler angles for 90-degree pitch', () => {
@@ -124,7 +120,7 @@ describe('useImuSubscription', () => {
       });
     });
 
-    expect(result.current.pitch).toBeCloseTo(90, 0);
+    expect(result.current.orientation?.pitch).toBeCloseTo(90, 0);
   });
 
   it('converts quaternion to euler angles for 90-degree yaw', () => {
@@ -137,7 +133,7 @@ describe('useImuSubscription', () => {
       });
     });
 
-    expect(result.current.yaw).toBeCloseTo(90, 0);
+    expect(result.current.orientation?.yaw).toBeCloseTo(90, 0);
   });
 
   it('handles optional angular_velocity and linear_acceleration', () => {
@@ -163,9 +159,7 @@ describe('useImuSubscription', () => {
       capturedOnMessage?.({ orientation: 'bad' });
     });
 
-    expect(result.current.roll).toBeNull();
-    expect(result.current.pitch).toBeNull();
-    expect(result.current.yaw).toBeNull();
+    expect(result.current.orientation).toBeNull();
     warnSpy.mockRestore();
   });
 
@@ -178,7 +172,7 @@ describe('useImuSubscription', () => {
       capturedOnMessage?.({});
     });
 
-    expect(result.current.roll).toBeNull();
+    expect(result.current.orientation).toBeNull();
     warnSpy.mockRestore();
   });
 });
