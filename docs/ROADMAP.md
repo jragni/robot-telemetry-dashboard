@@ -34,13 +34,29 @@ Living document of what's been built, what's in progress, and what's planned.
 - **Convention Enforcement** — Pre-commit hooks (lint-staged: eslint, prettier, check-conventions.sh), pre-push hooks (npm run build + vitest run)
 - **Observability** — Snapshot/scorecard scripts, dispatch logs, session reports in .planning/
 
+### Hardening & Reliability (2026-05)
+
+- **Low-bandwidth resilience (T-104)** — latest-wins per-topic coalescing at `useRosSubscriber`; parse/validate once per RAF, fixing the LTE flush-storm freeze
+- **CBOR / non-finite safety (T-150)** — `normalizeCborMessage` converts TypedArrays → plain arrays and NaN/±Inf → null at the transport boundary
+- **WebRTC reconnect hardening (T-152/T-162/T-163)** — clear-before-reschedule timer guard, double-fire guard with trace, step-context (`ConnectStep`) boundary logging, stable `onStatusChange` ref
+- **Data null-safety** — battery voltage/percentage nullable with finite/≥0 guards (T-164/T-166); IMU orientation surfaces an honest loss-of-fix state (OrientationUnknown panel + dimmed `---°` compass) instead of a fake-level identity (T-165)
+- **WebRTC stats overlay** — live RTT/bitrate instrumentation hook + pilot overlay
+- **Connection manager** — `lastSeen` stamped on every connection-state change; intentional-disconnect guard; exponential backoff
+
+### Process & Tooling (2026-05)
+
+- **Antagonistic PR review** — surface-scoped reviewer matrix (BLOCK/WARN/NIT), resolution rules, plain-text inline comments (`docs/PR-REVIEW.md`)
+- **GitHub Flow** — single `main` + short-lived branches; `quality-gate` CI gate; migrated 2026-05-30 from the dev/uat/main three-tier flow
+- **Headless UAT spec** — `e2e/uat`, robot URL via `UAT_ROBOT_URL`; manual driver checklist
+- **Observability** — `.planning/` dispatch logs, snapshots, scorecards, session reports, UAT findings
+
 ### Code Quality
 
-- 430+ unit tests across 60 test files
+- 545 unit tests across 70 test files (vitest); Playwright smoke + integration (fake-rosbridge) + UAT suites
 - Barrel imports for @/hooks, @/utils, feature components/hooks
 - Co-located types (Component/Component.types.ts)
 - Lookup object pattern replacing chained ternaries (STATUS_DISPLAY, CONNECTION_BUTTON, MOBILE_PANEL_MAP, VARIANT_VIEWS)
-- Pre-commit convention checks: deep barrel imports, duplicate module imports, inline types, missing JSDoc
+- Pre-commit convention checks (lint-staged) + pre-push build + vitest; `npm run lint` clean
 
 ## Current State
 
@@ -50,42 +66,45 @@ Living document of what's been built, what's in progress, and what's planned.
 - Lint is clean (`npm run lint` — 0 errors; T-074 swept)
 - PanelShowcase (mockups page) shows panels in disconnected state by design, since panels now self-subscribe
 
-> **Stale-section notice:** the `## Planned` lists below predate the 2026-05 work (bug hunt + mobile UX, WebRTC reconnect hardening, message coalescing, IMU loss-of-fix + battery null-safety, GitHub Flow migration). Treat root `ISSUES.md` as the live backlog source of truth; this section needs a full refresh.
-
 ## Planned
 
-### Housekeeping (in progress)
+High-level grouping only — ticket detail lives in root `ISSUES.md`, which is the live backlog. (Older ISSUES sections still list some already-shipped items, e.g. T-074/T-077/T-093/T-100/T-098/T-104; ISSUES.md is mid-reconcile.)
 
-- T-074: Lint error sweep (40 errors)
-- T-077: Barrel imports sweep (PR #87, ready to merge)
-- T-093: Dead code sweep (PR #88, ready to merge)
-- T-100: Utils test folder restructure (PR #86, ready to merge)
+### Type design
 
-### Next
+- **T-167** — collapse per-axis-nullable IMU angles into a single `orientation | null` discriminator (deferred from PR #131 review; no live bug)
 
-- T-092: README overhaul — screenshot/GIF, design decisions, known limitations
-- T-094: GitHub repo metadata — description, topics, website URL
-- T-098: Pilot reconnect button — reconnect action in pilot status bar when disconnected
-- Wire lastSeen — populate timestamp on ROS message receipt or disconnect
-- Mockups page — living design system reference with mock data flowing through real components
+### Mobile UX — Bug Hunt Wave B/C (mostly [VISUAL], needs the visual pipeline)
 
-### Visual Polish
+- **T-154** — touch targets <44px (D-pad, E-STOP, header icon buttons)
+- **T-116** — press-and-hold zoom still hits desktop PilotHud/PilotControls (mobile already guarded)
+- **T-158 / T-159** — iOS auto-zoom on <16px inputs; Add-Robot modal field hardening
+- **T-065a** — controls scrollbar (grid gutters + ControlsPanel spacing + container-query breakpoints)
+- **T-111** — RobotCard URL copy-to-clipboard affordance
+- **T-114** — Add-Robot modal feels frozen during a background reconnect (validation on the critical path)
 
-- T-052: MIL-STD-1472H status indicators (color + icon + text on all indicators)
-- T-065: Responsive polish (desktop resize, mobile layout, light mode contrast)
-- T-085: WireframeView body-frame axes
-- T-091: Mobile LiDAR minimap color alignment
+### Visual polish (visual pipeline)
 
-### Testing
+- **T-052** — MIL-STD-1472H status indicators (color + icon + text everywhere)
+- **T-065b / T-065c** — mobile layout trigger + camera tab; light-mode contrast audit
+- **T-076** — Pilot Mode CTA below the fold on 14" laptops (discoverability)
+- **T-085** — WireframeView body-frame axes
+- **T-091** — mobile LiDAR minimap color alignment
 
-- T-070: Fleet feature tests (unit + E2E)
-- T-072: Pilot feature tests (unit + E2E)
-- T-073: Workspace feature tests (unit + E2E)
+### Bugs
 
-### Documentation
+- **T-160** — footer StatusBar is hardcoded; wire to live connection/topic state
+- **T-117** — commit canvas-content visual-regression baselines (2 tests currently skipped)
 
-- T-069: JSDoc sweep (all exported functions)
-- T-099: JSDoc @param → @prop conversion on components
+### Test coverage
+
+- **T-070 / T-072 / T-073** — fleet / pilot / workspace feature tests (unit + E2E)
+
+### Bigger bets (not yet ticketed)
+
+- **Bandwidth** — foxglove_bridge (binary CDR, drop-in) → a custom `ros2-webrtc-bridge` pip package (P2P DataChannels, zero-install viewer). Research: `docs/research/webrtc-bandwidth.md`.
+- **Pi robot-brain** — Raspberry Pi + Claude API self-programming robot with dashboard chat control (Qwen hybrid).
+- **Per-PR preview deploy** — replace local-only visual review; note the GH Pages base-path caveat (see CLAUDE.md Branch Strategy).
 
 ## Not Planned
 
