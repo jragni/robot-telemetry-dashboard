@@ -130,7 +130,7 @@ Delete:      trash icon → AlertDialog "Remove <name>?" → removeRobot(id) →
 
 ## Manual test cases
 
-> Use the placeholder live robot URL `wss://<your-robot-host>/rosbridge` wherever a reachable robot is required.
+> Use the placeholder live robot URL `wss://<your-robot-host>` wherever a reachable robot is required.
 
 ### Happy path
 
@@ -146,7 +146,7 @@ Delete:      trash icon → AlertDialog "Remove <name>?" → removeRobot(id) →
 
 - **TC-03 — Add a valid robot and watch it connect**
   - Preconditions: Modal open; the placeholder URL is reachable.
-  - Steps: 1) Type a name, e.g. `Atlas-01`. 2) Type `wss://<your-robot-host>/rosbridge`. 3) Click **Add Robot**.
+  - Steps: 1) Type a name, e.g. `Atlas-01`. 2) Type `wss://<your-robot-host>`. 3) Click **Add Robot**.
   - Expected: Submit shows spinner + `Connecting... (attempt 1/3)`. On a successful test the modal closes; a `RobotCard` for "Atlas-01" appears. Its status badge transitions Caution → **Nominal**; left border is colored (deterministic from the name). Battery and graph counts populate as ROS data arrives. Footer updates to "1 robot connected". Sidebar shows the robot under Fleet.
 
 - **TC-04 — Add a second robot from the header button**
@@ -212,7 +212,7 @@ Delete:      trash icon → AlertDialog "Remove <name>?" → removeRobot(id) →
   - Expected: Adding B works independently; A's reconnect timers/attempts are tracked per-id in `ConnectionManager` (`reconnectTimers`/`reconnectAttempts` maps keyed by id), so B's flow does not cancel or interfere with A's. A continues its backoff schedule; B appears and connects on its own.
 
 - **TC-E9 — Very long URL truncation on card (T-111)**
-  - Preconditions: A robot added with a long URL, e.g. `wss://<your-robot-host>/rosbridge/some/very/long/path/segment`.
+  - Preconditions: A robot added with a long URL, e.g. `wss://<your-robot-host>/some/very/long/path/segment`.
   - Steps: View the card's "URL" row.
   - Expected: The URL value is truncated with ellipsis and does not overflow the card — `RobotCardConnection` applies `truncate max-w-45` to the URL value. The card layout stays intact (no horizontal scroll, no pushed-out badges).
 

@@ -168,11 +168,11 @@ Branches:
 
 ## Manual test cases
 
-> Use the live robot URL `wss://<your-robot-host>/rosbridge` when adding the robot. Add it from Fleet, connect, then enter Pilot Mode. Run `npm run dev` on desktop (≥ 1280px) unless a case says mobile.
+> Use the live robot URL `wss://<your-robot-host>` when adding the robot. Add it from Fleet, connect, then enter Pilot Mode. Run `npm run dev` on desktop (≥ 1280px) unless a case says mobile.
 
 ### Happy path
 
-- **TC-01 — Enter Pilot for a connected robot.** Add a robot with url `wss://<your-robot-host>/rosbridge`, connect it (status `connected`), open its workspace, click **Pilot Mode** in `ControlsPanel`. Expect: navigate to `/pilot/:id`, camera backdrop renders, HUD overlays mount, no `PilotNotFound`.
+- **TC-01 — Enter Pilot for a connected robot.** Add a robot with url `wss://<your-robot-host>`, connect it (status `connected`), open its workspace, click **Pilot Mode** in `ControlsPanel`. Expect: navigate to `/pilot/:id`, camera backdrop renders, HUD overlays mount, no `PilotNotFound`.
 - **TC-02 — Video stream.** Within a few seconds the camera empty state ("Connecting...") is replaced by the live `<video>` (full-bleed, object-cover). Status bar `VIDEO` dot turns `OK`/green.
 - **TC-03 — Compass + heading.** Compass strip shows ticks sliding with robot yaw and a numeric `NNN°` readout (not `---°`). Rotate the robot → strip and readout track.
 - **TC-04 — Gyro readout.** `PilotGyroReadout` (bottom-left) shows numeric PITCH/ROLL/YAW (not `---`); values change as the robot moves.

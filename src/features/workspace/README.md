@@ -259,7 +259,7 @@ Fleet RobotCard "VIEW" / sidebar
 ## Manual test cases
 
 > Live robot URL for happy-path steps:
-> `wss://<your-robot-host>/rosbridge`
+> `wss://<your-robot-host>`
 > Add a robot with this URL from the Fleet page first, then connect.
 
 ### Happy path
