@@ -83,6 +83,11 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-118: Move pilot reconnect button into PilotControls — PR #117
 - WebRTC stats instrumentation hook + pilot overlay — PR #121
 - T-150: Convert non-finite CBOR values to null — PR #122
+- T-151: Remove debug console.log from IMU hot path — PR #123
+- T-152: Harden WebRTC reconnect (clear timer, guard double-fire, stabilize onStatusChange) — PR #123
+- T-153: Empty hardcoded sensor topic defaults, rely on discovery auto-select — PR #123
+- T-155: IMU quaternion schema nullable components — PR #123
+- T-156: Battery schema nullable fields, clamp 0-100, unknown handling — PR #123
 - T-161: Drop redundant rafThrottle in IMU + LiDAR hooks — PR #128
 - T-162: WebRTC connect() step-context boundary logger — PR #129
 - T-163: WebRTC reconnect-guard trace — PR #129
@@ -92,13 +97,7 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 
 ## In Progress
 
-EPIC/bug-hunt-mobile-ux — multi-agent bug hunt + mobile UX. Triage: `.planning/bug-hunt/00-triage.md`.
-
-- T-151: Remove debug console.log from IMU hot path — Wave A
-- T-152: Harden WebRTC reconnect — clear timer before reschedule, guard double-fire, stabilize onStatusChange — Wave A
-- T-153: Empty hardcoded sensor topic defaults, rely on discovery auto-select — Wave A
-- T-155: IMU quaternion schema — nullable components with identity fallback — Wave A
-- T-156: Battery schema — nullable fields, clamp 0-100, unknown(-1/null) handling — Wave A
+(none — Wave A bug-hunt tickets shipped; remaining bug-hunt work is in Backlog under "Bug Hunt 2026-05-29 — Wave B/C")
 
 ## Backlog
 

@@ -6,7 +6,7 @@ import { RobotCardDataRow } from './RobotCardDataRow';
  * @description Renders connection info rows: rosbridge URL and
  *  last seen timestamp.
  * @prop url - Rosbridge WebSocket URL.
- * @prop lastSeen - Timestamp of last rosbridge message, or null.
+ * @prop lastSeen - Timestamp of last connection activity (connect/disconnect/error), or null.
  */
 export function RobotCardConnection({ url, lastSeen }: RobotCardConnectionProps) {
   return (

@@ -46,9 +46,11 @@ Living document of what's been built, what's in progress, and what's planned.
 
 - All features work in disconnected mode (empty states, mock-ready)
 - Real ROS 2 connection tested via Cloudflare Tunnel to Raspberry Pi
-- **lastSeen** field exists end-to-end but is never populated (no trigger sets the timestamp)
-- 40 pre-existing lint errors (backlog T-074)
-- PanelShowcase (mockups page) shows panels in disconnected state since panels now self-subscribe
+- **lastSeen** is populated on connection-state changes (connect / disconnect / error / close / reconnect-failure) in `ConnectionManager` — semantic is "last contact", not "last message"
+- Lint is clean (`npm run lint` — 0 errors; T-074 swept)
+- PanelShowcase (mockups page) shows panels in disconnected state by design, since panels now self-subscribe
+
+> **Stale-section notice:** the `## Planned` lists below predate the 2026-05 work (bug hunt + mobile UX, WebRTC reconnect hardening, message coalescing, IMU loss-of-fix + battery null-safety, GitHub Flow migration). Treat root `ISSUES.md` as the live backlog source of truth; this section needs a full refresh.
 
 ## Planned
 
