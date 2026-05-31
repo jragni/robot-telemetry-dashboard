@@ -28,9 +28,7 @@ export interface PilotCameraProps {
 }
 
 export interface PilotGyroReadoutProps {
-  readonly pitch: number | null;
-  readonly roll: number | null;
-  readonly yaw: number | null;
+  readonly orientation: Orientation | null;
 }
 
 export interface PilotStatusBarProps {
@@ -45,9 +43,7 @@ export interface StatusDotProps {
 }
 
 export interface GyroInlineProps {
-  readonly roll: number | null;
-  readonly pitch: number | null;
-  readonly yaw: number | null;
+  readonly orientation: Orientation | null;
 }
 
 export interface PilotControlsProps {

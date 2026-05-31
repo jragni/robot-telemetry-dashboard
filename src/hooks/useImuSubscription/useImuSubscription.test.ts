@@ -88,6 +88,8 @@ describe('useImuSubscription', () => {
       });
     });
 
+    // Orientation resolves to the full discriminator shape (all three axes or none — T-167).
+    expect(Object.keys(result.current.orientation ?? {}).sort()).toEqual(['pitch', 'roll', 'yaw']);
     expect(result.current.orientation?.roll).toBeCloseTo(0);
     expect(result.current.orientation?.pitch).toBeCloseTo(0);
     expect(result.current.orientation?.yaw).toBeCloseTo(0);

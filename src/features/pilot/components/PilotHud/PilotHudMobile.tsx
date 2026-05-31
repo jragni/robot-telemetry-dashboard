@@ -69,11 +69,7 @@ export function PilotHudMobile({
             {batteryPct !== null ? `${String(Math.round(batteryPct))}%` : '--'}
           </span>
           <div className="flex-1" />
-          <GyroInline
-            roll={telemetry.imu?.roll ?? null}
-            pitch={telemetry.imu?.pitch ?? null}
-            yaw={telemetry.imu?.yaw ?? null}
-          />
+          <GyroInline orientation={telemetry.imu} />
         </div>
       </div>
 

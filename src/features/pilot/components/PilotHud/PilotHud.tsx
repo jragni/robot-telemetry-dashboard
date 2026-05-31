@@ -83,11 +83,7 @@ export function PilotHud({
       </div>
 
       <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 flex flex-col items-start gap-2 sm:gap-3">
-        <PilotGyroReadout
-          pitch={telemetry.imu?.pitch ?? null}
-          roll={telemetry.imu?.roll ?? null}
-          yaw={telemetry.imu?.yaw ?? null}
-        />
+        <PilotGyroReadout orientation={telemetry.imu} />
         {robotId ? (
           <div className="pointer-events-auto">
             <Link to={`/robot/${robotId}`}>

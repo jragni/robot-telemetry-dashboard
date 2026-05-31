@@ -6,11 +6,9 @@ import { GyroRow } from './GyroRow';
  * @description Renders the gyroscope orientation readout (pitch, roll, yaw)
  *  and linear speed in a compact HUD overlay panel. Uses the instrument panel
  *  typography pattern: tiny uppercase labels + bright monospace values.
- * @prop pitch - Current pitch angle in degrees (null if no data).
- * @prop roll - Current roll angle in degrees (null if no data).
- * @prop yaw - Current yaw angle in degrees (null if no data).
+ * @prop orientation - Current orientation in degrees, or null when unknown.
  */
-export function PilotGyroReadout({ pitch, roll, yaw }: PilotGyroReadoutProps) {
+export function PilotGyroReadout({ orientation }: PilotGyroReadoutProps) {
   return (
     <dl
       className={`${HUD_PANEL_BASE} p-2 lg:p-4 flex flex-col gap-1.5 lg:gap-2`}
@@ -18,9 +16,9 @@ export function PilotGyroReadout({ pitch, roll, yaw }: PilotGyroReadoutProps) {
     >
       <dt className="font-sans text-xs uppercase tracking-widest text-text-muted">Gyro</dt>
 
-      <GyroRow label="PITCH" value={pitch} />
-      <GyroRow label="ROLL" value={roll} />
-      <GyroRow label="YAW" value={yaw} />
+      <GyroRow label="PITCH" value={orientation?.pitch ?? null} />
+      <GyroRow label="ROLL" value={orientation?.roll ?? null} />
+      <GyroRow label="YAW" value={orientation?.yaw ?? null} />
     </dl>
   );
 }
