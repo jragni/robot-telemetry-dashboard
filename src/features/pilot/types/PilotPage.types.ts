@@ -1,3 +1,4 @@
+import type { Orientation } from '@/hooks';
 import type { BatteryStatus } from '@/types/battery.types';
 import type { Direction } from '@/types/control.types';
 import type { VideoStreamStatus } from '@/types/streaming.types';
@@ -11,7 +12,7 @@ export interface LidarPoint {
 }
 
 export interface PilotTelemetry {
-  readonly imu: { roll: number | null; pitch: number | null; yaw: number | null } | null;
+  readonly imu: Orientation | null;
   readonly lidarPoints: readonly LidarPoint[];
   readonly lidarRangeMax: number;
   readonly battery: PilotBattery | null;
@@ -27,9 +28,7 @@ export interface PilotCameraProps {
 }
 
 export interface PilotGyroReadoutProps {
-  readonly pitch: number | null;
-  readonly roll: number | null;
-  readonly yaw: number | null;
+  readonly orientation: Orientation | null;
 }
 
 export interface PilotStatusBarProps {
@@ -44,9 +43,7 @@ export interface StatusDotProps {
 }
 
 export interface GyroInlineProps {
-  readonly roll: number | null;
-  readonly pitch: number | null;
-  readonly yaw: number | null;
+  readonly orientation: Orientation | null;
 }
 
 export interface PilotControlsProps {

@@ -1,8 +1,10 @@
+import type { Orientation } from './types';
+
 /** quaternionToEuler
  * @description Converts a quaternion to Euler angles in degrees.
  * @param q - Quaternion with x, y, z, w components.
  */
-export function quaternionToEuler(q: { x: number; y: number; z: number; w: number }) {
+export function quaternionToEuler(q: { x: number; y: number; z: number; w: number }): Orientation {
   const sinr = 2 * (q.w * q.x + q.y * q.z);
   const cosr = 1 - 2 * (q.x * q.x + q.y * q.y);
   const roll = Math.atan2(sinr, cosr);

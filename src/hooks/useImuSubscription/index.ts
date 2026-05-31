@@ -1,4 +1,4 @@
 export { quaternionToEuler } from './helpers';
 export { imuMessageSchema } from './schemas';
-export type { UseImuReturn } from './types';
+export type { Orientation, UseImuReturn } from './types';
 export { useImuSubscription } from './useImuSubscription';

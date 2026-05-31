@@ -69,13 +69,13 @@ export function PilotPage() {
   const telemetry = useMemo(
     () => ({
       battery: battery ? { percentage: battery.percentage, voltage: battery.voltage } : null,
-      imu: connected ? { pitch: imu.pitch, roll: imu.roll, yaw: imu.yaw } : null,
+      imu: connected ? imu.orientation : null,
       lidarPoints: pilotLidarPoints,
       lidarRangeMax: lidar.rangeMax,
       linearSpeed: 0,
       uptimeSeconds: null,
     }),
-    [connected, imu.roll, imu.pitch, imu.yaw, pilotLidarPoints, lidar.rangeMax, battery],
+    [connected, imu.orientation, pilotLidarPoints, lidar.rangeMax, battery],
   );
 
   if (!robot) {

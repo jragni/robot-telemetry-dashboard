@@ -2,10 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const source = fs.readFileSync(
-  path.resolve(__dirname, 'PilotPage.tsx'),
-  'utf-8',
-);
+const source = fs.readFileSync(path.resolve(__dirname, 'PilotPage.tsx'), 'utf-8');
 
 describe('PilotPage memoization', () => {
   it('imports useMemo from react', () => {
@@ -22,6 +19,8 @@ describe('PilotPage memoization', () => {
     expect(source).toContain('const telemetry = useMemo(');
     // Verify key dependencies are listed
     const telemetryMemoBlock = source.slice(source.indexOf('const telemetry = useMemo('));
-    expect(telemetryMemoBlock).toMatch(/\[.*connected.*imu\.roll.*imu\.pitch.*imu\.yaw.*pilotLidarPoints.*lidar\.rangeMax.*battery.*\]/s);
+    expect(telemetryMemoBlock).toMatch(
+      /\[.*connected.*imu\.orientation.*pilotLidarPoints.*lidar\.rangeMax.*battery.*\]/s,
+    );
   });
 });
