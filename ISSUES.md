@@ -96,16 +96,13 @@ Consolidated from 5 parallel audits on 2026-04-03. Restructured 2026-04-05 into 
 - T-165: Surface unknown IMU orientation instead of fake-level identity — PR #131
 - T-104: Latest-wins message coalescing (low-bandwidth freeze) — PR #124
 - T-160: Wire footer StatusBar to live connection state — PR #138
+- T-167: Collapse IMU per-axis nullables into single orientation discriminator — PR #140
 
 ## In Progress
 
 (none — Wave A bug-hunt tickets shipped; remaining bug-hunt work is in Backlog under "Bug Hunt 2026-05-29 — Wave B/C")
 
 ## Backlog
-
-### Type-design follow-up (deferred from PR #131 review)
-
-- **T-167** [WARN, type design]: After T-165, `UseImuReturn` and `PilotTelemetry.imu` carry per-axis nullable angles (`{ roll: number | null; pitch: number | null; yaw: number | null }`), which models an illegal state — orientation is produced all-three-or-none, so a mixed-null reading is unconstructible. Collapse to a single discriminator: `UseImuReturn.orientation: { roll; pitch; yaw } | null` (and `PilotTelemetry.imu` inner-non-null), so the unknown bit is checked once instead of via a triple guard. Deferred from PR #131 review (type-design-analyzer ×2) to keep that PR scoped. Touches `useImuSubscription` (+ tests), `ImuPanel`, `PilotPage`, `PilotPage.types.ts`. No live bug — pure type-design hardening.
 
 ### Bug Hunt 2026-05-29 (remaining — Wave B/C)
 
@@ -157,6 +154,16 @@ Triage: `.planning/bug-hunt/00-triage.md`. Wave A tickets are under In Progress.
 ### Performance
 
 ### Bugs
+
+#### T-168: AddRobot doubles a user-supplied /rosbridge path and reports it as a host/power failure
+
+- Severity: MEDIUM
+- Source: full E2E pass 2026-05-31 (finding F1), `.planning/uat-findings/2026-05-31-full-e2e.md`
+- Scope: src/stores/connection/useConnectionStore.helpers.ts (deriveRosbridgeUrl), src/lib/rosbridge/ConnectionManager.ts (testConnection:178 / connect:81), src/features/fleet/components/AddRobotModal/ (error copy), src/features/fleet/helpers.ts (normalizeRosbridgeUrl)
+- Problem: The connection URL is built in two layers — normalizeRosbridgeUrl sets protocol only (no path), then deriveRosbridgeUrl unconditionally appends `/rosbridge`. The app contract is "user enters the base host; the app derives /rosbridge (WS) + /webrtc (signaling)". If the user pastes the actual rosbridge endpoint (already ending in /rosbridge), deriveRosbridgeUrl produces `…/rosbridge/rosbridge` → WebSocket handshake 500 → modal shows "Failed after 3 attempts. Check the URL and ensure the robot is powered on." The error points at host/power, never reveals the doubled path, so the user cannot diagnose it. Confirmed live: base URL connects (19 topics); `/rosbridge` input fails.
+- Fix candidates: (1) dedup in deriveRosbridgeUrl — strip a trailing `/rosbridge` (and `/webrtc`) before appending; (2) surface the resolved/derived URL in the modal error so the doubled path is visible; (3) field help text: "enter the base host — /rosbridge is added automatically".
+- Acceptance: pasting a URL that already ends in /rosbridge connects successfully (no double-append); failed connection error reveals the resolved URL; unit test for deriveRosbridgeUrl dedup.
+- Branch: fix/t-168/rosbridge-path-dedup
 
 #### T-117: Generate visual regression baselines for canvas-content integration tests
 
@@ -224,6 +231,17 @@ Triage: `.planning/bug-hunt/00-triage.md`. Wave A tickets are under In Progress.
   5. Disable reconnection attempts while AddRobotModal is open (debatable — may mask real issue)
 - Acceptance: user can open AddRobotModal, fill form, and submit without perceived freeze while another robot is reconnecting; modal closes within 3 seconds on valid URL; toast notifications clearly attribute which robot they refer to
 - Branch: fix/t-114/add-robot-during-reconnect
+
+#### T-169: Deep-link / refresh into a robot view lands disconnected (opt-in reconnect-on-load)
+
+- Severity: LOW (by-design UX enhancement, not a defect)
+- Source: full E2E pass 2026-05-31 (finding F2), `.planning/uat-findings/2026-05-31-full-e2e.md`
+- Scope: src/stores/connection/useConnectionStore.ts (persist merge / status reset), WorkspacePage / PilotPage load
+- Problem: Zustand persist (key `rtd-connections`) rehydrates the robot record on load but resets `status` to `disconnected` and nulls lastSeen/reconnectAttempt — intentional, per CLAUDE.md "do NOT auto-connect on startup." Consequence: hard-navigating or refreshing `/robot/:id` or `/pilot/:id` renders disconnected (compass `---°`, gyro `---`, video idle) until the user clicks Reconnect. In-app client-side nav keeps the live socket; only full page loads drop it.
+- Assessment: working as designed. Reconnect button restores the link + video. Filed only as a possible UX improvement.
+- Fix candidates: (1) opt-in "reconnect on load" toggle (per-robot or global setting); (2) a one-click "Reconnect" affordance more prominent on the disconnected workspace/pilot view; (3) leave as-is and document the no-auto-connect behavior.
+- Acceptance: if implemented — deep-linking into a previously-connected robot optionally re-establishes the connection without manual Reconnect, gated behind an explicit setting (no silent auto-dialing by default).
+- Branch: feat/t-169/reconnect-on-load
 
 ### Documentation (run last — all paths finalized)
 
