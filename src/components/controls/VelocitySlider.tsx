@@ -25,8 +25,8 @@ export function VelocitySlider({
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between">
-        <span className="font-sans text-xs text-text-muted">{label}</span>
-        <span className="font-mono text-xs text-accent tabular-nums">
+        <span className="font-sans text-[0.85em] text-text-muted">{label}</span>
+        <span className="font-mono text-[0.85em] text-accent tabular-nums">
           {value.toFixed(2)} {unit}
         </span>
       </div>

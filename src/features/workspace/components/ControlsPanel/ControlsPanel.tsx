@@ -98,7 +98,14 @@ export function ControlsPanel({ connected, ros, topicName }: ControlsPanelProps)
     <div
       ref={panelRef}
       className="flex flex-col items-center w-full px-2 h-full [container-type:size] gap-[clamp(0.25rem,1.6cqh,0.625rem)] pt-[clamp(0.125rem,1cqh,0.5rem)] overflow-y-auto"
-      style={{ '--dpad-size': 'clamp(2.25rem, min(13cqh, 22cqw), 3.25rem)' } as React.CSSProperties}
+      style={
+        {
+          '--dpad-size': 'clamp(2.25rem, min(13cqh, 22cqw), 3.25rem)',
+          // Fluid base font-size: all panel text is em-relative to this, so it
+          // scales with the panel (which tracks the browser size). cqi = panel width.
+          fontSize: 'clamp(0.7rem, 3.8cqi, 1.05rem)',
+        } as React.CSSProperties
+      }
       tabIndex={0}
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
@@ -108,7 +115,7 @@ export function ControlsPanel({ connected, ros, topicName }: ControlsPanelProps)
         size="sm"
         disabled={disabled}
         aria-label="Emergency stop"
-        className="w-full font-mono text-[clamp(0.625rem,3.5cqmin,0.875rem)] font-semibold cursor-pointer transition-all duration-200"
+        className="w-full font-mono text-[1em] font-semibold cursor-pointer transition-all duration-200"
         onClick={handleEmergencyStop}
       >
         <OctagonX className="size-4" />
@@ -194,7 +201,7 @@ export function ControlsPanel({ connected, ros, topicName }: ControlsPanelProps)
         />
       </div>
 
-      <div className="flex items-center gap-1.5 font-mono text-[clamp(0.5rem,2.5cqmin,0.75rem)]">
+      <div className="flex items-center gap-1.5 font-mono text-[0.8em]">
         <span
           className={cn(
             'size-2 rounded-full',
