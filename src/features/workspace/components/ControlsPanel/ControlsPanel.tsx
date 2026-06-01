@@ -108,7 +108,7 @@ export function ControlsPanel({ connected, ros, topicName }: ControlsPanelProps)
         size="sm"
         disabled={disabled}
         aria-label="Emergency stop"
-        className="w-full font-mono text-xs font-semibold cursor-pointer transition-all duration-200"
+        className="w-full font-mono text-[clamp(0.625rem,3.5cqmin,0.875rem)] font-semibold cursor-pointer transition-all duration-200"
         onClick={handleEmergencyStop}
       >
         <OctagonX className="size-4" />
@@ -194,7 +194,7 @@ export function ControlsPanel({ connected, ros, topicName }: ControlsPanelProps)
         />
       </div>
 
-      <div className="flex items-center gap-1.5 font-mono text-xs">
+      <div className="flex items-center gap-1.5 font-mono text-[clamp(0.5rem,2.5cqmin,0.75rem)]">
         <span
           className={cn(
             'size-2 rounded-full',

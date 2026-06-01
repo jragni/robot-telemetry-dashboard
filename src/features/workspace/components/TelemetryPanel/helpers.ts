@@ -109,11 +109,17 @@ export function drawTimeAxis(
   timeWindowMs: number,
   colors: CanvasColors,
 ): void {
-  ctx.font = '12px "Roboto Mono", monospace';
+  // Scale font and thin out labels on narrow plots so they never collide.
+  const fontPx = plotW < 240 ? 9 : plotW < 360 ? 10 : 12;
+  ctx.font = `${String(fontPx)}px "Roboto Mono", monospace`;
   ctx.fillStyle = colors.textMuted;
   ctx.textBaseline = 'top';
 
+  const maxLabels = Math.max(2, Math.floor(plotW / 44));
+  const step = Math.max(1, Math.ceil((TELEMETRY_GRID_LINES_V + 1) / maxLabels));
+
   for (let i = 0; i <= TELEMETRY_GRID_LINES_V; i++) {
+    if (i % step !== 0 && i !== TELEMETRY_GRID_LINES_V) continue;
     const x = left + (plotW / TELEMETRY_GRID_LINES_V) * i;
     const t = (timeWindowMs / TELEMETRY_GRID_LINES_V) * i;
     const label = t === 0 ? 'now' : `-${String(Math.round(t / 1000))}s`;

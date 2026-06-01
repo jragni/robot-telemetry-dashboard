@@ -36,7 +36,7 @@ export function WorkspacePanel({
 
   return (
     <article className="relative bg-surface-primary border border-border rounded-sm shadow-glow-top flex flex-col h-full">
-      <header className="flex items-center gap-2 px-3 h-9 shrink-0 border-b border-border min-w-0">
+      <header className="flex items-center gap-1.5 px-2 h-7 shrink-0 border-b border-border min-w-0">
         <Icon className="size-3.5 text-text-muted shrink-0" aria-hidden="true" />
         <span className="font-mono text-xs font-semibold text-text-secondary uppercase tracking-widest shrink-0">
           {label}
@@ -88,7 +88,7 @@ export function WorkspacePanel({
           )}
         </div>
       </header>
-      <div className="flex-1 p-4 min-h-0 overflow-auto">
+      <div className="flex-1 min-h-0 p-[clamp(0.375rem,2.5cqmin,0.75rem)] [container-type:size] overflow-auto">
         <PanelErrorBoundary>
           <Component {...componentProps} />
         </PanelErrorBoundary>
