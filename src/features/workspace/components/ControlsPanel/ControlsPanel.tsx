@@ -108,7 +108,8 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
   return (
     <div
       ref={panelRef}
-      className="@container flex flex-col items-center gap-2 @sm:gap-3 w-full px-2 pt-1 overflow-y-auto"
+      className="flex flex-col items-center w-full px-2 h-full [container-type:size] gap-[clamp(0.25rem,1.6cqh,0.625rem)] pt-[clamp(0.125rem,1cqh,0.5rem)] overflow-y-auto"
+      style={{ '--dpad-size': 'clamp(2.25rem, 13cqh, 3.25rem)' } as React.CSSProperties}
       tabIndex={0}
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
@@ -126,7 +127,7 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
       </Button>
 
       <div
-        className="grid grid-cols-3 gap-0.5 @xs:gap-1 w-fit mx-auto"
+        className="grid grid-cols-3 gap-[clamp(0.125rem,0.8cqh,0.375rem)] w-fit mx-auto"
         role="group"
         aria-label="Directional controls — press and hold"
       >
@@ -181,7 +182,7 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
         <div />
       </div>
 
-      <div className="w-full flex flex-col gap-3">
+      <div className="w-full flex flex-col gap-[clamp(0.375rem,1.5cqh,0.75rem)]">
         <VelocitySlider
           label="LINEAR"
           value={linearVelocity}
