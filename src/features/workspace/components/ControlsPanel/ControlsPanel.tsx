@@ -4,6 +4,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, OctagonX, Square } f
 import { useControlPublisher } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { FitToBox } from '@/components/FitToBox';
 import { DpadButton, VelocitySlider } from '@/components/controls';
 import { KEY_TO_DIRECTION, VELOCITY_LIMITS } from '@/constants/controls';
 import type { Direction } from '@/types/control.types';
@@ -95,132 +96,127 @@ export function ControlsPanel({ connected, ros, topicName }: ControlsPanelProps)
   }, [handleDirectionStart, handleDirectionEnd, handleEmergencyStop]);
 
   return (
-    <div
-      ref={panelRef}
-      className="flex flex-col items-center w-full px-2 h-full [container-type:size] gap-[clamp(0.25rem,1.6cqh,0.625rem)] pt-[clamp(0.125rem,1cqh,0.5rem)] overflow-y-auto"
-      style={
-        {
-          '--dpad-size': 'clamp(2.25rem, min(15cqh, 24cqw), 3.75rem)',
-          // Fluid base font-size: all panel text is em-relative to this, so it
-          // scales with the panel (which tracks the browser size). cqi = panel width.
-          fontSize: 'clamp(0.7rem, 3.8cqi, 1.05rem)',
-        } as React.CSSProperties
-      }
-      tabIndex={0}
-      role="toolbar"
-      aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
-    >
-      <Button
-        variant="danger"
-        size="sm"
-        disabled={disabled}
-        aria-label="Emergency stop"
-        className="w-full font-mono text-[1em] font-semibold cursor-pointer transition-all duration-200"
-        onClick={handleEmergencyStop}
-      >
-        <OctagonX className="size-4" />
-        E-STOP
-      </Button>
-
+    <FitToBox minScale={0.4} maxScale={1.6}>
       <div
-        className="grid grid-cols-3 gap-[clamp(0.125rem,0.8cqh,0.375rem)] w-fit mx-auto"
-        role="group"
-        aria-label="Directional controls — press and hold"
+        ref={panelRef}
+        className="flex flex-col items-center gap-2 w-56 px-1 text-sm"
+        style={{ '--dpad-size': '2.75rem' } as React.CSSProperties}
+        tabIndex={0}
+        role="toolbar"
+        aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
       >
-        <div />
-        <DpadButton
-          direction="forward"
-          icon={ChevronUp}
-          label="Move forward"
-          activeDirection={activeDirection}
+        <Button
+          variant="danger"
+          size="sm"
           disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <div />
-        <DpadButton
-          direction="left"
-          icon={ChevronLeft}
-          label="Turn left"
-          activeDirection={activeDirection}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <DpadButton
-          direction="stop"
-          icon={Square}
-          label="Stop"
-          activeDirection={null}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <DpadButton
-          direction="right"
-          icon={ChevronRight}
-          label="Turn right"
-          activeDirection={activeDirection}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <div />
-        <DpadButton
-          direction="backward"
-          icon={ChevronDown}
-          label="Move backward"
-          activeDirection={activeDirection}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <div />
-      </div>
-
-      <div className="w-full flex flex-col gap-[clamp(0.375rem,1.5cqh,0.75rem)]">
-        <VelocitySlider
-          label="LINEAR"
-          value={linearVelocity}
-          min={VELOCITY_LIMITS.linear.min}
-          max={VELOCITY_LIMITS.linear.max}
-          step={0.01}
-          unit="m/s"
-          disabled={disabled}
-          onChange={handleLinearChange}
-        />
-        <VelocitySlider
-          label="ANGULAR"
-          value={angularVelocity}
-          min={VELOCITY_LIMITS.angular.min}
-          max={VELOCITY_LIMITS.angular.max}
-          step={0.01}
-          unit="rad/s"
-          disabled={disabled}
-          onChange={handleAngularChange}
-        />
-      </div>
-
-      <div className="flex items-center gap-1.5 font-mono text-[0.8em]">
-        <span
-          className={cn(
-            'size-2 rounded-full',
-            !connected && 'bg-status-critical',
-            connected && !isActive && 'bg-status-offline',
-            connected && isActive && 'bg-status-nominal motion-safe:animate-pulse',
-          )}
-          aria-hidden="true"
-        />
-        <span
-          className={cn(
-            !connected && 'text-status-offline',
-            connected && !isActive && 'text-status-offline',
-            connected && isActive && 'text-status-nominal',
-          )}
+          aria-label="Emergency stop"
+          className="w-full font-mono text-[1em] font-semibold cursor-pointer transition-all duration-200"
+          onClick={handleEmergencyStop}
         >
-          {!connected ? 'DISCONNECTED' : isActive ? 'ACTIVE' : 'STOPPED'}
-        </span>
+          <OctagonX className="size-4" />
+          E-STOP
+        </Button>
+
+        <div
+          className="grid grid-cols-3 gap-1 w-fit mx-auto"
+          role="group"
+          aria-label="Directional controls — press and hold"
+        >
+          <div />
+          <DpadButton
+            direction="forward"
+            icon={ChevronUp}
+            label="Move forward"
+            activeDirection={activeDirection}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <div />
+          <DpadButton
+            direction="left"
+            icon={ChevronLeft}
+            label="Turn left"
+            activeDirection={activeDirection}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <DpadButton
+            direction="stop"
+            icon={Square}
+            label="Stop"
+            activeDirection={null}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <DpadButton
+            direction="right"
+            icon={ChevronRight}
+            label="Turn right"
+            activeDirection={activeDirection}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <div />
+          <DpadButton
+            direction="backward"
+            icon={ChevronDown}
+            label="Move backward"
+            activeDirection={activeDirection}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <div />
+        </div>
+
+        <div className="w-full flex flex-col gap-2">
+          <VelocitySlider
+            label="LINEAR"
+            value={linearVelocity}
+            min={VELOCITY_LIMITS.linear.min}
+            max={VELOCITY_LIMITS.linear.max}
+            step={0.01}
+            unit="m/s"
+            disabled={disabled}
+            onChange={handleLinearChange}
+          />
+          <VelocitySlider
+            label="ANGULAR"
+            value={angularVelocity}
+            min={VELOCITY_LIMITS.angular.min}
+            max={VELOCITY_LIMITS.angular.max}
+            step={0.01}
+            unit="rad/s"
+            disabled={disabled}
+            onChange={handleAngularChange}
+          />
+        </div>
+
+        <div className="flex items-center gap-1.5 font-mono text-[0.8em]">
+          <span
+            className={cn(
+              'size-2 rounded-full',
+              !connected && 'bg-status-critical',
+              connected && !isActive && 'bg-status-offline',
+              connected && isActive && 'bg-status-nominal motion-safe:animate-pulse',
+            )}
+            aria-hidden="true"
+          />
+          <span
+            className={cn(
+              !connected && 'text-status-offline',
+              connected && !isActive && 'text-status-offline',
+              connected && isActive && 'text-status-nominal',
+            )}
+          >
+            {!connected ? 'DISCONNECTED' : isActive ? 'ACTIVE' : 'STOPPED'}
+          </span>
+        </div>
       </div>
-    </div>
+    </FitToBox>
   );
 }

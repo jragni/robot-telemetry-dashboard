@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { useBatterySubscription, useConnectionUptime, useRosGraph, useRosTopics } from '@/hooks';
 import { Button } from '@/components/ui/button';
+import { FitToBox } from '@/components/FitToBox';
 import { formatLastSeen, formatUptime, getBatteryColor } from '@/utils';
 
 import { CONNECTION_BUTTON, STATUS_DISPLAY } from './SystemStatusPanel.constants';
@@ -46,83 +47,87 @@ export function SystemStatusPanel({
   }
 
   return (
-    <dl className="flex flex-col gap-2 font-mono text-xs w-full h-full px-2 pt-1 overflow-y-auto scrollbar-thin">
-      <div className="flex items-center justify-between">
-        <span className="font-sans text-xs font-semibold text-text-primary">{name}</span>
-        <div className="flex items-center gap-1.5" aria-live="polite">
-          <span className={`size-2 rounded-full ${dotClass}`} aria-hidden="true" />
-          <span className={`font-mono text-xs ${textClass}`}>{statusLabel}</span>
+    <FitToBox align="top" minScale={0.5} maxScale={1.4}>
+      <dl className="flex flex-col gap-2 font-mono text-xs w-64 px-1">
+        <div className="flex items-center justify-between">
+          <span className="font-sans text-xs font-semibold text-text-primary">{name}</span>
+          <div className="flex items-center gap-1.5" aria-live="polite">
+            <span className={`size-2 rounded-full ${dotClass}`} aria-hidden="true" />
+            <span className={`font-mono text-xs ${textClass}`}>{statusLabel}</span>
+          </div>
         </div>
-      </div>
 
-      <span className="font-mono text-xs text-text-muted truncate">{url}</span>
+        <span className="font-mono text-xs text-text-muted truncate">{url}</span>
 
-      {!!(onConnect ?? onDisconnect) && (
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={isConnecting}
-          onClick={connected ? onDisconnect : onConnect}
-          className="w-full font-sans text-xs uppercase tracking-widest cursor-pointer transition"
-          aria-label={connected ? 'Disconnect from robot' : 'Connect to robot'}
-        >
-          <ButtonIcon size={12} className={buttonIconClass} /> {buttonLabel}
-        </Button>
-      )}
+        {!!(onConnect ?? onDisconnect) && (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isConnecting}
+            onClick={connected ? onDisconnect : onConnect}
+            className="w-full font-sans text-xs uppercase tracking-widest cursor-pointer transition"
+            aria-label={connected ? 'Disconnect from robot' : 'Connect to robot'}
+          >
+            <ButtonIcon size={12} className={buttonIconClass} /> {buttonLabel}
+          </Button>
+        )}
 
-      <hr className="border-border border-dashed my-1" />
+        <hr className="border-border border-dashed my-1" />
 
-      {connected && (
-        <>
-          <StatusRow label="UPTIME" value={formatUptime(uptimeSeconds)} />
-          <StatusRow
-            label="BATTERY"
-            value={battery?.percentage != null ? `${String(Math.round(battery.percentage))}%` : '—'}
-            valueClass={getBatteryColor(battery?.percentage ?? null)}
-          />
-        </>
-      )}
+        {connected && (
+          <>
+            <StatusRow label="UPTIME" value={formatUptime(uptimeSeconds)} />
+            <StatusRow
+              label="BATTERY"
+              value={
+                battery?.percentage != null ? `${String(Math.round(battery.percentage))}%` : '—'
+              }
+              valueClass={getBatteryColor(battery?.percentage ?? null)}
+            />
+          </>
+        )}
 
-      <StatusRow label="LAST SEEN" value={formatLastSeen(lastSeen)} />
+        <StatusRow label="LAST SEEN" value={formatLastSeen(lastSeen)} />
 
-      <hr className="border-border border-dashed my-1" />
+        <hr className="border-border border-dashed my-1" />
 
-      <ExpandableRow
-        label="NODES"
-        count={rosGraph?.nodes ?? 0}
-        names={rosGraph?.nodeNames ?? []}
-        expanded={expandedSection === 'nodes'}
-        onToggle={() => {
-          toggleSection('nodes');
-        }}
-      />
-      <ExpandableRow
-        label="TOPICS"
-        count={rosGraph?.topics ?? 0}
-        names={rosGraph?.topicNames ?? []}
-        expanded={expandedSection === 'topics'}
-        onToggle={() => {
-          toggleSection('topics');
-        }}
-      />
-      <ExpandableRow
-        label="SERVICES"
-        count={rosGraph?.services ?? 0}
-        names={rosGraph?.serviceNames ?? []}
-        expanded={expandedSection === 'services'}
-        onToggle={() => {
-          toggleSection('services');
-        }}
-      />
-      <ExpandableRow
-        label="ACTIONS"
-        count={rosGraph?.actions ?? 0}
-        names={rosGraph?.actionNames ?? []}
-        expanded={expandedSection === 'actions'}
-        onToggle={() => {
-          toggleSection('actions');
-        }}
-      />
-    </dl>
+        <ExpandableRow
+          label="NODES"
+          count={rosGraph?.nodes ?? 0}
+          names={rosGraph?.nodeNames ?? []}
+          expanded={expandedSection === 'nodes'}
+          onToggle={() => {
+            toggleSection('nodes');
+          }}
+        />
+        <ExpandableRow
+          label="TOPICS"
+          count={rosGraph?.topics ?? 0}
+          names={rosGraph?.topicNames ?? []}
+          expanded={expandedSection === 'topics'}
+          onToggle={() => {
+            toggleSection('topics');
+          }}
+        />
+        <ExpandableRow
+          label="SERVICES"
+          count={rosGraph?.services ?? 0}
+          names={rosGraph?.serviceNames ?? []}
+          expanded={expandedSection === 'services'}
+          onToggle={() => {
+            toggleSection('services');
+          }}
+        />
+        <ExpandableRow
+          label="ACTIONS"
+          count={rosGraph?.actions ?? 0}
+          names={rosGraph?.actionNames ?? []}
+          expanded={expandedSection === 'actions'}
+          onToggle={() => {
+            toggleSection('actions');
+          }}
+        />
+      </dl>
+    </FitToBox>
   );
 }
