@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, Moon, Sun } from 'lucide-react';
+import { Crosshair, Menu, Moon, Sun } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import type { HeaderProps } from '@/types/Header.types';
@@ -44,6 +44,9 @@ export function Header({
 }: HeaderProps) {
   const location = useLocation();
   const breadcrumb = getBreadcrumb(location.pathname);
+  const workspaceRobotId = location.pathname.startsWith('/robot/')
+    ? (location.pathname.split('/')[2] ?? null)
+    : null;
 
   return (
     <header className="bg-surface-primary border-b border-border flex items-center px-3 gap-2.5 h-full shadow-glow-bottom relative z-10">
@@ -71,7 +74,20 @@ export function Header({
         {breadcrumb}
       </span>
 
-      <div className="ml-auto flex items-center shrink-0">
+      <div className="ml-auto flex items-center gap-2 shrink-0">
+        {workspaceRobotId ? (
+          <Button
+            asChild
+            variant="secondary"
+            size="sm"
+            className="font-sans text-xs cursor-pointer transition-all duration-200"
+          >
+            <Link to={`/pilot/${workspaceRobotId}`} aria-label="Enter Pilot Mode">
+              <Crosshair className="size-3.5" />
+              <span className="hidden sm:inline">Pilot Mode</span>
+            </Link>
+          </Button>
+        ) : null}
         <Button
           variant="ghost"
           size="icon"

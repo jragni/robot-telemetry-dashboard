@@ -150,7 +150,6 @@ export function WorkspacePage() {
             Component={ControlsPanel}
             componentProps={{
               connected,
-              robotId: id,
               ros,
               topicName: selectedTopics.controls ?? '',
             }}

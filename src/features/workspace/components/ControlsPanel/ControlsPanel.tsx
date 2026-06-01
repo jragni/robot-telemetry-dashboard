@@ -1,14 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  Crosshair,
-  OctagonX,
-  Square,
-} from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, OctagonX, Square } from 'lucide-react';
 
 import { useControlPublisher } from '@/hooks';
 import { cn } from '@/lib/utils';
@@ -26,10 +17,9 @@ import type { ControlsPanelProps } from './ControlsPanel.types';
  *  arrow keys for direction, Escape for E-STOP.
  * @prop ros - roslib Ros instance for publishing commands (undefined when disconnected).
  * @prop connected - Whether the robot connection is active.
- * @prop robotId - Robot identifier for Pilot Mode navigation.
  * @prop topicName - ROS topic name for Twist command publishing.
  */
-export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPanelProps) {
+export function ControlsPanel({ connected, ros, topicName }: ControlsPanelProps) {
   const {
     angularVelocity,
     handleAngularChange,
@@ -41,7 +31,6 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
     linearVelocity,
   } = useControlPublisher({ ros, topicName });
   const disabled = !connected;
-  const navigate = useNavigate();
   const [activeDirection, setActiveDirection] = useState<Direction | null>(null);
   const activeRef = useRef<Direction | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -109,7 +98,7 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
     <div
       ref={panelRef}
       className="flex flex-col items-center w-full px-2 h-full [container-type:size] gap-[clamp(0.25rem,1.6cqh,0.625rem)] pt-[clamp(0.125rem,1cqh,0.5rem)] overflow-y-auto"
-      style={{ '--dpad-size': 'clamp(2.25rem, 13cqh, 3.25rem)' } as React.CSSProperties}
+      style={{ '--dpad-size': 'clamp(2.25rem, min(13cqh, 22cqw), 3.25rem)' } as React.CSSProperties}
       tabIndex={0}
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
@@ -225,24 +214,6 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
           {!connected ? 'DISCONNECTED' : isActive ? 'ACTIVE' : 'STOPPED'}
         </span>
       </div>
-
-      {robotId && (
-        <>
-          <hr className="w-full border-border" />
-          <Button
-            variant="secondary"
-            size="sm"
-            className="w-full font-sans text-xs cursor-pointer transition-all duration-200"
-            aria-label="Enter Pilot Mode"
-            onClick={() => {
-              void navigate(`/pilot/${robotId}`);
-            }}
-          >
-            <Crosshair className="size-3.5" />
-            Pilot Mode
-          </Button>
-        </>
-      )}
     </div>
   );
 }

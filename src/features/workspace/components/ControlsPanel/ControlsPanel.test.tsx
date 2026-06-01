@@ -45,7 +45,6 @@ function createMockRos(): Ros {
 function renderPanel(overrides: Partial<Parameters<typeof ControlsPanel>[0]> = {}) {
   const defaultProps = {
     connected: true,
-    robotId: 'robot-1',
     ros: createMockRos(),
     topicName: '/cmd_vel',
     ...overrides,
@@ -83,16 +82,6 @@ describe('ControlsPanel', () => {
   it('disables E-STOP button when disconnected', () => {
     renderPanel({ connected: false });
     expect(screen.getByRole('button', { name: /emergency stop/i })).toBeDisabled();
-  });
-
-  it('renders Pilot Mode button when robotId is provided', () => {
-    renderPanel({ robotId: 'robot-1' });
-    expect(screen.getByRole('button', { name: /enter pilot mode/i })).toBeInTheDocument();
-  });
-
-  it('does not render Pilot Mode button when robotId is undefined', () => {
-    renderPanel({ robotId: undefined });
-    expect(screen.queryByRole('button', { name: /enter pilot mode/i })).not.toBeInTheDocument();
   });
 
   it('renders with ros undefined without crashing', () => {
