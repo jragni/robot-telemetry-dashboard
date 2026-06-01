@@ -108,12 +108,16 @@ export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
       ctx.stroke();
     }
 
-    // Axis distance labels — X (forward) on vertical axis, Y (left) on horizontal
-    ctx.font = '12px "Roboto Mono", monospace';
+    // Axis distance labels — X (forward) on vertical axis, Y (left) on horizontal.
+    // Font scales with canvas size and labels are thinned (every other gridline)
+    // so they stay legible and uncluttered at any panel size.
+    const labelFont = Math.max(8, Math.min(10, Math.round(size * 0.04)));
+    ctx.font = `${String(labelFont)}px "Roboto Mono", monospace`;
     ctx.fillStyle = c.textMuted;
     ctx.globalAlpha = LIDAR_LABEL_ALPHA;
     const metersPerGrid = rangeMax / (LIDAR_GRID_LINE_COUNT / 2) / zoom;
     for (let i = 1; i < LIDAR_GRID_LINE_COUNT; i++) {
+      if (i % 2 !== 0) continue;
       const pos = i * gridSpacing;
       const distFromCenter = (i - LIDAR_GRID_LINE_COUNT / 2) * metersPerGrid;
       const labelVal = Math.abs(distFromCenter);
@@ -151,26 +155,6 @@ export function LidarPanel({ connected, ros, topicName }: LidarPanelProps) {
     ctx.lineTo(size, cy);
     ctx.stroke();
     ctx.globalAlpha = 1;
-
-    // Range circles at 50% and 100%
-    ctx.strokeStyle = c.accent;
-    ctx.lineWidth = 1;
-    const halfRange = (rangeMax / 2) * scale;
-    const fullRange = rangeMax * scale;
-    ctx.beginPath();
-    ctx.arc(cx, cy, halfRange, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(cx, cy, fullRange, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Range labels — positioned inside the circle to avoid clipping
-    ctx.font = '12px "Roboto Mono", monospace';
-    ctx.fillStyle = c.textMuted;
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText(`${String(rangeMax / 2)}m`, cx + halfRange - 4, cy - 4);
-    ctx.fillText(`${String(rangeMax)}m`, cx + fullRange - 4, cy - 4);
 
     // Scan points
     if (connected) {

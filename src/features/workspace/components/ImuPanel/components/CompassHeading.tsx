@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useCanvasColors } from '@/hooks';
 import { normalizeHeading } from '@/utils';
@@ -28,6 +28,23 @@ import {
  */
 export function CompassHeading({ yaw }: CompassHeadingProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState(COMPASS_HEADING_CANVAS_SIZE);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const box = entries[0]?.contentRect;
+      if (!box) return;
+      const next = Math.floor(Math.min(box.width, box.height));
+      if (next > 0) setSize(next);
+    });
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const { colorsRef, themeVersion, resolveColors } = useCanvasColors(
     COMPASS_HEADING_COLOR_FALLBACKS,
@@ -101,25 +118,27 @@ export function CompassHeading({ yaw }: CompassHeadingProps) {
     ctx.fill();
 
     const headingNormalized = normalizeHeading(yaw);
-    ctx.font = '600 12px "Roboto Mono", monospace';
+    ctx.font = `600 ${String(Math.max(11, Math.round(size * 0.11)))}px "Roboto Mono", monospace`;
     ctx.fillStyle = c.accent;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`${headingNormalized.toFixed(0)}°`, cx, cy);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
-  }, [yaw, resolveColors, themeVersion, colorsRef]);
+  }, [yaw, size, resolveColors, themeVersion, colorsRef]);
 
   useEffect(() => {
     draw();
   }, [draw]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={COMPASS_HEADING_CANVAS_SIZE}
-      height={COMPASS_HEADING_CANVAS_SIZE}
-      className="rounded-full"
-      aria-label={`Compass heading: ${String(Math.round(normalizeHeading(yaw)))}°`}
-    />
+    <div ref={containerRef} className="flex h-full w-full min-h-0 items-center justify-center">
+      <canvas
+        ref={canvasRef}
+        width={size}
+        height={size}
+        className="rounded-full"
+        aria-label={`Compass heading: ${String(Math.round(normalizeHeading(yaw)))}°`}
+      />
+    </div>
   );
 }
