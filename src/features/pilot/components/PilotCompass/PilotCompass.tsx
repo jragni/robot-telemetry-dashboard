@@ -76,22 +76,22 @@ export function PilotCompass({ heading }: PilotCompassProps) {
 
       ctx.beginPath();
       ctx.strokeStyle = isMajor ? colors.tickMajor : colors.tickMinor;
-      ctx.lineWidth = isMajor ? 1.5 : 0.5;
+      ctx.lineWidth = isMajor ? 1 : 0.5;
       const tickHeight = isMajor ? COMPASS_TICK_HEIGHT_MAJOR : COMPASS_TICK_HEIGHT_MINOR;
       ctx.moveTo(x, 0);
       ctx.lineTo(x, tickHeight);
       ctx.stroke();
 
       if (cardinal) {
-        ctx.font = '600 12px Exo, sans-serif';
+        ctx.font = '600 10px Exo, sans-serif';
         ctx.fillStyle = colors.accent;
         ctx.textAlign = 'center';
-        ctx.fillText(cardinal, x, 24);
+        ctx.fillText(cardinal, x, 19);
       } else if (isMajor) {
-        ctx.font = '400 12px "Roboto Mono", monospace';
+        ctx.font = '400 9px "Roboto Mono", monospace';
         ctx.fillStyle = colors.textMuted;
         ctx.textAlign = 'center';
-        ctx.fillText(`${String(deg)}°`, x, 22);
+        ctx.fillText(`${String(deg)}°`, x, 18);
       }
     }
 
@@ -138,7 +138,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
       />
       <span
         className={cn(
-          'font-mono text-xl font-semibold tabular-nums',
+          'font-mono text-sm font-semibold tabular-nums',
           isUnknown ? 'text-text-muted' : 'text-accent',
         )}
       >

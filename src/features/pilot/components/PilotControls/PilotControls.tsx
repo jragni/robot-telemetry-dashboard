@@ -114,8 +114,8 @@ export function PilotControls({
       className={`${HUD_PANEL_BASE} @container p-2 lg:p-3 flex flex-col gap-2 lg:gap-3`}
       style={
         {
-          '--dpad-size': 'clamp(2rem, 16cqi, 2.5rem)',
-          fontSize: 'clamp(0.8rem, 4cqi, 1rem)',
+          '--dpad-size': 'clamp(1.75rem, 13cqi, 2.25rem)',
+          fontSize: 'clamp(0.7rem, 3.4cqi, 0.9rem)',
         } as React.CSSProperties
       }
       tabIndex={0}
