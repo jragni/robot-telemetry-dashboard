@@ -63,6 +63,10 @@ export function PilotCompass({ heading }: PilotCompassProps) {
 
     const cardinalSet = new Map(COMPASS_CARDINALS.map((c) => [c.deg, c.label]));
 
+    // Soft phosphor glow on the whole tape (HUD heading-tape aesthetic).
+    ctx.shadowColor = colors.accent;
+    ctx.shadowBlur = 3;
+
     for (let deg = 0; deg < 360; deg += COMPASS_TICK_MINOR_INTERVAL) {
       let offset = deg - drawHeading;
       if (offset > 180) offset -= 360;
@@ -104,6 +108,8 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     ctx.closePath();
     ctx.fill();
 
+    ctx.shadowBlur = 0;
+
     // Fade edges — uses rgba for Canvas 2D compositing (cannot use CSS tokens)
     const fadeLeft = ctx.createLinearGradient(0, 0, COMPASS_FADE_WIDTH, 0);
     fadeLeft.addColorStop(0, 'rgba(0,0,0,1)');
@@ -123,7 +129,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
   const headingNormalized = ((drawHeading % 360) + 360) % 360;
 
   return (
-    <div className="flex flex-col items-center gap-0.5 pointer-events-auto bg-surface-base/60 backdrop-blur-sm rounded-sm px-2 py-1">
+    <div className="flex flex-col items-center gap-0.5 pointer-events-auto">
       <canvas
         ref={canvasRef}
         width={stripWidth}

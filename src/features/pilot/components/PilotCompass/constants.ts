@@ -21,7 +21,7 @@ export const COMPASS_POINTER_HEIGHT_MOBILE = 5;
 export const COMPASS_DEGREES_VISIBLE = 120;
 export const COMPASS_FADE_WIDTH = 30;
 export const COMPASS_TICK_MAJOR_INTERVAL = 30;
-export const COMPASS_TICK_MINOR_INTERVAL = 10;
+export const COMPASS_TICK_MINOR_INTERVAL = 5;
 
 export const COMPASS_TOKEN_MAP: Record<string, string> = {
   accent: '--color-accent',
