@@ -18,6 +18,7 @@ import {
   LIDAR_TICK_LENGTH,
   LIDAR_TOKEN_MAP,
   MINIMAP_SIZE_MOBILE_MAX,
+  PILOT_ZOOM_DEFAULT,
   PILOT_ZOOM_MAX,
   PILOT_ZOOM_MIN,
   PILOT_ZOOM_STEP,
@@ -42,6 +43,7 @@ export function PilotLidarMinimap({ heading, maxSize, points, rangeMax }: PilotL
     min: PILOT_ZOOM_MIN,
     max: PILOT_ZOOM_MAX,
     step: PILOT_ZOOM_STEP,
+    initial: PILOT_ZOOM_DEFAULT,
   });
   const computeSize = useCallback(() => clampSize(maxSize), [maxSize]);
   const size = useResponsiveSize(computeSize);

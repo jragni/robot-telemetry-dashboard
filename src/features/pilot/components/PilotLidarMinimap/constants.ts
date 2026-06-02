@@ -9,6 +9,7 @@ export const MINIMAP_SIZE_MOBILE_MAX = 100;
 export const PILOT_ZOOM_MIN = 0.5;
 export const PILOT_ZOOM_MAX = 4;
 export const PILOT_ZOOM_STEP = 0.2;
+export const PILOT_ZOOM_DEFAULT = 4;
 
 export const LIDAR_TICK_LENGTH = 4;
 export const LIDAR_DETAIL_THRESHOLD = 160;
