@@ -5,8 +5,11 @@ export const KEY_TO_DIRECTION: Record<string, 'forward' | 'backward' | 'left' | 
   ArrowRight: 'right',
 };
 
+// Size is driven by the --dpad-size custom property so each consumer scales the
+// cluster to its own container: the workspace ControlsPanel fluidly to its cell
+// height (cqh), Pilot Mode to its HUD width (cqi). Falls back to 2.5rem (40px).
 export const DPAD_BTN =
-  'w-8 h-8 @2xs:w-9 @2xs:h-9 @xs:w-10 @xs:h-10 bg-surface-tertiary border border-border rounded-sm font-mono text-xs text-text-muted hover:border-border-hover cursor-pointer transition-all duration-200 select-none';
+  'size-[var(--dpad-size,2.5rem)] bg-surface-tertiary border border-border rounded-sm font-mono text-xs text-text-muted hover:border-border-hover cursor-pointer transition-all duration-200 select-none';
 
 export const DPAD_BTN_ACTIVE = 'bg-accent-subtle text-accent border-accent';
 

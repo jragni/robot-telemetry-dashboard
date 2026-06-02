@@ -63,6 +63,10 @@ export function PilotCompass({ heading }: PilotCompassProps) {
 
     const cardinalSet = new Map(COMPASS_CARDINALS.map((c) => [c.deg, c.label]));
 
+    // Soft phosphor glow on the whole tape (HUD heading-tape aesthetic).
+    ctx.shadowColor = colors.accent;
+    ctx.shadowBlur = 3;
+
     for (let deg = 0; deg < 360; deg += COMPASS_TICK_MINOR_INTERVAL) {
       let offset = deg - drawHeading;
       if (offset > 180) offset -= 360;
@@ -76,22 +80,22 @@ export function PilotCompass({ heading }: PilotCompassProps) {
 
       ctx.beginPath();
       ctx.strokeStyle = isMajor ? colors.tickMajor : colors.tickMinor;
-      ctx.lineWidth = isMajor ? 1.5 : 0.5;
+      ctx.lineWidth = isMajor ? 1 : 0.5;
       const tickHeight = isMajor ? COMPASS_TICK_HEIGHT_MAJOR : COMPASS_TICK_HEIGHT_MINOR;
       ctx.moveTo(x, 0);
       ctx.lineTo(x, tickHeight);
       ctx.stroke();
 
       if (cardinal) {
-        ctx.font = '600 12px Exo, sans-serif';
+        ctx.font = '600 10px Exo, sans-serif';
         ctx.fillStyle = colors.accent;
         ctx.textAlign = 'center';
-        ctx.fillText(cardinal, x, 24);
+        ctx.fillText(cardinal, x, 19);
       } else if (isMajor) {
-        ctx.font = '400 12px "Roboto Mono", monospace';
+        ctx.font = '400 9px "Roboto Mono", monospace';
         ctx.fillStyle = colors.textMuted;
         ctx.textAlign = 'center';
-        ctx.fillText(`${String(deg)}°`, x, 22);
+        ctx.fillText(`${String(deg)}°`, x, 18);
       }
     }
 
@@ -103,6 +107,8 @@ export function PilotCompass({ heading }: PilotCompassProps) {
     ctx.lineTo(centerX, COMPASS_POINTER_HEIGHT);
     ctx.closePath();
     ctx.fill();
+
+    ctx.shadowBlur = 0;
 
     // Fade edges — uses rgba for Canvas 2D compositing (cannot use CSS tokens)
     const fadeLeft = ctx.createLinearGradient(0, 0, COMPASS_FADE_WIDTH, 0);
@@ -123,7 +129,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
   const headingNormalized = ((drawHeading % 360) + 360) % 360;
 
   return (
-    <div className="flex flex-col items-center gap-0.5 pointer-events-auto bg-surface-base/60 backdrop-blur-sm rounded-sm px-2 py-1">
+    <div className="flex flex-col items-center gap-0.5 pointer-events-auto">
       <canvas
         ref={canvasRef}
         width={stripWidth}
@@ -138,7 +144,7 @@ export function PilotCompass({ heading }: PilotCompassProps) {
       />
       <span
         className={cn(
-          'font-mono text-xl font-semibold tabular-nums',
+          'font-mono text-sm font-semibold tabular-nums',
           isUnknown ? 'text-text-muted' : 'text-accent',
         )}
       >

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useCanvasColors } from '@/hooks';
 import { formatDegrees, withAlpha } from '@/utils';
@@ -30,6 +30,23 @@ import {
  */
 export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState(ATTITUDE_CANVAS_SIZE);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const box = entries[0]?.contentRect;
+      if (!box) return;
+      const next = Math.floor(Math.min(box.width, box.height));
+      if (next > 0) setSize(next);
+    });
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const {
     colorsRef: rawColorsRef,
@@ -122,19 +139,21 @@ export function AttitudeIndicator({ roll, pitch }: AttitudeIndicatorProps) {
     ctx.fillStyle = c.accent;
     ctx.fill();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- themeVersion forces redraw on theme change
-  }, [roll, pitch, resolveColors, themeVersion, rawColorsRef]);
+  }, [roll, pitch, size, resolveColors, themeVersion, rawColorsRef]);
 
   useEffect(() => {
     draw();
   }, [draw]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={ATTITUDE_CANVAS_SIZE}
-      height={ATTITUDE_CANVAS_SIZE}
-      className="rounded-full"
-      aria-label={`Attitude indicator: roll ${formatDegrees(roll)}°, pitch ${formatDegrees(pitch)}°`}
-    />
+    <div ref={containerRef} className="flex h-full w-full min-h-0 items-center justify-center">
+      <canvas
+        ref={canvasRef}
+        width={size}
+        height={size}
+        className="rounded-full"
+        aria-label={`Attitude indicator: roll ${formatDegrees(roll)}°, pitch ${formatDegrees(pitch)}°`}
+      />
+    </div>
   );
 }

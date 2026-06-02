@@ -14,12 +14,16 @@ export function AttitudeCompassView({ roll, pitch, yaw }: AttitudeCompassViewPro
   const heading = normalizeHeading(yaw);
 
   return (
-    <>
-      <div className="flex items-center gap-3 shrink-0 max-w-full">
-        <AttitudeIndicator roll={roll} pitch={pitch} />
-        <CompassHeading yaw={yaw} />
+    <div className="flex flex-col h-full w-full min-h-0 items-center gap-2">
+      <div className="flex flex-1 min-h-0 w-full items-center justify-center gap-3">
+        <div className="flex-1 h-full min-w-0 max-w-[50%]">
+          <AttitudeIndicator roll={roll} pitch={pitch} />
+        </div>
+        <div className="flex-1 h-full min-w-0 max-w-[50%]">
+          <CompassHeading yaw={yaw} />
+        </div>
       </div>
-      <dl className="flex gap-4 font-mono text-xs flex-wrap justify-center">
+      <dl className="flex gap-4 font-mono text-[clamp(0.625rem,3cqmin,0.875rem)] flex-wrap justify-center shrink-0">
         <div className="flex items-center gap-2">
           <dt className="font-sans text-text-secondary">ROLL</dt>
           <dd className="text-text-primary font-semibold tabular-nums w-14 text-right">
@@ -39,6 +43,6 @@ export function AttitudeCompassView({ roll, pitch, yaw }: AttitudeCompassViewPro
           </dd>
         </div>
       </dl>
-    </>
+    </div>
   );
 }

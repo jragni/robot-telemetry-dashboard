@@ -112,6 +112,12 @@ export function PilotControls({
     <div
       ref={panelRef}
       className={`${HUD_PANEL_BASE} @container p-2 lg:p-3 flex flex-col gap-2 lg:gap-3`}
+      style={
+        {
+          '--dpad-size': 'clamp(1.75rem, 13cqi, 2.25rem)',
+          fontSize: 'clamp(0.7rem, 3.4cqi, 0.9rem)',
+        } as React.CSSProperties
+      }
       tabIndex={0}
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"

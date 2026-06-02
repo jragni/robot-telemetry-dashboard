@@ -1,14 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  Crosshair,
-  OctagonX,
-  Square,
-} from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, OctagonX, Square } from 'lucide-react';
 
 import { useControlPublisher } from '@/hooks';
 import { cn } from '@/lib/utils';
@@ -26,10 +17,9 @@ import type { ControlsPanelProps } from './ControlsPanel.types';
  *  arrow keys for direction, Escape for E-STOP.
  * @prop ros - roslib Ros instance for publishing commands (undefined when disconnected).
  * @prop connected - Whether the robot connection is active.
- * @prop robotId - Robot identifier for Pilot Mode navigation.
  * @prop topicName - ROS topic name for Twist command publishing.
  */
-export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPanelProps) {
+export function ControlsPanel({ connected, ros, topicName }: ControlsPanelProps) {
   const {
     angularVelocity,
     handleAngularChange,
@@ -41,7 +31,6 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
     linearVelocity,
   } = useControlPublisher({ ros, topicName });
   const disabled = !connected;
-  const navigate = useNavigate();
   const [activeDirection, setActiveDirection] = useState<Direction | null>(null);
   const activeRef = useRef<Direction | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -108,7 +97,7 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
   return (
     <div
       ref={panelRef}
-      className="@container flex flex-col items-center gap-2 @sm:gap-3 w-full px-2 pt-1 overflow-y-auto"
+      className="flex flex-col h-full w-full [container-type:size] items-center justify-between gap-[clamp(0.25rem,1.5cqh,0.625rem)] px-1 text-[clamp(0.7rem,3.4cqmin,1rem)]"
       tabIndex={0}
       role="toolbar"
       aria-label="Robot controls — use arrow keys to move, Escape for emergency stop"
@@ -118,70 +107,75 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
         size="sm"
         disabled={disabled}
         aria-label="Emergency stop"
-        className="w-full font-mono text-xs font-semibold cursor-pointer transition-all duration-200"
+        className="w-full shrink-0 h-auto py-[clamp(0.25rem,1.5cqh,0.5rem)] font-mono text-[1em] font-semibold cursor-pointer transition-all duration-200"
         onClick={handleEmergencyStop}
       >
-        <OctagonX className="size-4" />
+        <OctagonX className="size-[1.1em]" />
         E-STOP
       </Button>
 
       <div
-        className="grid grid-cols-3 gap-0.5 @xs:gap-1 w-fit mx-auto"
-        role="group"
-        aria-label="Directional controls — press and hold"
+        className="flex-1 min-h-0 w-full flex items-center justify-center [container-type:size]"
+        style={{ '--dpad-size': 'clamp(1.5rem, 28cqmin, 5rem)' } as React.CSSProperties}
       >
-        <div />
-        <DpadButton
-          direction="forward"
-          icon={ChevronUp}
-          label="Move forward"
-          activeDirection={activeDirection}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <div />
-        <DpadButton
-          direction="left"
-          icon={ChevronLeft}
-          label="Turn left"
-          activeDirection={activeDirection}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <DpadButton
-          direction="stop"
-          icon={Square}
-          label="Stop"
-          activeDirection={null}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <DpadButton
-          direction="right"
-          icon={ChevronRight}
-          label="Turn right"
-          activeDirection={activeDirection}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <div />
-        <DpadButton
-          direction="backward"
-          icon={ChevronDown}
-          label="Move backward"
-          activeDirection={activeDirection}
-          disabled={disabled}
-          onStart={handleStart}
-          onEnd={handleEnd}
-        />
-        <div />
+        <div
+          className="grid grid-cols-3 gap-[6%] w-fit"
+          role="group"
+          aria-label="Directional controls — press and hold"
+        >
+          <div />
+          <DpadButton
+            direction="forward"
+            icon={ChevronUp}
+            label="Move forward"
+            activeDirection={activeDirection}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <div />
+          <DpadButton
+            direction="left"
+            icon={ChevronLeft}
+            label="Turn left"
+            activeDirection={activeDirection}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <DpadButton
+            direction="stop"
+            icon={Square}
+            label="Stop"
+            activeDirection={null}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <DpadButton
+            direction="right"
+            icon={ChevronRight}
+            label="Turn right"
+            activeDirection={activeDirection}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <div />
+          <DpadButton
+            direction="backward"
+            icon={ChevronDown}
+            label="Move backward"
+            activeDirection={activeDirection}
+            disabled={disabled}
+            onStart={handleStart}
+            onEnd={handleEnd}
+          />
+          <div />
+        </div>
       </div>
 
-      <div className="w-full flex flex-col gap-3">
+      <div className="w-full shrink-0 flex flex-col gap-[clamp(0.25rem,1cqh,0.5rem)]">
         <VelocitySlider
           label="LINEAR"
           value={linearVelocity}
@@ -204,7 +198,7 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
         />
       </div>
 
-      <div className="flex items-center gap-1.5 font-mono text-xs">
+      <div className="shrink-0 flex items-center gap-1.5 font-mono text-[0.8em]">
         <span
           className={cn(
             'size-2 rounded-full',
@@ -224,24 +218,6 @@ export function ControlsPanel({ connected, robotId, ros, topicName }: ControlsPa
           {!connected ? 'DISCONNECTED' : isActive ? 'ACTIVE' : 'STOPPED'}
         </span>
       </div>
-
-      {robotId && (
-        <>
-          <hr className="w-full border-border" />
-          <Button
-            variant="secondary"
-            size="sm"
-            className="w-full font-sans text-xs cursor-pointer transition-all duration-200"
-            aria-label="Enter Pilot Mode"
-            onClick={() => {
-              void navigate(`/pilot/${robotId}`);
-            }}
-          >
-            <Crosshair className="size-3.5" />
-            Pilot Mode
-          </Button>
-        </>
-      )}
     </div>
   );
 }

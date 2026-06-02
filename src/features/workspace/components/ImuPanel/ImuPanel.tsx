@@ -29,8 +29,15 @@ export function ImuPanel({ connected, ros, topicName }: ImuPanelProps) {
   );
 
   return (
-    <div className={cn('flex flex-col items-center gap-3 w-full', !connected && 'opacity-50')}>
-      {orientationView}
+    <div
+      className={cn(
+        'flex flex-col items-center gap-2 w-full h-full min-h-0',
+        !connected && 'opacity-50',
+      )}
+    >
+      <div className="flex-1 min-h-0 w-full flex items-center justify-center">
+        {orientationView}
+      </div>
       <ImuVizSelect onChange={setVariant} value={variant} />
     </div>
   );

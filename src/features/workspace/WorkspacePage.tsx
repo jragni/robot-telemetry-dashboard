@@ -63,8 +63,8 @@ export function WorkspacePage() {
   const gridRows = rows === 1 ? 'grid-rows-1' : 'grid-rows-2';
 
   return (
-    <div className="flex flex-col h-full gap-3 p-4">
-      <div className={`flex-1 grid gap-3 min-h-0 overflow-hidden ${gridCols} ${gridRows}`}>
+    <div className="flex flex-col h-full gap-1 p-1">
+      <div className={`flex-1 grid gap-1 min-h-0 overflow-hidden ${gridCols} ${gridRows}`}>
         {!isMinimized('camera') && (
           <WorkspacePanel
             label="Camera"
@@ -150,7 +150,6 @@ export function WorkspacePage() {
             Component={ControlsPanel}
             componentProps={{
               connected,
-              robotId: id,
               ros,
               topicName: selectedTopics.controls ?? '',
             }}

@@ -46,16 +46,18 @@ export function SystemStatusPanel({
   }
 
   return (
-    <dl className="flex flex-col gap-2 font-mono text-xs w-full h-full px-2 pt-1 overflow-y-auto scrollbar-thin">
-      <div className="flex items-center justify-between">
-        <span className="font-sans text-xs font-semibold text-text-primary">{name}</span>
-        <div className="flex items-center gap-1.5" aria-live="polite">
+    <dl className="flex flex-col h-full w-full [container-type:size] gap-[clamp(0.25rem,1.6cqmin,0.625rem)] font-mono text-[clamp(0.6rem,3cqmin,0.85rem)] overflow-hidden">
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-sans text-[1em] font-semibold text-text-primary truncate">
+          {name}
+        </span>
+        <div className="flex items-center gap-1.5 shrink-0" aria-live="polite">
           <span className={`size-2 rounded-full ${dotClass}`} aria-hidden="true" />
-          <span className={`font-mono text-xs ${textClass}`}>{statusLabel}</span>
+          <span className={`font-mono text-[0.9em] ${textClass}`}>{statusLabel}</span>
         </div>
       </div>
 
-      <span className="font-mono text-xs text-text-muted truncate">{url}</span>
+      <span className="font-mono text-[0.85em] text-text-muted truncate">{url}</span>
 
       {!!(onConnect ?? onDisconnect) && (
         <Button
@@ -63,7 +65,7 @@ export function SystemStatusPanel({
           size="sm"
           disabled={isConnecting}
           onClick={connected ? onDisconnect : onConnect}
-          className="w-full font-sans text-xs uppercase tracking-widest cursor-pointer transition"
+          className="w-full shrink-0 h-auto py-[clamp(0.2rem,1cqmin,0.4rem)] font-sans text-[0.85em] uppercase tracking-widest cursor-pointer transition"
           aria-label={connected ? 'Disconnect from robot' : 'Connect to robot'}
         >
           <ButtonIcon size={12} className={buttonIconClass} /> {buttonLabel}
